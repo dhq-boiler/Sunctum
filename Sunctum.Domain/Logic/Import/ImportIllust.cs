@@ -40,7 +40,7 @@ namespace Sunctum.Domain.Logic.Import
 
         public override void Estimate()
         {
-            var targets = _Paths.Where(a => !File.GetAttributes(a).HasFlag(FileAttributes.Hidden) && Specifications.SupportedImageType.Any(b => a.EndsWith(b)));
+            var targets = _Paths.Where(a => !File.GetAttributes(a).HasFlag(FileAttributes.Hidden) && Specifications.SupportedImageType.Any(b => a.ToLower().EndsWith(b)));
 
             _children = new List<Importer>();
             foreach (var target in targets)
