@@ -1,0 +1,65 @@
+﻿<Window
+    x:Class="Sunctum.UI.Dialogs.TreeViewDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converter="clr-namespace:Sunctum.UI.Core.Converter"
+    xmlns:core="clr-namespace:Sunctum.UI.Core"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="TreeViewDialog"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="../Assets/CommonButtons.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <converter:TypeNameConverter x:Key="ObjectToTypeString" />
+        </ResourceDictionary>
+    </Window.Resources>
+    <DockPanel>
+        <DockPanel Background="#333333" DockPanel.Dock="Bottom">
+            <Button
+                x:Name="Button_OK"
+                Click="Button_OK_Click"
+                DockPanel.Dock="Right"
+                Style="{StaticResource OKButtonStyle}">
+                OK
+            </Button>
+            <Grid />
+        </DockPanel>
+        <TreeView
+            x:Name="TreeView_Main"
+            Background="#1e1e1e"
+            ItemsSource="{Binding Root}"
+            ScrollViewer.HorizontalScrollBarVisibility="Auto"
+            ScrollViewer.VerticalScrollBarVisibility="Auto">
+            <TreeView.Resources>
+                <HierarchicalDataTemplate DataType="{x:Type core:TreeEntry}" ItemsSource="{Binding Children}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock FontSize="20" Foreground="#499cd6">
+                            <Run Text="{Binding Key}" />
+                        </TextBlock>
+                        <TextBlock FontSize="20" Foreground="White">
+                            <Run Text=" : " />
+                        </TextBlock>
+                        <TextBlock FontSize="20" Foreground="#b5cea8">
+                            <Run DataContext="{Binding Value}" Text="{Binding Mode=OneWay}">
+                                <Run.Style>
+                                    <Style TargetType="{x:Type Run}">
+                                        <Setter Property="Text" Value="{Binding Mode=OneWay}" />
+                                    </Style>
+                                </Run.Style>
+                            </Run>
+                        </TextBlock>
+                    </StackPanel>
+                </HierarchicalDataTemplate>
+            </TreeView.Resources>
+            <TreeView.ItemContainerStyle>
+                <Style TargetType="{x:Type TreeViewItem}">
+                    <Setter Property="IsExpanded" Value="True" />
+                </Style>
+            </TreeView.ItemContainerStyle>
+        </TreeView>
+    </DockPanel>
+</Window>

@@ -1,0 +1,248 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{52D5E5CC-A861-433B-BFA0-7F69DD5D92B8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>simpleqb</RootNamespace>
+    <AssemblyName>simpleqb</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Core\Delimiter.cs" />
+    <Compile Include="Core\Extensions.cs" />
+    <Compile Include="Core\ISyntaxBase.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\BySyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\CloseParenthesisSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\CorrespondingSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\CrossSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\DefaultSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\ExceptSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\FullSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\GroupByColumnSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\GroupBySyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IBySyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\ICorrespondingColumnSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\ICorrespondingSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\ICrossSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IDeleteTableSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IExceptSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IGroupByColumnSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IGroupBySyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IInsertColumnsSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IIntersectSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IntersectSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IOrderTypeSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IOuterJoinTypeSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\ISetOperatorSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IUnionSyntax.cs" />
+    <Compile Include="Iso\Dml\Transitions\IUpdateSourceTransition.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IUpdateTableSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\OpenParenthesisSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\OuterSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\ValueExpressionSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\UnionSyntax.cs" />
+    <Compile Include="Iso\Dml\Transitions\IAsTransition.cs" />
+    <Compile Include="Iso\Dml\Transitions\IColumnTransition.cs" />
+    <Compile Include="Iso\Dml\Transitions\IComparisonPredicateTransition.cs" />
+    <Compile Include="Iso\Dml\Transitions\ICorrespondingByTransition.cs" />
+    <Compile Include="Iso\Dml\Transitions\ICorrespondingTransition.cs" />
+    <Compile Include="Iso\Dml\Transitions\ICrossJoinTransition.cs" />
+    <Compile Include="Iso\Dml\Transitions\IEqualToTransition.cs" />
+    <Compile Include="Iso\Dml\Transitions\IFromTransition.cs" />
+    <Compile Include="Iso\Dml\Transitions\IFunctionTransition.cs" />
+    <Compile Include="Iso\Dml\Transitions\IGroupByTransition.cs" />
+    <Compile Include="Iso\Dml\Transitions\IJoinTypeTransition.cs" />
+    <Compile Include="Iso\Dml\Transitions\IJoinTableTransition.cs" />
+    <Compile Include="Iso\Dml\Transitions\INaturalTransition.cs" />
+    <Compile Include="Core\INoMarginLeftSyntax.cs" />
+    <Compile Include="Core\INoMarginRightSyntax.cs" />
+    <Compile Include="Iso\Dml\Transitions\IOrderByTransition.cs" />
+    <Compile Include="Iso\Dml\Transitions\IOuterJoinTypeTransition.cs" />
+    <Compile Include="Iso\Dml\Transitions\IQuantityTransition.cs" />
+    <Compile Include="Core\IRepeatable.cs" />
+    <Compile Include="Iso\Dml\Transitions\IQueryTermTransition.cs" />
+    <Compile Include="Iso\Dml\Transitions\IRowTransition.cs" />
+    <Compile Include="Core\ISql.cs" />
+    <Compile Include="Iso\Dml\Transitions\ISetAllTransition.cs" />
+    <Compile Include="Iso\Dml\Transitions\ISetOperatorTransition.cs" />
+    <Compile Include="Iso\Dml\Transitions\ISubQueryTransition.cs" />
+    <Compile Include="Iso\Dml\Transitions\ITableTransition.cs" />
+    <Compile Include="Iso\Dml\Transitions\IUpdateColumnTransition.cs" />
+    <Compile Include="Iso\Dml\Transitions\IValuesTransition.cs" />
+    <Compile Include="Iso\Dml\Transitions\IValueTransition.cs" />
+    <Compile Include="Iso\Dml\Transitions\IWhereColumnTransition.cs" />
+    <Compile Include="Iso\Dml\Transitions\IWhereTransition.cs" />
+    <Compile Include="Core\RepeatableSyntax.cs" />
+    <Compile Include="Core\SyntaxBase.cs" />
+    <Compile Include="Core\Table.cs" />
+    <Compile Include="Iso\Dml\All.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\AllColumnSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\AllSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\AndSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\AscSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\AsSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\BeginSubquerySyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\ColumnSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\ConditionColumnSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\ParameterizedValueExpressionSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\CloseFunctionSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\CountSyntax.cs" />
+    <Compile Include="Iso\Dml\Delete.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\DeleteSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\DescSyntax.cs" />
+    <Compile Include="Iso\Dml\Distinct.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\DistinctColumnSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\DistinctSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\EndSubquerySyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\EqualToSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\ExistsSyntax.cs" />
+    <Compile Include="Iso\Dml\Extensions.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\FromSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\FunctionColumnSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\FunctionWildcardSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\GreaterThanOrEqualToSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\GreaterThanSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IAsSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\ICloseSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IColumnSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IConditionValueSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\ICountParameterSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\ICountSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IDeleteSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\ISetQuantifierSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IExistsSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IFromSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IInsertColumnSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IInsertSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IInSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IIntoSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IInValueSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IIsSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IJoinConditionSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IJoinTypeSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IJoinTableSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\INaturalSyntax.cs" />
+    <Compile Include="Iso\Dml\Transitions\INextRowTransition.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\InnerSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\INotSyntax.cs" />
+    <Compile Include="Iso\Dml\Insert.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\InsertColumnSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\InsertSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\InSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IntoSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\InValueSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IOnSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IOperatorColumnSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IOperatorSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IOrderByColumnSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IOrderBySyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IRowSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\ISelectSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\ISetSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\ISinkStateSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IsNotNullSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IsNullSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IsSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IValueExpressionSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\ISetClauseSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IUpdateSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IValuesSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\ISetClauseValueSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\ISearchCondition.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IWhereNotSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\IWhereSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\JoinTableSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\LeftSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\LessThanOrEqualToSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\LessThanSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\LikeSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\NaturalSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\NotEqualToSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\NotNullSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\NotSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\NullSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\OnSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\OpenFunctionSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\OrderByColumnSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\OrderBySyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\OrSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\RepeatRowSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\RightSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\RowSyntax.cs" />
+    <Compile Include="Iso\Dml\Select.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\SelectSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\SetSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\SubstituteSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\TableSyntax.cs" />
+    <Compile Include="Iso\Dml\Transitions\IWildcardTransition.cs" />
+    <Compile Include="Iso\Dml\Update.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\UpdateColumnSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\UpdateSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\UsingSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\ValuesSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\SetClauseValueSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\SearchCondition.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\WhereNotSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\WhereSyntax.cs" />
+    <Compile Include="Iso\Dml\Syntaxes\AsteriskSyntax.cs" />
+    <Compile Include="Vendor\SQLite\Dcl\Syntaxes\IVacuumSyntax.cs" />
+    <Compile Include="Vendor\SQLite\Dcl\Syntaxes\VacuumSyntax.cs" />
+    <Compile Include="Vendor\SQLite\Dcl\Vacuum.cs" />
+    <Compile Include="Vendor\SQLite\Dml\Extensions.cs" />
+    <Compile Include="Vendor\SQLite\Dml\InsertOrReplace.cs" />
+    <Compile Include="Vendor\SQLite\Dml\Syntaxes\IInsertOrReplaceSyntax.cs" />
+    <Compile Include="Vendor\SQLite\Dml\Syntaxes\ILimitSyntax.cs" />
+    <Compile Include="Vendor\SQLite\Dml\Syntaxes\InsertOrReplaceSyntax.cs" />
+    <Compile Include="Vendor\SQLite\Dml\Syntaxes\LimitSyntax.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

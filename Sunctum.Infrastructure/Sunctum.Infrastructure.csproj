@@ -1,0 +1,185 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{2CF31D9A-E84A-415A-8063-47BD28BA52AC}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Sunctum.Infrastructure</RootNamespace>
+    <AssemblyName>Sunctum.Infrastructure</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Dapper, Version=1.50.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Dapper.1.50.4\lib\net451\Dapper.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.4.13\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="YamlDotNet, Version=4.3.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\YamlDotNet.4.3.1\lib\net45\YamlDotNet.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Core\BaseObject.cs" />
+    <Compile Include="Core\Delegate.cs" />
+    <Compile Include="Core\File\FileSize.cs" />
+    <Compile Include="Core\IModifiedCounter.cs" />
+    <Compile Include="Core\ModifiedEventArgs.cs" />
+    <Compile Include="Core\MustInitialize.cs" />
+    <Compile Include="Core\PropertyNameUtility.cs" />
+    <Compile Include="Data\Rdbms\Connection.cs" />
+    <Compile Include="Data\Rdbms\ConnectionManager.cs" />
+    <Compile Include="Data\Rdbms\DaoConst.cs" />
+    <Compile Include="Data\Rdbms\DbSelector.cs" />
+    <Compile Include="Data\Rdbms\Ddl\Mapping\ISchemaVersion.cs" />
+    <Compile Include="Data\Rdbms\Ddl\Migration\ChangePlanByTable.cs" />
+    <Compile Include="Data\Rdbms\Ddl\Migration\IEntityVersionChangePlan.cs" />
+    <Compile Include="Data\Rdbms\Ddl\Migration\IVersionChangePlan.cs" />
+    <Compile Include="Data\Rdbms\Ddl\Migration\VersionChangeEventArgs.cs" />
+    <Compile Include="Data\Rdbms\Ddl\Migration\VersionHelper.cs" />
+    <Compile Include="Data\Rdbms\Ddl\Migration\VersionChangeUnit.cs" />
+    <Compile Include="Data\Rdbms\Ddl\Migration\ChangePlanByVersion.cs" />
+    <Compile Include="Data\Rdbms\Ddl\Mapping\ConvertAttribute.cs" />
+    <Compile Include="Data\Rdbms\Ddl\Mapping\IndexAttribute.cs" />
+    <Compile Include="Data\Rdbms\Ddl\Mapping\SinceAttribute.cs" />
+    <Compile Include="Data\Rdbms\Ddl\Mapping\UntilAttribute.cs" />
+    <Compile Include="Data\Rdbms\Ddl\Mapping\DefaultVersionAttribute.cs" />
+    <Compile Include="Data\Rdbms\Ddl\Mapping\VersionOrigin.cs" />
+    <Compile Include="Data\Rdbms\Ddl\Mapping\DiscontinuousVersionClassException.cs" />
+    <Compile Include="Data\Rdbms\Dml\ColumnNameDirectValuePair.cs" />
+    <Compile Include="Data\Rdbms\Dml\ColumnNameBindValuePair.cs" />
+    <Compile Include="Data\Rdbms\Dml\EqualityOperation.cs" />
+    <Compile Include="Data\Rdbms\Dml\CrudBase.cs" />
+    <Compile Include="Data\Rdbms\Dml\Delete.cs" />
+    <Compile Include="Data\Rdbms\Dml\DmlBase.cs" />
+    <Compile Include="Data\Rdbms\Dml\Exists.cs" />
+    <Compile Include="Data\Rdbms\Dml\GroupBy.cs" />
+    <Compile Include="Data\Rdbms\Dml\IComparisonOperation.cs" />
+    <Compile Include="Data\Rdbms\Dml\ICrud.cs" />
+    <Compile Include="Data\Rdbms\Dml\IExists.cs" />
+    <Compile Include="Data\Rdbms\Dml\IIn.cs" />
+    <Compile Include="Data\Rdbms\Dml\IIsNull.cs" />
+    <Compile Include="Data\Rdbms\Dml\IJoin.cs" />
+    <Compile Include="Data\Rdbms\Dml\ILimit.cs" />
+    <Compile Include="Data\Rdbms\Dml\InnerJoin.cs" />
+    <Compile Include="Data\Rdbms\Dml\In.cs" />
+    <Compile Include="Data\Rdbms\Dml\Insert.cs" />
+    <Compile Include="Data\Rdbms\Dml\IOrderBy.cs" />
+    <Compile Include="Data\Rdbms\Dml\IsNotNull.cs" />
+    <Compile Include="Data\Rdbms\Dml\IsNull.cs" />
+    <Compile Include="Data\Rdbms\Dml\LeftJoin.cs" />
+    <Compile Include="Data\Rdbms\Dml\NotExists.cs" />
+    <Compile Include="Data\Rdbms\Dml\NotIn.cs" />
+    <Compile Include="Data\Rdbms\Dml\Union.cs" />
+    <Compile Include="Data\Rdbms\IConnection.cs" />
+    <Compile Include="Data\Rdbms\IRightValue.cs" />
+    <Compile Include="Data\Rdbms\Dml\IQueryBuilder.cs" />
+    <Compile Include="Data\Rdbms\Dml\ISqlize.cs" />
+    <Compile Include="Data\Rdbms\Dml\IWhere.cs" />
+    <Compile Include="Data\Rdbms\Dml\JoinOn.cs" />
+    <Compile Include="Data\Rdbms\Dml\Limit.cs" />
+    <Compile Include="Data\Rdbms\Dml\LogicalOperator.cs" />
+    <Compile Include="Data\Rdbms\Dml\OrderBy.cs" />
+    <Compile Include="Data\Rdbms\MultiplePlaceholderRightValue.cs" />
+    <Compile Include="Data\Rdbms\Dml\SingleOrderBy.cs" />
+    <Compile Include="Data\Rdbms\Dml\Ordering.cs" />
+    <Compile Include="Data\Rdbms\Dml\Select.cs" />
+    <Compile Include="Data\Rdbms\Dml\Update.cs" />
+    <Compile Include="Data\Rdbms\Dml\Where.cs" />
+    <Compile Include="Data\Rdbms\ITable.cs" />
+    <Compile Include="Data\Rdbms\RightValueImpl.cs" />
+    <Compile Include="Data\Setup\DataVersionManager.cs" />
+    <Compile Include="Data\Rdbms\SubqueryRightValue.cs" />
+    <Compile Include="Data\Rdbms\Table.cs" />
+    <Compile Include="Data\Rdbms\DataOperationUnit.cs" />
+    <Compile Include="Data\Rdbms\EntityBaseObject.cs" />
+    <Compile Include="Core\NotifyPropertyChangedImpl.cs" />
+    <Compile Include="Data\Rdbms\BaseColumn.cs" />
+    <Compile Include="Data\Rdbms\Column.cs" />
+    <Compile Include="Data\Rdbms\Ddl\Mapping\ColumnAttribute.cs" />
+    <Compile Include="Data\Rdbms\IDao.cs" />
+    <Compile Include="Data\Rdbms\Dao.cs" />
+    <Compile Include="Data\Rdbms\DatabaseSchemaException.cs" />
+    <Compile Include="Data\Rdbms\Extensions.cs" />
+    <Compile Include="Data\Rdbms\FailedOpeningDatabaseException.cs" />
+    <Compile Include="Data\Rdbms\IColumn.cs" />
+    <Compile Include="Data\Rdbms\Ddl\IDdlConstraint.cs" />
+    <Compile Include="Data\Rdbms\Ddl\Mapping\IDdlConstraintAttribute.cs" />
+    <Compile Include="Data\Rdbms\IId.cs" />
+    <Compile Include="Data\Rdbms\NoEntityInsertedException.cs" />
+    <Compile Include="Data\Rdbms\NotExistColumnException.cs" />
+    <Compile Include="Data\Rdbms\NotMatchColumnException.cs" />
+    <Compile Include="Data\Rdbms\Ddl\NotNull.cs" />
+    <Compile Include="Data\Rdbms\Ddl\Mapping\NotNullAttribute.cs" />
+    <Compile Include="Data\Rdbms\OverridedColumn.cs" />
+    <Compile Include="Data\Rdbms\PlaceholderRightValue.cs" />
+    <Compile Include="Data\Rdbms\Ddl\PrimaryKey.cs" />
+    <Compile Include="Data\Rdbms\Ddl\Mapping\PrimaryKeyAttribute.cs" />
+    <Compile Include="Data\Setup\DbInfoRetriever.cs" />
+    <Compile Include="Data\Setup\EntityVersionKey.cs" />
+    <Compile Include="Data\Setup\UpgradeHelper.cs" />
+    <Compile Include="Data\Setup\VersioningStrategy.cs" />
+    <Compile Include="Data\Setup\VersioningStrategyByTable.cs" />
+    <Compile Include="Data\Setup\VersioningStrategyByTick.cs" />
+    <Compile Include="Data\Setup\VersioningStrategyNotSupported.cs" />
+    <Compile Include="Data\Setup\VersionKey.cs" />
+    <Compile Include="Data\Xml\XmlFile.cs" />
+    <Compile Include="Data\Yaml\YamlConverter.cs" />
+    <Compile Include="Data\Yaml\YamlFile.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\simpleqb\simpleqb.csproj">
+      <Project>{52d5e5cc-a861-433b-bfa0-7f69dd5d92b8}</Project>
+      <Name>simpleqb</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>"$(SolutionDir)CodeFormatter\CodeFormatter" "$(ProjectDir)$(ProjectFileName)" /nounicode /nocopyright</PreBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,45 @@
+﻿<UserControl
+    x:Class="Sunctum.Views.EditMetadataImportSetting"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Sunctum.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prism="http://prismlibrary.com/"
+    xmlns:properties="clr-namespace:Sunctum.Properties"
+    Width="500"
+    Height="300"
+    d:DesignHeight="300"
+    d:DesignWidth="300"
+    prism:ViewModelLocator.AutoWireViewModel="True"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <properties:Resources x:Key="resources" />
+    </UserControl.Resources>
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Bottom">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                <Button
+                    Command="{Binding OkCommand}"
+                    Content="{Binding Common_Ok, Source={StaticResource resources}}"
+                    Style="{StaticResource OKButtonStyle}" />
+                <Button
+                    Command="{Binding CancelCommand}"
+                    Content="{Binding Common_Cancel, Source={StaticResource resources}}"
+                    Style="{StaticResource CancelCloseButtonStyle}" />
+            </StackPanel>
+            <Grid />
+        </DockPanel>
+        <DockPanel Margin="10">
+            <TextBlock Margin="0,0,10,0" DockPanel.Dock="Left">
+                <Hyperlink Command="{Binding OpenBrowserCommand}" ToolTip="{Binding EditMetadataImportSettingDialog_Pattern_Tooltip, Source={StaticResource resources}}">
+                    <Run Text="{Binding EditMetadataImportSettingDialog_Pattern, Mode=OneWay, Source={StaticResource resources}}" />
+                </Hyperlink>
+            </TextBlock>
+            <TextBox
+                FontFamily="Consolas"
+                Text="{Binding EditTarget.Value.Pattern.Value, Mode=TwoWay}"
+                TextWrapping="Wrap" />
+        </DockPanel>
+    </DockPanel>
+</UserControl>

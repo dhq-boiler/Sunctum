@@ -1,0 +1,54 @@
+﻿<Window
+    x:Class="Sunctum.Views.ErrorReportDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Sunctum.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:properties="clr-namespace:Sunctum.Properties"
+    Width="640"
+    Height="480"
+    Closed="Window_Closed"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <properties:Resources x:Key="resources" />
+    </Window.Resources>
+    <Window.Title>
+        <Binding Path="ErrorReportDialogTitle" Source="{StaticResource resources}" />
+    </Window.Title>
+    <DockPanel Background="#1e1e1e">
+        <DockPanel Background="#333333" DockPanel.Dock="Bottom">
+            <DockPanel DockPanel.Dock="Right">
+                <DockPanel.Resources>
+                    <Style TargetType="Button">
+                        <Setter Property="Width" Value="75" />
+                        <Setter Property="Height" Value="20" />
+                        <Setter Property="Margin" Value="10" />
+                        <Setter Property="DockPanel.Dock" Value="Right" />
+                    </Style>
+                </DockPanel.Resources>
+                <Button Command="{Binding TerminateApplicationCommand}" Content="{Binding Common_Close, Source={StaticResource resources}}" />
+                <Button Command="{Binding ShowExceptionDetailsCommand}" Content="{Binding ErrorReportDialog_Details, Source={StaticResource resources}}" />
+            </DockPanel>
+            <Grid />
+        </DockPanel>
+        <FlowDocumentScrollViewer>
+            <FlowDocument>
+                <Paragraph>
+                    <Run
+                        FontSize="25"
+                        Foreground="#569cd6"
+                        Text="{Binding ErrorReportDialog_ImSorry, Source={StaticResource resources}, Mode=OneWay}" />
+                </Paragraph>
+                <Paragraph
+                    FontFamily="Consolas"
+                    FontSize="15"
+                    Foreground="#92caf4">
+                    <Run Text="{Binding ErrorReportDialog_Message_1st, Source={StaticResource resources}, Mode=OneWay}" />
+                    <Run Foreground="#d7ba7d" Text="{Binding ErrorReportDialog_Message_2nd, Source={StaticResource resources}, Mode=OneWay}" />
+                    <Run Text="{Binding ErrorReportDialog_Message_3rd, Source={StaticResource resources}, Mode=OneWay}" />
+                </Paragraph>
+            </FlowDocument>
+        </FlowDocumentScrollViewer>
+    </DockPanel>
+</Window>

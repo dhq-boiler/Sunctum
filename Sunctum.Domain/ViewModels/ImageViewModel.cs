@@ -1,0 +1,157 @@
+﻿
+
+using Sunctum.Domain.Data.Dao;
+using Sunctum.Domain.Logic.Generate;
+using Sunctum.Domain.Models;
+using Sunctum.Infrastructure.Core;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+
+namespace Sunctum.Domain.ViewModels
+{
+    public class ImageViewModel : EntryViewModel
+    {
+        public ImageViewModel()
+        { }
+
+        public ImageViewModel(Guid id, string title, string masterPath, Configuration config)
+            : base(id, title)
+        {
+            Configuration = config;
+            if (System.IO.Path.IsPathRooted(masterPath))
+            {
+                RelativeMasterPath = MakeRelativeMasterPath(Configuration.WorkingDirectory, masterPath);
+            }
+            else
+            {
+                RelativeMasterPath = masterPath;
+            }
+        }
+
+        public static string MakeRelativeMasterPath(string workingDirectory, string absoluteMasterPath)
+        {
+            Debug.Assert(absoluteMasterPath != null);
+            Debug.Assert(System.IO.Path.IsPathRooted(absoluteMasterPath));
+
+            Uri standard = new Uri(workingDirectory + "\\");
+            Uri absolute = new Uri(absoluteMasterPath);
+            Uri relative = standard.MakeRelativeUri(absolute);
+            string relativePath = relative.ToString();
+            relativePath = Uri.UnescapeDataString(relativePath);
+            relativePath = relativePath.Replace("%25", "%");
+            return relativePath;
+        }
+
+        private Configuration _Configuration;
+        private string _RelativeMasterPath;
+        private ThumbnailViewModel _Thumbnail;
+        private long? _ByteSize;
+
+        #region Configuration
+
+        public Configuration Configuration
+        {
+            get { return _Configuration; }
+            set { SetProperty(ref _Configuration, value); }
+        }
+
+        #endregion //Configuration
+
+        public string AbsoluteMasterPath
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(RelativeMasterPath)) return null;
+                return $"{Configuration.WorkingDirectory}\\{RelativeMasterPath}";
+            }
+        }
+
+        public string RelativeMasterPath
+        {
+            [DebuggerStepThrough]
+            get
+            { return _RelativeMasterPath; }
+            set { SetProperty(ref _RelativeMasterPath, value); }
+        }
+
+        public long? ByteSize
+        {
+            [DebuggerStepThrough]
+            get
+            { return _ByteSize; }
+            set { SetProperty(ref _ByteSize, value); }
+        }
+
+        public ThumbnailViewModel Thumbnail
+        {
+            [DebuggerStepThrough]
+            get
+            { return _Thumbnail; }
+            set
+            {
+                if (value != null && !System.IO.Path.GetFileNameWithoutExtension(value.AbsoluteMasterPath).Equals(value.ImageID.ToString("N")))
+                {
+                    ThumbnailGenerating.GenerateThumbnail(this);
+                }
+                else
+                {
+                    SetProperty(ref _Thumbnail, value);
+                    OnPropertyChanged(PropertyNameUtility.GetPropertyName(() => Path));
+                }
+            }
+        }
+
+        public string Path
+        {
+            get
+            {
+                if (ThumbnailLoaded && !ThumbnailGenerated && MasterFileSize > Configuration.LowerLimitFileSizeThatImageMustBeDisplayAsThumbnail)
+                {
+                    ThumbnailGenerating.GenerateThumbnail(this);
+                    return Thumbnail.AbsoluteMasterPath;
+                }
+
+                if (ThumbnailLoaded && ThumbnailGenerated)
+                    return Thumbnail.AbsoluteMasterPath;
+                else
+                {
+                    return AbsoluteMasterPath;
+                }
+            }
+        }
+
+        public long MasterFileSize
+        {
+            get { return new FileInfo(AbsoluteMasterPath).Length; }
+        }
+
+        public bool ThumbnailRecorded
+        {
+            get
+            {
+                ThumbnailDao dao = new ThumbnailDao();
+                return dao.CountBy(new Dictionary<string, object>() { { "ImageID", ID } }) > 0;
+            }
+        }
+
+        public bool ThumbnailLoaded
+        {
+            get { return Thumbnail != null && Thumbnail.RelativeMasterPath != null; }
+        }
+
+        public bool ThumbnailGenerated
+        {
+            get
+            {
+                return Thumbnail?.AbsoluteMasterPath != null && File.Exists(Thumbnail.AbsoluteMasterPath);
+            }
+        }
+
+        public override string ToString()
+        {
+            return "{RelativeMasterPath=" + RelativeMasterPath + ", ThumbnailGenerated=" + ThumbnailGenerated + ", Thumbnail=" + Thumbnail + "}";
+        }
+    }
+}

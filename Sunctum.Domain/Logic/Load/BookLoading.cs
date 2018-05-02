@@ -1,0 +1,111 @@
+﻿
+using NLog;
+using Sunctum.Domain.Data.DaoFacade;
+using Sunctum.Domain.Logic.Generate;
+using Sunctum.Domain.Models;
+using Sunctum.Domain.Models.Managers;
+using Sunctum.Domain.ViewModels;
+using Sunctum.Infrastructure.Data.Rdbms;
+using System;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Threading.Tasks;
+
+namespace Sunctum.Domain.Logic.Load
+{
+    public static class BookLoading
+    {
+        private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
+
+        public static async Task LoadBookListAsync(ILibraryManager libVM)
+        {
+            await Task.Run(() => LoadBookList(libVM));
+        }
+
+        public static void LoadBookList(ILibraryManager libVM)
+        {
+            Stopwatch sw = new Stopwatch();
+            s_logger.Info("Loading Book list...");
+            sw.Start();
+            using (var dataOpUnit = new DataOperationUnit())
+            {
+                dataOpUnit.Open(ConnectionManager.DefaultConnection);
+
+                libVM.LoadedBooks.CollectionChanged -= libVM.AuthorManager.LoadedBooks_CollectionChanged;
+
+                libVM.LoadedBooks = new ObservableCollection<BookViewModel>(BookFacade.FindAllWithAuthor(dataOpUnit));
+                libVM.AuthorManager.LoadAuthorCount();
+                libVM.LoadedBooks.CollectionChanged += libVM.AuthorManager.LoadedBooks_CollectionChanged;
+            }
+            sw.Stop();
+            s_logger.Info($"Completed to load Book list. {sw.ElapsedMilliseconds}ms");
+        }
+
+        public static void Load(BookViewModel book, DataOperationUnit dataOpUnit = null)
+        {
+            if (!book.IsLoaded)
+            {
+                if (book.FirstPage?.Image == null || book.FirstPage?.Image?.Thumbnail == null)
+                {
+                    LoadFirstPageAndThumbnail(book, dataOpUnit);
+                    if (book.FirstPage?.Image != null && book.FirstPage.Image.ThumbnailLoaded)
+                    {
+                        book.IsLoaded = true;
+                    }
+                }
+                else
+                {
+                    book.IsLoaded = true;
+                }
+            }
+
+            GenerateThumbnailCondition(book, dataOpUnit);
+        }
+
+        public static void GenerateThumbnailCondition(BookViewModel book, DataOperationUnit dataOpUnit = null)
+        {
+            if (Configuration.ApplicationConfiguration.ThumbnailParallelGeneration)
+            {
+                Task.Factory.StartNew(() => GenerateThumbnailIf(book));
+            }
+            else
+            {
+                GenerateThumbnailIf(book, dataOpUnit);
+            }
+        }
+
+        internal static void LoadAuthor(BookViewModel book, DataOperationUnit dataOpUnit = null)
+        {
+            if (book.AuthorID != Guid.Empty)
+            {
+                book.Author = AuthorFacade.FindBy(book.AuthorID, dataOpUnit);
+            }
+        }
+
+        public static void GenerateThumbnailIf(BookViewModel book, DataOperationUnit dataOpUnit = null)
+        {
+            var firstPage = book.FirstPage;
+            if (firstPage != null)
+            {
+                var firstPageImage = firstPage.Image;
+
+                if (!firstPageImage.ThumbnailLoaded)
+                {
+                    firstPageImage.Thumbnail = ThumbnailFacade.FindByImageID(firstPageImage.ID, dataOpUnit);
+                }
+
+                if (!firstPageImage.ThumbnailLoaded
+                    || firstPageImage.Thumbnail?.RelativeMasterPath == null
+                    || !firstPageImage.ThumbnailGenerated)
+                {
+                    ThumbnailGenerating.GenerateThumbnail(firstPageImage, dataOpUnit);
+                }
+            }
+        }
+
+        private static void LoadFirstPageAndThumbnail(BookViewModel book, DataOperationUnit dataOpUnit = null)
+        {
+            BookFacade.GetProeprty(ref book, dataOpUnit);
+        }
+    }
+}

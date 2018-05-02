@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F0CF5F50-3A7F-41C9-A486-8F38EA90C50E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Sunctum.UI</RootNamespace>
+    <AssemblyName>Sunctum.UI</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.4.13\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xaml" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controls\AutoScrollingHyperlink.xaml.cs">
+      <DependentUpon>AutoScrollingHyperlink.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\AutoScrollingLabel.xaml.cs">
+      <DependentUpon>AutoScrollingLabel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\EasyEnterTextBox.cs" />
+    <Compile Include="Controls\FolderSelectDialog.cs" />
+    <Compile Include="Controls\IntTextBox.cs" />
+    <Compile Include="Core\Reflector.cs" />
+    <Compile Include="Controls\SelectableLabel.xaml.cs">
+      <DependentUpon>SelectableLabel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\SimpleGrid.cs" />
+    <Compile Include="Controls\VerificationTextBox.xaml.cs" />
+    <Compile Include="Controls\VirtualizingStackPanel.cs" />
+    <Compile Include="Controls\VirtualizingWrapPanel.cs" />
+    <Compile Include="Core\Converter\BoolToBrushRedOrGreen.cs" />
+    <Compile Include="Core\Extensions.cs" />
+    <Compile Include="Core\StringCollectionReader.cs" />
+    <Compile Include="Core\TreeEntry.cs" />
+    <Compile Include="Core\TreeGenerator.cs" />
+    <Compile Include="Dialogs\AbstractEntityManagementDialog.xaml.cs">
+      <DependentUpon>AbstractEntityManagementDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Dialogs\EntityManagementDialog.cs" />
+    <Compile Include="Dialogs\TreeViewDialog.xaml.cs">
+      <DependentUpon>TreeViewDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModel\EntityManagementDialogViewModel.cs" />
+    <Compile Include="ViewModel\TreeViewDialogViewModel.cs" />
+    <Compile Include="Core\Converter\TypeNameConverter.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Controls\AutoScrollingHyperlink.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\AutoScrollingLabel.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\SelectableLabel.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Controls\VerificationTextBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\AbstractEntityManagementDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\TreeViewDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Assets\CommonButtons.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sunctum.Domain\Sunctum.Domain.csproj">
+      <Project>{df4f0810-0869-4124-8240-10c3c2d716d8}</Project>
+      <Name>Sunctum.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sunctum.Infrastructure\Sunctum.Infrastructure.csproj">
+      <Project>{2cf31d9a-e84a-415a-8063-47bd28ba52ac}</Project>
+      <Name>Sunctum.Infrastructure</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>"$(SolutionDir)CodeFormatter\CodeFormatter" "$(ProjectDir)$(ProjectFileName)" /nounicode /nocopyright</PreBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

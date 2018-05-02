@@ -1,0 +1,316 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\OpenCvSharp3-AnyCPU.3.4.1.20180319\build\OpenCvSharp3-AnyCPU.props" Condition="Exists('..\packages\OpenCvSharp3-AnyCPU.3.4.1.20180319\build\OpenCvSharp3-AnyCPU.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DF4F0810-0869-4124-8240-10C3C2D716D8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Sunctum.Domain</RootNamespace>
+    <AssemblyName>Sunctum.Domain</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Practices.ServiceLocation, Version=1.3.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\CommonServiceLocator.1.3\lib\portable-net4+sl5+netcore45+wpa81+wp8\Microsoft.Practices.ServiceLocation.dll</HintPath>
+    </Reference>
+    <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.4.13\lib\net45\NLog.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenCvSharp, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6adad1e807fea099, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenCvSharp3-AnyCPU.3.4.1.20180319\lib\net46\OpenCvSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenCvSharp.Blob, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6adad1e807fea099, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenCvSharp3-AnyCPU.3.4.1.20180319\lib\net46\OpenCvSharp.Blob.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenCvSharp.Extensions, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6adad1e807fea099, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenCvSharp3-AnyCPU.3.4.1.20180319\lib\net46\OpenCvSharp.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenCvSharp.UserInterface, Version=1.0.0.0, Culture=neutral, PublicKeyToken=6adad1e807fea099, processorArchitecture=MSIL">
+      <HintPath>..\packages\OpenCvSharp3-AnyCPU.3.4.1.20180319\lib\net46\OpenCvSharp.UserInterface.dll</HintPath>
+    </Reference>
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+    <Reference Include="Prism, Version=6.3.0.0, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
+      <HintPath>..\packages\Prism.Core.6.3.0\lib\net45\Prism.dll</HintPath>
+    </Reference>
+    <Reference Include="Prism.Wpf, Version=6.3.0.0, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
+      <HintPath>..\packages\Prism.Wpf.6.3.0\lib\net45\Prism.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.SQLite, Version=1.0.108.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Core.1.0.108.0\lib\net46\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.Linq, Version=1.0.108.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Data.SQLite.Linq.1.0.108.0\lib\net46\System.Data.SQLite.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Prism.Wpf.6.3.0\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+    <Reference Include="YamlDotNet, Version=4.3.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\YamlDotNet.4.3.1\lib\net45\YamlDotNet.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Bridge\Extentions.cs" />
+    <Compile Include="Data\DaoFacade\AuthorFacade.cs" />
+    <Compile Include="Data\DaoFacade\BookFacade.cs" />
+    <Compile Include="Data\DaoFacade\ColorMapFacade.cs" />
+    <Compile Include="Data\DaoFacade\ImageFacade.cs" />
+    <Compile Include="Data\DaoFacade\ImageTagFacade.cs" />
+    <Compile Include="Data\DaoFacade\PageFacade.cs" />
+    <Compile Include="Data\DaoFacade\QueryFailedException.cs" />
+    <Compile Include="Data\DaoFacade\TagFacade.cs" />
+    <Compile Include="Data\DaoFacade\ThumbnailFacade.cs" />
+    <Compile Include="Data\Dao\ColorMapDao.cs" />
+    <Compile Include="Data\Dao\DaoBuilder.cs" />
+    <Compile Include="Data\Dao\DirectoryNameParserDao.cs" />
+    <Compile Include="Data\Dao\Dummy.cs" />
+    <Compile Include="Data\Dao\IDaoBuilder.cs" />
+    <Compile Include="Data\Dao\Migration\IDConversionDao.cs" />
+    <Compile Include="Data\Dao\Migration\Plan\ChangePlan_AppDb_RecentOpenedLibrary_VersionOrigin.cs" />
+    <Compile Include="Data\Dao\Migration\Plan\ChangePlan_AppDb_VersionOrigin.cs" />
+    <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Author_VersionOrigin.cs" />
+    <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Book_VersionOrigin.cs" />
+    <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Book_Version_1.cs" />
+    <Compile Include="Data\Dao\Migration\Plan\ChangePlan_ColorMap_VersionOrigin.cs" />
+    <Compile Include="Data\Dao\Migration\Plan\ChangePlan_DirectoryNameParser_VersionOrigin.cs" />
+    <Compile Include="Data\Dao\Migration\Plan\ChangePlan_ImageTag_VersionOrigin.cs" />
+    <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Image_VersionOrigin.cs" />
+    <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Image_Version_1.cs" />
+    <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Page_VersionOrigin.cs" />
+    <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Tag_VersionOrigin.cs" />
+    <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Thumbnail_VersionOrigin.cs" />
+    <Compile Include="Data\Dao\Migration\Plan\ChangePlan_VersionOrigin.cs" />
+    <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Version_1.cs" />
+    <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Version_2.cs" />
+    <Compile Include="Data\Dao\RecentOpenedLibraryDao.cs" />
+    <Compile Include="Logic\Async\BookLoading.cs" />
+    <Compile Include="Logic\Async\IBookLoading.cs" />
+    <Compile Include="Logic\Async\ILibraryResetting.cs" />
+    <Compile Include="Logic\Async\LibraryResetting.cs" />
+    <Compile Include="Logic\Parse\DirectoryNameParser.cs" />
+    <Compile Include="Logic\Parse\DirectoryNameParserBase.cs" />
+    <Compile Include="Logic\Parse\DirectoryNameParserManager.cs" />
+    <Compile Include="Logic\Parse\Extensions.cs" />
+    <Compile Include="Logic\Parse\IDirectoryNameParser.cs" />
+    <Compile Include="Logic\Parse\IDirectoryNameParserManager.cs" />
+    <Compile Include="Models\Conversion\Version_1.cs" />
+    <Compile Include="Models\Conversion\Version_2.cs" />
+    <Compile Include="Models\DirectoryNameParser.cs" />
+    <Compile Include="Models\IName.cs" />
+    <Compile Include="Models\Migration\IDConversion.cs" />
+    <Compile Include="Models\RecentOpenedLibrary.cs" />
+    <Compile Include="Data\Rdbms\Dml\InsertOrReplace.cs" />
+    <Compile Include="Data\Dao\AuthorDao.cs" />
+    <Compile Include="Data\Dao\BookDao.cs" />
+    <Compile Include="Data\Dao\ImageDao.cs" />
+    <Compile Include="Data\Dao\ImageTagDao.cs" />
+    <Compile Include="Data\Dao\PageDao.cs" />
+    <Compile Include="Data\Dao\SQLiteBaseDao.cs" />
+    <Compile Include="Data\Dao\TagDao.cs" />
+    <Compile Include="Data\Dao\ThumbnailDao.cs" />
+    <Compile Include="Models\Author.cs" />
+    <Compile Include="Models\Book.cs" />
+    <Compile Include="Models\ColorMap.cs" />
+    <Compile Include="Models\Entry.cs" />
+    <Compile Include="Models\Image.cs" />
+    <Compile Include="Models\ImageTag.cs" />
+    <Compile Include="Models\NoPkIdEntity.cs" />
+    <Compile Include="Models\Page.cs" />
+    <Compile Include="Models\PkIdEntity.cs" />
+    <Compile Include="Models\Tag.cs" />
+    <Compile Include="Models\Thumbnail.cs" />
+    <Compile Include="Data\Rdbms\SQLiteDataOperationUnit.cs" />
+    <Compile Include="Data\Rdbms\SQLite\SpecificationDefaults.cs" />
+    <Compile Include="Extensions\PresentationExtensions.cs" />
+    <Compile Include="Logic\Async\AsyncTaskMakerBase.cs" />
+    <Compile Include="Logic\Async\ByteSizeCalculating.cs" />
+    <Compile Include="Logic\Async\IRecentOpenedLibraryUpdating.cs" />
+    <Compile Include="Logic\Async\PageOrderUpdating.cs" />
+    <Compile Include="Logic\Async\IPageOrderUpdating.cs" />
+    <Compile Include="Logic\Async\IAsyncTaskMaker.cs" />
+    <Compile Include="Logic\Async\IBookExporting.cs" />
+    <Compile Include="Logic\Async\IBookImporting.cs" />
+    <Compile Include="Logic\Async\IBookRemoving.cs" />
+    <Compile Include="Logic\Async\IByteSizeCalculating.cs" />
+    <Compile Include="Logic\Async\IImageTagAdding.cs" />
+    <Compile Include="Logic\Async\IImageTagRemoving.cs" />
+    <Compile Include="Logic\Async\ILibraryImporting.cs" />
+    <Compile Include="Logic\Async\ILibraryInitializing.cs" />
+    <Compile Include="Logic\Async\ILibraryLoading.cs" />
+    <Compile Include="Logic\Async\IPageRemoving.cs" />
+    <Compile Include="Logic\Async\IPageScrapping.cs" />
+    <Compile Include="Logic\Async\IPageThumbnailRemaking.cs" />
+    <Compile Include="Logic\Async\ITagRemoving.cs" />
+    <Compile Include="Logic\Async\IBookThumbnailRemaking.cs" />
+    <Compile Include="Logic\Async\LibraryLoading.cs" />
+    <Compile Include="Logic\Async\PageThumbnailRemaking.cs" />
+    <Compile Include="Logic\Async\RecentOpenedLibraryUpdating.cs" />
+    <Compile Include="Logic\Async\TagRemoving.cs" />
+    <Compile Include="Logic\AuthorSorting\AuthorSorting.cs" />
+    <Compile Include="Logic\AuthorSorting\AuthorSortingByCountAsc.cs" />
+    <Compile Include="Logic\AuthorSorting\AuthorSortingByCountDesc.cs" />
+    <Compile Include="Logic\AuthorSorting\AuthorSortingByNameAsc.cs" />
+    <Compile Include="Logic\AuthorSorting\AuthorSortingByNameDesc.cs" />
+    <Compile Include="Logic\AuthorSorting\IAuthorSorting.cs" />
+    <Compile Include="Logic\BookSorting\BookSorting.cs" />
+    <Compile Include="Logic\BookSorting\BookSortingByAuthorAsc.cs" />
+    <Compile Include="Logic\BookSorting\BookSortingByAuthorDesc.cs" />
+    <Compile Include="Logic\BookSorting\BookSortingByCoverBlueAsc.cs" />
+    <Compile Include="Logic\BookSorting\BookSortingByCoverBlueDesc.cs" />
+    <Compile Include="Logic\BookSorting\BookSortingByCoverGreenAsc.cs" />
+    <Compile Include="Logic\BookSorting\BookSortingByCoverGreenDesc.cs" />
+    <Compile Include="Logic\BookSorting\BookSortingByCoverRedAsc.cs" />
+    <Compile Include="Logic\BookSorting\BookSortingByCoverRedDesc.cs" />
+    <Compile Include="Logic\BookSorting\BookSortingByLoadedAsc.cs" />
+    <Compile Include="Logic\BookSorting\BookSortingByLoadedDesc.cs" />
+    <Compile Include="Logic\BookSorting\BookSortingByTitleAsc.cs" />
+    <Compile Include="Logic\BookSorting\BookSortingByTitleDesc.cs" />
+    <Compile Include="Logic\BookSorting\CoverComparator.cs" />
+    <Compile Include="Logic\BookSorting\IBookSorting.cs" />
+    <Compile Include="Logic\Create\ImageTagCreating.cs" />
+    <Compile Include="Logic\Async\ImageTagAdding.cs" />
+    <Compile Include="Logic\Delete\ThumbnailDeleting.cs" />
+    <Compile Include="Logic\Async\BookExporting.cs" />
+    <Compile Include="Logic\Generate\ThumbnailGenerating.cs" />
+    <Compile Include="Logic\Async\BookImporting.cs" />
+    <Compile Include="Logic\ImageTagCountSorting\ImageTagCountSorting.cs" />
+    <Compile Include="Logic\ImageTagCountSorting\IImageTagCountSorting.cs" />
+    <Compile Include="Logic\ImageTagCountSorting\ImageTagCountSortingByCountAsc.cs" />
+    <Compile Include="Logic\ImageTagCountSorting\ImageTagCountSortingByCountDesc.cs" />
+    <Compile Include="Logic\ImageTagCountSorting\ImageTagCountSortingByNameAsc.cs" />
+    <Compile Include="Logic\ImageTagCountSorting\ImageTagCountSortingByNameDesc.cs" />
+    <Compile Include="Logic\Import\ImportBook.cs" />
+    <Compile Include="Logic\Import\Importer.cs" />
+    <Compile Include="Logic\Import\ImportIllust.cs" />
+    <Compile Include="Logic\Async\LibraryImporting.cs" />
+    <Compile Include="Logic\Import\ImportPage.cs" />
+    <Compile Include="Logic\Async\LibraryInitializing.cs" />
+    <Compile Include="Logic\Load\BookLoading.cs" />
+    <Compile Include="Logic\Load\ColorMapLoader.cs" />
+    <Compile Include="Logic\Load\ContentsLoadTask.cs" />
+    <Compile Include="Logic\PageSorting\PageOrdering.cs" />
+    <Compile Include="Logic\Parse\DefaultDirectoryNameParser.cs" />
+    <Compile Include="Logic\Parse\NotMatchException.cs" />
+    <Compile Include="Logic\Query\Querying.cs" />
+    <Compile Include="Logic\Async\BookThumbnailRemaking.cs" />
+    <Compile Include="Logic\Async\BookRemoving.cs" />
+    <Compile Include="Logic\Remove\ImageTagRemoving.cs" />
+    <Compile Include="Logic\Async\PageRemoving.cs" />
+    <Compile Include="Logic\Async\ImageTagRemoving.cs" />
+    <Compile Include="Logic\Async\PageScrapping.cs" />
+    <Compile Include="Logic\Async\AsyncTaskSequence.cs" />
+    <Compile Include="Models\AuthorCount.cs" />
+    <Compile Include="Models\Configuration.cs" />
+    <Compile Include="Models\Util\ConfigurationDataAttribute.cs" />
+    <Compile Include="Models\Util\ConnectionStringBuilder.cs" />
+    <Compile Include="Models\Managers\IDataAccessManager.cs" />
+    <Compile Include="Models\Managers\ITaskManager.cs" />
+    <Compile Include="Models\Rect.cs" />
+    <Compile Include="Models\TagCount.cs" />
+    <Compile Include="Models\Managers\IAuthorManager.cs" />
+    <Compile Include="Models\Managers\IItemSelector.cs" />
+    <Compile Include="Models\Managers\ILibraryManager.cs" />
+    <Compile Include="Models\Managers\IProgressManager.cs" />
+    <Compile Include="Models\Managers\ITagManager.cs" />
+    <Compile Include="Models\Managers\SearchedEventArgs.cs" />
+    <Compile Include="Models\ReadOnlyConfiguration.cs" />
+    <Compile Include="Models\Specifications.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Util\Extensions.cs" />
+    <Compile Include="Util\FileSize.cs" />
+    <Compile Include="Util\SafeNativeMethods.cs" />
+    <Compile Include="Util\ThumbnailGenerator.cs" />
+    <Compile Include="Util\TimeKeeper.cs" />
+    <Compile Include="ViewModels\AuthorCountViewModel.cs" />
+    <Compile Include="ViewModels\AuthorViewModel.cs" />
+    <Compile Include="ViewModels\BaseObjectViewModel.cs" />
+    <Compile Include="ViewModels\BookViewModel.cs" />
+    <Compile Include="ViewModels\EntityBaseObjectViewModel.cs" />
+    <Compile Include="ViewModels\EntryViewModel.cs" />
+    <Compile Include="ViewModels\ImageTagViewModel.cs" />
+    <Compile Include="ViewModels\ImageViewModel.cs" />
+    <Compile Include="ViewModels\NoPkIdEntityViewModel.cs" />
+    <Compile Include="ViewModels\PageViewModel.cs" />
+    <Compile Include="ViewModels\PkIdEntityViewModel.cs" />
+    <Compile Include="ViewModels\TagCountViewModel.cs" />
+    <Compile Include="ViewModels\TagViewModel.cs" />
+    <Compile Include="ViewModels\ThumbnailViewModel.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\simpleqb\simpleqb.csproj">
+      <Project>{52D5E5CC-A861-433B-BFA0-7F69DD5D92B8}</Project>
+      <Name>simpleqb</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sunctum.Infrastructure\Sunctum.Infrastructure.csproj">
+      <Project>{2cf31d9a-e84a-415a-8063-47bd28ba52ac}</Project>
+      <Name>Sunctum.Infrastructure</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>"$(SolutionDir)CodeFormatter\CodeFormatter" "$(ProjectDir)$(ProjectFileName)" /nounicode /nocopyright</PreBuildEvent>
+  </PropertyGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>このプロジェクトは、このコンピューター上にない NuGet パッケージを参照しています。それらのパッケージをダウンロードするには、[NuGet パッケージの復元] を使用します。詳細については、http://go.microsoft.com/fwlink/?LinkID=322105 を参照してください。見つからないファイルは {0} です。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\OpenCvSharp3-AnyCPU.3.4.1.20180319\build\OpenCvSharp3-AnyCPU.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\OpenCvSharp3-AnyCPU.3.4.1.20180319\build\OpenCvSharp3-AnyCPU.props'))" />
+    <Error Condition="!Exists('..\packages\System.Data.SQLite.Core.1.0.108.0\build\net46\System.Data.SQLite.Core.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.Data.SQLite.Core.1.0.108.0\build\net46\System.Data.SQLite.Core.targets'))" />
+  </Target>
+  <Import Project="..\packages\System.Data.SQLite.Core.1.0.108.0\build\net46\System.Data.SQLite.Core.targets" Condition="Exists('..\packages\System.Data.SQLite.Core.1.0.108.0\build\net46\System.Data.SQLite.Core.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

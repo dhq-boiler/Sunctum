@@ -1,0 +1,19 @@
+﻿
+
+using Sunctum.Infrastructure.Data.Rdbms.Ddl.Mapping;
+using Sunctum.Infrastructure.Data.Rdbms.Ddl.Migration;
+using System.Collections.Generic;
+
+namespace Sunctum.Domain.Data.Dao.Migration.Plan
+{
+    public class ChangePlan_AppDb_VersionOrigin : ChangePlanByVersion<VersionOrigin>
+    {
+        public override IEnumerable<IEntityVersionChangePlan> VersionChangePlanList
+        {
+            get
+            {
+                yield return new ChangePlan_AppDb_RecentOpenedLibrary_VersionOrigin();
+            }
+        }
+    }
+}

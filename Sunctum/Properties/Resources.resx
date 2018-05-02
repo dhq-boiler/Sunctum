@@ -1,0 +1,426 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AboutSunctumDialogTitle" xml:space="preserve">
+    <value>About Sunctum</value>
+  </data>
+  <data name="BookProeprtyDialog_SavedDir" xml:space="preserve">
+    <value>Saved Dir</value>
+  </data>
+  <data name="BookPropertyDialogTitle" xml:space="preserve">
+    <value>Property of [{0}]{1}</value>
+  </data>
+  <data name="BookPropertyDialog_Author" xml:space="preserve">
+    <value>Author</value>
+  </data>
+  <data name="BookPropertyDialog_AuthorManagement" xml:space="preserve">
+    <value>Author Management...</value>
+  </data>
+  <data name="BookPropertyDialog_BookID" xml:space="preserve">
+    <value>Book ID</value>
+  </data>
+  <data name="BookPropertyDialog_PublishDate" xml:space="preserve">
+    <value>Publish Date</value>
+  </data>
+  <data name="BookPropertyDialog_SavedDir_Tooltip" xml:space="preserve">
+    <value>Open in Explorer</value>
+  </data>
+  <data name="BookPropertyDialog_Size" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="BookPropertyDialog_Title" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="BookPropertyDialog_TotalPageCount" xml:space="preserve">
+    <value>Total Page Count</value>
+  </data>
+  <data name="Common_Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Common_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Common_Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="Common_Down" xml:space="preserve">
+    <value>↓</value>
+  </data>
+  <data name="Common_Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Common_Next" xml:space="preserve">
+    <value>_Next &gt;&gt;</value>
+  </data>
+  <data name="Common_Ok" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Common_Previous" xml:space="preserve">
+    <value>&lt;&lt; _Prev</value>
+  </data>
+  <data name="Common_Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="Common_Up" xml:space="preserve">
+    <value>↑</value>
+  </data>
+  <data name="EditMetadataImportSettingDialogTitle_Add" xml:space="preserve">
+    <value>Add pattern</value>
+  </data>
+  <data name="EditMetadataImportSettingDialogTitle_Edit" xml:space="preserve">
+    <value>Edit pattern</value>
+  </data>
+  <data name="EditMetadataImportSettingDialog_Pattern" xml:space="preserve">
+    <value>Pattern</value>
+  </data>
+  <data name="EditMetadataImportSettingDialog_PatternUri" xml:space="preserve">
+    <value>https://docs.microsoft.com/en-us/dotnet/standard/base-types/regular-expression-language-quick-reference</value>
+  </data>
+  <data name="EditMetadataImportSettingDialog_Pattern_Tooltip" xml:space="preserve">
+    <value>Open details in browser</value>
+  </data>
+  <data name="ErrorReportDialogTitle" xml:space="preserve">
+    <value>Sunctum ERROR Report</value>
+  </data>
+  <data name="ErrorReportDialog_Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="ErrorReportDialog_ImSorry" xml:space="preserve">
+    <value>I'm sorry</value>
+  </data>
+  <data name="ErrorReportDialog_Message_1st" xml:space="preserve">
+    <value>Sunctum will be terminated, because Unexpected ERROR occured. You can see the details of exception by press</value>
+  </data>
+  <data name="ErrorReportDialog_Message_2nd" xml:space="preserve">
+    <value>[Details]</value>
+  </data>
+  <data name="ErrorReportDialog_Message_3rd" xml:space="preserve">
+    <value>button on bottom of this dialog.</value>
+  </data>
+  <data name="ExportDialogTitle" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="ExportDialog_ExportDestination" xml:space="preserve">
+    <value>Exporting destination</value>
+  </data>
+  <data name="ExportDialog_IncludeTagToExportingFilesAndFolders" xml:space="preserve">
+    <value>Include tags to export files and folders</value>
+  </data>
+  <data name="ExportDialog_Option" xml:space="preserve">
+    <value>Option</value>
+  </data>
+  <data name="MainWindow_Data" xml:space="preserve">
+    <value>_DATA</value>
+  </data>
+  <data name="MainWindow_Data_AuthorManagement" xml:space="preserve">
+    <value>Author Management...</value>
+  </data>
+  <data name="MainWindow_Data_BookSize" xml:space="preserve">
+    <value>Book Size</value>
+  </data>
+  <data name="MainWindow_Data_BookSize_UpdateSizeAllBooks" xml:space="preserve">
+    <value>Update Size all books</value>
+  </data>
+  <data name="MainWindow_Data_BookSize_UpdateSizeQuickly" xml:space="preserve">
+    <value>Update Size quickly</value>
+  </data>
+  <data name="MainWindow_Data_MetadataImportSetting" xml:space="preserve">
+    <value>Metadata Import setting...</value>
+  </data>
+  <data name="MainWindow_Data_TagManagement" xml:space="preserve">
+    <value>Tag Management...</value>
+  </data>
+  <data name="MainWindow_Display" xml:space="preserve">
+    <value>_DISPLAY</value>
+  </data>
+  <data name="MainWindow_Display_Sorting" xml:space="preserve">
+    <value>Sorting</value>
+  </data>
+  <data name="MainWindow_Display_Sorting_AuthorAsc" xml:space="preserve">
+    <value>By Author Asc</value>
+  </data>
+  <data name="MainWindow_Display_Sorting_AuthorDesc" xml:space="preserve">
+    <value>By Author Desc</value>
+  </data>
+  <data name="MainWindow_Display_Sorting_CoverBlueAsc" xml:space="preserve">
+    <value>By Cover Blue Asc</value>
+  </data>
+  <data name="MainWindow_Display_Sorting_CoverBlueDesc" xml:space="preserve">
+    <value>By Cover Blue Desc</value>
+  </data>
+  <data name="MainWindow_Display_Sorting_CoverGreenAsc" xml:space="preserve">
+    <value>By Cover Green Asc</value>
+  </data>
+  <data name="MainWindow_Display_Sorting_CoverGreenDesc" xml:space="preserve">
+    <value>By Cover Green Desc</value>
+  </data>
+  <data name="MainWindow_Display_Sorting_CoverRedAsc" xml:space="preserve">
+    <value>By Cover Red Asc</value>
+  </data>
+  <data name="MainWindow_Display_Sorting_CoverRedDesc" xml:space="preserve">
+    <value>By Cover Red Desc</value>
+  </data>
+  <data name="MainWindow_Display_Sorting_LoadedAsc" xml:space="preserve">
+    <value>By loaded ASC</value>
+  </data>
+  <data name="MainWindow_Display_Sorting_LoadedDesc" xml:space="preserve">
+    <value>By loaded DESC</value>
+  </data>
+  <data name="MainWindow_Display_Sorting_TitleAsc" xml:space="preserve">
+    <value>By Title Asc</value>
+  </data>
+  <data name="MainWindow_Display_Sorting_TitleDesc" xml:space="preserve">
+    <value>By Title Desc</value>
+  </data>
+  <data name="MainWindow_Display_Window" xml:space="preserve">
+    <value>Window</value>
+  </data>
+  <data name="MainWindow_Display_Window_Author" xml:space="preserve">
+    <value>Author</value>
+  </data>
+  <data name="MainWindow_Display_Window_Information" xml:space="preserve">
+    <value>Information</value>
+  </data>
+  <data name="MainWindow_Display_Window_Tag" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="MainWindow_File" xml:space="preserve">
+    <value>_FILE</value>
+  </data>
+  <data name="MainWindow_File_ExitSunctum" xml:space="preserve">
+    <value>Exit Sunctum</value>
+  </data>
+  <data name="MainWindow_File_ImportFiles" xml:space="preserve">
+    <value>Import Files...</value>
+  </data>
+  <data name="MainWindow_File_ImportFolders" xml:space="preserve">
+    <value>Import Folders...</value>
+  </data>
+  <data name="MainWindow_File_ImportLibrary" xml:space="preserve">
+    <value>Import Library...</value>
+  </data>
+  <data name="MainWindow_File_Preferences" xml:space="preserve">
+    <value>_Preferences...</value>
+  </data>
+  <data name="MainWindow_File_RecentLibraries" xml:space="preserve">
+    <value>Recent Libraries</value>
+  </data>
+  <data name="MainWindow_File_ReloadLibrary" xml:space="preserve">
+    <value>_Reload Library</value>
+  </data>
+  <data name="MainWindow_File_SwitchLibrary" xml:space="preserve">
+    <value>_Switch Library...</value>
+  </data>
+  <data name="MainWindow_Help" xml:space="preserve">
+    <value>_HELP</value>
+  </data>
+  <data name="MainWindow_Help_AboutSunctum" xml:space="preserve">
+    <value>About Sunctum...</value>
+  </data>
+  <data name="MainWindow_Search" xml:space="preserve">
+    <value>_SEARCH</value>
+  </data>
+  <data name="MainWindow_Search_ClearSearchResult" xml:space="preserve">
+    <value>Clear Search Result</value>
+  </data>
+  <data name="MainWindow_Search_Search" xml:space="preserve">
+    <value>Search...</value>
+  </data>
+  <data name="MetadataImportSettingDialogTitle" xml:space="preserve">
+    <value>Metadata import setting</value>
+  </data>
+  <data name="MetadataImportSettingDialog_Pattern" xml:space="preserve">
+    <value>Pattern</value>
+  </data>
+  <data name="MetadataImportSettingDialog_Priority" xml:space="preserve">
+    <value>Priority</value>
+  </data>
+  <data name="PreferencesDialogTitle" xml:space="preserve">
+    <value>Preferences</value>
+  </data>
+  <data name="PreferencesDialog_General" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="PreferencesDialog_General_ConnectionString" xml:space="preserve">
+    <value>Connection string</value>
+  </data>
+  <data name="PreferencesDialog_General_GenerateThumbnailInMultithread" xml:space="preserve">
+    <value>Generate thumbnail in multithread</value>
+  </data>
+  <data name="PreferencesDialog_General_LockImportingFile" xml:space="preserve">
+    <value>Lock importing file</value>
+  </data>
+  <data name="PreferencesDialog_General_MaximumNumberOfLibrariesRecentlyOpened" xml:space="preserve">
+    <value>Maximum number of libraries opened recently</value>
+  </data>
+  <data name="PreferencesDialog_General_QualityOfThumbnail" xml:space="preserve">
+    <value>Quality of thumbnail</value>
+  </data>
+  <data name="PreferencesDialog_General_SaveWindowPosition" xml:space="preserve">
+    <value>Save window position</value>
+  </data>
+  <data name="PreferencesDialog_General_WorkingDirectory" xml:space="preserve">
+    <value>Working directory</value>
+  </data>
+  <data name="PreferencesDialog_Layout" xml:space="preserve">
+    <value>Layout</value>
+  </data>
+  <data name="PreferencesDialog_Layout_Author" xml:space="preserve">
+    <value>Author</value>
+  </data>
+  <data name="PreferencesDialog_Layout_AuthorHeight" xml:space="preserve">
+    <value>Author Height</value>
+  </data>
+  <data name="PreferencesDialog_Layout_BookListViewItem" xml:space="preserve">
+    <value>Book ListViewItem</value>
+  </data>
+  <data name="PreferencesDialog_Layout_ContentListViewItem" xml:space="preserve">
+    <value>Content ListViewItem</value>
+  </data>
+  <data name="PreferencesDialog_Layout_Image" xml:space="preserve">
+    <value>Image</value>
+  </data>
+  <data name="PreferencesDialog_Layout_ImageHeight" xml:space="preserve">
+    <value>Image Height</value>
+  </data>
+  <data name="PreferencesDialog_Layout_ListViewItem_MarginBottom" xml:space="preserve">
+    <value>ListViewItem MarginBottom</value>
+  </data>
+  <data name="PreferencesDialog_Layout_ListViewItem_MarginLeft" xml:space="preserve">
+    <value>ListViewItem MarginLeft</value>
+  </data>
+  <data name="PreferencesDialog_Layout_ListViewItem_MarginRight" xml:space="preserve">
+    <value>ListViewItem MarginRight</value>
+  </data>
+  <data name="PreferencesDialog_Layout_ListViewItem_MarginTop" xml:space="preserve">
+    <value>ListViewItem MarginTop</value>
+  </data>
+  <data name="PreferencesDialog_Layout_ListViewItem_Width" xml:space="preserve">
+    <value>ListViewItem Width</value>
+  </data>
+  <data name="PreferencesDialog_Layout_Preview" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="PreferencesDialog_Layout_Title" xml:space="preserve">
+    <value>Title</value>
+  </data>
+  <data name="PreferencesDialog_Layout_TitleHeight" xml:space="preserve">
+    <value>Title Height</value>
+  </data>
+</root>
