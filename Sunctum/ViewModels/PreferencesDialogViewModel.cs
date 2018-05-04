@@ -1,7 +1,14 @@
 ﻿
 
+using Ninject;
 using Prism.Mvvm;
+using Reactive.Bindings;
 using Sunctum.Domain.Models;
+using Sunctum.UI.Controls;
+using System;
+using System.Diagnostics;
+using System.Web.UI.WebControls;
+using System.Windows;
 
 namespace Sunctum.ViewModels
 {
@@ -19,152 +26,95 @@ namespace Sunctum.ViewModels
 
         public bool RestartRequired { get; private set; }
 
+        [Inject]
+        public IMainWindowViewModel MainWindowViewModel { get; set; }
+
+        public ReactiveCommand<Window> OkCommand { get; set; } = new ReactiveCommand<Window>();
+
+        public ReactiveCommand<Window> CancelCommand { get; set; } = new ReactiveCommand<Window>();
+
+        public ReactiveCommand<TextBox> PathReferenceCommand { get; set; } = new ReactiveCommand<TextBox>();
+
         public PreferencesDialogViewModel()
         {
             var config = Configuration.ApplicationConfiguration;
             this.InitialConfig = config.ReadOnly();
             this.Config = (Configuration)config.Clone();
+
+            RegisterCommands();
         }
 
-        public void CheckUpdate_WorkingDirectory()
+        private void RegisterCommands()
         {
-            if (!RestartRequired && !Config.WorkingDirectory.Equals(InitialConfig.WorkingDirectory))
-            {
-                RestartRequired = true;
-            }
+            OkCommand
+                .Subscribe(dialog =>
+                {
+                    CheckUpdate(Config.WorkingDirectory, InitialConfig.WorkingDirectory);
+                    CheckUpdate(Config.ConnectionString, InitialConfig.ConnectionString);
+                    CheckUpdate(Config.LockFileInImporting, InitialConfig.LockFileInImporting);
+
+                    CheckUpdate(Config.BookListViewItemAuthorHeight, InitialConfig.BookListViewItemAuthorHeight);
+                    CheckUpdate(Config.BookListViewItemImageHeight, InitialConfig.BookListViewItemImageHeight);
+                    CheckUpdate(Config.BookListViewItemTitleHeight, InitialConfig.BookListViewItemTitleHeight);
+                    CheckUpdate(Config.BookListViewItemWidth, InitialConfig.BookListViewItemWidth);
+
+                    CheckUpdate(Config.BookListViewItemMarginLeft, InitialConfig.BookListViewItemMarginLeft);
+                    CheckUpdate(Config.BookListViewItemMarginTop, InitialConfig.BookListViewItemMarginTop);
+                    CheckUpdate(Config.BookListViewItemMarginRight, InitialConfig.BookListViewItemMarginRight);
+                    CheckUpdate(Config.BookListViewItemMarginBottom, InitialConfig.BookListViewItemMarginBottom);
+
+                    CheckUpdate(Config.ContentListViewItemImageHeight, InitialConfig.ContentListViewItemImageHeight);
+                    CheckUpdate(Config.ContentListViewItemTitleHeight, InitialConfig.ContentListViewItemTitleHeight);
+                    CheckUpdate(Config.ContentListViewItemWidth, InitialConfig.ContentListViewItemWidth);
+
+                    CheckUpdate(Config.ContentListViewItemMarginLeft, InitialConfig.ContentListViewItemMarginLeft);
+                    CheckUpdate(Config.ContentListViewItemMarginTop, InitialConfig.ContentListViewItemMarginTop);
+                    CheckUpdate(Config.ContentListViewItemMarginRight, InitialConfig.ContentListViewItemMarginRight);
+                    CheckUpdate(Config.ContentListViewItemMarginBottom, InitialConfig.ContentListViewItemMarginBottom);
+
+                    dialog.DialogResult = true;
+
+                    bool willRestart = false;
+
+                    if (RestartRequired)
+                    {
+                        willRestart = MessageBox.Show("変更を反映するには再起動が必要です.\n今すぐ再起動しますか？",
+                        Process.GetCurrentProcess().MainWindowTitle, MessageBoxButton.OKCancel, MessageBoxImage.Information) == MessageBoxResult.OK;
+                    }
+
+                    if (!RestartRequired || willRestart)
+                    {
+                        Configuration.ApplicationConfiguration = Config;
+                        Configuration.Save(Configuration.ApplicationConfiguration);
+                    }
+
+                    if (willRestart)
+                    {
+                        MainWindowViewModel.Exit();
+                        Process.Start(Process.GetCurrentProcess().MainModule.FileName);
+                    }
+                });
+            CancelCommand
+                .Subscribe(dialog =>
+                {
+                    dialog.DialogResult = false;
+                });
+            PathReferenceCommand
+                .Subscribe(textbox =>
+                {
+                    var dialog = new FolderSelectDialog();
+                    dialog.InitialDirectory = textbox.Text;
+
+                    if (dialog.ShowDialog() == true)
+                    {
+                        textbox.Text = dialog.FileName;
+                    }
+                });
         }
 
-        public void CheckUpdate_LockFileInImporting()
+        public void CheckUpdate<T>(T left, T right)
         {
-            if (!RestartRequired && Config.LockFileInImporting != InitialConfig.LockFileInImporting)
-            {
-                RestartRequired = true;
-            }
-        }
-
-        public void CheckUpdate_ConnectionString()
-        {
-            if (!RestartRequired && Config.ConnectionString != InitialConfig.ConnectionString)
-            {
-                RestartRequired = true;
-            }
-        }
-
-        public void CheckUpdate_BookListViewItemWidth()
-        {
-            if (!RestartRequired && Config.BookListViewItemWidth != InitialConfig.BookListViewItemWidth)
-            {
-                RestartRequired = true;
-            }
-        }
-
-        public void CheckUpdate_BookListViewItemImageHeight()
-        {
-            if (!RestartRequired && Config.BookListViewItemImageHeight != InitialConfig.BookListViewItemImageHeight)
-            {
-                RestartRequired = true;
-            }
-        }
-
-        public void CheckUpdate_BookListViewItemAuthorHeight()
-        {
-            if (!RestartRequired && Config.BookListViewItemAuthorHeight != InitialConfig.BookListViewItemAuthorHeight)
-            {
-                RestartRequired = true;
-            }
-        }
-
-        public void CheckUpdate_BookListViewItemTitleHeight()
-        {
-            if (!RestartRequired && Config.BookListViewItemTitleHeight != InitialConfig.BookListViewItemTitleHeight)
-            {
-                RestartRequired = true;
-            }
-        }
-
-        public void CheckUpdate_BookListViewItemMarginLeft()
-        {
-            if (!RestartRequired && Config.BookListViewItemMarginLeft != InitialConfig.BookListViewItemMarginLeft)
-            {
-                RestartRequired = true;
-            }
-        }
-
-        public void CheckUpdate_BookListViewItemMarginTop()
-        {
-            if (!RestartRequired && Config.BookListViewItemMarginTop != InitialConfig.BookListViewItemMarginTop)
-            {
-                RestartRequired = true;
-            }
-        }
-
-        public void CheckUpdate_BookListViewItemMarginRight()
-        {
-            if (!RestartRequired && Config.BookListViewItemMarginRight != InitialConfig.BookListViewItemMarginRight)
-            {
-                RestartRequired = true;
-            }
-        }
-
-        public void CheckUpdate_BookListViewItemMarginBottom()
-        {
-            if (!RestartRequired && Config.BookListViewItemMarginBottom != InitialConfig.BookListViewItemMarginBottom)
-            {
-                RestartRequired = true;
-            }
-        }
-
-        public void CheckUpdate_ContentListViewItemWidth()
-        {
-            if (!RestartRequired && Config.ContentListViewItemWidth != InitialConfig.ContentListViewItemWidth)
-            {
-                RestartRequired = true;
-            }
-        }
-
-        public void CheckUpdate_ContentListViewItemImageHeight()
-        {
-            if (!RestartRequired && Config.ContentListViewItemImageHeight != InitialConfig.ContentListViewItemImageHeight)
-            {
-                RestartRequired = true;
-            }
-        }
-
-        public void CheckUpdate_ContentListViewItemTitleHeight()
-        {
-            if (!RestartRequired && Config.ContentListViewItemTitleHeight != InitialConfig.ContentListViewItemTitleHeight)
-            {
-                RestartRequired = true;
-            }
-        }
-
-        public void CheckUpdate_ContentListViewItemMarginLeft()
-        {
-            if (!RestartRequired && Config.ContentListViewItemMarginLeft != InitialConfig.ContentListViewItemMarginLeft)
-            {
-                RestartRequired = true;
-            }
-        }
-
-        public void CheckUpdate_ContentListViewItemMarginTop()
-        {
-            if (!RestartRequired && Config.ContentListViewItemMarginTop != InitialConfig.ContentListViewItemMarginTop)
-            {
-                RestartRequired = true;
-            }
-        }
-
-        public void CheckUpdate_ContentListViewItemMarginRight()
-        {
-            if (!RestartRequired && Config.ContentListViewItemMarginRight != InitialConfig.ContentListViewItemMarginRight)
-            {
-                RestartRequired = true;
-            }
-        }
-
-        public void CheckUpdate_ContentListViewItemMarginBottom()
-        {
-            if (!RestartRequired && Config.ContentListViewItemMarginBottom != InitialConfig.ContentListViewItemMarginBottom)
+            if (!RestartRequired && !left.Equals(right))
             {
                 RestartRequired = true;
             }

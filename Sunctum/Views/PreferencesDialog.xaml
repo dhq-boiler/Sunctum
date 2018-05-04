@@ -4,15 +4,15 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prism="http://prismlibrary.com/"
     xmlns:properties="clr-namespace:Sunctum.Properties"
     xmlns:ui.ctrl="clr-namespace:Sunctum.UI.Controls;assembly=Sunctum.UI"
     xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
-    d:DesignHeight="380"
-    d:DesignWidth="500"
     Width="640"
     Height="480"
-    Closed="Window_Closed"
-    Loaded="Window_Loaded"
+    d:DesignHeight="380"
+    d:DesignWidth="500"
+    prism:ViewModelLocator.AutoWireViewModel="True"
     mc:Ignorable="d">
     <Window.Resources>
         <properties:Resources x:Key="resources" />
@@ -25,12 +25,14 @@
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                 <Button
                     x:Name="Button_OK"
-                    Click="Button_OK_Click"
+                    Command="{Binding OkCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
                     Content="{Binding Common_Ok, Source={StaticResource resources}}"
                     Style="{StaticResource OKButtonStyle}" />
                 <Button
                     x:Name="Button_Cancel"
-                    Click="Button_Cancel_Click"
+                    Command="{Binding CancelCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
                     Content="{Binding Common_Cancel, Source={StaticResource resources}}"
                     Style="{StaticResource CancelCloseButtonStyle}" />
             </StackPanel>
@@ -62,7 +64,8 @@
                     <DockPanel Grid.Row="0" Grid.Column="1">
                         <Button
                             x:Name="reference"
-                            Click="reference_Click"
+                            Command="{Binding PathReferenceCommand}"
+                            CommandParameter="{Binding ElementName=WorkingDirectory}"
                             DockPanel.Dock="Right">
                             ...
                         </Button>

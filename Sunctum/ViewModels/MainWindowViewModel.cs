@@ -1018,28 +1018,7 @@ namespace Sunctum.ViewModels
         public void ShowPreferenceDialog()
         {
             PreferencesDialog dialog = new PreferencesDialog();
-            if (dialog.ShowDialog() == true)
-            {
-                bool willRestart = false;
-
-                if (dialog.PreferencesVM.RestartRequired)
-                {
-                    willRestart = MessageBox.Show("変更を反映するには再起動が必要です.\n今すぐ再起動しますか？",
-                        Process.GetCurrentProcess().MainWindowTitle, MessageBoxButton.OKCancel, MessageBoxImage.Information) == MessageBoxResult.OK;
-                }
-
-                if (!dialog.PreferencesVM.RestartRequired || willRestart)
-                {
-                    Configuration.ApplicationConfiguration = dialog.PreferencesVM.Config;
-                    Configuration.Save(Configuration.ApplicationConfiguration);
-                }
-
-                if (willRestart)
-                {
-                    Exit();
-                    Process.Start(Process.GetCurrentProcess().MainModule.FileName);
-                }
-            }
+            dialog.ShowDialog();
         }
 
         private async Task OpenImportLibraryDialog()
