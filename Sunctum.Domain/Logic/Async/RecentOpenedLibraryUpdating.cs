@@ -33,7 +33,7 @@ namespace Sunctum.Domain.Logic.Async
                 var dao = DataAccessManager.AppDao.Build<RecentOpenedLibraryDao>();
 
                 var hisotries = dao.FindAll();
-                var matchOrNull = hisotries.Where(h => h.Path.Equals(Configuration.ApplicationConfiguration.WorkingDirectory)).SingleOrDefault();
+                var matchOrNull = hisotries.Where(h => h.Path != null && h.Path.Equals(Configuration.ApplicationConfiguration.WorkingDirectory)).SingleOrDefault();
                 if (matchOrNull != null)
                 {
                     matchOrNull.AccessOrder = 0;
@@ -46,7 +46,7 @@ namespace Sunctum.Domain.Logic.Async
                     newhisotry.Path = Configuration.ApplicationConfiguration.WorkingDirectory;
                     dao.Insert(newhisotry);
                 }
-                var other = hisotries.Where(h => !h.Path.Equals(Configuration.ApplicationConfiguration.WorkingDirectory)).OrderBy(h => h.AccessOrder).ToArray();
+                var other = hisotries.Where(h => h.Path != null && !h.Path.Equals(Configuration.ApplicationConfiguration.WorkingDirectory)).OrderBy(h => h.AccessOrder).ToArray();
                 for (int i = 1; i < Math.Min(other.Count(), Configuration.ApplicationConfiguration.LibraryHistoryRecordCount) + 1; ++i)
                 {
                     var o = other.ElementAt(i - 1);
