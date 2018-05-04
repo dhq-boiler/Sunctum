@@ -349,7 +349,7 @@ namespace Sunctum.ViewModels
 
             if (shiftPressed || Configuration.ApplicationConfiguration.WorkingDirectory == null)
             {
-                ChangeWorkingDirectory();
+                OpenSwitchLibraryDialogAndChangeWorkingDirectory();
             }
 
             if (starting)
@@ -671,7 +671,7 @@ namespace Sunctum.ViewModels
             RestoreScrollOffset(Guid.Empty);
         }
 
-        private bool ChangeWorkingDirectory()
+        private bool OpenSwitchLibraryDialogAndChangeWorkingDirectory()
         {
             var dialog = new FolderSelectDialog();
             dialog.Title = "ライブラリディレクトリの場所";
@@ -801,7 +801,12 @@ namespace Sunctum.ViewModels
             });
             OpenSwitchLibraryCommand = new DelegateCommand(async () =>
             {
-                await OpenSwitchLibraryDialog();
+                bool changed = OpenSwitchLibraryDialogAndChangeWorkingDirectory();
+                if (changed)
+                {
+                    await LibraryVM.Reset();
+                    await Initialize(false);
+                }
             });
             OpenTagManagementDialogCommand = new DelegateCommand(() =>
             {
@@ -1004,15 +1009,6 @@ namespace Sunctum.ViewModels
             }
             LibraryVM.TagMng.ShowBySelectedItems(LibraryVM, items.Select(itc => itc.Tag));
             ResetScrollOffset();
-        }
-
-        private async Task OpenSwitchLibraryDialog()
-        {
-            bool changed = ChangeWorkingDirectory();
-            if (changed)
-            {
-                await Initialize(false);
-            }
         }
 
         public void ShowPreferenceDialog()
