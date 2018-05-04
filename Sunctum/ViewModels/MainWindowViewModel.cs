@@ -1126,7 +1126,7 @@ namespace Sunctum.ViewModels
 
         private void OpenBookPropertyDialog(BookViewModel book)
         {
-            BookPropertyDialog dialog = new BookPropertyDialog(book, _LibraryVM);
+            BookPropertyDialog dialog = new BookPropertyDialog(book);
             dialog.ShowDialog();
         }
 
