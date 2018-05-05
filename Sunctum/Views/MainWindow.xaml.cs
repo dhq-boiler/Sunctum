@@ -155,26 +155,6 @@ namespace Sunctum.Views
             MainWindowVM.GoNextImage();
         }
 
-        private void Window_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            MainWindowVM.OperateByKeyboard(e);
-        }
-
-        private void Window_PreviewMouseDown(object sender, MouseButtonEventArgs e)
-        {
-            MainWindowVM.OperateByMouseButton(e);
-        }
-
-        private void Window_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
-        {
-            MainWindowVM.OperateByMouseWheel(e);
-        }
-
-        private void Window_Activated(object sender, EventArgs e)
-        {
-            MainWindowVM.FocusSearchBoxIf();
-        }
-
         private void MoveBackword_Button_Click(object sender, RoutedEventArgs e)
         {
             MainWindowVM.MovePageBackward((PageViewModel)(sender as Button).DataContext);
@@ -205,7 +185,6 @@ namespace Sunctum.Views
         private void DockPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             MainWindowVM.ResetScrollOffsetPool();
-            MainWindowVM.UpdateProgressBarLayout();
         }
 
         private void CloseSearchPane_Button_Click(object sender, RoutedEventArgs e)
@@ -221,6 +200,9 @@ namespace Sunctum.Views
 
         private void Book_ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            var viewModel = (MainWindowViewModel)DataContext;
+            viewModel.BookListViewSelectedItems = Book_ListView.SelectedItems.Cast<BookViewModel>().ToList();
+
             MainWindowVM.RemoveFromSelectedEntries(e.RemovedItems.Cast<EntryViewModel>());
             MainWindowVM.LibraryVM.TagMng.Unselect(e.RemovedItems.Cast<EntryViewModel>());
 
@@ -232,6 +214,9 @@ namespace Sunctum.Views
 
         private void Contents_ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            var viewModel = (MainWindowViewModel)DataContext;
+            viewModel.ContentsListViewSelectedItems = Contents_ListView.SelectedItems.Cast<PageViewModel>().ToList();
+
             MainWindowVM.RemoveFromSelectedEntries(e.RemovedItems.Cast<EntryViewModel>());
             MainWindowVM.LibraryVM.TagMng.Unselect(e.RemovedItems.Cast<EntryViewModel>());
 

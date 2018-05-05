@@ -92,10 +92,12 @@ namespace Sunctum.Core
                 {
                     Application.Current.MainWindow.WindowStartupLocation = WindowStartupLocation.Manual;
 
-                    Application.Current.MainWindow.Left = rect.X;
-                    Application.Current.MainWindow.Top = rect.Y;
-                    Application.Current.MainWindow.Width = rect.Width;
-                    Application.Current.MainWindow.Height = rect.Height;
+                    var mainWindowVM = Kernel.Get<IMainWindowViewModel>();
+
+                    mainWindowVM.WindowLeft = rect.X;
+                    mainWindowVM.WindowTop = rect.Y;
+                    mainWindowVM.WindowWidth = rect.Width;
+                    mainWindowVM.WindowHeight = rect.Height;
                 }
             }
             Application.Current.MainWindow.Show();

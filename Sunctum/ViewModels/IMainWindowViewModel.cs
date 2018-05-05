@@ -5,7 +5,6 @@ using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Windows.Input;
 
 namespace Sunctum.ViewModels
 {
@@ -27,12 +26,6 @@ namespace Sunctum.ViewModels
 
         void GoNextImage();
 
-        void OperateByKeyboard(KeyEventArgs e);
-
-        void OperateByMouseButton(MouseButtonEventArgs e);
-
-        void OperateByMouseWheel(MouseWheelEventArgs e);
-
         void MovePageBackward(PageViewModel page);
 
         void MovePageForward(PageViewModel page);
@@ -41,13 +34,9 @@ namespace Sunctum.ViewModels
 
         void ResetScrollOffsetPool();
 
-        void UpdateProgressBarLayout();
-
         void CloseSearchPane();
 
         void Search();
-
-        void SetProgress(double progress);
 
         void Terminate();
 
@@ -55,7 +44,7 @@ namespace Sunctum.ViewModels
 
         void RestoreScrollOffset(Guid bookid);
 
-        void SaveScrollOffset(Guid bookid);
+        void StoreScrollOffset(Guid bookid);
 
         void ResetScrollOffset();
 
@@ -77,7 +66,13 @@ namespace Sunctum.ViewModels
 
         string SearchText { get; set; }
 
-        void FocusSearchBoxIf();
+        double WindowLeft { get; set; }
+
+        double WindowTop { get; set; }
+
+        double WindowWidth { get; set; }
+
+        double WindowHeight { get; set; }
 
         //↓ICommand
 

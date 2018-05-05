@@ -15,6 +15,8 @@ namespace Sunctum.Domain.Models.Managers
 
         ObservableCollection<AuthorViewModel> Authors { get; }
 
+        ObservableCollection<AuthorCountViewModel> AuthorCount { get; }
+
         bool EnableOrderByName { get; set; }
 
         void SwitchOrdering();
