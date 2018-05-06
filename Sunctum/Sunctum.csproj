@@ -181,6 +181,7 @@
     <Compile Include="ViewModels\ErrorReportDialogViewModel.cs" />
     <Compile Include="ViewModels\ExportDialogViewModel.cs" />
     <Compile Include="ViewModels\IAuthorPaneViewModel.cs" />
+    <Compile Include="ViewModels\IInformationPaneViewModel.cs" />
     <Compile Include="ViewModels\IMainWindowViewModel.cs" />
     <Compile Include="Managers\AuthorManager.cs" />
     <Compile Include="Managers\LibraryManager.cs" />
@@ -223,6 +224,10 @@
     <Compile Include="Views\BookPropertyDialog.xaml.cs">
       <DependentUpon>BookPropertyDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\InformationPane.xaml.cs">
+      <DependentUpon>InformationPane.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\InformationPaneViewModel.cs" />
     <Compile Include="Views\MetadataImportSettingDialog.xaml.cs">
       <DependentUpon>MetadataImportSettingDialog.xaml</DependentUpon>
     </Compile>
@@ -237,6 +242,7 @@
     </Compile>
     <Compile Include="Views\Triggers\CloseWindowAction.cs" />
     <Compile Include="Views\Triggers\DeleteKeyDownEventTrigger.cs" />
+    <Compile Include="Views\Triggers\DropEventTrigger.cs" />
     <Compile Include="Views\Triggers\EndKeyDownEventTrigger.cs" />
     <Compile Include="Views\Triggers\FocusAction.cs" />
     <Compile Include="Views\Triggers\HomeKeyDownEventTrigger.cs" />
@@ -263,6 +269,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\EditMetadataImportSetting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\InformationPane.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

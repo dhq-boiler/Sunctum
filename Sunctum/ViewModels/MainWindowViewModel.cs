@@ -660,6 +660,9 @@ namespace Sunctum.ViewModels
         [Inject]
         public ITagPaneViewModel TagPaneViewModel { get; set; }
 
+        [Inject]
+        public IInformationPaneViewModel InformationPaneViewModel { get; set; }
+
         #endregion
 
         #region 一般
