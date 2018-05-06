@@ -185,11 +185,13 @@
     <Compile Include="Managers\AuthorManager.cs" />
     <Compile Include="Managers\LibraryManager.cs" />
     <Compile Include="Managers\TagManager.cs" />
+    <Compile Include="ViewModels\ITagPaneViewModel.cs" />
     <Compile Include="ViewModels\MetadataImportSettingDialogViewModel.cs" />
     <Compile Include="ViewModels\PreferencesDialogViewModel.cs" />
     <Compile Include="Converters\BookCoverThumbnailLoader.cs" />
     <Compile Include="Converters\FileSizeFormatter.cs" />
     <Compile Include="Converters\PageThumbnailLoader.cs" />
+    <Compile Include="ViewModels\TagPaneViewModel.cs" />
     <Compile Include="Views\AboutSunctumDialog.xaml.cs">
       <DependentUpon>AboutSunctumDialog.xaml</DependentUpon>
     </Compile>
@@ -230,7 +232,11 @@
     <Compile Include="Views\ProgressBar.xaml.cs">
       <DependentUpon>ProgressBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\TagPane.xaml.cs">
+      <DependentUpon>TagPane.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Triggers\CloseWindowAction.cs" />
+    <Compile Include="Views\Triggers\DeleteKeyDownEventTrigger.cs" />
     <Compile Include="Views\Triggers\EndKeyDownEventTrigger.cs" />
     <Compile Include="Views\Triggers\FocusAction.cs" />
     <Compile Include="Views\Triggers\HomeKeyDownEventTrigger.cs" />
@@ -297,6 +303,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ProgressBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TagPane.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
