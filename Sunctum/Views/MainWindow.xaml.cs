@@ -388,20 +388,6 @@ namespace Sunctum.Views
 
         #endregion //Tagペイン
 
-        #region Authorペイン
-
-        private void Author_Button_Close_Click(object sender, RoutedEventArgs e)
-        {
-            MainWindowVM.DisplayAuthorPane = false;
-        }
-
-        private void Author_Button_Order_Click(object sender, RoutedEventArgs e)
-        {
-            MainWindowVM.LibraryVM.AuthorManager.SwitchOrdering();
-        }
-
-        #endregion //Authorペイン
-
         #region Informationペイン
 
         private void Information_Button_Close_Click(object sender, RoutedEventArgs e)

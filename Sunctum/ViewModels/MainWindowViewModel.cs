@@ -53,14 +53,12 @@ namespace Sunctum.ViewModels
         private ObservableCollection<System.Windows.Controls.Control> _ContentsContextMenuItems;
         private ObservableCollection<System.Windows.Controls.Control> _BooksContextMenuItems;
         private ObservableCollection<System.Windows.Controls.Control> _TagContextMenuItems;
-        private ObservableCollection<System.Windows.Controls.Control> _AuthorContextMenuItems;
         private IEnumerable<IPlugin> _Plugins;
         private string _TooltipOnProgressBar;
         private bool _SearchPaneIsVisible;
         private string _ActiveContent;
         private List<BookViewModel> _BookListViewSelectedItems;
         private List<PageViewModel> _ContentsListViewSelectedItems;
-        private List<AuthorCountViewModel> _AuthorListBoxSelectedItems;
         private List<TagCountViewModel> _TagListBoxSelectedItems;
         private double _WindowLeft;
         private double _WindowTop;
@@ -72,8 +70,6 @@ namespace Sunctum.ViewModels
         public ICommand AboutSunctumCommand { get; set; }
 
         public ICommand ClearSearchResultCommand { get; set; }
-
-        public ICommand ClearResultSearchingByAuthorCommand { get; set; }
 
         public ICommand ClearResultSearchingByTagCommand { get; set; }
 
@@ -122,8 +118,6 @@ namespace Sunctum.ViewModels
         public ICommand RightKeyDownCommand { get; set; }
 
         public ICommand ScrapPagesCommand { get; set; }
-
-        public ICommand SearchByAuthorCommand { get; set; }
 
         public ICommand SearchByTagCommand { get; set; }
 
@@ -182,10 +176,6 @@ namespace Sunctum.ViewModels
             ClearSearchResultCommand = new DelegateCommand(() =>
             {
                 ClearSearchResult();
-            });
-            ClearResultSearchingByAuthorCommand = new DelegateCommand(() =>
-            {
-                ClearResultSearchingByAuthor();
             });
             ClearResultSearchingByTagCommand = new DelegateCommand(() =>
             {
@@ -335,11 +325,6 @@ namespace Sunctum.ViewModels
             ScrapPagesCommand = new DelegateCommand<object>(async (p) =>
             {
                 await ScrapPages(p as IEnumerable<PageViewModel>);
-            });
-            SearchByAuthorCommand = new DelegateCommand(() =>
-            {
-                var items = AuthorListBoxSelectedItems;
-                SearchByAuthor(items);
             });
             SearchByTagCommand = new DelegateCommand(() =>
             {
@@ -616,12 +601,6 @@ namespace Sunctum.ViewModels
             set { SetProperty(ref _TagContextMenuItems, value); }
         }
 
-        public ObservableCollection<System.Windows.Controls.Control> AuthorContextMenuItems
-        {
-            get { return _AuthorContextMenuItems; }
-            set { SetProperty(ref _AuthorContextMenuItems, value); }
-        }
-
         [Inject]
         public IEnumerable<IPlugin> Plugins
         {
@@ -668,12 +647,6 @@ namespace Sunctum.ViewModels
             set { SetProperty(ref _ContentsListViewSelectedItems, value); }
         }
 
-        public List<AuthorCountViewModel> AuthorListBoxSelectedItems
-        {
-            get { return _AuthorListBoxSelectedItems; }
-            set { SetProperty(ref _AuthorListBoxSelectedItems, value); }
-        }
-
         public List<TagCountViewModel> TagListBoxSelectedItems
         {
             get { return _TagListBoxSelectedItems; }
@@ -708,6 +681,9 @@ namespace Sunctum.ViewModels
 
         public InteractionRequest<Notification> BlinkGoBackButtonRequest { get; } = new InteractionRequest<Notification>();
 
+        [Inject]
+        public IAuthorPaneViewModel AuthorPaneViewModel { get; set; }
+
         #endregion
 
         #region 一般
@@ -719,7 +695,7 @@ namespace Sunctum.ViewModels
                 BuildContextMenus_Books();
                 BuildContextMenus_Contents();
                 BuildContextMenus_Tags();
-                BuildContextMenus_Authors();
+                AuthorPaneViewModel.BuildContextMenus_Authors();
                 LoadPlugins();
             }
 
@@ -777,31 +753,6 @@ namespace Sunctum.ViewModels
             {
                 SQLiteBaseDao<Dummy>.Vacuum(DataAccessManager.AppDao.CurrentConnection);
             }
-        }
-
-        private void BuildContextMenus_Authors()
-        {
-            AuthorContextMenuItems = new ObservableCollection<System.Windows.Controls.Control>();
-
-            var menuitem = new System.Windows.Controls.MenuItem()
-            {
-                Header = "選択中の作者で検索",
-                Command = SearchByAuthorCommand
-            };
-            AuthorContextMenuItems.Add(menuitem);
-
-            menuitem = new System.Windows.Controls.MenuItem()
-            {
-                Header = "検索結果をクリア",
-                Command = ClearResultSearchingByAuthorCommand
-            };
-            AuthorContextMenuItems.Add(menuitem);
-
-            menuitem = new System.Windows.Controls.MenuItem()
-            {
-                Header = "Ex",
-            };
-            AuthorContextMenuItems.Add(menuitem);
         }
 
         private void BuildContextMenus_Tags()
@@ -955,7 +906,7 @@ namespace Sunctum.ViewModels
                             break;
                         case MenuType.MainWindow_Author_ContextMenu:
                             menu = plugin.GetMenu(MenuType.MainWindow_Author_ContextMenu, () => LibraryVM.AuthorManager.SelectedItems.Where(e => e is AuthorViewModel).Cast<AuthorViewModel>()) as System.Windows.Controls.MenuItem;
-                            AuthorContextMenuItems.Where(m => m is System.Windows.Controls.MenuItem && ((System.Windows.Controls.MenuItem)m).Header.Equals("Ex"))
+                            AuthorPaneViewModel.AuthorContextMenuItems.Where(m => m is System.Windows.Controls.MenuItem && ((System.Windows.Controls.MenuItem)m).Header.Equals("Ex"))
                                 .Cast<System.Windows.Controls.MenuItem>()
                                 .Single().Items.Add(menu);
                             break;
@@ -987,7 +938,7 @@ namespace Sunctum.ViewModels
             LibraryVM.ProgressManager.Complete();
             TooltipOnProgressBar = "Ready";
             BookListViewSelectedItems = new List<BookViewModel>();
-            AuthorListBoxSelectedItems = new List<AuthorCountViewModel>();
+            AuthorPaneViewModel.ClearSelectedItems();
             TagListBoxSelectedItems = new List<TagCountViewModel>();
 
             DisplayAuthorPane = Configuration.ApplicationConfiguration.DisplayAuthorPane;
@@ -1137,22 +1088,6 @@ namespace Sunctum.ViewModels
             dialog.EntityMngVM = dialogViewModel;
             dialogViewModel.Initialize();
             dialog.Show();
-        }
-
-        private void ClearResultSearchingByAuthor()
-        {
-            LibraryVM.ClearSearchResult();
-        }
-
-        private void SearchByAuthor(IEnumerable<AuthorCountViewModel> items)
-        {
-            LibraryVM.ClearSearchResult();
-            foreach (var item in items)
-            {
-                item.IsSearchingKey = true;
-            }
-            LibraryVM.AuthorManager.ShowBySelectedItems(LibraryVM, items.Select(ac => ac.Author));
-            ResetScrollOffset();
         }
 
         private void ClearResultSearchingByTag()

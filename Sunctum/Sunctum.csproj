@@ -173,12 +173,14 @@
     <Compile Include="Managers\DataAccessManager.cs" />
     <Compile Include="Managers\TaskManager.cs" />
     <Compile Include="ViewModels\AboutSunctumDialogViewModel.cs" />
+    <Compile Include="ViewModels\AuthorPaneViewModel.cs" />
     <Compile Include="ViewModels\BookPropertyDialogViewModel.cs" />
     <Compile Include="Exceptions\BrokenPageIndexException.cs" />
     <Compile Include="ViewModels\DirectoryNameParserViewModel.cs" />
     <Compile Include="ViewModels\EditMetadataImportSettingViewModel.cs" />
     <Compile Include="ViewModels\ErrorReportDialogViewModel.cs" />
     <Compile Include="ViewModels\ExportDialogViewModel.cs" />
+    <Compile Include="ViewModels\IAuthorPaneViewModel.cs" />
     <Compile Include="ViewModels\IMainWindowViewModel.cs" />
     <Compile Include="Managers\AuthorManager.cs" />
     <Compile Include="Managers\LibraryManager.cs" />
@@ -190,6 +192,9 @@
     <Compile Include="Converters\PageThumbnailLoader.cs" />
     <Compile Include="Views\AboutSunctumDialog.xaml.cs">
       <DependentUpon>AboutSunctumDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\AuthorPane.xaml.cs">
+      <DependentUpon>AuthorPane.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Behaviors\IListItemConverter.cs" />
     <Compile Include="Views\Behaviors\MultiSelectorBehaviours.cs" />
@@ -240,6 +245,10 @@
     <Compile Include="Views\Triggers\XButton1MouseDownEventTrigger.cs" />
     <Compile Include="Views\Triggers\XButton2MouseDownEventTrigger.cs" />
     <Page Include="Views\AboutSunctumDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\AuthorPane.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
