@@ -1289,9 +1289,12 @@ namespace Sunctum.ViewModels
 
             if (bookId.Equals(Guid.Empty))
             {
-                StoreBookScrollOffsetRequest.Raise(new Notification()
+                Application.Current.Dispatcher.Invoke(() =>
                 {
-                    Content = new Tuple<Dictionary<Guid, Point>, Guid>(_scrollOffset, bookId)
+                    StoreBookScrollOffsetRequest.Raise(new Notification()
+                    {
+                        Content = new Tuple<Dictionary<Guid, Point>, Guid>(_scrollOffset, bookId)
+                    });
                 });
             }
             else
@@ -1309,9 +1312,12 @@ namespace Sunctum.ViewModels
 
             if (bookId.Equals(Guid.Empty))
             {
-                RestoreBookScrollOffsetRequest.Raise(new Notification()
+                Application.Current.Dispatcher.Invoke(() =>
                 {
-                    Content = new Tuple<Dictionary<Guid, Point>, Guid>(_scrollOffset, bookId)
+                    RestoreBookScrollOffsetRequest.Raise(new Notification()
+                    {
+                        Content = new Tuple<Dictionary<Guid, Point>, Guid>(_scrollOffset, bookId)
+                    });
                 });
             }
             else
@@ -1325,7 +1331,10 @@ namespace Sunctum.ViewModels
 
         public void ResetScrollOffset()
         {
-            ResetScrollOffsetRequest.Raise(new Notification());
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                ResetScrollOffsetRequest.Raise(new Notification());
+            });
         }
 
         public void OpenImage(PageViewModel page)
