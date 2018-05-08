@@ -2,7 +2,6 @@
 
 using Ninject;
 using Prism.Commands;
-using Prism.Mvvm;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using System.Collections.Generic;
@@ -12,7 +11,7 @@ using System.Windows.Input;
 
 namespace Sunctum.ViewModels
 {
-    internal class AuthorPaneViewModel : BindableBase, IAuthorPaneViewModel
+    internal class AuthorPaneViewModel : PaneViewModelBase, IAuthorPaneViewModel
     {
         private ObservableCollection<System.Windows.Controls.Control> _AuthorContextMenuItems;
         private List<AuthorCountViewModel> _AuthorListBoxSelectedItems;
@@ -21,10 +20,23 @@ namespace Sunctum.ViewModels
         public IMainWindowViewModel MainWindowViewModel { get; set; }
 
         [Inject]
+        public IHomeDocumentViewModel HomeDocumentViewModel { get; set; }
+
+        [Inject]
         public ILibraryManager LibraryManager { get; set; }
 
         [Inject]
         public IAuthorManager AuthorManager { get; set; }
+
+        public override string Title
+        {
+            get { return "Author"; }
+        }
+
+        public override string ContentId
+        {
+            get { return "author"; }
+        }
 
         public ObservableCollection<System.Windows.Controls.Control> AuthorContextMenuItems
         {
@@ -116,7 +128,7 @@ namespace Sunctum.ViewModels
                 item.IsSearchingKey = true;
             }
             AuthorManager.ShowBySelectedItems(LibraryManager, items.Select(ac => ac.Author));
-            MainWindowViewModel.ResetScrollOffset();
+            HomeDocumentViewModel.ResetScrollOffset();
         }
     }
 }

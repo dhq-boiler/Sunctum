@@ -2,7 +2,6 @@
 
 using Ninject;
 using Prism.Commands;
-using Prism.Mvvm;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using System;
@@ -13,7 +12,7 @@ using System.Windows.Input;
 
 namespace Sunctum.ViewModels
 {
-    internal class InformationPaneViewModel : BindableBase, IInformationPaneViewModel
+    internal class InformationPaneViewModel : PaneViewModelBase, IInformationPaneViewModel
     {
         private List<TagViewModel> _TagListBoxSelectedItems;
 
@@ -22,6 +21,16 @@ namespace Sunctum.ViewModels
 
         [Inject]
         public ITagManager TagManager { get; set; }
+
+        public override string Title
+        {
+            get { return "Information"; }
+        }
+
+        public override string ContentId
+        {
+            get { return "information"; }
+        }
 
         public List<TagViewModel> TagListBoxSelectedItems
         {

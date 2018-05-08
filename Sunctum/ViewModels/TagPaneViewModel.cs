@@ -2,7 +2,6 @@
 
 using Ninject;
 using Prism.Commands;
-using Prism.Mvvm;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using System.Collections.Generic;
@@ -12,10 +11,20 @@ using System.Windows.Input;
 
 namespace Sunctum.ViewModels
 {
-    internal class TagPaneViewModel : BindableBase, ITagPaneViewModel
+    internal class TagPaneViewModel : PaneViewModelBase, ITagPaneViewModel
     {
         private List<TagCountViewModel> _TagListBoxSelectedItems;
         private ObservableCollection<System.Windows.Controls.Control> _TagContextMenuItems;
+
+        public override string Title
+        {
+            get { return "Tag"; }
+        }
+
+        public override string ContentId
+        {
+            get { return "tag"; }
+        }
 
         public List<TagCountViewModel> TagListBoxSelectedItems
         {
@@ -31,6 +40,9 @@ namespace Sunctum.ViewModels
 
         [Inject]
         public IMainWindowViewModel MainWindowViewModel { get; set; }
+
+        [Inject]
+        public IHomeDocumentViewModel HomeDocumentViewModel { get; set; }
 
         [Inject]
         public ILibraryManager LibraryManager { get; set; }
@@ -81,7 +93,7 @@ namespace Sunctum.ViewModels
 
         public void ClearSelectedItems()
         {
-            TagListBoxSelectedItems?.Clear();
+            TagListBoxSelectedItems = new List<TagCountViewModel>();
         }
 
         public void BuildContextMenus_Tags()
@@ -122,7 +134,7 @@ namespace Sunctum.ViewModels
                 item.IsSearchingKey = true;
             }
             TagManager.ShowBySelectedItems(LibraryManager, items.Select(itc => itc.Tag));
-            MainWindowViewModel.ResetScrollOffset();
+            HomeDocumentViewModel.ResetScrollOffset();
         }
     }
 }

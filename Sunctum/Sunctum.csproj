@@ -174,13 +174,17 @@
     <Compile Include="Managers\TaskManager.cs" />
     <Compile Include="ViewModels\AboutSunctumDialogViewModel.cs" />
     <Compile Include="ViewModels\AuthorPaneViewModel.cs" />
+    <Compile Include="ViewModels\DockElementViewModelBase.cs" />
     <Compile Include="ViewModels\BookPropertyDialogViewModel.cs" />
     <Compile Include="Exceptions\BrokenPageIndexException.cs" />
     <Compile Include="ViewModels\DirectoryNameParserViewModel.cs" />
+    <Compile Include="ViewModels\DocumentViewModelBase.cs" />
     <Compile Include="ViewModels\EditMetadataImportSettingViewModel.cs" />
     <Compile Include="ViewModels\ErrorReportDialogViewModel.cs" />
     <Compile Include="ViewModels\ExportDialogViewModel.cs" />
+    <Compile Include="ViewModels\HomeDocumentViewModel.cs" />
     <Compile Include="ViewModels\IAuthorPaneViewModel.cs" />
+    <Compile Include="ViewModels\IHomeDocumentViewModel.cs" />
     <Compile Include="ViewModels\IInformationPaneViewModel.cs" />
     <Compile Include="ViewModels\IMainWindowViewModel.cs" />
     <Compile Include="Managers\AuthorManager.cs" />
@@ -188,6 +192,7 @@
     <Compile Include="Managers\TagManager.cs" />
     <Compile Include="ViewModels\ITagPaneViewModel.cs" />
     <Compile Include="ViewModels\MetadataImportSettingDialogViewModel.cs" />
+    <Compile Include="ViewModels\PaneViewModelBase.cs" />
     <Compile Include="ViewModels\PreferencesDialogViewModel.cs" />
     <Compile Include="Converters\BookCoverThumbnailLoader.cs" />
     <Compile Include="Converters\FileSizeFormatter.cs" />
@@ -213,6 +218,9 @@
     </Compile>
     <Compile Include="Views\ExportDialog.xaml.cs">
       <DependentUpon>ExportDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HomeDocument.xaml.cs">
+      <DependentUpon>HomeDocument.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\IMainWindow.cs" />
     <Compile Include="Managers\FillContentsTaskManager.cs" />
@@ -269,6 +277,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\EditMetadataImportSetting.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HomeDocument.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

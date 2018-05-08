@@ -5,12 +5,10 @@ using NLog;
 using Prism.Commands;
 using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
-using Sunctum.Core.Extensions;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Data.Dao.Migration.Plan;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.BookSorting;
-using Sunctum.Domain.Logic.Load;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
@@ -30,7 +28,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Web;
 using System.Windows;
 using System.Windows.Input;
 
@@ -41,27 +38,18 @@ namespace Sunctum.ViewModels
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
         private ILibraryManager _LibraryVM;
-        private BookViewModel _OpenedBook;
-        private PageViewModel _OpenedPage;
         private string _MainWindowTitle;
-        private string _SearchText;
-        private Dictionary<Guid, Point> _scrollOffset;
         private bool _DisplayTagPane;
         private bool _DisplayInformationPane;
         private bool _DisplayAuthorPane;
-        private List<EntryViewModel> _SelectedEntries;
-        private ObservableCollection<System.Windows.Controls.Control> _ContentsContextMenuItems;
-        private ObservableCollection<System.Windows.Controls.Control> _BooksContextMenuItems;
         private IEnumerable<IPlugin> _Plugins;
         private string _TooltipOnProgressBar;
-        private bool _SearchPaneIsVisible;
-        private string _ActiveContent;
-        private List<BookViewModel> _BookListViewSelectedItems;
-        private List<PageViewModel> _ContentsListViewSelectedItems;
         private double _WindowLeft;
         private double _WindowTop;
         private double _WindowWidth;
         private double _WindowHeight;
+        private ObservableCollection<BindableBase> _DockingDocumentViewModels;
+        private ObservableCollection<BindableBase> _DockingPaneViewModels;
 
         #region コマンド
 
@@ -69,11 +57,7 @@ namespace Sunctum.ViewModels
 
         public ICommand ClearSearchResultCommand { get; set; }
 
-        public ICommand CloseSearchPaneCommand { get; set; }
-
         public ICommand ExitApplicationCommand { get; set; }
-
-        public ICommand ExportBooksCommand { get; set; }
 
         public ICommand GeneralCancelCommand { get; set; }
 
@@ -83,37 +67,15 @@ namespace Sunctum.ViewModels
 
         public ICommand ImportLibraryCommand { get; set; }
 
-        public ICommand LeftKeyDownCommand { get; set; }
-
-        public ICommand MouseWheelCommand { get; set; }
-
         public ICommand OpenAuthorManagementDialogCommand { get; set; }
 
-        public ICommand OpenBookPropertyDialogCommand { get; set; }
-
-        public ICommand OpenImageByDefaultProgramCommand { get; set; }
-
         public ICommand OpenMetadataImportSettingDialogCommand { get; set; }
-
-        public ICommand OpenSearchPaneCommand { get; set; }
 
         public ICommand OpenSwitchLibraryCommand { get; set; }
 
         public ICommand OpenTagManagementDialogCommand { get; set; }
 
         public ICommand ReloadLibraryCommand { get; set; }
-
-        public ICommand RemakeThumbnailOfBookCommand { get; set; }
-
-        public ICommand RemakeThumbnailOfPageCommand { get; set; }
-
-        public ICommand RemoveBookCommand { get; set; }
-
-        public ICommand RemovePageCommand { get; set; }
-
-        public ICommand RightKeyDownCommand { get; set; }
-
-        public ICommand ScrapPagesCommand { get; set; }
 
         public ICommand ShowPreferenceDialogCommand { get; set; }
 
@@ -153,10 +115,6 @@ namespace Sunctum.ViewModels
 
         public ICommand UpdateBookByteSizeStillNullCommand { get; set; }
 
-        public ICommand XButton1MouseButtonDownCommand { get; set; }
-
-        public ICommand XButton2MouseButtonDownCommand { get; set; }
-
         #endregion //コマンド
 
         #region コマンド登録
@@ -169,20 +127,11 @@ namespace Sunctum.ViewModels
             });
             ClearSearchResultCommand = new DelegateCommand(() =>
             {
-                ClearSearchResult();
-            });
-            CloseSearchPaneCommand = new DelegateCommand(() =>
-            {
-                CloseSearchPane();
+                HomeDocumentViewModel.ClearSearchResult();
             });
             ExitApplicationCommand = new DelegateCommand(() =>
             {
                 Exit();
-            });
-            ExportBooksCommand = new DelegateCommand(() =>
-            {
-                var books = BookListViewSelectedItems;
-                OpenExportDialog(books.ToArray());
             });
             GeneralCancelCommand = new DelegateCommand(() =>
             {
@@ -200,64 +149,13 @@ namespace Sunctum.ViewModels
             {
                 await OpenImportLibraryDialog();
             });
-            LeftKeyDownCommand = new DelegateCommand(() =>
-            {
-                if (OpenedPage != null)
-                {
-                    GoPreviousImage();
-                    BeginAnimation_Tick_PreviousImageButton();
-                }
-                else if (OpenedBook != null)
-                {
-                    //Do nothing
-                }
-                else
-                {
-                    //Do nothing
-                }
-            });
-            MouseWheelCommand = new DelegateCommand<int?>(delta =>
-            {
-                if (OpenedPage != null)
-                {
-                    if (delta.Value > 0) //奥方向に回転
-                    {
-                        GoPreviousImage();
-                    }
-                    else if (delta.Value < 0) //手前方向に回転
-                    {
-                        GoNextImage();
-                    }
-                }
-                else if (OpenedBook != null)
-                {
-                    //Do nothing
-                }
-                else
-                {
-                    //Do nothing
-                }
-            });
             OpenAuthorManagementDialogCommand = new DelegateCommand(() =>
             {
                 OpenAuthorManagementDialog();
             });
-            OpenBookPropertyDialogCommand = new DelegateCommand(() =>
-            {
-                var books = BookListViewSelectedItems;
-                OpenBookPropertyDialog(books.First());
-            });
-            OpenImageByDefaultProgramCommand = new DelegateCommand<object>((p) =>
-            {
-                OpenImageByDefaultProgram(p as IEnumerable<PageViewModel>);
-            });
             OpenMetadataImportSettingDialogCommand = new DelegateCommand(() =>
             {
                 OpenMetadataImportSettingDialog();
-            });
-            OpenSearchPaneCommand = new DelegateCommand(() =>
-            {
-                OpenSearchPane();
             });
             OpenSwitchLibraryCommand = new DelegateCommand(async () =>
             {
@@ -276,45 +174,6 @@ namespace Sunctum.ViewModels
             {
                 await LibraryVM.Reset();
                 await Initialize(false);
-            });
-            RemakeThumbnailOfBookCommand = new DelegateCommand(async () =>
-            {
-                var books = BookListViewSelectedItems;
-                await RemakeThumbnail(books);
-            });
-            RemakeThumbnailOfPageCommand = new DelegateCommand(async () =>
-            {
-                var pages = ContentsListViewSelectedItems;
-                await RemakeThumbnail(pages);
-            });
-            RemoveBookCommand = new DelegateCommand(async () =>
-            {
-                var books = BookListViewSelectedItems;
-                await RemoveBook(books.ToArray());
-            });
-            RemovePageCommand = new DelegateCommand<object>(async (p) =>
-            {
-                await RemovePage(p as IEnumerable<PageViewModel>);
-            });
-            RightKeyDownCommand = new DelegateCommand(() =>
-            {
-                if (OpenedPage != null)
-                {
-                    GoNextImage();
-                    BeginAnimation_Tick_NextImageButton();
-                }
-                else if (OpenedBook != null)
-                {
-                    //Do nothing
-                }
-                else
-                {
-                    //Do nothing
-                }
-            });
-            ScrapPagesCommand = new DelegateCommand<object>(async (p) =>
-            {
-                await ScrapPages(p as IEnumerable<PageViewModel>);
             });
             ShowPreferenceDialogCommand = new DelegateCommand(() =>
             {
@@ -395,40 +254,6 @@ namespace Sunctum.ViewModels
             {
                 await LibraryVM.UpdateBookByteSizeStillNull();
             });
-            XButton1MouseButtonDownCommand = new DelegateCommand(() =>
-            {
-                if (OpenedPage != null)
-                {
-                    CloseImage();
-                }
-                else if (OpenedBook != null)
-                {
-                    CloseBook();
-                }
-                else
-                {
-                    if (LibraryVM.IsSearching)
-                    {
-                        ClearSearchResult();
-                        CloseSearchPane();
-                    }
-                }
-            });
-            XButton2MouseButtonDownCommand = new DelegateCommand(() =>
-            {
-                if (OpenedPage != null)
-                {
-                    //Do nothing
-                }
-                else if (OpenedBook != null)
-                {
-                    //Do nothing
-                }
-                else
-                {
-                    //Do nothing
-                }
-            });
         }
 
         #endregion //コマンド登録
@@ -438,7 +263,6 @@ namespace Sunctum.ViewModels
         public MainWindowViewModel()
         {
             RegisterCommands();
-            SelectedEntries = new List<EntryViewModel>();
         }
 
         #endregion
@@ -461,66 +285,12 @@ namespace Sunctum.ViewModels
             set { SetProperty(ref _LibraryVM, value); }
         }
 
-        public List<EntryViewModel> SelectedEntries
-        {
-            [DebuggerStepThrough]
-            get
-            { return _SelectedEntries; }
-            protected set { SetProperty(ref _SelectedEntries, value); }
-        }
-
-        public BookViewModel OpenedBook
-        {
-            [DebuggerStepThrough]
-            get
-            { return _OpenedBook; }
-            set { SetProperty(ref _OpenedBook, value); }
-        }
-
-        public PageViewModel OpenedPage
-        {
-            [DebuggerStepThrough]
-            get
-            { return _OpenedPage; }
-            set
-            {
-                SetProperty(ref _OpenedPage, value);
-                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => CurrentPage));
-            }
-        }
-
         public string MainWindowTitle
         {
             [DebuggerStepThrough]
             get
             { return _MainWindowTitle; }
             set { SetProperty(ref _MainWindowTitle, value); }
-        }
-
-        public string SearchText
-        {
-            [DebuggerStepThrough]
-            get
-            { return _SearchText; }
-            set
-            {
-                SetProperty(ref _SearchText, value);
-                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => SearchStatusText));
-                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => UnescapedSearchText));
-            }
-        }
-
-        public string UnescapedSearchText
-        {
-            [DebuggerStepThrough]
-            get
-            { return HttpUtility.HtmlDecode(SearchText); }
-            set { SearchText = HttpUtility.HtmlEncode(value); }
-        }
-
-        public string SearchStatusText
-        {
-            get { return $"Searched by '{UnescapedSearchText}'"; }
         }
 
         public bool DisplayTagPane
@@ -547,37 +317,10 @@ namespace Sunctum.ViewModels
             set { SetProperty(ref _DisplayAuthorPane, value); }
         }
 
-        public int CurrentPage
-        {
-            get
-            {
-                if (OpenedBook != null && OpenedPage != null)
-                {
-                    return OpenedBook.Contents.IndexOf(OpenedPage) + 1;
-                }
-                else
-                {
-                    return -1;
-                }
-            }
-        }
-
         public string TooltipOnProgressBar
         {
             get { return _TooltipOnProgressBar; }
             set { SetProperty(ref _TooltipOnProgressBar, value); }
-        }
-
-        public ObservableCollection<System.Windows.Controls.Control> BooksContextMenuItems
-        {
-            get { return _BooksContextMenuItems; }
-            set { SetProperty(ref _BooksContextMenuItems, value); }
-        }
-
-        public ObservableCollection<System.Windows.Controls.Control> ContentsContextMenuItems
-        {
-            get { return _ContentsContextMenuItems; }
-            set { SetProperty(ref _ContentsContextMenuItems, value); }
         }
 
         [Inject]
@@ -590,41 +333,7 @@ namespace Sunctum.ViewModels
         [Inject]
         public IDataAccessManager DataAccessManager { get; set; }
 
-        public bool SearchPaneIsVisible
-        {
-            get { return _SearchPaneIsVisible; }
-            set { SetProperty(ref _SearchPaneIsVisible, value); }
-        }
-
-        public string ActiveContent
-        {
-            get { return _ActiveContent; }
-            set { SetProperty(ref _ActiveContent, value); }
-        }
-
         public InteractionRequest<Notification> CloseRequest { get; } = new InteractionRequest<Notification>();
-
-        public InteractionRequest<Notification> ResetScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
-
-        public InteractionRequest<Notification> StoreBookScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
-
-        public InteractionRequest<Notification> StoreContentScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
-
-        public InteractionRequest<Notification> RestoreBookScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
-
-        public InteractionRequest<Notification> RestoreContentScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
-
-        public List<BookViewModel> BookListViewSelectedItems
-        {
-            get { return _BookListViewSelectedItems; }
-            set { SetProperty(ref _BookListViewSelectedItems, value); }
-        }
-
-        public List<PageViewModel> ContentsListViewSelectedItems
-        {
-            get { return _ContentsListViewSelectedItems; }
-            set { SetProperty(ref _ContentsListViewSelectedItems, value); }
-        }
 
         public double WindowLeft
         {
@@ -650,10 +359,6 @@ namespace Sunctum.ViewModels
             set { SetProperty(ref _WindowHeight, value); }
         }
 
-        public InteractionRequest<Notification> BlinkGoNextButtonRequest { get; } = new InteractionRequest<Notification>();
-
-        public InteractionRequest<Notification> BlinkGoBackButtonRequest { get; } = new InteractionRequest<Notification>();
-
         [Inject]
         public IAuthorPaneViewModel AuthorPaneViewModel { get; set; }
 
@@ -663,6 +368,21 @@ namespace Sunctum.ViewModels
         [Inject]
         public IInformationPaneViewModel InformationPaneViewModel { get; set; }
 
+        public ObservableCollection<BindableBase> DockingDocumentViewModels
+        {
+            get { return _DockingDocumentViewModels; }
+            set { SetProperty(ref _DockingDocumentViewModels, value); }
+        }
+
+        public ObservableCollection<BindableBase> DockingPaneViewModels
+        {
+            get { return _DockingPaneViewModels; }
+            set { SetProperty(ref _DockingPaneViewModels, value); }
+        }
+
+        [Inject]
+        public IHomeDocumentViewModel HomeDocumentViewModel { get; set; }
+
         #endregion
 
         #region 一般
@@ -671,8 +391,8 @@ namespace Sunctum.ViewModels
         {
             if (starting)
             {
-                BuildContextMenus_Books();
-                BuildContextMenus_Contents();
+                HomeDocumentViewModel.BuildContextMenus_Books();
+                HomeDocumentViewModel.BuildContextMenus_Contents();
                 TagPaneViewModel.BuildContextMenus_Tags();
                 AuthorPaneViewModel.BuildContextMenus_Authors();
                 LoadPlugins();
@@ -693,7 +413,7 @@ namespace Sunctum.ViewModels
             }
 
             SetMainWindowTitle();
-            ClearSearchResult();
+            HomeDocumentViewModel.ClearSearchResult();
             InitializeWindowComponent();
             SetEventToLibraryManager();
             ManageAppDB();
@@ -734,103 +454,6 @@ namespace Sunctum.ViewModels
             }
         }
 
-        private void BuildContextMenus_Books()
-        {
-            BooksContextMenuItems = new ObservableCollection<System.Windows.Controls.Control>();
-
-            var menuitem = new System.Windows.Controls.MenuItem()
-            {
-                Header = "書き出し",
-                Command = ExportBooksCommand
-            };
-            BooksContextMenuItems.Add(menuitem);
-
-            var manageMenu = new System.Windows.Controls.MenuItem()
-            {
-                Header = "管理"
-            };
-
-            menuitem = new System.Windows.Controls.MenuItem()
-            {
-                Header = "サムネイル再作成",
-                Command = RemakeThumbnailOfBookCommand
-            };
-            manageMenu.Items.Add(menuitem);
-
-            menuitem = new System.Windows.Controls.MenuItem()
-            {
-                Header = "削除",
-                Command = RemoveBookCommand
-            };
-            manageMenu.Items.Add(menuitem);
-            BooksContextMenuItems.Add(manageMenu);
-
-            menuitem = new System.Windows.Controls.MenuItem()
-            {
-                Header = "プロパティ",
-                Command = OpenBookPropertyDialogCommand,
-            };
-            BooksContextMenuItems.Add(menuitem);
-
-            BooksContextMenuItems.Add(new System.Windows.Controls.Separator());
-
-            menuitem = new System.Windows.Controls.MenuItem()
-            {
-                Header = "Ex",
-            };
-            BooksContextMenuItems.Add(menuitem);
-        }
-
-        private void BuildContextMenus_Contents()
-        {
-            ContentsContextMenuItems = new ObservableCollection<System.Windows.Controls.Control>();
-
-            var menuitem = new System.Windows.Controls.MenuItem()
-            {
-                Header = "開く",
-                Command = OpenImageByDefaultProgramCommand,
-                CommandParameter = SelectedEntries.Where(x => x is PageViewModel).Cast<PageViewModel>()
-            };
-            ContentsContextMenuItems.Add(menuitem);
-
-            menuitem = new System.Windows.Controls.MenuItem()
-            {
-                Header = "スクラップ",
-                Command = ScrapPagesCommand,
-                CommandParameter = SelectedEntries.Where(x => x is PageViewModel).Cast<PageViewModel>()
-            };
-            ContentsContextMenuItems.Add(menuitem);
-
-            var manageMenu = new System.Windows.Controls.MenuItem()
-            {
-                Header = "管理"
-            };
-
-            menuitem = new System.Windows.Controls.MenuItem()
-            {
-                Header = "サムネイル再作成",
-                Command = RemakeThumbnailOfPageCommand
-            };
-            manageMenu.Items.Add(menuitem);
-
-            menuitem = new System.Windows.Controls.MenuItem()
-            {
-                Header = "削除",
-                Command = RemovePageCommand,
-                CommandParameter = SelectedEntries.Where(x => x is PageViewModel).Cast<PageViewModel>()
-            };
-            manageMenu.Items.Add(menuitem);
-            ContentsContextMenuItems.Add(manageMenu);
-
-            ContentsContextMenuItems.Add(new System.Windows.Controls.Separator());
-
-            menuitem = new System.Windows.Controls.MenuItem()
-            {
-                Header = "Ex",
-            };
-            ContentsContextMenuItems.Add(menuitem);
-        }
-
         private void LoadPlugins()
         {
             foreach (var plugin in Plugins)
@@ -841,14 +464,14 @@ namespace Sunctum.ViewModels
                     switch (flag)
                     {
                         case MenuType.MainWindow_Book_ContextMenu:
-                            var menu = plugin.GetMenu(MenuType.MainWindow_Book_ContextMenu, () => SelectedEntries.Where(e => e is BookViewModel).Cast<BookViewModel>()) as System.Windows.Controls.MenuItem;
-                            BooksContextMenuItems.Where(m => m is System.Windows.Controls.MenuItem && ((System.Windows.Controls.MenuItem)m).Header.Equals("Ex"))
+                            var menu = plugin.GetMenu(MenuType.MainWindow_Book_ContextMenu, () => HomeDocumentViewModel.SelectedEntries.Where(e => e is BookViewModel).Cast<BookViewModel>()) as System.Windows.Controls.MenuItem;
+                            HomeDocumentViewModel.BooksContextMenuItems.Where(m => m is System.Windows.Controls.MenuItem && ((System.Windows.Controls.MenuItem)m).Header.Equals("Ex"))
                                 .Cast<System.Windows.Controls.MenuItem>()
                                 .Single().Items.Add(menu);
                             break;
                         case MenuType.MainWindow_Page_ContextMenu:
-                            menu = plugin.GetMenu(MenuType.MainWindow_Page_ContextMenu, () => SelectedEntries.Where(e => e is PageViewModel).Cast<PageViewModel>()) as System.Windows.Controls.MenuItem;
-                            ContentsContextMenuItems.Where(m => m is System.Windows.Controls.MenuItem && ((System.Windows.Controls.MenuItem)m).Header.Equals("Ex"))
+                            menu = plugin.GetMenu(MenuType.MainWindow_Page_ContextMenu, () => HomeDocumentViewModel.SelectedEntries.Where(e => e is PageViewModel).Cast<PageViewModel>()) as System.Windows.Controls.MenuItem;
+                            HomeDocumentViewModel.ContentsContextMenuItems.Where(m => m is System.Windows.Controls.MenuItem && ((System.Windows.Controls.MenuItem)m).Header.Equals("Ex"))
                                 .Cast<System.Windows.Controls.MenuItem>()
                                 .Single().Items.Add(menu);
                             break;
@@ -884,16 +507,24 @@ namespace Sunctum.ViewModels
 
         private void InitializeWindowComponent()
         {
-            CloseSearchPane();
-            CloseImage();
-            CloseBook();
-            ResetScrollOffsetPool();
-            ResetScrollOffset();
+            DockingDocumentViewModels = new ObservableCollection<BindableBase>();
+            DockingDocumentViewModels.Add(new HomeDocumentViewModel());
+
+            DockingPaneViewModels = new ObservableCollection<BindableBase>();
+            DockingPaneViewModels.Add(new AuthorPaneViewModel());
+            DockingPaneViewModels.Add(new TagPaneViewModel());
+            DockingPaneViewModels.Add(new InformationPaneViewModel());
+
+            HomeDocumentViewModel.CloseSearchPane();
+            HomeDocumentViewModel.CloseImage();
+            HomeDocumentViewModel.CloseBook();
+            HomeDocumentViewModel.ResetScrollOffsetPool();
+            HomeDocumentViewModel.ResetScrollOffset();
             LibraryVM.ProgressManager.Complete();
             TooltipOnProgressBar = "Ready";
-            BookListViewSelectedItems = new List<BookViewModel>();
+            HomeDocumentViewModel.ClearSelectedItems();
             AuthorPaneViewModel.ClearSelectedItems();
-            TagPaneViewModel.TagListBoxSelectedItems = new List<TagCountViewModel>();
+            TagPaneViewModel.ClearSelectedItems();
 
             DisplayAuthorPane = Configuration.ApplicationConfiguration.DisplayAuthorPane;
             DisplayTagPane = Configuration.ApplicationConfiguration.DisplayTagPane;
@@ -927,15 +558,15 @@ namespace Sunctum.ViewModels
         {
             if (string.IsNullOrEmpty(e.PreviousSearchingText))
             {
-                StoreScrollOffset(Guid.Empty);
+                HomeDocumentViewModel.StoreScrollOffset(Guid.Empty);
             }
 
-            ResetScrollOffset();
+            HomeDocumentViewModel.ResetScrollOffset();
         }
 
         private void LibraryVM_SearchCleared(object sender, EventArgs e)
         {
-            RestoreScrollOffset(Guid.Empty);
+            HomeDocumentViewModel.RestoreScrollOffset(Guid.Empty);
         }
 
         private bool OpenSwitchLibraryDialogAndChangeWorkingDirectory()
@@ -956,7 +587,7 @@ namespace Sunctum.ViewModels
 
         private void GeneralCancel()
         {
-            CloseSearchPane();
+            HomeDocumentViewModel.CloseSearchPane();
         }
 
         private static void Invoke(UIElement elm, Action act)
@@ -1063,22 +694,6 @@ namespace Sunctum.ViewModels
             }
         }
 
-        public async Task RemovePage(IEnumerable<PageViewModel> pages)
-        {
-            await LibraryVM.RemovePages(pages.ToArray());
-        }
-
-        public async Task RemoveBook(BookViewModel[] books)
-        {
-            await LibraryVM.RemoveBooks(books);
-        }
-
-        private void OpenExportDialog(BookViewModel[] books)
-        {
-            ExportDialog dialog = new ExportDialog(LibraryVM, books);
-            dialog.ShowDialog();
-        }
-
         private void OpenAuthorManagementDialog()
         {
             EntityManagementDialog<AuthorViewModel> dialog = new EntityManagementDialog<AuthorViewModel>();
@@ -1132,22 +747,6 @@ namespace Sunctum.ViewModels
             dialog.Show();
         }
 
-        private void OpenBookPropertyDialog(BookViewModel book)
-        {
-            BookPropertyDialog dialog = new BookPropertyDialog(book);
-            dialog.ShowDialog();
-        }
-
-        private async Task ScrapPages(IEnumerable<PageViewModel> pages)
-        {
-            await LibraryVM.ScrapPages(null, Specifications.SCRAPPED_NEW_BOOK_TITLE, pages.ToArray());
-        }
-
-        private static void OpenImageByDefaultProgram(IEnumerable<PageViewModel> images)
-        {
-            Process.Start(images.First().Image.AbsoluteMasterPath);
-        }
-
         private async Task OpenImportFileDialogThenImport()
         {
             var dialog = new System.Windows.Forms.OpenFileDialog();
@@ -1156,7 +755,7 @@ namespace Sunctum.ViewModels
 
             if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                await ImportAsync(dialog.FileNames.ToArray());
+                await LibraryVM.ImportAsync(dialog.FileNames.ToArray());
             }
         }
 
@@ -1166,285 +765,26 @@ namespace Sunctum.ViewModels
 
             if (dialog.ShowDialog() == true)
             {
-                await ImportAsync(new string[] { dialog.FileName });
+                await LibraryVM.ImportAsync(new string[] { dialog.FileName });
             }
         }
 
-        private async Task RemakeThumbnails(IEnumerable<PageViewModel> obj)
-        {
-            if (obj.Count() > 0)
-            {
-                var first = obj.ElementAt(0);
-                string typeName = first.GetType().Name;
-                switch (typeName)
-                {
-                    case nameof(BookViewModel):
-                        await RemakeThumbnail(obj.Cast<BookViewModel>());
-                        break;
-                    case nameof(PageViewModel):
-                        await RemakeThumbnail(obj.Cast<PageViewModel>());
-                        break;
-                }
-            }
-        }
-
-        #region 操作
-
-        public void AddToSelectedEntry(EntryViewModel add)
-        {
-            SelectedEntries.Add(add);
-        }
-
-        public void AddToSelectedEntries(IEnumerable<EntryViewModel> add)
-        {
-            SelectedEntries.AddRange(add);
-        }
-
-        public void RemoveFromSelectedEntries(IEnumerable<EntryViewModel> entries)
-        {
-            foreach (var entry in entries)
-            {
-                SelectedEntries.Remove(entry);
-            }
-        }
-
-        #endregion //操作
-
-        #region サムネイル再作成
-
-        private async Task RemakeThumbnail(IEnumerable<BookViewModel> books)
-        {
-            await LibraryVM.RemakeThumbnail(books);
-        }
-
-        private async Task RemakeThumbnail(IEnumerable<PageViewModel> pages)
-        {
-            await LibraryVM.RemakeThumbnail(pages);
-        }
-
-        #endregion //サムネイル再作成
-
-        #region 検索
-
-        public void Search()
-        {
-            LibraryVM.Search(SearchText);
-        }
-
-        public void Search(string searchText)
-        {
-            SearchText = searchText;
-        }
-
-        private void OpenSearchPane()
-        {
-            SearchPaneIsVisible = true;
-        }
-
-        private void ClearSearchResult()
-        {
-            SearchText = "";
-            LibraryVM.ClearSearchResult();
-        }
-
-        public void CloseSearchPane()
-        {
-            SearchPaneIsVisible = false;
-        }
-
-        #endregion //検索
-
-        #region 画面遷移
-
-        public void OpenBook(BookViewModel book)
-        {
-            if (book == null) return;
-
-            CloseSearchPane();
-            StoreScrollOffset(Guid.Empty);
-            OpenedBook = book;
-            RestoreScrollOffset(OpenedBook.ID);
-            LibraryVM.TagMng.ClearSelectedEntries();
-            Task.Factory.StartNew(() => LibraryVM.FireFillContents(book));
-            ActiveContent = "PageView";
-        }
-
-        public void CloseBook()
-        {
-            ActiveContent = "BookView";
-            if (OpenedBook != null)
-            {
-                StoreScrollOffset(OpenedBook.ID);
-                RestoreScrollOffset(Guid.Empty);
-                LibraryVM.TagMng.ClearSelectedEntries();
-            }
-            OpenedBook = null;
-        }
-
-        public void ResetScrollOffsetPool()
-        {
-            _scrollOffset = new Dictionary<Guid, Point>();
-        }
-
-        public void StoreScrollOffset(Guid bookId)
-        {
-            if (_scrollOffset == null) return;
-
-            if (bookId.Equals(Guid.Empty))
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    StoreBookScrollOffsetRequest.Raise(new Notification()
-                    {
-                        Content = new Tuple<Dictionary<Guid, Point>, Guid>(_scrollOffset, bookId)
-                    });
-                });
-            }
-            else
-            {
-                StoreContentScrollOffsetRequest.Raise(new Notification()
-                {
-                    Content = new Tuple<Dictionary<Guid, Point>, Guid>(_scrollOffset, bookId)
-                });
-            }
-        }
-
-        public void RestoreScrollOffset(Guid bookId)
-        {
-            if (_scrollOffset == null) return;
-
-            if (bookId.Equals(Guid.Empty))
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    RestoreBookScrollOffsetRequest.Raise(new Notification()
-                    {
-                        Content = new Tuple<Dictionary<Guid, Point>, Guid>(_scrollOffset, bookId)
-                    });
-                });
-            }
-            else
-            {
-                RestoreContentScrollOffsetRequest.Raise(new Notification()
-                {
-                    Content = new Tuple<Dictionary<Guid, Point>, Guid>(_scrollOffset, bookId)
-                });
-            }
-        }
-
-        public void ResetScrollOffset()
-        {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                ResetScrollOffsetRequest.Raise(new Notification());
-            });
-        }
-
-        public void OpenImage(PageViewModel page)
-        {
-            OpenedPage = page;
-            ActiveContent = "ImageView";
-        }
-
-        public void CloseImage()
-        {
-            OpenedPage = null;
-            ActiveContent = "PageView";
-        }
-
-        #endregion
-
-        #region インポート
-
-        public async Task ImportAsync(string[] objectPaths)
-        {
-            await LibraryVM.ImportAsync(objectPaths);
-        }
-
-        #endregion //インポート
-
-        #region Image遷移
-
-        public void GoNextImage()
-        {
-            var currentPage = OpenedPage;
-
-            OpenedPage = OpenedBook.Contents.LoopNext(currentPage);
-
-            ContentsLoadTask.Load(OpenedPage);
-
-            if (OpenedPage.IsLoaded)
-            {
-                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => CurrentPage));
-            }
-        }
-
-        public void GoPreviousImage()
-        {
-            var currentPage = OpenedPage;
-
-            OpenedPage = OpenedBook.Contents.LoopPrevious(currentPage);
-
-            ContentsLoadTask.Load(OpenedPage);
-
-            if (OpenedPage.IsLoaded)
-            {
-                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => CurrentPage));
-            }
-        }
-
-        private PageViewModel GoFirstImage()
-        {
-            return OpenedBook.Contents.OrderBy(p => p.PageIndex).Take(1).Single();
-        }
-
-        private PageViewModel GoLastImage()
-        {
-            return OpenedBook.Contents.OrderByDescending(p => p.PageIndex).Take(1).Single();
-        }
-
-        #endregion //Image遷移
-
-        #region ページ単位ソート
-
-        public void MovePageForward(PageViewModel page)
-        {
-            OpenedBook = LibraryVM.OrderForward(page, OpenedBook);
-        }
-
-        public void MovePageBackward(PageViewModel page)
-        {
-            OpenedBook = LibraryVM.OrderBackward(page, OpenedBook);
-        }
-
-        public async Task SaveOpenedBookContentsOrder()
-        {
-            await LibraryVM.SaveBookContentsOrder(OpenedBook);
-            SetFirstPage();
-        }
-
-        private void SetFirstPage()
-        {
-            if (OpenedBook.Contents.Count() > 0)
-            {
-                OpenedBook.FirstPage = OpenedBook.Contents.First();
-            }
-        }
-
-        #endregion //ページ単位ソート
-
-        #region キーボード操作
-
-        private void BeginAnimation_Tick_PreviousImageButton()
-        {
-            BlinkGoBackButtonRequest.Raise(new Notification());
-        }
-
-        private void BeginAnimation_Tick_NextImageButton()
-        {
-            BlinkGoNextButtonRequest.Raise(new Notification());
-        }
-
-        #endregion //キーボード操作
+        //private async Task RemakeThumbnails(IEnumerable<PageViewModel> obj)
+        //{
+        //    if (obj.Count() > 0)
+        //    {
+        //        var first = obj.ElementAt(0);
+        //        string typeName = first.GetType().Name;
+        //        switch (typeName)
+        //        {
+        //            case nameof(BookViewModel):
+        //                await RemakeThumbnail(obj.Cast<BookViewModel>());
+        //                break;
+        //            case nameof(PageViewModel):
+        //                await RemakeThumbnail(obj.Cast<PageViewModel>());
+        //                break;
+        //        }
+        //    }
+        //}
     }
 }
