@@ -29,7 +29,7 @@ namespace Sunctum.Domain.Models.Managers
 
         void AddToMemory(BookViewModel target);
 
-        void RemoveBookFromMemory(BookViewModel target);
+        void RemoveFromMemory(BookViewModel target);
 
         void AccessDispatcherObject(Action accessAction);
 

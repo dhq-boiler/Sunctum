@@ -43,7 +43,7 @@ namespace Sunctum.Domain.Logic.Async
                 }
 
                 sequence.Add(new Task(() => DeleteRecordFromStorage(book)));
-                sequence.Add(new Task(() => LibraryManager.RemoveBookFromMemory(book)));
+                sequence.Add(new Task(() => LibraryManager.RemoveFromMemory(book)));
                 sequence.Add(new Task(() => s_logger.Info($"Removed Book:{book}")));
             }
         }

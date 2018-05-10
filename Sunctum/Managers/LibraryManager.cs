@@ -264,7 +264,7 @@ namespace Sunctum.Managers
             AccessDispatcherObject(() => Internal_UpdateInMemory(book));
         }
 
-        public void RemoveBookFromMemory(BookViewModel book)
+        public void RemoveFromMemory(BookViewModel book)
         {
             AccessDispatcherObject(() => Internal_RemoveBookFromMemory(book));
         }
