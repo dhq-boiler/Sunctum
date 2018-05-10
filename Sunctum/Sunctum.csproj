@@ -170,7 +170,10 @@
     <Compile Include="Core\SunctumBootstrapper.cs" />
     <Compile Include="Core\Extensions\NinjectBindingExtensions.cs" />
     <Compile Include="Core\Extensions\UILogicExtensions.cs" />
+    <Compile Include="Managers\BookCabinet.cs" />
+    <Compile Include="Managers\BookStorage.cs" />
     <Compile Include="Managers\DataAccessManager.cs" />
+    <Compile Include="Managers\ArrangedBookStorage.cs" />
     <Compile Include="Managers\TaskManager.cs" />
     <Compile Include="ViewModels\AboutSunctumDialogViewModel.cs" />
     <Compile Include="ViewModels\AuthorPaneViewModel.cs" />
@@ -188,7 +191,7 @@
     <Compile Include="ViewModels\IInformationPaneViewModel.cs" />
     <Compile Include="ViewModels\IMainWindowViewModel.cs" />
     <Compile Include="Managers\AuthorManager.cs" />
-    <Compile Include="Managers\LibraryManager.cs" />
+    <Compile Include="Managers\Library.cs" />
     <Compile Include="Managers\TagManager.cs" />
     <Compile Include="ViewModels\ITagPaneViewModel.cs" />
     <Compile Include="ViewModels\MetadataImportSettingDialogViewModel.cs" />

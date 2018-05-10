@@ -57,7 +57,7 @@ namespace Sunctum.Domain.Logic.Import
             Count = _children.Count();
         }
 
-        public override IEnumerable<Task> GenerateTasks(ILibraryManager library, string copyTo, string entryName, DataOperationUnit dataOpUnit)
+        public override IEnumerable<Task> GenerateTasks(ILibrary library, string copyTo, string entryName, DataOperationUnit dataOpUnit)
         {
             List<Task> ret = new List<Task>();
 
@@ -140,7 +140,7 @@ namespace Sunctum.Domain.Logic.Import
             _book.ContentsRegistered = true;
         }
 
-        private void ProcessChildren(ILibraryManager library, List<Task> ret, string directoryPath, Importer child, DataOperationUnit dataOpUnit)
+        private void ProcessChildren(ILibrary library, List<Task> ret, string directoryPath, Importer child, DataOperationUnit dataOpUnit)
         {
             if (child is ImportPage)
             {
@@ -159,7 +159,7 @@ namespace Sunctum.Domain.Logic.Import
             ++Processed;
         }
 
-        protected void SetDeliverables(ILibraryManager library)
+        protected void SetDeliverables(ILibrary library)
         {
             library.AddToMemory(_book);
         }

@@ -22,7 +22,7 @@ namespace Sunctum.Domain.Logic.Async
         { }
 
         [Inject]
-        public ILibraryManager LibraryManager { get; set; }
+        public ILibrary LibraryManager { get; set; }
 
         [Inject]
         public IDirectoryNameParserManager DirectoryNameParserManager { get; set; }

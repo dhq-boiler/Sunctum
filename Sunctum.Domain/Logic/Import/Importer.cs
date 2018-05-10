@@ -39,6 +39,6 @@ namespace Sunctum.Domain.Logic.Import
 
         public abstract void Estimate();
 
-        public abstract IEnumerable<System.Threading.Tasks.Task> GenerateTasks(ILibraryManager library, string copyTo, string entryName, DataOperationUnit dataOpUnit);
+        public abstract IEnumerable<System.Threading.Tasks.Task> GenerateTasks(ILibrary library, string copyTo, string entryName, DataOperationUnit dataOpUnit);
     }
 }

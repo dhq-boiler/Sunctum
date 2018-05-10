@@ -60,6 +60,8 @@ namespace Sunctum.Views
         private void Book_ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var viewModel = (HomeDocumentViewModel)DataContext;
+            if (viewModel == null) return;
+
             viewModel.BookListViewSelectedItems = Book_ListView.SelectedItems.Cast<BookViewModel>().ToList();
 
             viewModel.RemoveFromSelectedEntries(e.RemovedItems.Cast<EntryViewModel>());

@@ -47,7 +47,7 @@ namespace Sunctum.ViewModels
         public IHomeDocumentViewModel HomeDocumentViewModel { get; set; }
 
         [Inject]
-        public ILibraryManager LibraryManager { get; set; }
+        public ILibrary LibraryManager { get; set; }
 
         [Inject]
         public ITagManager TagManager { get; set; }
@@ -125,18 +125,20 @@ namespace Sunctum.ViewModels
 
         private void ClearResultSearchingByTag()
         {
-            LibraryManager.ClearSearchResult();
+            var activeViewModel = MainWindowViewModel.ActiveDocumentViewModel;
+            activeViewModel.BookCabinet.ClearSearchResult();
         }
 
         private void SearchByTag(IEnumerable<TagCountViewModel> items)
         {
-            LibraryManager.ClearSearchResult();
+            var activeViewModel = MainWindowViewModel.ActiveDocumentViewModel;
+            activeViewModel.BookCabinet.ClearSearchResult();
             foreach (var item in items)
             {
                 item.IsSearchingKey = true;
             }
-            TagManager.ShowBySelectedItems(LibraryManager, items.Select(itc => itc.Tag));
-            HomeDocumentViewModel.ResetScrollOffset();
+            TagManager.ShowBySelectedItems(items.Select(itc => itc.Tag));
+            activeViewModel.ResetScrollOffset();
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Sunctum.Domain.Logic.Async
 {
     public interface IPageScrapping : IAsyncTaskMaker
     {
-        ILibraryManager LibraryManager { get; set; }
+        ILibrary LibraryManager { get; set; }
 
         string Title { get; set; }
 

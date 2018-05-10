@@ -90,7 +90,7 @@ namespace Sunctum.ViewModels
 
                     if (willRestart)
                     {
-                        MainWindowViewModel.Exit();
+                        MainWindowViewModel.Close();
                         Process.Start(Process.GetCurrentProcess().MainModule.FileName);
                     }
                 });

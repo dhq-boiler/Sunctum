@@ -2,18 +2,13 @@
 
 using Ninject;
 using NLog;
-using Prism.Mvvm;
-using Sunctum.Domail.Util;
-using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Async;
-using Sunctum.Domain.Logic.BookSorting;
 using Sunctum.Domain.Logic.Load;
 using Sunctum.Domain.Logic.PageSorting;
 using Sunctum.Domain.Logic.Query;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
-using Sunctum.Infrastructure.Core;
 using Sunctum.Infrastructure.Data.Rdbms;
 using System;
 using System.Collections.Generic;
@@ -25,91 +20,18 @@ using System.Windows;
 
 namespace Sunctum.Managers
 {
-    public class LibraryManager : BindableBase, ILibraryManager
+    public class Library : BookStorage, ILibrary
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
-        private ObservableCollection<BookViewModel> _LoadedBooks;
-        private ObservableCollection<BookViewModel> _SearchedBooks;
-        private IBookSorting _BookSorting;
         private FillContentsTaskManager _fcTaskManager = new FillContentsTaskManager();
+        private ObservableCollection<RecentOpenedLibrary> _RecentOpenedLibraryList;
 
-        public LibraryManager()
+        public Library()
         {
-            Sorting = BookSorting.ByLoadedAsc;
-            LoadedBooks = new ObservableCollection<BookViewModel>();
         }
 
         #region プロパティ
-
-        public ObservableCollection<BookViewModel> LoadedBooks
-        {
-            [DebuggerStepThrough]
-            get
-            { return _LoadedBooks; }
-            set
-            {
-                SetProperty(ref _LoadedBooks, value);
-                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
-            }
-        }
-
-        public ObservableCollection<BookViewModel> SearchedBooks
-        {
-            [DebuggerStepThrough]
-            get
-            { return _SearchedBooks; }
-            set
-            {
-                SetProperty(ref _SearchedBooks, value);
-                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
-                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => IsSearching));
-            }
-        }
-
-        private ObservableCollection<BookViewModel> DisplayableBookSource
-        {
-            [DebuggerStepThrough]
-            get
-            {
-                if (SearchedBooks != null)
-                {
-                    return SearchedBooks;
-                }
-                else
-                {
-                    return LoadedBooks;
-                }
-            }
-        }
-
-        public ObservableCollection<BookViewModel> OnStage
-        {
-            get
-            {
-                var newCollection = Sorting.Sort(DisplayableBookSource).ToArray();
-                return new ObservableCollection<BookViewModel>(newCollection);
-            }
-        }
-
-        public bool IsSearching
-        {
-            [DebuggerStepThrough]
-            get
-            { return SearchedBooks != null; }
-        }
-
-        public IBookSorting Sorting
-        {
-            [DebuggerStepThrough]
-            get
-            { return _BookSorting; }
-            set
-            {
-                SetProperty(ref _BookSorting, value);
-                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
-            }
-        }
 
         public ObservableCollection<RecentOpenedLibrary> RecentOpenedLibraryList
         {
@@ -163,6 +85,9 @@ namespace Sunctum.Managers
 
         [Inject]
         public ILibraryResetting LibraryResettingService {[DebuggerStepThrough] get; set; }
+
+        [Inject]
+        public IByteSizeCalculating ByteSizeCalculatingService { get; set; }
 
         [Inject]
         public IDataAccessManager DataAccessManager {[DebuggerStepThrough] get; set; }
@@ -252,123 +177,7 @@ namespace Sunctum.Managers
 
         #endregion //インターフェース
 
-        #region オンメモリ
-
-        public void AddToMemory(BookViewModel book)
-        {
-            AccessDispatcherObject(() => Internal_AddToMemory(book));
-        }
-
-        public void UpdateInMemory(BookViewModel book)
-        {
-            AccessDispatcherObject(() => Internal_UpdateInMemory(book));
-        }
-
-        public void RemoveFromMemory(BookViewModel book)
-        {
-            AccessDispatcherObject(() => Internal_RemoveBookFromMemory(book));
-        }
-
-        #region private
-
-        private void Internal_AddToMemory(BookViewModel book)
-        {
-            LoadedBooks.Add(book);
-            RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
-        }
-
-        private void Internal_UpdateInMemory(BookViewModel book)
-        {
-            BookFacade.Update(book);
-            int index = LoadedBooks.IndexOf(LoadedBooks.Where(b => b.ID.Equals(book.ID)).Single());
-            LoadedBooks[index] = book;
-            if (SearchedBooks != null)
-            {
-                index = SearchedBooks.IndexOf(SearchedBooks.Where(b => b.ID.Equals(book.ID)).Single());
-                SearchedBooks[index] = book;
-            }
-            RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
-        }
-
-        private void Internal_RemoveBookFromMemory(BookViewModel book)
-        {
-            LoadedBooks.Remove(book);
-            RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
-        }
-
-        #endregion //private
-
-        #endregion //オンメモリ
-
         #endregion //エンティティ操作
-
-        #region 検索
-
-        private string _previousSearchingText;
-        private ObservableCollection<RecentOpenedLibrary> _RecentOpenedLibraryList;
-
-        public event EventHandler SearchCleared;
-        public event SearchedEventHandler Searched;
-
-        protected virtual void OnSearchCleared(EventArgs e)
-        {
-            SearchCleared?.Invoke(this, e);
-        }
-
-        protected virtual void OnSearched(SearchedEventArgs e)
-        {
-            Searched?.Invoke(this, e);
-        }
-
-        public void Search(string searchingText)
-        {
-            Task.Factory.StartNew(() =>
-            {
-                if (string.IsNullOrEmpty(searchingText))
-                {
-                    SearchedBooks = null;
-
-                    OnSearchCleared(new EventArgs());
-                }
-                else
-                {
-                    s_logger.Debug($"Search Word:{searchingText}");
-                    SearchedBooks = new ObservableCollection<BookViewModel>(LoadedBooks.Where(b => AuthorNameContainsSearchText(b, searchingText) || TitleContainsSearchText(b, searchingText)));
-
-                    OnSearched(new SearchedEventArgs(searchingText, _previousSearchingText));
-                }
-
-                _previousSearchingText = searchingText;
-            });
-        }
-
-        private bool AuthorNameContainsSearchText(BookViewModel target, string searchingText)
-        {
-            if (target == null || target.Author == null)
-            {
-                return false;
-            }
-            return target.Author.Name.IndexOf(searchingText) != -1;
-        }
-
-        private bool TitleContainsSearchText(BookViewModel target, string searchingText)
-        {
-            if (target == null)
-            {
-                return false;
-            }
-            return target.Title.IndexOf(searchingText) != -1;
-        }
-
-        public void ClearSearchResult()
-        {
-            SearchedBooks = null;
-
-            TagMng?.ClearSearchResult();
-            AuthorManager?.ClearSearchResult();
-        }
-
-        #endregion //検索
 
         #region コンテンツ読み込み
 
@@ -411,39 +220,6 @@ namespace Sunctum.Managers
         }
 
         #endregion //コンテンツ読み込み
-
-        #region 一般
-
-        public void RunTasks(List<Task> tasks, bool progressEnables = true)
-        {
-            int total = tasks.Count;
-
-            var timekeeper = new TimeKeeper();
-
-            for (int i = 0; i < total; ++i)
-            {
-                if (progressEnables)
-                {
-                    ProgressManager.UpdateProgress(i, total, timekeeper);
-                }
-
-                var t = tasks[i];
-
-                t.RunSynchronously();
-
-                if (total < tasks.Count)
-                {
-                    total = tasks.Count;
-                }
-            }
-
-            if (progressEnables)
-            {
-                ProgressManager.Complete();
-            }
-        }
-
-        #endregion //一般
 
         #region ソート
 
@@ -515,17 +291,9 @@ namespace Sunctum.Managers
             return Querying.IsDirty(this, book);
         }
 
-        public bool SortingSelected(string name)
-        {
-            return Querying.SortingSelected(this.Sorting, name);
-        }
-
         #endregion //問い合わせ
 
         #region サイズ更新
-
-        [Inject]
-        public IByteSizeCalculating ByteSizeCalculatingService { get; set; }
 
         public async Task UpdateBookByteSizeAll()
         {
@@ -541,33 +309,11 @@ namespace Sunctum.Managers
             await TaskManager.Enqueue(ByteSizeCalculatingService.GetTaskSequence());
         }
 
-        #endregion //サイズ更新
-
-        #region DispatcherObjectアクセス
-
-        public void AccessDispatcherObject(Action accessAction)
+        public IArrangedBookStorage CreateBookStorage()
         {
-            if (Application.Current?.Dispatcher == null) //For UnitTest
-            {
-                accessAction.Invoke();
-                return;
-            }
-
-            try
-            {
-                if (Application.Current.Dispatcher.CheckAccess())
-                {
-                    accessAction.Invoke();
-                }
-                else
-                {
-                    Application.Current.Dispatcher.Invoke(accessAction);
-                }
-            }
-            catch (NullReferenceException)
-            { }
+            return new BookCabinet(this.BookSource);
         }
 
-        #endregion
+        #endregion //サイズ更新
     }
 }

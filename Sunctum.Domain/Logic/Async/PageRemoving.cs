@@ -22,7 +22,7 @@ namespace Sunctum.Domain.Logic.Async
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
         [Inject]
-        public ILibraryManager LibraryManager { get; set; }
+        public ILibrary LibraryManager { get; set; }
 
         public IEnumerable<PageViewModel> TargetPages { get; set; }
 
@@ -50,7 +50,7 @@ namespace Sunctum.Domain.Logic.Async
         }
 
         [Obsolete]
-        public static List<Task> GenerateRemoveTasks(ILibraryManager libVM, PageViewModel[] pages, DataOperationUnit dataOpUnit)
+        public static List<Task> GenerateRemoveTasks(ILibrary libVM, PageViewModel[] pages, DataOperationUnit dataOpUnit)
         {
             List<Task> tasks = new List<Task>();
 
@@ -66,9 +66,9 @@ namespace Sunctum.Domain.Logic.Async
             return tasks;
         }
 
-        private static void RemovePageFromBook(ILibraryManager libVM, PageViewModel page)
+        private static void RemovePageFromBook(ILibrary libVM, PageViewModel page)
         {
-            var bookInLib = libVM.LoadedBooks.Where(b => b.ID == page.BookID).Single();
+            var bookInLib = libVM.BookSource.Where(b => b.ID == page.BookID).Single();
             libVM.AccessDispatcherObject(() => bookInLib.RemovePage(page));
         }
 

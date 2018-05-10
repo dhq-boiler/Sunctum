@@ -20,7 +20,7 @@ namespace Sunctum.Domain.Test.UnitTest
         private string _filePath;
         private string _dirPath;
         private string _dataPath;
-        private ILibraryManager _libManager;
+        private ILibrary _libManager;
 
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -48,7 +48,7 @@ namespace Sunctum.Domain.Test.UnitTest
 
             _dataPath = Path.Combine(_dirPath, "data");
 
-            _libManager = s_bootstrapper.Get<ILibraryManager>();
+            _libManager = s_bootstrapper.Get<ILibrary>();
 
             AsyncContext.Run(async () =>
             {
@@ -61,7 +61,7 @@ namespace Sunctum.Domain.Test.UnitTest
         [Test]
         public void ChangingPageOrderTest()
         {
-            var book = _libManager.LoadedBooks.First();
+            var book = _libManager.BookSource.First();
 
             //ブックの読み込み
             _libManager.RunFillContentsWithImage(book);
@@ -96,7 +96,7 @@ namespace Sunctum.Domain.Test.UnitTest
                 await _libManager.Load();
             });
 
-            book = _libManager.LoadedBooks.First();
+            book = _libManager.BookSource.First();
 
             //ブックの読み込み
             _libManager.RunFillContentsWithImage(book);

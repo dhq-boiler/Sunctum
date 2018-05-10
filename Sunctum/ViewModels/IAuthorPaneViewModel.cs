@@ -13,7 +13,7 @@ namespace Sunctum.ViewModels
         ObservableCollection<Control> AuthorContextMenuItems { get; set; }
         List<AuthorCountViewModel> AuthorListBoxSelectedItems { get; set; }
         IAuthorManager AuthorManager { get; set; }
-        ILibraryManager LibraryManager { get; set; }
+        ILibrary LibraryManager { get; set; }
         IMainWindowViewModel MainWindowViewModel { get; set; }
 
         void BuildContextMenus_Authors();

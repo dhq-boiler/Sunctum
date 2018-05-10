@@ -15,7 +15,7 @@ namespace Sunctum.Domain.Logic.Async
     public class RecentOpenedLibraryUpdating : AsyncTaskMakerBase, IRecentOpenedLibraryUpdating
     {
         [Inject]
-        public ILibraryManager LibraryManager { get; set; }
+        public ILibrary LibraryManager { get; set; }
 
         [Inject]
         public IDataAccessManager DataAccessManager { get; set; }

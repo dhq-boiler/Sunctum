@@ -20,7 +20,7 @@ namespace Sunctum.Domain.Test.UnitTest
     public class PageDaoTest
     {
         private static TestBootstrapper s_bootstrapper;
-        private ILibraryManager _libManager;
+        private ILibrary _libManager;
         private string _filePath;
         private string _dirPath;
 
@@ -49,7 +49,7 @@ namespace Sunctum.Domain.Test.UnitTest
             config.WorkingDirectory = _dirPath;
             Configuration.ApplicationConfiguration = config;
 
-            _libManager = s_bootstrapper.Get<ILibraryManager>();
+            _libManager = s_bootstrapper.Get<ILibrary>();
             _libManager.Initialize().Wait();
             _libManager.Load().Wait();
         }

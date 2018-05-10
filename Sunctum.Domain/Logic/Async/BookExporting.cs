@@ -19,7 +19,7 @@ namespace Sunctum.Domain.Logic.Async
         private string _bookDir;
 
         [Inject]
-        public ILibraryManager LibraryManager { get; set; }
+        public ILibrary LibraryManager { get; set; }
 
         public IEnumerable<BookViewModel> TargetBooks { get; set; }
 

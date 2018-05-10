@@ -12,7 +12,7 @@ namespace Sunctum.ViewModels
     public interface ITagPaneViewModel
     {
         ICommand ClearResultSearchingByTagCommand { get; set; }
-        ILibraryManager LibraryManager { get; set; }
+        ILibrary LibraryManager { get; set; }
         IMainWindowViewModel MainWindowViewModel { get; set; }
         ObservableCollection<Control> TagContextMenuItems { get; set; }
         List<TagCountViewModel> TagListBoxSelectedItems { get; set; }

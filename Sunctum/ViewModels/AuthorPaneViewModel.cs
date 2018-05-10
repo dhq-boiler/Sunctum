@@ -23,7 +23,7 @@ namespace Sunctum.ViewModels
         public IHomeDocumentViewModel HomeDocumentViewModel { get; set; }
 
         [Inject]
-        public ILibraryManager LibraryManager { get; set; }
+        public ILibrary LibraryManager { get; set; }
 
         [Inject]
         public IAuthorManager AuthorManager { get; set; }
@@ -119,17 +119,20 @@ namespace Sunctum.ViewModels
 
         private void ClearResultSearchingByAuthor()
         {
-            LibraryManager.ClearSearchResult();
+            var activeViewModel = MainWindowViewModel.ActiveDocumentViewModel;
+            activeViewModel.BookCabinet.ClearSearchResult();
+            AuthorManager.ClearSearchResult();
         }
 
         private void SearchByAuthor(IEnumerable<AuthorCountViewModel> items)
         {
-            LibraryManager.ClearSearchResult();
+            var activeViewModel = MainWindowViewModel.ActiveDocumentViewModel;
+            activeViewModel.BookCabinet.ClearSearchResult();
             foreach (var item in items)
             {
                 item.IsSearchingKey = true;
             }
-            AuthorManager.ShowBySelectedItems(LibraryManager, items.Select(ac => ac.Author));
+            AuthorManager.ShowBySelectedItems(items.Select(ac => ac.Author));
             HomeDocumentViewModel.ResetScrollOffset();
         }
     }

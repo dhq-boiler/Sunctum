@@ -26,7 +26,7 @@ namespace Sunctum.Domain.Logic.Async
         internal BookViewModel NewBook { get { return _newBook; } set { _newBook = value; } }
 
         [Inject]
-        public ILibraryManager LibraryManager { get; set; }
+        public ILibrary LibraryManager { get; set; }
 
         public string Title { get; set; }
 
@@ -102,7 +102,7 @@ namespace Sunctum.Domain.Logic.Async
         }
 
         [Obsolete]
-        public static List<System.Threading.Tasks.Task> GenerateScrapPagesTasks(ILibraryManager libVM, string title, ref PageViewModel[] pages, string masterDirectory)
+        public static List<System.Threading.Tasks.Task> GenerateScrapPagesTasks(ILibrary libVM, string title, ref PageViewModel[] pages, string masterDirectory)
         {
             pages = pages.OrderBy(a => a.Title, new NaturalStringComparer()).ToArray();
 

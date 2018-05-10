@@ -19,7 +19,7 @@ namespace Sunctum.Domain.Logic.Async
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
         [Inject]
-        public ILibraryManager LibraryManager { get; set; }
+        public ILibrary LibraryManager { get; set; }
 
         [Inject]
         public IByteSizeCalculating ByteSizeCalculatingService { get; set; }

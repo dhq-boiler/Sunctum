@@ -15,7 +15,7 @@ namespace Sunctum.Domain.Logic.Async
         private Stopwatch _stopwatch = new Stopwatch();
 
         [Inject]
-        public ILibraryManager LibraryManager { get; set; }
+        public ILibrary LibraryManager { get; set; }
 
         [Inject]
         public IAuthorManager AuthorManager { get; set; }
@@ -33,7 +33,7 @@ namespace Sunctum.Domain.Logic.Async
 
             sequence.Add(() => _stopwatch.Start());
 
-            sequence.Add(() => LibraryManager.LoadedBooks.CollectionChanged -= AuthorManager.LoadedBooks_CollectionChanged);
+            sequence.Add(() => LibraryManager.BookSource.CollectionChanged -= AuthorManager.LoadedBooks_CollectionChanged);
 
             sequence.Add(() =>
             {
@@ -44,7 +44,7 @@ namespace Sunctum.Domain.Logic.Async
                 }
             });
 
-            sequence.Add(() => LibraryManager.LoadedBooks.CollectionChanged += AuthorManager.LoadedBooks_CollectionChanged);
+            sequence.Add(() => LibraryManager.BookSource.CollectionChanged += AuthorManager.LoadedBooks_CollectionChanged);
 
             sequence.Add(() => _stopwatch.Stop());
 

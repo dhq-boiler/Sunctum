@@ -7,7 +7,7 @@ namespace Sunctum.Domain.Logic.Async
 {
     public interface IBookImporting : IAsyncTaskMaker
     {
-        ILibraryManager LibraryManager { get; set; }
+        ILibrary LibraryManager { get; set; }
 
         IEnumerable<string> ObjectPaths { get; set; }
 

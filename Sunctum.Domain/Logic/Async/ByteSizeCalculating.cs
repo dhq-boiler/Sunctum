@@ -18,7 +18,7 @@ namespace Sunctum.Domain.Logic.Async
         private long _byteSize;
 
         [Inject]
-        public ILibraryManager LibraryManager { get; set; }
+        public ILibrary LibraryManager { get; set; }
 
         public UpdateRange Range { get; set; }
 
@@ -77,7 +77,7 @@ namespace Sunctum.Domain.Logic.Async
             sequence.Add(() => s_logger.Info($"Finish ByteSizeCalculating"));
         }
 
-        private IEnumerable<Task> GenerateTasksToCalcBook(ILibraryManager libVM, BookViewModel book)
+        private IEnumerable<Task> GenerateTasksToCalcBook(ILibrary libVM, BookViewModel book)
         {
             List<Task> ret = new List<Task>();
 

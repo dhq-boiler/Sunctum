@@ -10,6 +10,7 @@ using Sunctum.Domain.Logic.ImageTagCountSorting;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using Sunctum.Infrastructure.Core;
+using Sunctum.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -42,6 +43,9 @@ namespace Sunctum.Managers
         public ICommand RemoveTagFromEntriesCommand { get; set; }
 
         #endregion //コマンド
+
+        [Inject]
+        public IMainWindowViewModel MainWindowViewModel { get; set; }
 
         public TagManager()
         {
@@ -522,31 +526,29 @@ namespace Sunctum.Managers
             }
         }
 
-        public void ShowBySelectedItems(ILibraryManager library)
+        public void ShowBySelectedItems()
         {
-            Contract.Requires(library != null);
-            Contract.Requires(library.TagMng != null);
-            Contract.Requires(library.TagMng.SelectedItems != null);
+            var activeViewModel = MainWindowViewModel.ActiveDocumentViewModel;
 
             var images = ImageFacade.FindAll();
             var pages = PageFacade.FindAll();
-            var books = library.LoadedBooks.Select(b => b);
+            var books = activeViewModel.BookCabinet.BookSource.Select(b => b);
 
             books = (from bk in books
                      join pg in pages on bk.ID equals pg.BookID
                      join img in images on pg.ImageID equals img.ID
-                     join ic in library.TagMng.Chains on img.ID equals ic.ImageID
-                     join tg in library.TagMng.SelectedItems on ic.TagID equals tg.ID
+                     join ic in Chains on img.ID equals ic.ImageID
+                     join tg in SelectedItems on ic.TagID equals tg.ID
                      select bk).Distinct();
 
-            library.SearchedBooks = new ObservableCollection<BookViewModel>(books.ToList());
+            activeViewModel.BookCabinet.SearchedBooks = new ObservableCollection<BookViewModel>(books.ToList());
         }
 
-        public void ShowBySelectedItems(ILibraryManager library, IEnumerable<TagViewModel> searchItems)
+        public void ShowBySelectedItems(IEnumerable<TagViewModel> searchItems)
         {
             SelectedItems = searchItems.ToList();
 
-            ShowBySelectedItems(library);
+            ShowBySelectedItems();
         }
 
         public bool IsSearching()

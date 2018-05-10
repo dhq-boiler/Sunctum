@@ -262,7 +262,7 @@
                 x:Name="Book_ListView"
                 AllowDrop="True"
                 Drop="Book_ListView_Drop"
-                ItemsSource="{Binding OnStage}"
+                ItemsSource="{Binding BookCabinet.OnStage}"
                 PreviewDragOver="Book_ListView_PreviewDragOver"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                 SelectionChanged="Book_ListView_SelectionChanged"

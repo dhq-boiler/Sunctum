@@ -5,6 +5,7 @@ using NLog;
 using Prism.Commands;
 using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
+using Reactive.Bindings.Extensions;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Data.Dao.Migration.Plan;
 using Sunctum.Domain.Data.DaoFacade;
@@ -26,6 +27,7 @@ using System.Collections.ObjectModel;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
@@ -33,11 +35,11 @@ using System.Windows.Input;
 
 namespace Sunctum.ViewModels
 {
-    public class MainWindowViewModel : BindableBase, IMainWindowViewModel
+    public class MainWindowViewModel : BindableBase, IMainWindowViewModel, IDisposable
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
-        private ILibraryManager _LibraryVM;
+        private ILibrary _LibraryVM;
         private string _MainWindowTitle;
         private bool _DisplayTagPane;
         private bool _DisplayInformationPane;
@@ -50,6 +52,7 @@ namespace Sunctum.ViewModels
         private double _WindowHeight;
         private ObservableCollection<DocumentViewModelBase> _TabItemViewModels;
         private int _SelectedTabIndex;
+        private CompositeDisposable _disposable = new CompositeDisposable();
 
         #region コマンド
 
@@ -127,11 +130,11 @@ namespace Sunctum.ViewModels
             });
             ClearSearchResultCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.ClearSearchResult();
+                ActiveDocumentViewModel.BookCabinet.ClearSearchResult();
             });
             ExitApplicationCommand = new DelegateCommand(() =>
             {
-                Exit();
+                Close();
             });
             GeneralCancelCommand = new DelegateCommand(() =>
             {
@@ -181,51 +184,51 @@ namespace Sunctum.ViewModels
             });
             SortBookByAuthorAscCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.Sorting = BookSorting.ByAuthorAsc;
+                HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.ByAuthorAsc;
             });
             SortBookByAuthorDescCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.Sorting = BookSorting.ByAuthorDesc;
+                HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.ByAuthorDesc;
             });
             SortBookByCoverBlueAscCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.Sorting = BookSorting.ByCoverBlueAsc;
+                HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.ByCoverBlueAsc;
             });
             SortBookByCoverBlueDescCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.Sorting = BookSorting.ByCoverBlueDesc;
+                HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.ByCoverBlueDesc;
             });
             SortBookByCoverGreenAscCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.Sorting = BookSorting.ByCoverGreenAsc;
+                HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.ByCoverGreenAsc;
             });
             SortBookByCoverGreenDescCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.Sorting = BookSorting.ByCoverGreenDesc;
+                HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.ByCoverGreenDesc;
             });
             SortBookByCoverRedAscCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.Sorting = BookSorting.ByCoverRedAsc;
+                HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.ByCoverRedAsc;
             });
             SortBookByCoverRedDescCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.Sorting = BookSorting.ByCoverRedDesc;
+                HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.ByCoverRedDesc;
             });
             SortBookByLoadedAscCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.Sorting = BookSorting.ByLoadedAsc;
+                HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.ByLoadedAsc;
             });
             SortBookByLoadedDescCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.Sorting = BookSorting.ByLoadedDesc;
+                HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.ByLoadedDesc;
             });
             SortBookByTitleAscCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.Sorting = BookSorting.ByTitleAsc;
+                HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.ByTitleAsc;
             });
             SortBookByTitleDescCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.Sorting = BookSorting.ByTitleDesc;
+                HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.ByTitleDesc;
             });
             SwitchLibraryCommand = new DelegateCommand<RecentOpenedLibrary>(async (p) =>
             {
@@ -277,7 +280,7 @@ namespace Sunctum.ViewModels
         }
 
         [Inject]
-        public ILibraryManager LibraryVM
+        public ILibrary LibraryVM
         {
             [DebuggerStepThrough]
             get
@@ -374,13 +377,26 @@ namespace Sunctum.ViewModels
         public ObservableCollection<DocumentViewModelBase> TabItemViewModels
         {
             get { return _TabItemViewModels; }
-            set { SetProperty(ref _TabItemViewModels, value); }
+            set
+            {
+                SetProperty(ref _TabItemViewModels, value);
+                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => ActiveDocumentViewModel));
+            }
         }
 
         public int SelectedTabIndex
         {
             get { return _SelectedTabIndex; }
-            set { SetProperty(ref _SelectedTabIndex, value); }
+            set
+            {
+                SetProperty(ref _SelectedTabIndex, value);
+                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => ActiveDocumentViewModel));
+            }
+        }
+
+        public DocumentViewModelBase ActiveDocumentViewModel
+        {
+            get { return TabItemViewModels[SelectedTabIndex]; }
         }
 
         #endregion
@@ -403,15 +419,6 @@ namespace Sunctum.ViewModels
                 OpenSwitchLibraryDialogAndChangeWorkingDirectory();
             }
 
-            if (starting)
-            {
-                var sorting = Configuration.ApplicationConfiguration.BookSorting;
-                if (sorting != null)
-                {
-                    HomeDocumentViewModel.Sorting = BookSorting.GetReferenceByName(sorting);
-                }
-            }
-
             TabItemViewModels = new ObservableCollection<DocumentViewModelBase>();
             TabItemViewModels.Add((DocumentViewModelBase)HomeDocumentViewModel);
 
@@ -422,7 +429,6 @@ namespace Sunctum.ViewModels
             SetMainWindowTitle();
             HomeDocumentViewModel.ClearSearchResult();
             InitializeWindowComponent();
-            SetEventToLibraryManager();
             ManageAppDB();
 
             Configuration.ApplicationConfiguration.ConnectionString = Specifications.GenerateConnectionString(Configuration.ApplicationConfiguration.WorkingDirectory);
@@ -431,7 +437,23 @@ namespace Sunctum.ViewModels
 
             await LibraryVM.Initialize();
             await LibraryVM.Load()
-                .ContinueWith(_ => HomeDocumentViewModel.BookSource = LibraryVM.LoadedBooks);
+                .ContinueWith(_ =>
+                {
+                    HomeDocumentViewModel.BookCabinet = LibraryVM.CreateBookStorage();
+                    (LibraryVM as IObservable<BookCollectionChanged>)
+                        .Subscribe(HomeDocumentViewModel.BookCabinet as IObserver<BookCollectionChanged>)
+                        .AddTo(_disposable);
+
+                    if (starting)
+                    {
+                        var sorting = Configuration.ApplicationConfiguration.BookSorting;
+                        if (sorting != null)
+                        {
+                            HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.GetReferenceByName(sorting);
+                        }
+                    }
+                    SetEvent();
+                });
         }
 
         private void ManageAppDB()
@@ -499,11 +521,11 @@ namespace Sunctum.ViewModels
             }
         }
 
-        private void SetEventToLibraryManager()
+        private void SetEvent()
         {
             LibraryVM.ProgressManager.PropertyChanged += ProgressManager_PropertyChanged;
-            LibraryVM.SearchCleared += LibraryVM_SearchCleared;
-            LibraryVM.Searched += LibraryVM_Searched;
+            HomeDocumentViewModel.BookCabinet.SearchCleared += LibraryVM_SearchCleared;
+            HomeDocumentViewModel.BookCabinet.Searched += LibraryVM_Searched;
         }
 
         private void InitializeWindowComponent()
@@ -598,7 +620,7 @@ namespace Sunctum.ViewModels
         public void Terminate()
         {
             var config = Configuration.ApplicationConfiguration;
-            config.BookSorting = BookSorting.GetPropertyName(HomeDocumentViewModel.Sorting);
+            config.BookSorting = BookSorting.GetPropertyName(HomeDocumentViewModel.BookCabinet.Sorting);
             config.DisplayAuthorPane = DisplayAuthorPane;
             config.DisplayInformationPane = DisplayInformationPane;
             config.DisplayTagPane = DisplayTagPane;
@@ -611,9 +633,11 @@ namespace Sunctum.ViewModels
                 config.WindowRect = null;
             }
             Configuration.Save(config);
+
+            Dispose();
         }
 
-        public void Exit()
+        public void Close()
         {
             CloseRequest.Raise(new Notification());
         }
@@ -710,7 +734,7 @@ namespace Sunctum.ViewModels
                 new Action<AuthorViewModel>((target) =>
                 {
                     AuthorFacade.Update(target);
-                    var willUpdate = LibraryVM.LoadedBooks.Where(b => b.AuthorID == target.ID);
+                    var willUpdate = LibraryVM.BookSource.Where(b => b.AuthorID == target.ID);
                     foreach (var x in willUpdate)
                     {
                         x.Author = target.Clone() as AuthorViewModel;
@@ -719,7 +743,7 @@ namespace Sunctum.ViewModels
                 new Action<Guid>((id) =>
                 {
                     AuthorFacade.Delete(id);
-                    var willUpdate = LibraryVM.LoadedBooks.Where(b => b.AuthorID == id);
+                    var willUpdate = LibraryVM.BookSource.Where(b => b.AuthorID == id);
                     foreach (var x in willUpdate)
                     {
                         x.Author = null;
@@ -728,7 +752,7 @@ namespace Sunctum.ViewModels
                 new Action<AuthorViewModel, AuthorViewModel>((willDiscard, into) =>
                 {
                     AuthorFacade.Delete(willDiscard.ID);
-                    var willUpdate = LibraryVM.LoadedBooks.Where(b => b.AuthorID == willDiscard.ID);
+                    var willUpdate = LibraryVM.BookSource.Where(b => b.AuthorID == willDiscard.ID);
                     foreach (var x in willUpdate)
                     {
                         x.Author = into.Clone() as AuthorViewModel;
@@ -760,6 +784,11 @@ namespace Sunctum.ViewModels
             {
                 await LibraryVM.ImportAsync(new string[] { dialog.FileName });
             }
+        }
+
+        public void Dispose()
+        {
+            _disposable.Dispose();
         }
     }
 }

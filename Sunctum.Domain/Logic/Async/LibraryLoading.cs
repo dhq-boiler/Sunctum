@@ -14,7 +14,7 @@ namespace Sunctum.Domain.Logic.Async
         public IAuthorManager AuthorManager { get; set; }
 
         [Inject]
-        public ILibraryManager LibraryManager { get; set; }
+        public ILibrary LibraryManager { get; set; }
 
         [Inject]
         public ITagManager TagManager { get; set; }

@@ -13,9 +13,9 @@ namespace Sunctum.Domain.Logic.Query
 {
     public class Querying
     {
-        public static bool IsDirty(ILibraryManager libVM, BookViewModel book)
+        public static bool IsDirty(ILibrary libVM, BookViewModel book)
         {
-            BookViewModel refBook = libVM.LoadedBooks.Where(b => b.ID.Equals(book.ID)).Single();
+            BookViewModel refBook = libVM.BookSource.Where(b => b.ID.Equals(book.ID)).Single();
             return !book.Equals(refBook);
         }
 

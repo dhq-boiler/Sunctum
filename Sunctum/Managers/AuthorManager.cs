@@ -1,18 +1,18 @@
 ﻿
 
+using Ninject;
 using NLog;
 using Prism.Mvvm;
-using Sunctum.Domain.Bridge;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.AuthorSorting;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using Sunctum.Infrastructure.Core;
+using Sunctum.ViewModels;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -29,6 +29,9 @@ namespace Sunctum.Managers
         private ObservableCollection<AuthorCountViewModel> _AuthorCount;
         private ObservableCollection<AuthorCountViewModel> _SearchedAuthors;
         private IAuthorSorting _AuthorSorting;
+
+        [Inject]
+        public IMainWindowViewModel MainWindowViewModel { get; set; }
 
         public AuthorManager()
         {
@@ -294,24 +297,22 @@ namespace Sunctum.Managers
             RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => AuthorCount));
         }
 
-        public void ShowBySelectedItems(ILibraryManager library)
+        public void ShowBySelectedItems()
         {
-            Contract.Requires(library != null);
-            Contract.Requires(library.AuthorManager != null);
-            Contract.Requires(library.AuthorManager.SelectedItems != null);
+            var activeViewModel = MainWindowViewModel.ActiveDocumentViewModel;
 
-            var books = from b in library.LoadedBooks
-                        join s in library.AuthorManager.SelectedItems on b.AuthorID equals s.ID
+            var books = from b in activeViewModel.BookCabinet.BookSource
+                        join s in SelectedItems on b.AuthorID equals s.ID
                         select b;
 
-            library.SearchedBooks = new ObservableCollection<BookViewModel>(books.ToList());
+            activeViewModel.BookCabinet.SearchedBooks = new ObservableCollection<BookViewModel>(books.ToList());
         }
 
-        public void ShowBySelectedItems(ILibraryManager library, IEnumerable<AuthorViewModel> searchItems)
+        public void ShowBySelectedItems(IEnumerable<AuthorViewModel> searchItems)
         {
             SelectedItems = searchItems.ToList();
 
-            ShowBySelectedItems(library);
+            ShowBySelectedItems();
         }
 
         public void ClearSearchResult()

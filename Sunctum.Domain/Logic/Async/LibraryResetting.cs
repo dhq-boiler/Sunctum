@@ -11,7 +11,7 @@ namespace Sunctum.Domain.Logic.Async
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
         [Inject]
-        public ILibraryManager LibraryManager { get; set; }
+        public ILibrary LibraryManager { get; set; }
 
         public override void ConfigurePreTaskAction(AsyncTaskSequence sequence)
         {
@@ -30,13 +30,13 @@ namespace Sunctum.Domain.Logic.Async
 
         private void CleanUp()
         {
-            if (LibraryManager.LoadedBooks != null)
+            if (LibraryManager.BookSource != null)
             {
-                foreach (var book in LibraryManager.LoadedBooks)
+                foreach (var book in LibraryManager.BookSource)
                 {
                     book.Dispose();
                 }
-                LibraryManager.LoadedBooks.Clear();
+                LibraryManager.BookSource.Clear();
             }
         }
     }

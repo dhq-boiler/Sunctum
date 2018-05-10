@@ -5,7 +5,6 @@ using NLog;
 using Prism.Commands;
 using Prism.Interactivity.InteractionRequest;
 using Sunctum.Core.Extensions;
-using Sunctum.Domain.Logic.BookSorting;
 using Sunctum.Domain.Logic.Load;
 using Sunctum.Domain.Logic.Query;
 using Sunctum.Domain.Models;
@@ -20,7 +19,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -30,22 +28,19 @@ namespace Sunctum.ViewModels
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
         private bool _SearchPaneIsVisible;
-        private ObservableCollection<BookViewModel> _BookSource;
-        private IBookSorting _BookSorting;
-        private ObservableCollection<BookViewModel> _SearchedBooks;
         private BookViewModel _OpenedBook;
         private PageViewModel _OpenedPage;
         private string _ActiveContent;
         private string _SearchText;
         private ObservableCollection<Control> _BooksContextMenuItems;
         private ObservableCollection<Control> _ContentsContextMenuItems;
-        private Dictionary<Guid, Point> _scrollOffset;
         private List<EntryViewModel> _SelectedEntries;
         private List<BookViewModel> _BookListViewSelectedItems;
         private List<PageViewModel> _ContentsListViewSelectedItems;
+        private string _previousSearchingText;
 
         [Inject]
-        public ILibraryManager LibraryManager { get; set; }
+        public ILibrary LibraryManager { get; set; }
 
         [Inject]
         public ITagManager TagManager { get; set; }
@@ -100,71 +95,6 @@ namespace Sunctum.ViewModels
         {
             get { return _SearchPaneIsVisible; }
             set { SetProperty(ref _SearchPaneIsVisible, value); }
-        }
-
-        public ObservableCollection<BookViewModel> BookSource
-        {
-            get { return _BookSource; }
-            set
-            {
-                SetProperty(ref _BookSource, value);
-                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
-            }
-        }
-
-        public ObservableCollection<BookViewModel> SearchedBooks
-        {
-            [DebuggerStepThrough]
-            get
-            { return _SearchedBooks; }
-            set
-            {
-                SetProperty(ref _SearchedBooks, value);
-                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
-                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => IsSearching));
-            }
-        }
-
-        private ObservableCollection<BookViewModel> DisplayableBookSource
-        {
-            [DebuggerStepThrough]
-            get
-            {
-                if (SearchedBooks != null)
-                {
-                    return SearchedBooks;
-                }
-                else
-                {
-                    return BookSource;
-                }
-            }
-        }
-
-        public ObservableCollection<BookViewModel> OnStage
-        {
-            get
-            {
-                var newCollection = Sorting.Sort(DisplayableBookSource);
-                return new ObservableCollection<BookViewModel>(newCollection);
-            }
-        }
-
-        public bool IsSearching
-        {
-            [DebuggerStepThrough]
-            get
-            { return SearchedBooks != null; }
-        }
-
-        public IBookSorting Sorting
-        {
-            get { return _BookSorting; }
-            set
-            {
-                SetProperty(ref _BookSorting, value);
-                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
-            }
         }
 
         public BookViewModel OpenedBook
@@ -266,16 +196,6 @@ namespace Sunctum.ViewModels
             set { SetProperty(ref _ContentsListViewSelectedItems, value); }
         }
 
-        public InteractionRequest<Notification> ResetScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
-
-        public InteractionRequest<Notification> StoreBookScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
-
-        public InteractionRequest<Notification> StoreContentScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
-
-        public InteractionRequest<Notification> RestoreBookScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
-
-        public InteractionRequest<Notification> RestoreContentScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
-
         public InteractionRequest<Notification> BlinkGoNextButtonRequest { get; } = new InteractionRequest<Notification>();
 
         public InteractionRequest<Notification> BlinkGoBackButtonRequest { get; } = new InteractionRequest<Notification>();
@@ -283,8 +203,6 @@ namespace Sunctum.ViewModels
         public HomeDocumentViewModel()
         {
             RegisterCommands();
-            BookSource = new ObservableCollection<BookViewModel>();
-            Sorting = BookSorting.ByLoadedAsc;
             SelectedEntries = new List<EntryViewModel>();
         }
 
@@ -401,7 +319,7 @@ namespace Sunctum.ViewModels
                 }
                 else
                 {
-                    if (IsSearching)
+                    if (BookCabinet.IsSearching)
                     {
                         ClearSearchResult();
                         CloseSearchPane();
@@ -591,7 +509,6 @@ namespace Sunctum.ViewModels
         #endregion //操作
 
         #region 検索
-        private string _previousSearchingText;
 
         public event EventHandler SearchCleared;
         public event SearchedEventHandler Searched;
@@ -612,14 +529,14 @@ namespace Sunctum.ViewModels
             {
                 if (string.IsNullOrEmpty(searchingText))
                 {
-                    SearchedBooks = null;
+                    BookCabinet.SearchedBooks = null;
 
                     OnSearchCleared(new EventArgs());
                 }
                 else
                 {
                     s_logger.Debug($"Search Word:{searchingText}");
-                    SearchedBooks = new ObservableCollection<BookViewModel>(BookSource.Where(b => AuthorNameContainsSearchText(b, searchingText) || TitleContainsSearchText(b, searchingText)));
+                    BookCabinet.SearchedBooks = new ObservableCollection<BookViewModel>(BookCabinet.BookSource.Where(b => AuthorNameContainsSearchText(b, searchingText) || TitleContainsSearchText(b, searchingText)));
 
                     OnSearched(new SearchedEventArgs(searchingText, _previousSearchingText));
                 }
@@ -654,7 +571,10 @@ namespace Sunctum.ViewModels
         public void ClearSearchResult()
         {
             SearchText = "";
-            LibraryManager.ClearSearchResult();
+            if (BookCabinet != null)
+            {
+                BookCabinet.ClearSearchResult();
+            }
         }
 
         public void OpenSearchPane()
@@ -720,65 +640,6 @@ namespace Sunctum.ViewModels
         {
             OpenedPage = null;
             ActiveContent = "PageView";
-        }
-
-        public void ResetScrollOffsetPool()
-        {
-            _scrollOffset = new Dictionary<Guid, Point>();
-        }
-
-        public void StoreScrollOffset(Guid bookId)
-        {
-            if (_scrollOffset == null) return;
-
-            if (bookId.Equals(Guid.Empty))
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    StoreBookScrollOffsetRequest.Raise(new Notification()
-                    {
-                        Content = new Tuple<Dictionary<Guid, Point>, Guid>(_scrollOffset, bookId)
-                    });
-                });
-            }
-            else
-            {
-                StoreContentScrollOffsetRequest.Raise(new Notification()
-                {
-                    Content = new Tuple<Dictionary<Guid, Point>, Guid>(_scrollOffset, bookId)
-                });
-            }
-        }
-
-        public void RestoreScrollOffset(Guid bookId)
-        {
-            if (_scrollOffset == null) return;
-
-            if (bookId.Equals(Guid.Empty))
-            {
-                Application.Current.Dispatcher.Invoke(() =>
-                {
-                    RestoreBookScrollOffsetRequest.Raise(new Notification()
-                    {
-                        Content = new Tuple<Dictionary<Guid, Point>, Guid>(_scrollOffset, bookId)
-                    });
-                });
-            }
-            else
-            {
-                RestoreContentScrollOffsetRequest.Raise(new Notification()
-                {
-                    Content = new Tuple<Dictionary<Guid, Point>, Guid>(_scrollOffset, bookId)
-                });
-            }
-        }
-
-        public void ResetScrollOffset()
-        {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                ResetScrollOffsetRequest.Raise(new Notification());
-            });
         }
 
         #endregion
@@ -880,7 +741,7 @@ namespace Sunctum.ViewModels
 
         public bool SortingSelected(string name)
         {
-            return Querying.SortingSelected(this.Sorting, name);
+            return Querying.SortingSelected(this.BookCabinet.Sorting, name);
         }
 
         #endregion //問い合わせ

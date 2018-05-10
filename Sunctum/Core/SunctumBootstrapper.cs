@@ -36,7 +36,7 @@ namespace Sunctum.Core
             Kernel.Bind<ITagPaneViewModel>().To<TagPaneViewModel>().InSingletonScope();
             Kernel.Bind<IInformationPaneViewModel>().To<InformationPaneViewModel>().InSingletonScope();
 
-            Kernel.Bind<ILibraryManager>().To<LibraryManager>().InSingletonScope();
+            Kernel.Bind<ILibrary>().To<Library>().InSingletonScope();
             Kernel.Bind<ITagManager>().To<TagManager>().InSingletonScope();
             Kernel.Bind<IAuthorManager>().To<AuthorManager>().InSingletonScope();
             Kernel.Bind<IProgressManager>().To<ProgressManager>().InSingletonScope();

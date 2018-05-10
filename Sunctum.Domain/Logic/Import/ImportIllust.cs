@@ -50,7 +50,7 @@ namespace Sunctum.Domain.Logic.Import
             Count = _children.Count();
         }
 
-        public override IEnumerable<System.Threading.Tasks.Task> GenerateTasks(ILibraryManager library, string copyTo, string entryName, DataOperationUnit dataOpUnit)
+        public override IEnumerable<System.Threading.Tasks.Task> GenerateTasks(ILibrary library, string copyTo, string entryName, DataOperationUnit dataOpUnit)
         {
             List<System.Threading.Tasks.Task> ret = new List<System.Threading.Tasks.Task>();
 
@@ -78,7 +78,7 @@ namespace Sunctum.Domain.Logic.Import
             return ret;
         }
 
-        private void ProcessChild(ILibraryManager library, DataOperationUnit dataOpUnit, List<System.Threading.Tasks.Task> ret, string directoryPath, Importer child)
+        private void ProcessChild(ILibrary library, DataOperationUnit dataOpUnit, List<System.Threading.Tasks.Task> ret, string directoryPath, Importer child)
         {
             if (child is ImportPage)
             {

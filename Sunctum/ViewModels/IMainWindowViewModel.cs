@@ -11,9 +11,9 @@ namespace Sunctum.ViewModels
 
         void Terminate();
 
-        void Exit();
+        void Close();
 
-        ILibraryManager LibraryVM { get; }
+        ILibrary LibraryVM { get; }
 
         bool DisplayInformationPane { get; set; }
 
@@ -30,5 +30,7 @@ namespace Sunctum.ViewModels
         double WindowHeight { get; set; }
 
         void ShowPreferenceDialog();
+
+        DocumentViewModelBase ActiveDocumentViewModel { get; }
     }
 }

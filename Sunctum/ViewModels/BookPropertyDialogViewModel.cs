@@ -30,7 +30,7 @@ namespace Sunctum.ViewModels
         private int _SelectedAuthorIndex;
 
         [Inject]
-        public ILibraryManager LibraryManager { get; set; }
+        public ILibrary LibraryManager { get; set; }
 
         public ReactiveCommand SelectNextBookCommand { get; set; } = new ReactiveCommand();
 
@@ -97,7 +97,7 @@ namespace Sunctum.ViewModels
                         new Action<AuthorViewModel>((target) =>
                         {
                             AuthorFacade.Update(target);
-                            var willUpdate = LibraryManager.LoadedBooks.Where(b => b.AuthorID == target.ID);
+                            var willUpdate = LibraryManager.BookSource.Where(b => b.AuthorID == target.ID);
                             foreach (var x in willUpdate)
                             {
                                 x.Author = target.Clone() as AuthorViewModel;
@@ -106,7 +106,7 @@ namespace Sunctum.ViewModels
                         new Action<Guid>((id) =>
                         {
                             AuthorFacade.Delete(id);
-                            var willUpdate = LibraryManager.LoadedBooks.Where(b => b.AuthorID == id);
+                            var willUpdate = LibraryManager.BookSource.Where(b => b.AuthorID == id);
                             foreach (var x in willUpdate)
                             {
                                 x.Author = null;
@@ -115,7 +115,7 @@ namespace Sunctum.ViewModels
                         new Action<AuthorViewModel, AuthorViewModel>((willDiscard, into) =>
                         {
                             AuthorFacade.Delete(willDiscard.ID);
-                            var willUpdate = LibraryManager.LoadedBooks.Where(b => b.AuthorID == willDiscard.ID);
+                            var willUpdate = LibraryManager.BookSource.Where(b => b.AuthorID == willDiscard.ID);
                             foreach (var x in willUpdate)
                             {
                                 x.Author = into.Clone() as AuthorViewModel;

@@ -13,7 +13,7 @@ namespace Sunctum.Domain.Logic.Load
 {
     public static class ContentsLoadTask
     {
-        public static void FillContents(ILibraryManager libVm, BookViewModel book)
+        public static void FillContents(ILibrary libVm, BookViewModel book)
         {
             var pages = PageFacade.FindByBookId(book.ID).OrderBy(p => p.PageIndex);
 
@@ -28,7 +28,7 @@ namespace Sunctum.Domain.Logic.Load
             });
         }
 
-        public static void FillContentsWithImage(ILibraryManager libVm, BookViewModel book)
+        public static void FillContentsWithImage(ILibrary libVm, BookViewModel book)
         {
             var pages = PageFacade.FindByBookId(book.ID).OrderBy(p => p.PageIndex);
 

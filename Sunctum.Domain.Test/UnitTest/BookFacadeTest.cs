@@ -19,7 +19,7 @@ namespace Sunctum.Domain.Test.UnitTest
     public class BookFacadeTest
     {
         private static TestBootstrapper s_bootstrapper;
-        private static ILibraryManager s_libManager;
+        private static ILibrary s_libManager;
 
         private string _filePath;
         private readonly BookViewModel[] _books =
@@ -51,7 +51,7 @@ namespace Sunctum.Domain.Test.UnitTest
             config.WorkingDirectory = TestContext.CurrentContext.TestDirectory;
             Configuration.ApplicationConfiguration = config;
 
-            s_libManager = s_bootstrapper.Get<ILibraryManager>();
+            s_libManager = s_bootstrapper.Get<ILibrary>();
             s_libManager.Initialize().Wait();
             s_libManager.Load().Wait();
         }
