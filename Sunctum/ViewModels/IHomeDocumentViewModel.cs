@@ -63,6 +63,7 @@ namespace Sunctum.ViewModels
         Task SaveOpenedBookContentsOrder();
         void Search();
         void Search(string searchText);
+        bool SortingSelected(string name);
         void StoreScrollOffset(Guid bookId);
     }
 }

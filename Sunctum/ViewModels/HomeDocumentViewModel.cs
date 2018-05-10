@@ -7,6 +7,7 @@ using Prism.Interactivity.InteractionRequest;
 using Sunctum.Core.Extensions;
 using Sunctum.Domain.Logic.BookSorting;
 using Sunctum.Domain.Logic.Load;
+using Sunctum.Domain.Logic.Query;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
@@ -281,13 +282,7 @@ namespace Sunctum.ViewModels
         {
             RegisterCommands();
             BookSource = new ObservableCollection<BookViewModel>();
-
-            var sorting = Configuration.ApplicationConfiguration.BookSorting;
-            if (sorting != null)
-            {
-                Sorting = BookSorting.GetReferenceByName(sorting);
-            }
-
+            Sorting = BookSorting.ByLoadedAsc;
             SelectedEntries = new List<EntryViewModel>();
         }
 
@@ -878,5 +873,14 @@ namespace Sunctum.ViewModels
         }
 
         #endregion //インポート
+
+        #region 問い合わせ
+
+        public bool SortingSelected(string name)
+        {
+            return Querying.SortingSelected(this.Sorting, name);
+        }
+
+        #endregion //問い合わせ
     }
 }

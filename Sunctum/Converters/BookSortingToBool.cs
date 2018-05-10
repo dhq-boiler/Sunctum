@@ -2,6 +2,7 @@
 
 using Ninject;
 using Sunctum.Domain.Models.Managers;
+using Sunctum.ViewModels;
 using System;
 using System.Diagnostics;
 using System.Globalization;
@@ -15,11 +16,11 @@ namespace Sunctum.Converters
     public class BookSortingToBool : MarkupExtension, IValueConverter
     {
         [Inject]
-        public ILibraryManager LibraryVM { get; set; }
+        public IHomeDocumentViewModel viewModel { get; set; }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return LibraryVM?.SortingSelected(parameter as string);
+            return viewModel?.SortingSelected(parameter as string);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

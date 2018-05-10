@@ -48,8 +48,6 @@ namespace Sunctum.ViewModels
         private double _WindowTop;
         private double _WindowWidth;
         private double _WindowHeight;
-        private ObservableCollection<BindableBase> _DockingDocumentViewModels;
-        private ObservableCollection<BindableBase> _DockingPaneViewModels;
 
         #region コマンド
 
@@ -181,51 +179,51 @@ namespace Sunctum.ViewModels
             });
             SortBookByAuthorAscCommand = new DelegateCommand(() =>
             {
-                LibraryVM.Sorting = BookSorting.ByAuthorAsc;
+                HomeDocumentViewModel.Sorting = BookSorting.ByAuthorAsc;
             });
             SortBookByAuthorDescCommand = new DelegateCommand(() =>
             {
-                LibraryVM.Sorting = BookSorting.ByAuthorDesc;
+                HomeDocumentViewModel.Sorting = BookSorting.ByAuthorDesc;
             });
             SortBookByCoverBlueAscCommand = new DelegateCommand(() =>
             {
-                LibraryVM.Sorting = BookSorting.ByCoverBlueAsc;
+                HomeDocumentViewModel.Sorting = BookSorting.ByCoverBlueAsc;
             });
             SortBookByCoverBlueDescCommand = new DelegateCommand(() =>
             {
-                LibraryVM.Sorting = BookSorting.ByCoverBlueDesc;
+                HomeDocumentViewModel.Sorting = BookSorting.ByCoverBlueDesc;
             });
             SortBookByCoverGreenAscCommand = new DelegateCommand(() =>
             {
-                LibraryVM.Sorting = BookSorting.ByCoverGreenAsc;
+                HomeDocumentViewModel.Sorting = BookSorting.ByCoverGreenAsc;
             });
             SortBookByCoverGreenDescCommand = new DelegateCommand(() =>
             {
-                LibraryVM.Sorting = BookSorting.ByCoverGreenDesc;
+                HomeDocumentViewModel.Sorting = BookSorting.ByCoverGreenDesc;
             });
             SortBookByCoverRedAscCommand = new DelegateCommand(() =>
             {
-                LibraryVM.Sorting = BookSorting.ByCoverRedAsc;
+                HomeDocumentViewModel.Sorting = BookSorting.ByCoverRedAsc;
             });
             SortBookByCoverRedDescCommand = new DelegateCommand(() =>
             {
-                LibraryVM.Sorting = BookSorting.ByCoverRedDesc;
+                HomeDocumentViewModel.Sorting = BookSorting.ByCoverRedDesc;
             });
             SortBookByLoadedAscCommand = new DelegateCommand(() =>
             {
-                LibraryVM.Sorting = BookSorting.ByLoadedAsc;
+                HomeDocumentViewModel.Sorting = BookSorting.ByLoadedAsc;
             });
             SortBookByLoadedDescCommand = new DelegateCommand(() =>
             {
-                LibraryVM.Sorting = BookSorting.ByLoadedDesc;
+                HomeDocumentViewModel.Sorting = BookSorting.ByLoadedDesc;
             });
             SortBookByTitleAscCommand = new DelegateCommand(() =>
             {
-                LibraryVM.Sorting = BookSorting.ByTitleAsc;
+                HomeDocumentViewModel.Sorting = BookSorting.ByTitleAsc;
             });
             SortBookByTitleDescCommand = new DelegateCommand(() =>
             {
-                LibraryVM.Sorting = BookSorting.ByTitleDesc;
+                HomeDocumentViewModel.Sorting = BookSorting.ByTitleDesc;
             });
             SwitchLibraryCommand = new DelegateCommand<RecentOpenedLibrary>(async (p) =>
             {
@@ -368,18 +366,6 @@ namespace Sunctum.ViewModels
         [Inject]
         public IInformationPaneViewModel InformationPaneViewModel { get; set; }
 
-        public ObservableCollection<BindableBase> DockingDocumentViewModels
-        {
-            get { return _DockingDocumentViewModels; }
-            set { SetProperty(ref _DockingDocumentViewModels, value); }
-        }
-
-        public ObservableCollection<BindableBase> DockingPaneViewModels
-        {
-            get { return _DockingPaneViewModels; }
-            set { SetProperty(ref _DockingPaneViewModels, value); }
-        }
-
         [Inject]
         public IHomeDocumentViewModel HomeDocumentViewModel { get; set; }
 
@@ -408,7 +394,7 @@ namespace Sunctum.ViewModels
                 var sorting = Configuration.ApplicationConfiguration.BookSorting;
                 if (sorting != null)
                 {
-                    LibraryVM.Sorting = BookSorting.GetReferenceByName(sorting);
+                    HomeDocumentViewModel.Sorting = BookSorting.GetReferenceByName(sorting);
                 }
             }
 
@@ -507,14 +493,6 @@ namespace Sunctum.ViewModels
 
         private void InitializeWindowComponent()
         {
-            DockingDocumentViewModels = new ObservableCollection<BindableBase>();
-            DockingDocumentViewModels.Add(new HomeDocumentViewModel());
-
-            DockingPaneViewModels = new ObservableCollection<BindableBase>();
-            DockingPaneViewModels.Add(new AuthorPaneViewModel());
-            DockingPaneViewModels.Add(new TagPaneViewModel());
-            DockingPaneViewModels.Add(new InformationPaneViewModel());
-
             HomeDocumentViewModel.CloseSearchPane();
             HomeDocumentViewModel.CloseImage();
             HomeDocumentViewModel.CloseBook();
@@ -605,7 +583,7 @@ namespace Sunctum.ViewModels
         public void Terminate()
         {
             var config = Configuration.ApplicationConfiguration;
-            config.BookSorting = BookSorting.GetPropertyName(LibraryVM.Sorting);
+            config.BookSorting = BookSorting.GetPropertyName(HomeDocumentViewModel.Sorting);
             config.DisplayAuthorPane = DisplayAuthorPane;
             config.DisplayInformationPane = DisplayInformationPane;
             config.DisplayTagPane = DisplayTagPane;
@@ -768,23 +746,5 @@ namespace Sunctum.ViewModels
                 await LibraryVM.ImportAsync(new string[] { dialog.FileName });
             }
         }
-
-        //private async Task RemakeThumbnails(IEnumerable<PageViewModel> obj)
-        //{
-        //    if (obj.Count() > 0)
-        //    {
-        //        var first = obj.ElementAt(0);
-        //        string typeName = first.GetType().Name;
-        //        switch (typeName)
-        //        {
-        //            case nameof(BookViewModel):
-        //                await RemakeThumbnail(obj.Cast<BookViewModel>());
-        //                break;
-        //            case nameof(PageViewModel):
-        //                await RemakeThumbnail(obj.Cast<PageViewModel>());
-        //                break;
-        //        }
-        //    }
-        //}
     }
 }
