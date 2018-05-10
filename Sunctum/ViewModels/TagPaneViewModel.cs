@@ -26,6 +26,8 @@ namespace Sunctum.ViewModels
             get { return "tag"; }
         }
 
+        public override bool CanClose => true;
+
         public List<TagCountViewModel> TagListBoxSelectedItems
         {
             get { return _TagListBoxSelectedItems; }

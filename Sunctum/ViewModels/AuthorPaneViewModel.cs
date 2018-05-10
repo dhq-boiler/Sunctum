@@ -38,6 +38,8 @@ namespace Sunctum.ViewModels
             get { return "author"; }
         }
 
+        public override bool CanClose => true;
+
         public ObservableCollection<System.Windows.Controls.Control> AuthorContextMenuItems
         {
             get { return _AuthorContextMenuItems; }

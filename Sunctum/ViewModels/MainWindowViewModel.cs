@@ -48,6 +48,8 @@ namespace Sunctum.ViewModels
         private double _WindowTop;
         private double _WindowWidth;
         private double _WindowHeight;
+        private ObservableCollection<DocumentViewModelBase> _TabItemViewModels;
+        private int _SelectedTabIndex;
 
         #region コマンド
 
@@ -369,6 +371,18 @@ namespace Sunctum.ViewModels
         [Inject]
         public IHomeDocumentViewModel HomeDocumentViewModel { get; set; }
 
+        public ObservableCollection<DocumentViewModelBase> TabItemViewModels
+        {
+            get { return _TabItemViewModels; }
+            set { SetProperty(ref _TabItemViewModels, value); }
+        }
+
+        public int SelectedTabIndex
+        {
+            get { return _SelectedTabIndex; }
+            set { SetProperty(ref _SelectedTabIndex, value); }
+        }
+
         #endregion
 
         #region 一般
@@ -397,6 +411,13 @@ namespace Sunctum.ViewModels
                     HomeDocumentViewModel.Sorting = BookSorting.GetReferenceByName(sorting);
                 }
             }
+
+            TabItemViewModels = new ObservableCollection<DocumentViewModelBase>();
+            TabItemViewModels.Add((DocumentViewModelBase)HomeDocumentViewModel);
+
+            SelectedTabIndex = 0;
+            ((DocumentViewModelBase)HomeDocumentViewModel).IsVisible = true;
+            ((DocumentViewModelBase)HomeDocumentViewModel).IsSelected = true;
 
             SetMainWindowTitle();
             HomeDocumentViewModel.ClearSearchResult();

@@ -245,6 +245,7 @@
     <Compile Include="Views\ProgressBar.xaml.cs">
       <DependentUpon>ProgressBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\TabItemContainerStyleSelector.cs" />
     <Compile Include="Views\TagPane.xaml.cs">
       <DependentUpon>TagPane.xaml</DependentUpon>
     </Compile>

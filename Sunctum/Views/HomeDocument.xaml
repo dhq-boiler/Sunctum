@@ -13,13 +13,13 @@
     xmlns:ui.ctrl="clr-namespace:Sunctum.UI.Controls;assembly=Sunctum.UI"
     d:DesignHeight="450"
     d:DesignWidth="800"
-    prism:ViewModelLocator.AutoWireViewModel="True"
     mc:Ignorable="d">
     <UserControl.Resources>
         <cvt:MarginConverter x:Key="MarginConverter" />
         <cvt:BookCoverThumbnailLoader x:Key="BookCoverThumbnailLoader" />
         <cvt:PathToWriteableBitmap x:Key="ImageConverter" />
         <cvt:PageThumbnailLoader x:Key="PageThumbnailLoader" />
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <ItemsPanelTemplate x:Key="Contents_ItemPanelTemplate">
             <WrapPanel />
         </ItemsPanelTemplate>
@@ -185,7 +185,8 @@
             Grid.Column="0"
             Panel.ZIndex="1000"
             BorderBrush="Gray"
-            BorderThickness="1">
+            BorderThickness="1"
+            Visibility="{Binding SearchPaneIsVisible, Converter={StaticResource BoolToVisibilityConverter}}">
             <Border.Resources />
             <i:Interaction.Triggers>
                 <ei:PropertyChangedTrigger Binding="{Binding SearchPaneIsVisible}">

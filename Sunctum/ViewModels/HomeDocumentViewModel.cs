@@ -94,6 +94,8 @@ namespace Sunctum.ViewModels
             get { return "home"; }
         }
 
+        public override bool CanClose => false;
+
         public bool SearchPaneIsVisible
         {
             get { return _SearchPaneIsVisible; }

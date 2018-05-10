@@ -13,6 +13,7 @@
     xmlns:properties="clr-namespace:Sunctum.Properties"
     xmlns:trigger="clr-namespace:Sunctum.Views.Triggers"
     xmlns:ui.ctrl="clr-namespace:Sunctum.UI.Controls;assembly=Sunctum.UI"
+    xmlns:viewModel="clr-namespace:Sunctum.ViewModels"
     Title="{Binding MainWindowTitle}"
     Width="{Binding WindowWidth, Mode=TwoWay}"
     Height="{Binding WindowHeight, Mode=TwoWay}"
@@ -42,7 +43,7 @@
     <Window.InputBindings>
         <KeyBinding
             Key="F"
-            Command="{Binding OpenSearchPaneCommand}"
+            Command="{Binding HomeDocumentViewModel.OpenSearchPaneCommand}"
             Modifiers="Ctrl" />
         <KeyBinding Key="Esc" Command="{Binding GeneralCancelCommand}" />
         <KeyBinding
@@ -52,7 +53,7 @@
     </Window.InputBindings>
     <Window.Resources>
         <properties:Resources x:Key="resources" />
-        <cvt:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <cvt:BookSortingToBool x:Key="BookSortingToBool" />
         <cvt:PathToMenuItem x:Key="PathToMenuItem" />
     </Window.Resources>
@@ -187,10 +188,61 @@
         <DockPanel DockPanel.Dock="Right" Visibility="{Binding DisplayInformationPane, Converter={StaticResource BoolToVisibilityConverter}}">
             <local:InformationPane DataContext="{Binding InformationPaneViewModel}" />
         </DockPanel>
-        <TabControl>
-            <TabItem Header="Home">
-                <local:HomeDocument DataContext="{Binding HomeDocumentViewModel}" />
-            </TabItem>
+        <TabControl ItemsSource="{Binding TabItemViewModels}" SelectedIndex="{Binding SelectedTabIndex}">
+            <TabControl.ItemContainerStyleSelector>
+                <local:TabItemContainerStyleSelector>
+                    <local:TabItemTypedStyle DataType="{x:Type viewModel:HomeDocumentViewModel}">
+                        <Style TargetType="{x:Type TabItem}">
+                            <Setter Property="ContentTemplate">
+                                <Setter.Value>
+                                    <DataTemplate DataType="{x:Type viewModel:HomeDocumentViewModel}">
+                                        <DockPanel>
+                                            <local:HomeDocument DataContext="{Binding}" />
+                                        </DockPanel>
+                                    </DataTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                            <Setter Property="Visibility" Value="Visible" />
+                        </Style>
+                    </local:TabItemTypedStyle>
+                </local:TabItemContainerStyleSelector>
+            </TabControl.ItemContainerStyleSelector>
+            <TabControl.ItemTemplate>
+                <DataTemplate DataType="{x:Type viewModel:HomeDocumentViewModel}">
+                    <DockPanel Margin="0">
+                        <Button
+                            Width="15"
+                            Height="15"
+                            Margin="5,1,1,1"
+                            Background="Transparent"
+                            BorderBrush="Transparent"
+                            DockPanel.Dock="Right"
+                            Visibility="{Binding CanClose, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <Canvas
+                                Name="canvas"
+                                Width="11"
+                                Height="11">
+                                <Path Stroke="Black" StrokeThickness="1.5">
+                                    <Path.Data>
+                                        <PathGeometry>
+                                            <PathGeometry.Figures>
+                                                <PathFigure StartPoint="1,1">
+                                                    <LineSegment Point="10,10" />
+                                                </PathFigure>
+                                                <PathFigure StartPoint="1,10">
+                                                    <LineSegment Point="10,1" />
+                                                </PathFigure>
+                                            </PathGeometry.Figures>
+                                        </PathGeometry>
+                                    </Path.Data>
+                                </Path>
+                            </Canvas>
+                        </Button>
+                        <TextBlock Height="20" Text="{Binding Title}" />
+                    </DockPanel>
+                </DataTemplate>
+            </TabControl.ItemTemplate>
         </TabControl>
     </DockPanel>
 </Window>
