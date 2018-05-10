@@ -429,15 +429,8 @@ namespace Sunctum.ViewModels
             ConnectionManager.SetDefaultConnection(Configuration.ApplicationConfiguration.ConnectionString, typeof(SQLiteConnection));
             DataAccessManager.WorkingDao = new DaoBuilder(new Connection(Specifications.GenerateConnectionString(Configuration.ApplicationConfiguration.WorkingDirectory), typeof(SQLiteConnection)));
 
-            try
-            {
-                await LibraryVM.Initialize();
-                await LibraryVM.Load();
-            }
-            catch (FailedOpeningDatabaseException)
-            {
-                Exit();
-            }
+            await LibraryVM.Initialize();
+            await LibraryVM.Load();
         }
 
         private void ManageAppDB()
