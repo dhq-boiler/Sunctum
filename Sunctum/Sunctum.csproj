@@ -219,8 +219,8 @@
     <Compile Include="Views\ExportDialog.xaml.cs">
       <DependentUpon>ExportDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\HomeDocument.xaml.cs">
-      <DependentUpon>HomeDocument.xaml</DependentUpon>
+    <Compile Include="Views\BookShowcase.xaml.cs">
+      <DependentUpon>BookShowcase.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\IMainWindow.cs" />
     <Compile Include="Managers\FillContentsTaskManager.cs" />
@@ -281,7 +281,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\HomeDocument.xaml">
+    <Page Include="Views\BookShowcase.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

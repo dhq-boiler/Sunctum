@@ -197,7 +197,7 @@
                                 <Setter.Value>
                                     <DataTemplate DataType="{x:Type viewModel:HomeDocumentViewModel}">
                                         <DockPanel>
-                                            <local:HomeDocument DataContext="{Binding}" />
+                                            <local:BookShowcase DataContext="{Binding}" />
                                         </DockPanel>
                                     </DataTemplate>
                                 </Setter.Value>

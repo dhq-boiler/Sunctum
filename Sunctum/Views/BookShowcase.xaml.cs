@@ -1,9 +1,7 @@
 ﻿
 
-using Ninject;
 using NLog;
 using Sunctum.Domain.Models;
-using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using Sunctum.UI.Controls;
 using Sunctum.ViewModels;
@@ -20,11 +18,11 @@ namespace Sunctum.Views
     /// <summary>
     /// HomeDocument.xaml の相互作用ロジック
     /// </summary>
-    public partial class HomeDocument : UserControl
+    public partial class BookShowcase : UserControl
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
-        public HomeDocument()
+        public BookShowcase()
         {
             InitializeComponent();
         }
