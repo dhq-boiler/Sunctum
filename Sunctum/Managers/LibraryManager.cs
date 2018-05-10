@@ -36,8 +36,8 @@ namespace Sunctum.Managers
 
         public LibraryManager()
         {
-            _BookSorting = BookSorting.ByLoadedAsc;
-            _LoadedBooks = new ObservableCollection<BookViewModel>();
+            Sorting = BookSorting.ByLoadedAsc;
+            LoadedBooks = new ObservableCollection<BookViewModel>();
         }
 
         #region プロパティ

@@ -17,11 +17,13 @@ namespace Sunctum.Domain.Logic.Load
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
+        [Obsolete]
         public static async Task LoadBookListAsync(ILibraryManager libVM)
         {
             await Task.Run(() => LoadBookList(libVM));
         }
 
+        [Obsolete]
         public static void LoadBookList(ILibraryManager libVM)
         {
             Stopwatch sw = new Stopwatch();
