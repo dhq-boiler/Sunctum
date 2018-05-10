@@ -430,7 +430,8 @@ namespace Sunctum.ViewModels
             DataAccessManager.WorkingDao = new DaoBuilder(new Connection(Specifications.GenerateConnectionString(Configuration.ApplicationConfiguration.WorkingDirectory), typeof(SQLiteConnection)));
 
             await LibraryVM.Initialize();
-            await LibraryVM.Load();
+            await LibraryVM.Load()
+                .ContinueWith(_ => HomeDocumentViewModel.BookSource = LibraryVM.LoadedBooks);
         }
 
         private void ManageAppDB()

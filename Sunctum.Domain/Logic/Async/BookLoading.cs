@@ -4,8 +4,6 @@ using Ninject;
 using NLog;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Models.Managers;
-using Sunctum.Domain.ViewModels;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 
 namespace Sunctum.Domain.Logic.Async
@@ -37,7 +35,14 @@ namespace Sunctum.Domain.Logic.Async
 
             sequence.Add(() => LibraryManager.LoadedBooks.CollectionChanged -= AuthorManager.LoadedBooks_CollectionChanged);
 
-            sequence.Add(() => LibraryManager.LoadedBooks = new ObservableCollection<BookViewModel>(BookFacade.FindAllWithAuthor(null)));
+            sequence.Add(() =>
+            {
+                var books = BookFacade.FindAllWithAuthor(null);
+                foreach (var book in books)
+                {
+                    LibraryManager.AddToMemory(book);
+                }
+            });
 
             sequence.Add(() => LibraryManager.LoadedBooks.CollectionChanged += AuthorManager.LoadedBooks_CollectionChanged);
 
