@@ -9,6 +9,7 @@ namespace Sunctum.Domain.ViewModels
         private AuthorViewModel _Author;
         private int _Count;
         private bool _IsSearchingKey;
+        private bool _IsVisible;
 
         public AuthorViewModel Author
         {
@@ -32,6 +33,14 @@ namespace Sunctum.Domain.ViewModels
             get
             { return _IsSearchingKey; }
             set { SetProperty(ref _IsSearchingKey, value); }
+        }
+
+        public bool IsVisible
+        {
+            [DebuggerStepThrough]
+            get
+            { return _IsVisible; }
+            set { SetProperty(ref _IsVisible, value); }
         }
 
         public AuthorCountViewModel()

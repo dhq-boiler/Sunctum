@@ -6,6 +6,7 @@ using Prism.Commands;
 using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
 using Reactive.Bindings.Extensions;
+using Sunctum.Core.Notifications;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Data.Dao.Migration.Plan;
 using Sunctum.Domain.Data.DaoFacade;
@@ -35,7 +36,7 @@ using System.Windows.Input;
 
 namespace Sunctum.ViewModels
 {
-    public class MainWindowViewModel : BindableBase, IMainWindowViewModel, IDisposable
+    public class MainWindowViewModel : BindableBase, IMainWindowViewModel, IDisposable, IObservable<ActiveTabChanged>
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
@@ -53,6 +54,7 @@ namespace Sunctum.ViewModels
         private ObservableCollection<DocumentViewModelBase> _TabItemViewModels;
         private int _SelectedTabIndex;
         private CompositeDisposable _disposable = new CompositeDisposable();
+        protected List<IObserver<ActiveTabChanged>> observerList = new List<IObserver<ActiveTabChanged>>();
 
         #region コマンド
 
@@ -391,13 +393,20 @@ namespace Sunctum.ViewModels
             {
                 SetProperty(ref _SelectedTabIndex, value);
                 RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => ActiveDocumentViewModel));
+                NotifyActiveTabChanged();
             }
         }
 
         public DocumentViewModelBase ActiveDocumentViewModel
         {
-            get { return TabItemViewModels[SelectedTabIndex]; }
+            get { return TabItemViewModels != null && TabItemViewModels.Count > SelectedTabIndex ? TabItemViewModels[SelectedTabIndex] : null; }
         }
+
+        [Inject]
+        public ITagManager TagManager { get; set; }
+
+        [Inject]
+        public IAuthorManager AuthorManager { get; set; }
 
         #endregion
 
@@ -422,9 +431,10 @@ namespace Sunctum.ViewModels
             TabItemViewModels = new ObservableCollection<DocumentViewModelBase>();
             TabItemViewModels.Add((DocumentViewModelBase)HomeDocumentViewModel);
 
-            SelectedTabIndex = 0;
             ((DocumentViewModelBase)HomeDocumentViewModel).IsVisible = true;
             ((DocumentViewModelBase)HomeDocumentViewModel).IsSelected = true;
+
+            ((DocumentViewModelBase)HomeDocumentViewModel).MainWindowViewModel = this;
 
             SetMainWindowTitle();
             HomeDocumentViewModel.ClearSearchResult();
@@ -440,8 +450,13 @@ namespace Sunctum.ViewModels
                 .ContinueWith(_ =>
                 {
                     HomeDocumentViewModel.BookCabinet = LibraryVM.CreateBookStorage();
+
                     (LibraryVM as IObservable<BookCollectionChanged>)
                         .Subscribe(HomeDocumentViewModel.BookCabinet as IObserver<BookCollectionChanged>)
+                        .AddTo(_disposable);
+                    this.Subscribe((IObserver<ActiveTabChanged>)TagManager)
+                        .AddTo(_disposable);
+                    this.Subscribe((IObserver<ActiveTabChanged>)AuthorManager)
                         .AddTo(_disposable);
 
                     if (starting)
@@ -453,7 +468,20 @@ namespace Sunctum.ViewModels
                         }
                     }
                     SetEvent();
+
+                    SelectedTabIndex = 0;
                 });
+        }
+
+        private void NotifyActiveTabChanged()
+        {
+            if (observerList.Any())
+            {
+                foreach (var observer in observerList)
+                {
+                    Task.Run(() => observer.OnNext(new ActiveTabChanged(ActiveDocumentViewModel.BookCabinet)));
+                }
+            }
         }
 
         private void ManageAppDB()
@@ -499,13 +527,13 @@ namespace Sunctum.ViewModels
                                 .Single().Items.Add(menu);
                             break;
                         case MenuType.MainWindow_Tag_ContextMenu:
-                            menu = plugin.GetMenu(MenuType.MainWindow_Tag_ContextMenu, () => LibraryVM.TagMng.TagCount.Where(e => e is TagCountViewModel).Cast<TagCountViewModel>()) as System.Windows.Controls.MenuItem;
+                            menu = plugin.GetMenu(MenuType.MainWindow_Tag_ContextMenu, () => TagManager.TagCount.Where(e => e is TagCountViewModel).Cast<TagCountViewModel>()) as System.Windows.Controls.MenuItem;
                             TagPaneViewModel.TagContextMenuItems.Where(m => m is System.Windows.Controls.MenuItem && ((System.Windows.Controls.MenuItem)m).Header.Equals("Ex"))
                                 .Cast<System.Windows.Controls.MenuItem>()
                                 .Single().Items.Add(menu);
                             break;
                         case MenuType.MainWindow_Author_ContextMenu:
-                            menu = plugin.GetMenu(MenuType.MainWindow_Author_ContextMenu, () => LibraryVM.AuthorManager.SelectedItems.Where(e => e is AuthorViewModel).Cast<AuthorViewModel>()) as System.Windows.Controls.MenuItem;
+                            menu = plugin.GetMenu(MenuType.MainWindow_Author_ContextMenu, () => AuthorManager.SelectedItems.Where(e => e is AuthorViewModel).Cast<AuthorViewModel>()) as System.Windows.Controls.MenuItem;
                             AuthorPaneViewModel.AuthorContextMenuItems.Where(m => m is System.Windows.Controls.MenuItem && ((System.Windows.Controls.MenuItem)m).Header.Equals("Ex"))
                                 .Cast<System.Windows.Controls.MenuItem>()
                                 .Single().Items.Add(menu);
@@ -680,10 +708,10 @@ namespace Sunctum.ViewModels
                 new Action<Guid>((id) =>
                 {
                     TagFacade.Delete(id);
-                    var willDelete = LibraryVM.TagMng.Chains.Where(t => t.TagID == id).ToList();
+                    var willDelete = TagManager.Chains.Where(t => t.TagID == id).ToList();
                     foreach (var del in willDelete)
                     {
-                        LibraryVM.TagMng.Chains.Remove(del);
+                        TagManager.Chains.Remove(del);
                     }
                 }),
                 null);
@@ -789,6 +817,29 @@ namespace Sunctum.ViewModels
         public void Dispose()
         {
             _disposable.Dispose();
+        }
+
+        public IDisposable Subscribe(IObserver<ActiveTabChanged> observer)
+        {
+            observerList.Add(observer);
+            return new ActiveTabChangedDisposable(this, observer);
+        }
+
+        private class ActiveTabChangedDisposable : IDisposable
+        {
+            private MainWindowViewModel _mainWindowViewModel;
+            private IObserver<ActiveTabChanged> _observer;
+
+            public ActiveTabChangedDisposable(MainWindowViewModel mainWindowViewModel, IObserver<ActiveTabChanged> observer)
+            {
+                _mainWindowViewModel = mainWindowViewModel;
+                _observer = observer;
+            }
+
+            public void Dispose()
+            {
+                _mainWindowViewModel.observerList.Remove(_observer);
+            }
         }
     }
 }

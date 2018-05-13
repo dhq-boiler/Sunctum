@@ -15,5 +15,9 @@ namespace Sunctum.Domain.Models.Managers
         void AddToMemory(BookViewModel book);
         void RemoveFromMemory(BookViewModel book);
         void UpdateInMemory(BookViewModel book);
+        void FireFillContents(BookViewModel book);
+        void RunFillContents(BookViewModel book);
+        void FireFillContentsWithImage(BookViewModel book);
+        void RunFillContentsWithImage(BookViewModel book);
     }
 }

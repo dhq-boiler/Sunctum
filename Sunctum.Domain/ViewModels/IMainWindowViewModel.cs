@@ -3,7 +3,7 @@
 using Sunctum.Domain.Models.Managers;
 using System.Threading.Tasks;
 
-namespace Sunctum.ViewModels
+namespace Sunctum.Domain.ViewModels
 {
     public interface IMainWindowViewModel
     {

@@ -3,7 +3,6 @@
 using Ninject;
 using NLog;
 using Sunctum.Domain.Logic.Async;
-using Sunctum.Domain.Logic.Load;
 using Sunctum.Domain.Logic.PageSorting;
 using Sunctum.Domain.Logic.Query;
 using Sunctum.Domain.Models;
@@ -14,7 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -23,8 +21,6 @@ namespace Sunctum.Managers
     public class Library : BookStorage, ILibrary
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
-
-        private FillContentsTaskManager _fcTaskManager = new FillContentsTaskManager();
         private ObservableCollection<RecentOpenedLibrary> _RecentOpenedLibraryList;
 
         public Library()
@@ -179,48 +175,6 @@ namespace Sunctum.Managers
 
         #endregion //エンティティ操作
 
-        #region コンテンツ読み込み
-
-        public void FireFillContents(BookViewModel book)
-        {
-            _fcTaskManager.RunAsync((b) => Internal_FillContents(b), book);
-        }
-
-        public void RunFillContents(BookViewModel book)
-        {
-            _fcTaskManager.Run((b) => Internal_FillContents(b), book);
-        }
-
-        public void FireFillContentsWithImage(BookViewModel book)
-        {
-            _fcTaskManager.RunAsync((b) => Internal_FillContentsWithImage(b), book);
-        }
-
-        public void RunFillContentsWithImage(BookViewModel book)
-        {
-            _fcTaskManager.Run((b) => Internal_FillContentsWithImage(b), book);
-        }
-
-        private void Internal_FillContents(BookViewModel book)
-        {
-            int currentCount = Querying.BookContentsCount(book.ID);
-            if (currentCount != book.Contents.Count() || !book.Contents.All(b => b.IsLoaded))
-            {
-                ContentsLoadTask.FillContents(this, book);
-            }
-        }
-
-        private void Internal_FillContentsWithImage(BookViewModel book)
-        {
-            int currentCount = Querying.BookContentsCount(book.ID);
-            if (currentCount != book.Contents.Count() || !book.Contents.All(b => b.IsLoaded))
-            {
-                ContentsLoadTask.FillContentsWithImage(this, book);
-            }
-        }
-
-        #endregion //コンテンツ読み込み
-
         #region ソート
 
         public BookViewModel OrderForward(PageViewModel page, BookViewModel book)
@@ -309,11 +263,11 @@ namespace Sunctum.Managers
             await TaskManager.Enqueue(ByteSizeCalculatingService.GetTaskSequence());
         }
 
+        #endregion //サイズ更新
+
         public IArrangedBookStorage CreateBookStorage()
         {
             return new BookCabinet(this.BookSource);
         }
-
-        #endregion //サイズ更新
     }
 }

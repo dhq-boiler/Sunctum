@@ -4,13 +4,15 @@ using Ninject;
 using NLog;
 using Prism.Commands;
 using Prism.Mvvm;
+using Sunctum.Core.Notifications;
+using Sunctum.Domail.Util;
+using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Async;
 using Sunctum.Domain.Logic.ImageTagCountSorting;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using Sunctum.Infrastructure.Core;
-using Sunctum.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -23,7 +25,7 @@ using System.Windows.Input;
 
 namespace Sunctum.Managers
 {
-    public class TagManager : BindableBase, ITagManager
+    public class TagManager : BindableBase, ITagManager, IObserver<ActiveTabChanged>
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
@@ -46,6 +48,8 @@ namespace Sunctum.Managers
 
         [Inject]
         public IMainWindowViewModel MainWindowViewModel { get; set; }
+
+        public IProgressManager ProgressManager { get; set; } = new ProgressManager();
 
         public TagManager()
         {
@@ -324,6 +328,30 @@ namespace Sunctum.Managers
             }
         }
 
+        private void Filter(ObservableCollection<BookViewModel> books)
+        {
+            var timeKeeper = new TimeKeeper();
+            var booksSet = new HashSet<Guid>(books.Select(b => b.ID));
+            var bookImageChains = new IntermediateTableDao().FindAll();
+            var filteredBookImageChains = new HashSet<Guid>(bookImageChains.Where(c => booksSet.Contains(c.BookId)).Select(c => c.ImageId));
+
+            ProgressManager.UpdateProgress(0, OnStage.Count, timeKeeper);
+
+            var i = 0;
+            foreach (var tagCount in OnStage.Reverse())
+            {
+                var imageIds = (from chain in Chains
+                                where chain.TagID == tagCount.Tag.ID
+                                orderby chain.ImageID
+                                select chain.ImageID);
+                tagCount.IsVisible = imageIds.Any(x => filteredBookImageChains.Any(c => x.Equals(c)));
+
+                ++i;
+                ProgressManager.UpdateProgress(i, TagCount.Count, timeKeeper);
+            }
+            ProgressManager.Complete();
+        }
+
         private IEnumerable<TagCountViewModel> GenerateTagCount()
         {
             Stopwatch sw = new Stopwatch();
@@ -585,6 +613,21 @@ namespace Sunctum.Managers
                 else
                     return "↓";
             }
+        }
+
+        public void OnNext(ActiveTabChanged value)
+        {
+            Filter(value.BookStorage.BookSource);
+        }
+
+        public void OnError(Exception error)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnCompleted()
+        {
+            throw new NotImplementedException();
         }
     }
 }

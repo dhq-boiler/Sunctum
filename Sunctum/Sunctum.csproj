@@ -167,6 +167,7 @@
     <Compile Include="Converters\MarginConverter.cs" />
     <Compile Include="Converters\PathToMenuItem.cs" />
     <Compile Include="Core\ExportAttributeBindingGenerator.cs" />
+    <Compile Include="Core\Notifications\ActiveTabChanged.cs" />
     <Compile Include="Core\SunctumBootstrapper.cs" />
     <Compile Include="Core\Extensions\NinjectBindingExtensions.cs" />
     <Compile Include="Core\Extensions\UILogicExtensions.cs" />
@@ -177,11 +178,9 @@
     <Compile Include="Managers\TaskManager.cs" />
     <Compile Include="ViewModels\AboutSunctumDialogViewModel.cs" />
     <Compile Include="ViewModels\AuthorPaneViewModel.cs" />
-    <Compile Include="ViewModels\DockElementViewModelBase.cs" />
     <Compile Include="ViewModels\BookPropertyDialogViewModel.cs" />
     <Compile Include="Exceptions\BrokenPageIndexException.cs" />
     <Compile Include="ViewModels\DirectoryNameParserViewModel.cs" />
-    <Compile Include="ViewModels\DocumentViewModelBase.cs" />
     <Compile Include="ViewModels\EditMetadataImportSettingViewModel.cs" />
     <Compile Include="ViewModels\ErrorReportDialogViewModel.cs" />
     <Compile Include="ViewModels\ExportDialogViewModel.cs" />
@@ -189,7 +188,6 @@
     <Compile Include="ViewModels\IAuthorPaneViewModel.cs" />
     <Compile Include="ViewModels\IHomeDocumentViewModel.cs" />
     <Compile Include="ViewModels\IInformationPaneViewModel.cs" />
-    <Compile Include="ViewModels\IMainWindowViewModel.cs" />
     <Compile Include="Managers\AuthorManager.cs" />
     <Compile Include="Managers\Library.cs" />
     <Compile Include="Managers\TagManager.cs" />

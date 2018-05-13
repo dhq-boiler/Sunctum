@@ -34,16 +34,10 @@ namespace Sunctum.ViewModels
         private string _SearchText;
         private ObservableCollection<Control> _BooksContextMenuItems;
         private ObservableCollection<Control> _ContentsContextMenuItems;
-        private List<EntryViewModel> _SelectedEntries;
-        private List<BookViewModel> _BookListViewSelectedItems;
-        private List<PageViewModel> _ContentsListViewSelectedItems;
         private string _previousSearchingText;
 
         [Inject]
         public ILibrary LibraryManager { get; set; }
-
-        [Inject]
-        public ITagManager TagManager { get; set; }
 
         #region コマンド
 
@@ -174,26 +168,6 @@ namespace Sunctum.ViewModels
         {
             get { return _ContentsContextMenuItems; }
             set { SetProperty(ref _ContentsContextMenuItems, value); }
-        }
-
-        public List<EntryViewModel> SelectedEntries
-        {
-            [DebuggerStepThrough]
-            get
-            { return _SelectedEntries; }
-            protected set { SetProperty(ref _SelectedEntries, value); }
-        }
-
-        public List<BookViewModel> BookListViewSelectedItems
-        {
-            get { return _BookListViewSelectedItems; }
-            set { SetProperty(ref _BookListViewSelectedItems, value); }
-        }
-
-        public List<PageViewModel> ContentsListViewSelectedItems
-        {
-            get { return _ContentsListViewSelectedItems; }
-            set { SetProperty(ref _ContentsListViewSelectedItems, value); }
         }
 
         public InteractionRequest<Notification> BlinkGoNextButtonRequest { get; } = new InteractionRequest<Notification>();
@@ -485,28 +459,6 @@ namespace Sunctum.ViewModels
         }
 
         #endregion //コンテキストメニュー
-
-        #region 操作
-
-        public void AddToSelectedEntry(EntryViewModel add)
-        {
-            SelectedEntries.Add(add);
-        }
-
-        public void AddToSelectedEntries(IEnumerable<EntryViewModel> add)
-        {
-            SelectedEntries.AddRange(add);
-        }
-
-        public void RemoveFromSelectedEntries(IEnumerable<EntryViewModel> entries)
-        {
-            foreach (var entry in entries)
-            {
-                SelectedEntries.Remove(entry);
-            }
-        }
-
-        #endregion //操作
 
         #region 検索
 

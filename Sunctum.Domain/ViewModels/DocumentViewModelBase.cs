@@ -3,14 +3,18 @@ using Prism.Interactivity.InteractionRequest;
 using Sunctum.Domain.Models.Managers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Windows;
 
-namespace Sunctum.ViewModels
+namespace Sunctum.Domain.ViewModels
 {
     public abstract class DocumentViewModelBase : DockElementViewModelBase
     {
         private IArrangedBookStorage _Cabinet;
         private Dictionary<Guid, Point> _scrollOffset;
+        private List<EntryViewModel> _SelectedEntries;
+        private List<BookViewModel> _BookListViewSelectedItems;
+        private List<PageViewModel> _ContentsListViewSelectedItems;
 
         public InteractionRequest<Notification> ResetScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
 
@@ -27,6 +31,28 @@ namespace Sunctum.ViewModels
             get { return _Cabinet; }
             set { SetProperty(ref _Cabinet, value); }
         }
+
+        public List<EntryViewModel> SelectedEntries
+        {
+            [DebuggerStepThrough]
+            get
+            { return _SelectedEntries; }
+            protected set { SetProperty(ref _SelectedEntries, value); }
+        }
+
+        public List<BookViewModel> BookListViewSelectedItems
+        {
+            get { return _BookListViewSelectedItems; }
+            set { SetProperty(ref _BookListViewSelectedItems, value); }
+        }
+
+        public List<PageViewModel> ContentsListViewSelectedItems
+        {
+            get { return _ContentsListViewSelectedItems; }
+            set { SetProperty(ref _ContentsListViewSelectedItems, value); }
+        }
+
+        public IMainWindowViewModel MainWindowViewModel { get; set; }
 
         public void ResetScrollOffsetPool()
         {
@@ -86,5 +112,27 @@ namespace Sunctum.ViewModels
                 ResetScrollOffsetRequest.Raise(new Notification());
             });
         }
+
+        #region 操作
+
+        public void AddToSelectedEntry(EntryViewModel add)
+        {
+            SelectedEntries.Add(add);
+        }
+
+        public void AddToSelectedEntries(IEnumerable<EntryViewModel> add)
+        {
+            SelectedEntries.AddRange(add);
+        }
+
+        public void RemoveFromSelectedEntries(IEnumerable<EntryViewModel> entries)
+        {
+            foreach (var entry in entries)
+            {
+                SelectedEntries.Remove(entry);
+            }
+        }
+
+        #endregion //操作
     }
 }

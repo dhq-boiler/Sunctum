@@ -2,7 +2,7 @@
 
 using Prism.Mvvm;
 
-namespace Sunctum.ViewModels
+namespace Sunctum.Domain.ViewModels
 {
     public abstract class DockElementViewModelBase : BindableBase
     {

@@ -55,6 +55,9 @@
                 IsChecked="{Binding TagManager.EnableOrderByName}" />
             <Label>Tag</Label>
         </DockPanel>
+        <local:ProgressBar DockPanel.Dock="Top"
+                           Height="2"
+                           ProgressionRate="{Binding TagManager.ProgressManager.Progress}" />
         <ListBox
             x:Name="Tag_ListBox"
             behavior:MultiSelectorBehaviours.SynchronizedSelectedItems="{Binding TagListBoxSelectedItems}"
@@ -89,6 +92,12 @@
                         </DataTrigger>
                         <DataTrigger Binding="{Binding IsSearchingKey}" Value="False">
                             <Setter Property="Background" Value="Transparent" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsVisible}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsVisible}" Value="False">
+                            <Setter Property="Visibility" Value="Collapsed" />
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>

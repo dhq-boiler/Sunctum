@@ -3,12 +3,14 @@
 using Ninject;
 using NLog;
 using Prism.Mvvm;
+using Sunctum.Core.Notifications;
+using Sunctum.Domail.Util;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.AuthorSorting;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using Sunctum.Infrastructure.Core;
-using Sunctum.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -18,7 +20,7 @@ using System.Threading.Tasks;
 
 namespace Sunctum.Managers
 {
-    public class AuthorManager : BindableBase, IAuthorManager
+    public class AuthorManager : BindableBase, IAuthorManager, IObserver<ActiveTabChanged>
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
@@ -32,6 +34,8 @@ namespace Sunctum.Managers
 
         [Inject]
         public IMainWindowViewModel MainWindowViewModel { get; set; }
+
+        public IProgressManager ProgressManager { get; set; } = new ProgressManager();
 
         public AuthorManager()
         {
@@ -51,6 +55,21 @@ namespace Sunctum.Managers
         public async Task LoadAsync()
         {
             await Task.Run(() => Load());
+        }
+
+        private void Filter(ObservableCollection<BookViewModel> bookSource)
+        {
+            var timeKeeper = new TimeKeeper();
+            ProgressManager.UpdateProgress(0, AuthorCount.Count, timeKeeper);
+
+            var i = 0;
+            foreach (var authorCount in AuthorCount)
+            {
+                authorCount.IsVisible = bookSource.Any(b => b.AuthorID.Equals(authorCount.Author.ID));
+                ++i;
+                ProgressManager.UpdateProgress(i, AuthorCount.Count, timeKeeper);
+            }
+            ProgressManager.Complete();
         }
 
         public void LoadedBooks_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -330,6 +349,21 @@ namespace Sunctum.Managers
             if (_AuthorCount == null) return false;
 
             return _AuthorCount.Any(a => a.IsSearchingKey);
+        }
+
+        public void OnNext(ActiveTabChanged value)
+        {
+            Filter(value.BookStorage.BookSource);
+        }
+
+        public void OnError(Exception error)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnCompleted()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -108,6 +108,7 @@
     <Compile Include="Data\Dao\DirectoryNameParserDao.cs" />
     <Compile Include="Data\Dao\Dummy.cs" />
     <Compile Include="Data\Dao\IDaoBuilder.cs" />
+    <Compile Include="Data\Dao\IntermediateTableDao.cs" />
     <Compile Include="Data\Dao\Migration\IDConversionDao.cs" />
     <Compile Include="Data\Dao\Migration\Plan\ChangePlan_AppDb_RecentOpenedLibrary_VersionOrigin.cs" />
     <Compile Include="Data\Dao\Migration\Plan\ChangePlan_AppDb_VersionOrigin.cs" />
@@ -137,6 +138,7 @@
     <Compile Include="Logic\Parse\Extensions.cs" />
     <Compile Include="Logic\Parse\IDirectoryNameParser.cs" />
     <Compile Include="Logic\Parse\IDirectoryNameParserManager.cs" />
+    <Compile Include="Models\BookImageChain.cs" />
     <Compile Include="Models\Conversion\Version_1.cs" />
     <Compile Include="Models\Conversion\Version_2.cs" />
     <Compile Include="Models\DirectoryNameParser.cs" />
@@ -272,10 +274,13 @@
     <Compile Include="ViewModels\AuthorViewModel.cs" />
     <Compile Include="ViewModels\BaseObjectViewModel.cs" />
     <Compile Include="ViewModels\BookViewModel.cs" />
+    <Compile Include="ViewModels\DockElementViewModelBase.cs" />
+    <Compile Include="ViewModels\DocumentViewModelBase.cs" />
     <Compile Include="ViewModels\EntityBaseObjectViewModel.cs" />
     <Compile Include="ViewModels\EntryViewModel.cs" />
     <Compile Include="ViewModels\ImageTagViewModel.cs" />
     <Compile Include="ViewModels\ImageViewModel.cs" />
+    <Compile Include="ViewModels\IMainWindowViewModel.cs" />
     <Compile Include="ViewModels\NoPkIdEntityViewModel.cs" />
     <Compile Include="ViewModels\PageViewModel.cs" />
     <Compile Include="ViewModels\PkIdEntityViewModel.cs" />

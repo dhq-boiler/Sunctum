@@ -42,7 +42,7 @@ namespace Sunctum.Domain.Logic.Async
 
             sequence.Add(() => TaskManager.Enqueue(RecentOpenedLibraryUpdating.GetTaskSequence()));
 
-            sequence.Add(() => TagManager.LoadAsync());
+            sequence.Add(() => TagManager.Load());
 
             sequence.Add(() => AuthorManager.LoadAsync());
 

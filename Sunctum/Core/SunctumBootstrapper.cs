@@ -9,6 +9,7 @@ using Sunctum.Domain.Logic.Async;
 using Sunctum.Domain.Logic.Parse;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
+using Sunctum.Domain.ViewModels;
 using Sunctum.Infrastructure.Data.Rdbms;
 using Sunctum.Managers;
 using Sunctum.ViewModels;

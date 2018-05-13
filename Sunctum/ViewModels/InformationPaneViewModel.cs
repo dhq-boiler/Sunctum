@@ -2,7 +2,6 @@
 
 using Ninject;
 using Prism.Commands;
-using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -18,9 +17,6 @@ namespace Sunctum.ViewModels
 
         [Inject]
         public IMainWindowViewModel MainWindowViewModel { get; set; }
-
-        [Inject]
-        public ITagManager TagManager { get; set; }
 
         public override string Title
         {
@@ -66,7 +62,7 @@ namespace Sunctum.ViewModels
                 var items = TagListBoxSelectedItems;
                 foreach (var item in items)
                 {
-                    TagManager.RemoveImageTag(item.Name);
+                    MainWindowViewModel.LibraryVM.TagMng.RemoveImageTag(item.Name);
                 }
             });
             DropTagCommand = new DelegateCommand<IDataObject>(data =>
@@ -74,7 +70,7 @@ namespace Sunctum.ViewModels
                 var imageTagCount = (TagCountViewModel)data.GetData(typeof(TagCountViewModel));
                 try
                 {
-                    TagManager.AddImageTagToSelectedObject(imageTagCount.Tag.Name);
+                    MainWindowViewModel.LibraryVM.TagMng.AddImageTagToSelectedObject(imageTagCount.Tag.Name);
                 }
                 catch (ArgumentException)
                 {
@@ -83,14 +79,14 @@ namespace Sunctum.ViewModels
             });
             TagPlusCommand = new DelegateCommand<string>(async text =>
             {
-                await TagManager.AddImageTagToSelectedObject(text);
+                await MainWindowViewModel.LibraryVM.TagMng.AddImageTagToSelectedObject(text);
             });
             TagMinusCommand = new DelegateCommand(() =>
             {
                 var items = TagListBoxSelectedItems;
                 foreach (var item in items)
                 {
-                    TagManager.RemoveImageTag(item.Name);
+                    MainWindowViewModel.LibraryVM.TagMng.RemoveImageTag(item.Name);
                 }
             });
         }

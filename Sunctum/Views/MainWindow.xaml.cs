@@ -2,6 +2,7 @@
 
 using Ninject;
 using NLog;
+using Sunctum.Domain.ViewModels;
 using Sunctum.ViewModels;
 using System;
 using System.Windows;
