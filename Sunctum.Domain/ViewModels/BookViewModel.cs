@@ -1,7 +1,6 @@
 ﻿
 
 using Sunctum.Domain.Models;
-using Sunctum.Infrastructure.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -23,20 +22,12 @@ namespace Sunctum.Domain.ViewModels
         public BookViewModel()
         {
             Contents = new ObservableCollection<PageViewModel>();
-            Contents.CollectionChanged += Children_CollectionChanged;
         }
 
         public BookViewModel(Guid id, string title)
             : base(id, title)
         {
             Contents = new ObservableCollection<PageViewModel>();
-            Contents.CollectionChanged += Children_CollectionChanged;
-        }
-
-        private void Children_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            OnPropertyChanged(PropertyNameUtility.GetPropertyName(() => Contents),
-                              PropertyNameUtility.GetPropertyName(() => NumberOfPages));
         }
 
         public Configuration Configuration
@@ -164,9 +155,7 @@ namespace Sunctum.Domain.ViewModels
 
         public void ResetContents(IEnumerable<PageViewModel> pages)
         {
-            Contents.CollectionChanged -= Children_CollectionChanged;
             Contents = new ObservableCollection<PageViewModel>(pages);
-            Contents.CollectionChanged += Children_CollectionChanged;
         }
 
         public void ClearContents()
@@ -244,7 +233,6 @@ namespace Sunctum.Domain.ViewModels
             {
                 if (disposing)
                 {
-                    Contents.CollectionChanged -= Children_CollectionChanged;
                 }
 
                 Contents = null;
