@@ -20,7 +20,7 @@ namespace simpleqb.Iso.Dml.Syntaxes
             return new InValueSyntax(this, values, Delimiter.OpenedParenthesis);
         }
 
-        public IInValueSyntax Value(IEnumerable<object> values)
+        public IInValueSyntax Array(IEnumerable<object> values)
         {
             return Value(values.ToArray());
         }
