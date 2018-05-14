@@ -1,6 +1,7 @@
 ﻿
 
 using Sunctum.Domain.Models.Managers;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace Sunctum.Domain.ViewModels
@@ -31,6 +32,10 @@ namespace Sunctum.Domain.ViewModels
 
         void ShowPreferenceDialog();
 
-        DocumentViewModelBase ActiveDocumentViewModel { get; }
+        IDocumentViewModelBase ActiveDocumentViewModel { get; }
+
+        void NewSearchTab(ObservableCollection<BookViewModel> onStage);
+
+        void CloseTab(IDocumentViewModelBase documentViewModelBase);
     }
 }

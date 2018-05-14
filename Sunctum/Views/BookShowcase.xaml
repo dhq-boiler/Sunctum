@@ -251,6 +251,12 @@
                     Margin="3"
                     Text="{Binding UnescapedSearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     TextChanged="Search_TextBox_TextChanged" />
+                <Button
+                    Height="19"
+                    Margin="3"
+                    Command="{Binding SearchInNewTabCommand}"
+                    CommandParameter="{Binding ElementName=Search_TextBox, Path=Text}"
+                    Content="New Tab" />
             </StackPanel>
         </Border>
         <Grid

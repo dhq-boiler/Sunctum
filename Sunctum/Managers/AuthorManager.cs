@@ -16,6 +16,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Sunctum.Managers
@@ -351,9 +352,27 @@ namespace Sunctum.Managers
             return _AuthorCount.Any(a => a.IsSearchingKey);
         }
 
+        private object _lock_object = new object();
+        private CancellationTokenSource _tokenSource;
+
         public void OnNext(ActiveTabChanged value)
         {
-            Filter(value.BookStorage.BookSource);
+            lock (_lock_object)
+            {
+                if (_tokenSource != null)
+                {
+                    _tokenSource.Cancel();
+                }
+            }
+            _tokenSource = new CancellationTokenSource();
+            Task.Run(() =>
+            {
+                Filter(value.BookStorage.BookSource);
+                lock (_lock_object)
+                {
+                    _tokenSource = null;
+                }
+            }, _tokenSource.Token);
         }
 
         public void OnError(Exception error)

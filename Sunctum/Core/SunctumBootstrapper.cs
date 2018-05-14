@@ -63,6 +63,7 @@ namespace Sunctum.Core
             Kernel.Bind<IDirectoryNameParserManager>().To<DirectoryNameParserManager>().InSingletonScope();
             Kernel.Bind<ILibraryResetting>().To<LibraryResetting>().InSingletonScope();
             Kernel.Bind<IBookLoading>().To<BookLoading>().InSingletonScope();
+            Kernel.Bind<IBookTagInitializing>().To<BookTagInitializing>().InSingletonScope();
 
             Kernel.Bind<IValueConverter>().To<BookSortingToBool>().InSingletonScope().Named("BookSortingToBool");
 

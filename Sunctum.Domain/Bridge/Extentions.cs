@@ -99,6 +99,15 @@ namespace Sunctum.Domain.Bridge
             };
         }
 
+        public static BookTag ToEntity(this BookTagViewModel obj)
+        {
+            return new BookTag()
+            {
+                BookID = obj.BookID,
+                TagID = obj.TagID,
+            };
+        }
+
         public static BookViewModel ToViewModel(this Book obj)
         {
             return new BookViewModel()
@@ -190,6 +199,15 @@ namespace Sunctum.Domain.Bridge
                 ID = obj.ID,
                 ImageID = obj.ImageID,
                 RelativeMasterPath = obj.RelativeMasterPath
+            };
+        }
+
+        public static BookTagViewModel ToViewModel(this BookTag obj)
+        {
+            return new BookTagViewModel()
+            {
+                BookID = obj.BookID,
+                TagID = obj.TagID
             };
         }
 

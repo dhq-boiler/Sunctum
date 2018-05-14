@@ -80,7 +80,7 @@ namespace Sunctum.Views
 
             s_logger.Debug(obj as BookViewModel);
 
-            var viewModel = (HomeDocumentViewModel)DataContext;
+            var viewModel = (DocumentViewModelBase)DataContext;
             viewModel.OpenBook(obj as BookViewModel);
         }
 
@@ -154,7 +154,7 @@ namespace Sunctum.Views
             var str = obj.ToString();
             if (str.Equals("{DisconnectedItem}")) return;
 
-            var viewModel = (HomeDocumentViewModel)DataContext;
+            var viewModel = (DocumentViewModelBase)DataContext;
             viewModel.OpenImage((PageViewModel)obj);
         }
 
@@ -198,37 +198,37 @@ namespace Sunctum.Views
 
         private void BackToBooks_Button_Click(object sender, RoutedEventArgs e)
         {
-            var viewModel = (HomeDocumentViewModel)DataContext;
+            var viewModel = (DocumentViewModelBase)DataContext;
             viewModel.CloseBook();
         }
 
         private void BackToPages_Button_Click(object sender, RoutedEventArgs e)
         {
-            var viewModel = (HomeDocumentViewModel)DataContext;
+            var viewModel = (DocumentViewModelBase)DataContext;
             viewModel.CloseImage();
         }
 
         private void GoBack_Button_Click(object sender, RoutedEventArgs e)
         {
-            var viewModel = (HomeDocumentViewModel)DataContext;
+            var viewModel = (DocumentViewModelBase)DataContext;
             viewModel.GoPreviousImage();
         }
 
         private void GoNext_Button_Click(object sender, RoutedEventArgs e)
         {
-            var viewModel = (HomeDocumentViewModel)DataContext;
+            var viewModel = (DocumentViewModelBase)DataContext;
             viewModel.GoNextImage();
         }
 
         private void MoveBackword_Button_Click(object sender, RoutedEventArgs e)
         {
-            var viewModel = (HomeDocumentViewModel)DataContext;
+            var viewModel = (DocumentViewModelBase)DataContext;
             viewModel.MovePageBackward((PageViewModel)(sender as Button).DataContext);
         }
 
         private void MoveForward_Button_Click(object sender, RoutedEventArgs e)
         {
-            var viewModel = (HomeDocumentViewModel)DataContext;
+            var viewModel = (DocumentViewModelBase)DataContext;
             viewModel.MovePageForward((PageViewModel)(sender as Button).DataContext);
         }
 
@@ -245,7 +245,7 @@ namespace Sunctum.Views
             else
             {
                 Contents_ListView.ItemTemplate = (DataTemplate)(this.Resources["Contents_ListViewItem_DataTemplate"]);
-                var viewModel = (HomeDocumentViewModel)DataContext;
+                var viewModel = (DocumentViewModelBase)DataContext;
                 await viewModel.SaveOpenedBookContentsOrder();
                 SwitchSorting_Button.Content = "Sort";
                 SortingBookContents = false;
@@ -254,13 +254,13 @@ namespace Sunctum.Views
 
         private void CloseSearchPane_Button_Click(object sender, RoutedEventArgs e)
         {
-            var viewModel = (HomeDocumentViewModel)DataContext;
+            var viewModel = (DocumentViewModelBase)DataContext;
             viewModel.CloseSearchPane();
         }
 
         private void Search_TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            var viewModel = (HomeDocumentViewModel)DataContext;
+            var viewModel = (DocumentViewModelBase)DataContext;
             viewModel.Search();
             e.Handled = true;
         }
@@ -269,14 +269,14 @@ namespace Sunctum.Views
         {
             AutoScrollingHyperlink hyperlink = (AutoScrollingHyperlink)sender;
             var author = hyperlink.DataContext as AuthorViewModel;
-            var viewModel = (HomeDocumentViewModel)DataContext;
+            var viewModel = (DocumentViewModelBase)DataContext;
             viewModel.SearchText = author.Name;
         }
 
         private void Hyperlink_Click(object sender, RoutedEventArgs e)
         {
             var author = ((FrameworkContentElement)sender).DataContext as Author;
-            var viewModel = (HomeDocumentViewModel)DataContext;
+            var viewModel = (DocumentViewModelBase)DataContext;
             viewModel.SearchText = author.Name;
         }
 

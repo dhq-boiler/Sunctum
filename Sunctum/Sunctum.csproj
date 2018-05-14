@@ -170,7 +170,6 @@
     <Compile Include="Core\Notifications\ActiveTabChanged.cs" />
     <Compile Include="Core\SunctumBootstrapper.cs" />
     <Compile Include="Core\Extensions\NinjectBindingExtensions.cs" />
-    <Compile Include="Core\Extensions\UILogicExtensions.cs" />
     <Compile Include="Managers\BookCabinet.cs" />
     <Compile Include="Managers\BookStorage.cs" />
     <Compile Include="Managers\DataAccessManager.cs" />
@@ -181,6 +180,7 @@
     <Compile Include="ViewModels\BookPropertyDialogViewModel.cs" />
     <Compile Include="Exceptions\BrokenPageIndexException.cs" />
     <Compile Include="ViewModels\DirectoryNameParserViewModel.cs" />
+    <Compile Include="ViewModels\DocumentViewModelBase.cs" />
     <Compile Include="ViewModels\EditMetadataImportSettingViewModel.cs" />
     <Compile Include="ViewModels\ErrorReportDialogViewModel.cs" />
     <Compile Include="ViewModels\ExportDialogViewModel.cs" />
@@ -198,6 +198,7 @@
     <Compile Include="Converters\BookCoverThumbnailLoader.cs" />
     <Compile Include="Converters\FileSizeFormatter.cs" />
     <Compile Include="Converters\PageThumbnailLoader.cs" />
+    <Compile Include="ViewModels\SearchDocumentViewModel.cs" />
     <Compile Include="ViewModels\TagPaneViewModel.cs" />
     <Compile Include="Views\AboutSunctumDialog.xaml.cs">
       <DependentUpon>AboutSunctumDialog.xaml</DependentUpon>
@@ -247,6 +248,7 @@
       <DependentUpon>ProgressBar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TabItemContainerStyleSelector.cs" />
+    <Compile Include="Views\TabItemTemplateSelector.cs" />
     <Compile Include="Views\TagPane.xaml.cs">
       <DependentUpon>TagPane.xaml</DependentUpon>
     </Compile>

@@ -397,7 +397,7 @@ namespace Sunctum.ViewModels
             }
         }
 
-        public DocumentViewModelBase ActiveDocumentViewModel
+        public IDocumentViewModelBase ActiveDocumentViewModel
         {
             get { return TabItemViewModels != null && TabItemViewModels.Count > SelectedTabIndex ? TabItemViewModels[SelectedTabIndex] : null; }
         }
@@ -416,6 +416,7 @@ namespace Sunctum.ViewModels
         {
             if (starting)
             {
+                LibraryVM.ProgressManager.PropertyChanged += ProgressManager_PropertyChanged;
                 HomeDocumentViewModel.BuildContextMenus_Books();
                 HomeDocumentViewModel.BuildContextMenus_Contents();
                 TagPaneViewModel.BuildContextMenus_Tags();
@@ -473,13 +474,35 @@ namespace Sunctum.ViewModels
                 });
         }
 
+        public void NewSearchTab(ObservableCollection<BookViewModel> onStage)
+        {
+            var newTabViewModel = new SearchDocumentViewModel("Search results");
+            newTabViewModel.BookCabinet = LibraryVM.CreateBookStorage();
+            newTabViewModel.BookCabinet.BookSource = new ObservableCollection<BookViewModel>(onStage);
+            newTabViewModel.MainWindowViewModel = this;
+            TabItemViewModels.Add(newTabViewModel);
+
+            (LibraryVM as IObservable<BookCollectionChanged>)
+                .Subscribe(newTabViewModel.BookCabinet as IObserver<BookCollectionChanged>)
+                .AddTo(_disposable);
+
+            newTabViewModel.IsVisible = true;
+            newTabViewModel.IsSelected = true;
+            SelectedTabIndex = TabItemViewModels.Count - 1;
+        }
+
+        public void CloseTab(IDocumentViewModelBase documentViewModelBase)
+        {
+            TabItemViewModels.Remove((DocumentViewModelBase)documentViewModelBase);
+        }
+
         private void NotifyActiveTabChanged()
         {
             if (observerList.Any())
             {
                 foreach (var observer in observerList)
                 {
-                    Task.Run(() => observer.OnNext(new ActiveTabChanged(ActiveDocumentViewModel.BookCabinet)));
+                    observer.OnNext(new ActiveTabChanged(ActiveDocumentViewModel.BookCabinet));
                 }
             }
         }
@@ -551,7 +574,6 @@ namespace Sunctum.ViewModels
 
         private void SetEvent()
         {
-            LibraryVM.ProgressManager.PropertyChanged += ProgressManager_PropertyChanged;
             HomeDocumentViewModel.BookCabinet.SearchCleared += LibraryVM_SearchCleared;
             HomeDocumentViewModel.BookCabinet.Searched += LibraryVM_Searched;
         }

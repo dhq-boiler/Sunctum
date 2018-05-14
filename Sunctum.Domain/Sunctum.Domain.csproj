@@ -96,6 +96,7 @@
     <Compile Include="Bridge\Extentions.cs" />
     <Compile Include="Data\DaoFacade\AuthorFacade.cs" />
     <Compile Include="Data\DaoFacade\BookFacade.cs" />
+    <Compile Include="Data\DaoFacade\BookTagFacade.cs" />
     <Compile Include="Data\DaoFacade\ColorMapFacade.cs" />
     <Compile Include="Data\DaoFacade\ImageFacade.cs" />
     <Compile Include="Data\DaoFacade\ImageTagFacade.cs" />
@@ -103,6 +104,7 @@
     <Compile Include="Data\DaoFacade\QueryFailedException.cs" />
     <Compile Include="Data\DaoFacade\TagFacade.cs" />
     <Compile Include="Data\DaoFacade\ThumbnailFacade.cs" />
+    <Compile Include="Data\Dao\BookTagDao.cs" />
     <Compile Include="Data\Dao\ColorMapDao.cs" />
     <Compile Include="Data\Dao\DaoBuilder.cs" />
     <Compile Include="Data\Dao\DirectoryNameParserDao.cs" />
@@ -113,6 +115,7 @@
     <Compile Include="Data\Dao\Migration\Plan\ChangePlan_AppDb_RecentOpenedLibrary_VersionOrigin.cs" />
     <Compile Include="Data\Dao\Migration\Plan\ChangePlan_AppDb_VersionOrigin.cs" />
     <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Author_VersionOrigin.cs" />
+    <Compile Include="Data\Dao\Migration\Plan\ChangePlan_BookTag_VersionOrigin.cs" />
     <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Book_VersionOrigin.cs" />
     <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Book_Version_1.cs" />
     <Compile Include="Data\Dao\Migration\Plan\ChangePlan_ColorMap_VersionOrigin.cs" />
@@ -126,10 +129,14 @@
     <Compile Include="Data\Dao\Migration\Plan\ChangePlan_VersionOrigin.cs" />
     <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Version_1.cs" />
     <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Version_2.cs" />
+    <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Version_3.cs" />
     <Compile Include="Data\Dao\RecentOpenedLibraryDao.cs" />
     <Compile Include="Extensions\Extensions.cs" />
+    <Compile Include="Extensions\UILogicExtensions.cs" />
     <Compile Include="Logic\Async\BookLoading.cs" />
+    <Compile Include="Logic\Async\BookTagInitializing.cs" />
     <Compile Include="Logic\Async\IBookLoading.cs" />
+    <Compile Include="Logic\Async\IBookTagInitializing.cs" />
     <Compile Include="Logic\Async\ILibraryResetting.cs" />
     <Compile Include="Logic\Async\LibraryResetting.cs" />
     <Compile Include="Logic\Parse\DirectoryNameParser.cs" />
@@ -139,8 +146,10 @@
     <Compile Include="Logic\Parse\IDirectoryNameParser.cs" />
     <Compile Include="Logic\Parse\IDirectoryNameParserManager.cs" />
     <Compile Include="Models\BookImageChain.cs" />
+    <Compile Include="Models\BookTag.cs" />
     <Compile Include="Models\Conversion\Version_1.cs" />
     <Compile Include="Models\Conversion\Version_2.cs" />
+    <Compile Include="Models\Conversion\Version_3.cs" />
     <Compile Include="Models\DirectoryNameParser.cs" />
     <Compile Include="Models\IName.cs" />
     <Compile Include="Models\Managers\BookCollectionChanged.cs" />
@@ -273,11 +282,12 @@
     <Compile Include="ViewModels\AuthorCountViewModel.cs" />
     <Compile Include="ViewModels\AuthorViewModel.cs" />
     <Compile Include="ViewModels\BaseObjectViewModel.cs" />
+    <Compile Include="ViewModels\BookTagViewModel.cs" />
     <Compile Include="ViewModels\BookViewModel.cs" />
     <Compile Include="ViewModels\DockElementViewModelBase.cs" />
-    <Compile Include="ViewModels\DocumentViewModelBase.cs" />
     <Compile Include="ViewModels\EntityBaseObjectViewModel.cs" />
     <Compile Include="ViewModels\EntryViewModel.cs" />
+    <Compile Include="ViewModels\IDocumentViewModelBase.cs" />
     <Compile Include="ViewModels\ImageTagViewModel.cs" />
     <Compile Include="ViewModels\ImageViewModel.cs" />
     <Compile Include="ViewModels\IMainWindowViewModel.cs" />

@@ -4,9 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Sunctum.Core.Extensions
+namespace Sunctum.Domain.Extensions
 {
-    internal static class UILogicExtensions
+    public static class UILogicExtensions
     {
         public static T LoopNext<T>(this IEnumerable<T> collection, T current)
         {

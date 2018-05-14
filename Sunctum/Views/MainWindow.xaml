@@ -25,25 +25,25 @@
     mc:Ignorable="d">
     <i:Interaction.Triggers>
         <trigger:LeftKeyDownEventTrigger EventName="KeyDown">
-            <i:InvokeCommandAction Command="{Binding HomeDocumentViewModel.LeftKeyDownCommand}" />
+            <i:InvokeCommandAction Command="{Binding ActiveDocumentViewModel.LeftKeyDownCommand}" />
         </trigger:LeftKeyDownEventTrigger>
         <trigger:RightKeyDownEventTrigger EventName="KeyDown">
-            <i:InvokeCommandAction Command="{Binding HomeDocumentViewModel.RightKeyDownCommand}" />
+            <i:InvokeCommandAction Command="{Binding ActiveDocumentViewModel.RightKeyDownCommand}" />
         </trigger:RightKeyDownEventTrigger>
         <trigger:XButton1MouseDownEventTrigger EventName="MouseDown">
-            <i:InvokeCommandAction Command="{Binding HomeDocumentViewModel.XButton1MouseButtonDownCommand}" />
+            <i:InvokeCommandAction Command="{Binding ActiveDocumentViewModel.XButton1MouseButtonDownCommand}" />
         </trigger:XButton1MouseDownEventTrigger>
         <trigger:XButton2MouseDownEventTrigger EventName="MouseDown">
-            <i:InvokeCommandAction Command="{Binding HomeDocumentViewModel.XButton2MouseButtonDownCommand}" />
+            <i:InvokeCommandAction Command="{Binding ActiveDocumentViewModel.XButton2MouseButtonDownCommand}" />
         </trigger:XButton2MouseDownEventTrigger>
         <trigger:MouseWheelEventTrigger EventName="MouseWheel">
-            <prism:InvokeCommandAction Command="{Binding HomeDocumentViewModel.MouseWheelCommand}" TriggerParameterPath="Delta" />
+            <prism:InvokeCommandAction Command="{Binding ActiveDocumentViewModel.MouseWheelCommand}" TriggerParameterPath="Delta" />
         </trigger:MouseWheelEventTrigger>
     </i:Interaction.Triggers>
     <Window.InputBindings>
         <KeyBinding
             Key="F"
-            Command="{Binding HomeDocumentViewModel.OpenSearchPaneCommand}"
+            Command="{Binding ActiveDocumentViewModel.OpenSearchPaneCommand}"
             Modifiers="Ctrl" />
         <KeyBinding Key="Esc" Command="{Binding GeneralCancelCommand}" />
         <KeyBinding
@@ -206,43 +206,94 @@
                             <Setter Property="Visibility" Value="Visible" />
                         </Style>
                     </local:TabItemTypedStyle>
+                    <local:TabItemTypedStyle DataType="{x:Type viewModel:SearchDocumentViewModel}">
+                        <Style TargetType="{x:Type TabItem}">
+                            <Setter Property="ContentTemplate">
+                                <Setter.Value>
+                                    <DataTemplate DataType="{x:Type viewModel:SearchDocumentViewModel}">
+                                        <DockPanel>
+                                            <local:BookShowcase DataContext="{Binding}" />
+                                        </DockPanel>
+                                    </DataTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                            <Setter Property="Visibility" Value="Visible" />
+                        </Style>
+                    </local:TabItemTypedStyle>
                 </local:TabItemContainerStyleSelector>
             </TabControl.ItemContainerStyleSelector>
-            <TabControl.ItemTemplate>
-                <DataTemplate DataType="{x:Type viewModel:HomeDocumentViewModel}">
-                    <DockPanel Margin="0">
-                        <Button
-                            Width="15"
-                            Height="15"
-                            Margin="5,1,1,1"
-                            Background="Transparent"
-                            BorderBrush="Transparent"
-                            DockPanel.Dock="Right"
-                            Visibility="{Binding CanClose, Converter={StaticResource BoolToVisibilityConverter}}">
-                            <Canvas
-                                Name="canvas"
-                                Width="11"
-                                Height="11">
-                                <Path Stroke="Black" StrokeThickness="1.5">
-                                    <Path.Data>
-                                        <PathGeometry>
-                                            <PathGeometry.Figures>
-                                                <PathFigure StartPoint="1,1">
-                                                    <LineSegment Point="10,10" />
-                                                </PathFigure>
-                                                <PathFigure StartPoint="1,10">
-                                                    <LineSegment Point="10,1" />
-                                                </PathFigure>
-                                            </PathGeometry.Figures>
-                                        </PathGeometry>
-                                    </Path.Data>
-                                </Path>
-                            </Canvas>
-                        </Button>
-                        <TextBlock Height="20" Text="{Binding Title}" />
-                    </DockPanel>
-                </DataTemplate>
-            </TabControl.ItemTemplate>
+            <TabControl.ItemTemplateSelector>
+                <local:TabItemTemplateSelector>
+                    <DataTemplate DataType="{x:Type viewModel:HomeDocumentViewModel}">
+                        <DockPanel Margin="0">
+                            <Button
+                                Width="15"
+                                Height="15"
+                                Margin="5,1,1,1"
+                                Background="Transparent"
+                                BorderBrush="Transparent"
+                                DockPanel.Dock="Right"
+                                Visibility="{Binding CanClose, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <Canvas
+                                    Name="canvas"
+                                    Width="11"
+                                    Height="11">
+                                    <Path Stroke="Black" StrokeThickness="1.5">
+                                        <Path.Data>
+                                            <PathGeometry>
+                                                <PathGeometry.Figures>
+                                                    <PathFigure StartPoint="1,1">
+                                                        <LineSegment Point="10,10" />
+                                                    </PathFigure>
+                                                    <PathFigure StartPoint="1,10">
+                                                        <LineSegment Point="10,1" />
+                                                    </PathFigure>
+                                                </PathGeometry.Figures>
+                                            </PathGeometry>
+                                        </Path.Data>
+                                    </Path>
+                                </Canvas>
+                            </Button>
+                            <TextBlock Height="20" Text="{Binding Title}" />
+                        </DockPanel>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type viewModel:SearchDocumentViewModel}">
+                        <DockPanel Margin="0">
+                            <Button
+                                Width="15"
+                                Height="15"
+                                Margin="5,1,1,1"
+                                Background="Transparent"
+                                BorderBrush="Transparent"
+                                DockPanel.Dock="Right"
+                                Visibility="{Binding CanClose, Converter={StaticResource BoolToVisibilityConverter}}"
+                                Command="{Binding CloseTabCommand}">
+                                <Canvas
+                                    Name="canvas"
+                                    Width="11"
+                                    Height="11">
+                                    <Path Stroke="Black" StrokeThickness="1.5">
+                                        <Path.Data>
+                                            <PathGeometry>
+                                                <PathGeometry.Figures>
+                                                    <PathFigure StartPoint="1,1">
+                                                        <LineSegment Point="10,10" />
+                                                    </PathFigure>
+                                                    <PathFigure StartPoint="1,10">
+                                                        <LineSegment Point="10,1" />
+                                                    </PathFigure>
+                                                </PathGeometry.Figures>
+                                            </PathGeometry>
+                                        </Path.Data>
+                                    </Path>
+                                </Canvas>
+                            </Button>
+                            <TextBlock Height="20" Text="{Binding Title}" />
+                        </DockPanel>
+                    </DataTemplate>
+                </local:TabItemTemplateSelector>
+            </TabControl.ItemTemplateSelector>
         </TabControl>
     </DockPanel>
 </Window>

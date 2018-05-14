@@ -20,6 +20,7 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
@@ -331,20 +332,17 @@ namespace Sunctum.Managers
         private void Filter(ObservableCollection<BookViewModel> books)
         {
             var timeKeeper = new TimeKeeper();
-            var booksSet = new HashSet<Guid>(books.Select(b => b.ID));
-            var bookImageChains = new IntermediateTableDao().FindAll();
-            var filteredBookImageChains = new HashSet<Guid>(bookImageChains.Where(c => booksSet.Contains(c.BookId)).Select(c => c.ImageId));
 
             ProgressManager.UpdateProgress(0, OnStage.Count, timeKeeper);
+
+            var bookTags = new BookTagDao().FindAll().ToList();
+            var bookIds = books.Select(b => b.ID);
+            var filteredBookTags = bookTags.Where(bt => bookIds.Contains(bt.BookID)).ToList();
 
             var i = 0;
             foreach (var tagCount in OnStage.Reverse())
             {
-                var imageIds = (from chain in Chains
-                                where chain.TagID == tagCount.Tag.ID
-                                orderby chain.ImageID
-                                select chain.ImageID);
-                tagCount.IsVisible = imageIds.Any(x => filteredBookImageChains.Any(c => x.Equals(c)));
+                tagCount.IsVisible = filteredBookTags.Any(bt => bt.TagID.Equals(tagCount.Tag.ID));
 
                 ++i;
                 ProgressManager.UpdateProgress(i, TagCount.Count, timeKeeper);
@@ -615,9 +613,27 @@ namespace Sunctum.Managers
             }
         }
 
+        private object _lock_object = new object();
+        private CancellationTokenSource _tokenSource;
+
         public void OnNext(ActiveTabChanged value)
         {
-            Filter(value.BookStorage.BookSource);
+            lock (_lock_object)
+            {
+                if (_tokenSource != null)
+                {
+                    _tokenSource.Cancel();
+                }
+            }
+            _tokenSource = new CancellationTokenSource();
+            Task.Run(() =>
+            {
+                Filter(value.BookStorage.BookSource);
+                lock (_lock_object)
+                {
+                    _tokenSource = null;
+                }
+            }, _tokenSource.Token);
         }
 
         public void OnError(Exception error)

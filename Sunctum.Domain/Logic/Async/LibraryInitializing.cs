@@ -8,6 +8,7 @@ using Sunctum.Domain.Logic.Parse;
 using Sunctum.Domain.Models.Conversion;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Infrastructure.Data.Rdbms;
+using Sunctum.Infrastructure.Data.Rdbms.Ddl.Migration;
 using Sunctum.Infrastructure.Data.Setup;
 using System.Data.SQLite;
 using System.Diagnostics;
@@ -26,6 +27,9 @@ namespace Sunctum.Domain.Logic.Async
 
         [Inject]
         public IDirectoryNameParserManager DirectoryNameParserManager { get; set; }
+
+        [Inject]
+        public IBookTagInitializing BookTagInitializingService { get; set; }
 
         public Stopwatch Stopwatch { get; private set; } = new Stopwatch();
 
@@ -51,6 +55,8 @@ namespace Sunctum.Domain.Logic.Async
                     dvManager.RegisterChangePlan(new ChangePlan_Version_1());
                     dvManager.GetPlan(new Version_1()).FinishedToUpgradeTo += LibraryInitializing_FinishToUpgradeTo_Version_1;
                     dvManager.RegisterChangePlan(new ChangePlan_Version_2());
+                    dvManager.RegisterChangePlan(new ChangePlan_Version_3());
+                    dvManager.GetPlan(new Version_3()).FinishedToUpgradeTo += LibraryInitializing_FinishToUpgradeTo_Version_3;
                     dvManager.FinishedToUpgradeTo += DvManager_FinishedToUpgradeTo;
 
                     dvManager.UpgradeToTargetVersion();
@@ -104,6 +110,24 @@ namespace Sunctum.Domain.Logic.Async
             if (LibraryManager == null) return;
             ByteSizeCalculatingService.Range = ByteSizeCalculating.UpdateRange.IsAll;
             await LibraryManager.TaskManager.Enqueue(ByteSizeCalculatingService.GetTaskSequence());
+        }
+
+        private async void LibraryInitializing_FinishToUpgradeTo_Version_3(object sender, VersionChangeEventArgs e)
+        {
+            await LibraryManager.TaskManager.Enqueue(BookTagInitializingService.GetTaskSequence());
+            //var bookImageChains = new IntermediateTableDao().FindAll();
+            //foreach (var chain in bookImageChains)
+            //{
+            //    var imageTags = ImageTagFacade.FindByImageId(chain.ImageId);
+            //    foreach (var imageTag in imageTags)
+            //    {
+            //        var newEntity = new BookTagViewModel(chain.BookId, imageTag.TagID);
+            //        if (!BookTagFacade.Exists(newEntity))
+            //        {
+            //            BookTagFacade.Insert(newEntity);
+            //        }
+            //    }
+            //}
         }
     }
 }
