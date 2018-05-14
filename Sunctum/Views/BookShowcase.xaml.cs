@@ -292,7 +292,7 @@ namespace Sunctum.Views
 
         private void ProcessInDrop(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(typeof(TagCount)))
+            if (e.Data.GetDataPresent(typeof(TagCountViewModel)))
             {
                 var beDropped = (EntryViewModel)((ListViewItem)sender).DataContext;
                 var viewModel = (DocumentViewModelBase)DataContext;
