@@ -515,6 +515,14 @@ namespace Sunctum.ViewModels
 
         public void CloseTab(IDocumentViewModelBase documentViewModelBase)
         {
+            int index = TabItemViewModels.IndexOf((DocumentViewModelBase)documentViewModelBase);
+            if (SelectedTabIndex == index)
+            {
+                if (SelectedTabIndex > 0)
+                {
+                    --SelectedTabIndex;
+                }
+            }
             TabItemViewModels.Remove((DocumentViewModelBase)documentViewModelBase);
         }
 
