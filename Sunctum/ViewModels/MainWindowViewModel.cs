@@ -399,7 +399,7 @@ namespace Sunctum.ViewModels
 
         public IDocumentViewModelBase ActiveDocumentViewModel
         {
-            get { return TabItemViewModels != null && TabItemViewModels.Count > SelectedTabIndex ? TabItemViewModels[SelectedTabIndex] : null; }
+            get { return TabItemViewModels != null && SelectedTabIndex >= 0 && TabItemViewModels.Count > SelectedTabIndex ? TabItemViewModels[SelectedTabIndex] : null; }
         }
 
         [Inject]
@@ -428,6 +428,8 @@ namespace Sunctum.ViewModels
             {
                 OpenSwitchLibraryDialogAndChangeWorkingDirectory();
             }
+
+            CloseAllTab();
 
             TabItemViewModels = new ObservableCollection<DocumentViewModelBase>();
             TabItemViewModels.Add((DocumentViewModelBase)HomeDocumentViewModel);
@@ -518,12 +520,23 @@ namespace Sunctum.ViewModels
             int index = TabItemViewModels.IndexOf((DocumentViewModelBase)documentViewModelBase);
             if (SelectedTabIndex == index)
             {
-                if (SelectedTabIndex > 0)
+                if (SelectedTabIndex >= 0)
                 {
                     --SelectedTabIndex;
                 }
             }
             TabItemViewModels.Remove((DocumentViewModelBase)documentViewModelBase);
+        }
+
+        public void CloseAllTab()
+        {
+            if (TabItemViewModels == null) return;
+
+            while (TabItemViewModels.Count > 0)
+            {
+                var viewModel = TabItemViewModels.Last();
+                CloseTab(viewModel);
+            }
         }
 
         private void NotifyActiveTabChanged()
@@ -532,7 +545,10 @@ namespace Sunctum.ViewModels
             {
                 foreach (var observer in observerList)
                 {
-                    observer.OnNext(new ActiveTabChanged(ActiveDocumentViewModel.BookCabinet));
+                    if (ActiveDocumentViewModel != null)
+                    {
+                        observer.OnNext(new ActiveTabChanged(ActiveDocumentViewModel.BookCabinet));
+                    }
                 }
             }
         }
