@@ -11,7 +11,6 @@ namespace Sunctum.Domain.ViewModels
 {
     public interface IDocumentViewModelBase
     {
-        string ActiveContent { get; set; }
         IArrangedBookStorage BookCabinet { get; set; }
         List<BookViewModel> BookListViewSelectedItems { get; set; }
         ObservableCollection<Control> BooksContextMenuItems { get; set; }

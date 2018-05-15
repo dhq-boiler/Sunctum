@@ -35,11 +35,13 @@ namespace Sunctum.ViewModels
         private bool _SearchPaneIsVisible;
         private BookViewModel _OpenedBook;
         private PageViewModel _OpenedPage;
-        private string _ActiveContent;
         private string _SearchText;
         private ObservableCollection<Control> _BooksContextMenuItems;
         private ObservableCollection<Control> _ContentsContextMenuItems;
         private string _previousSearchingText;
+        private bool _BookListIsVisible;
+        private bool _ContentListIsVisible;
+        private bool _ImageIsVisible;
 
         public ILibrary LibraryManager { get; set; }
 
@@ -56,6 +58,10 @@ namespace Sunctum.ViewModels
         public ICommand LeftKeyDownCommand { get; set; }
 
         public ICommand MouseWheelCommand { get; set; }
+
+        public ICommand OpenBookCommand { get; set; }
+
+        public ICommand OpenBookInNewTabCommand { get; set; }
 
         public ICommand OpenBookPropertyDialogCommand { get; set; }
 
@@ -168,12 +174,6 @@ namespace Sunctum.ViewModels
             }
         }
 
-        public string ActiveContent
-        {
-            get { return _ActiveContent; }
-            set { SetProperty(ref _ActiveContent, value); }
-        }
-
         public string SearchText
         {
             [DebuggerStepThrough]
@@ -212,12 +212,33 @@ namespace Sunctum.ViewModels
             set { SetProperty(ref _ContentsContextMenuItems, value); }
         }
 
+        public bool BookListIsVisible
+        {
+            get { return _BookListIsVisible; }
+            set { SetProperty(ref _BookListIsVisible, value); }
+        }
+
+        public bool ContentListIsVisible
+        {
+            get { return _ContentListIsVisible; }
+            set { SetProperty(ref _ContentListIsVisible, value); }
+        }
+
+        public bool ImageIsVisible
+        {
+            get { return _ImageIsVisible; }
+            set { SetProperty(ref _ImageIsVisible, value); }
+        }
+
         #endregion //プロパティ
 
         public DocumentViewModelBase()
         {
             RegisterCommands();
             SelectedEntries = new List<EntryViewModel>();
+            BookListIsVisible = true;
+            ContentListIsVisible = false;
+            ImageIsVisible = false;
         }
 
         private void RegisterCommands()
@@ -272,6 +293,15 @@ namespace Sunctum.ViewModels
                 {
                     //Do nothing
                 }
+            });
+            OpenBookCommand = new DelegateCommand(() =>
+            {
+                OpenBook(BookListViewSelectedItems.First());
+            });
+            OpenBookInNewTabCommand = new DelegateCommand(() =>
+            {
+                MainWindowViewModel.NewContentTab(BookListViewSelectedItems.First());
+                MainWindowViewModel.ActiveDocumentViewModel.OpenBook(BookListViewSelectedItems.First());
             });
             OpenBookPropertyDialogCommand = new DelegateCommand(() =>
             {
@@ -462,7 +492,21 @@ namespace Sunctum.ViewModels
         {
             BooksContextMenuItems = new ObservableCollection<System.Windows.Controls.Control>();
 
-            var menuitem = new System.Windows.Controls.MenuItem()
+            var menuitem = new MenuItem()
+            {
+                Header = "開く",
+                Command = OpenBookCommand
+            };
+            BooksContextMenuItems.Add(menuitem);
+
+            menuitem = new MenuItem()
+            {
+                Header = "新しいタブで開く",
+                Command = OpenBookInNewTabCommand
+            };
+            BooksContextMenuItems.Add(menuitem);
+
+            menuitem = new System.Windows.Controls.MenuItem()
             {
                 Header = "書き出し",
                 Command = ExportBooksCommand
@@ -696,12 +740,14 @@ namespace Sunctum.ViewModels
             RestoreScrollOffset(OpenedBook.ID);
             this.MainWindowViewModel.LibraryVM.TagMng.ClearSelectedEntries();
             Task.Factory.StartNew(() => this.MainWindowViewModel.LibraryVM.FireFillContents(book));
-            ActiveContent = "PageView";
+            BookListIsVisible = false;
+            ContentListIsVisible = true;
         }
 
         public void CloseBook()
         {
-            ActiveContent = "BookView";
+            BookListIsVisible = true;
+            ContentListIsVisible = false;
             if (OpenedBook != null)
             {
                 StoreScrollOffset(OpenedBook.ID);
@@ -714,13 +760,15 @@ namespace Sunctum.ViewModels
         public void OpenImage(PageViewModel page)
         {
             OpenedPage = page;
-            ActiveContent = "ImageView";
+            ContentListIsVisible = false;
+            ImageIsVisible = true;
         }
 
         public void CloseImage()
         {
             OpenedPage = null;
-            ActiveContent = "PageView";
+            ContentListIsVisible = true;
+            ImageIsVisible = false;
         }
 
         #endregion

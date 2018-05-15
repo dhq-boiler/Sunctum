@@ -179,6 +179,7 @@
     <Compile Include="ViewModels\AuthorPaneViewModel.cs" />
     <Compile Include="ViewModels\BookPropertyDialogViewModel.cs" />
     <Compile Include="Exceptions\BrokenPageIndexException.cs" />
+    <Compile Include="ViewModels\ContentDocumentViewModel.cs" />
     <Compile Include="ViewModels\DirectoryNameParserViewModel.cs" />
     <Compile Include="ViewModels\DocumentViewModelBase.cs" />
     <Compile Include="ViewModels\EditMetadataImportSettingViewModel.cs" />

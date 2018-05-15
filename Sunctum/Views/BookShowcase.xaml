@@ -276,47 +276,8 @@
                 SizeChanged="Book_ListView_SizeChanged"
                 VirtualizingPanel.IsVirtualizing="True"
                 VirtualizingPanel.VirtualizationMode="Recycling"
-                Visibility="Visible">
+                Visibility="{Binding BookListIsVisible, Converter={StaticResource BoolToVisibilityConverter}}">
                 <i:Interaction.Triggers>
-                    <ei:PropertyChangedTrigger Binding="{Binding ActiveContent}">
-                        <i:Interaction.Behaviors>
-                            <ei:ConditionBehavior>
-                                <ei:ConditionalExpression>
-                                    <ei:ComparisonCondition LeftOperand="{Binding ActiveContent}" RightOperand="BookView" />
-                                </ei:ConditionalExpression>
-                            </ei:ConditionBehavior>
-                        </i:Interaction.Behaviors>
-                        <ei:ChangePropertyAction
-                            PropertyName="Visibility"
-                            TargetObject="{Binding ElementName=Book_ListView}"
-                            Value="Visible" />
-                    </ei:PropertyChangedTrigger>
-                    <ei:PropertyChangedTrigger Binding="{Binding ActiveContent}">
-                        <i:Interaction.Behaviors>
-                            <ei:ConditionBehavior>
-                                <ei:ConditionalExpression>
-                                    <ei:ComparisonCondition LeftOperand="{Binding ActiveContent}" RightOperand="PageView" />
-                                </ei:ConditionalExpression>
-                            </ei:ConditionBehavior>
-                        </i:Interaction.Behaviors>
-                        <ei:ChangePropertyAction
-                            PropertyName="Visibility"
-                            TargetObject="{Binding ElementName=Book_ListView}"
-                            Value="Hidden" />
-                    </ei:PropertyChangedTrigger>
-                    <ei:PropertyChangedTrigger Binding="{Binding ActiveContent}">
-                        <i:Interaction.Behaviors>
-                            <ei:ConditionBehavior>
-                                <ei:ConditionalExpression>
-                                    <ei:ComparisonCondition LeftOperand="{Binding ActiveContent}" RightOperand="ImageView" />
-                                </ei:ConditionalExpression>
-                            </ei:ConditionBehavior>
-                        </i:Interaction.Behaviors>
-                        <ei:ChangePropertyAction
-                            PropertyName="Visibility"
-                            TargetObject="{Binding ElementName=Book_ListView}"
-                            Value="Hidden" />
-                    </ei:PropertyChangedTrigger>
                     <trigger:HomeKeyDownEventTrigger>
                         <trigger:ScrollTopAction TargetObject="{Binding ElementName=Book_ListView}" />
                     </trigger:HomeKeyDownEventTrigger>
@@ -433,48 +394,7 @@
                     <ContextMenu ItemsSource="{Binding BooksContextMenuItems}" />
                 </ListView.ContextMenu>
             </ListView>
-            <DockPanel x:Name="Contents_DockPanel" Visibility="Hidden">
-                <i:Interaction.Triggers>
-                    <ei:PropertyChangedTrigger Binding="{Binding ActiveContent}">
-                        <i:Interaction.Behaviors>
-                            <ei:ConditionBehavior>
-                                <ei:ConditionalExpression>
-                                    <ei:ComparisonCondition LeftOperand="{Binding ActiveContent}" RightOperand="BookView" />
-                                </ei:ConditionalExpression>
-                            </ei:ConditionBehavior>
-                        </i:Interaction.Behaviors>
-                        <ei:ChangePropertyAction
-                            PropertyName="Visibility"
-                            TargetObject="{Binding ElementName=Contents_DockPanel}"
-                            Value="Hidden" />
-                    </ei:PropertyChangedTrigger>
-                    <ei:PropertyChangedTrigger Binding="{Binding ActiveContent}">
-                        <i:Interaction.Behaviors>
-                            <ei:ConditionBehavior>
-                                <ei:ConditionalExpression>
-                                    <ei:ComparisonCondition LeftOperand="{Binding ActiveContent}" RightOperand="PageView" />
-                                </ei:ConditionalExpression>
-                            </ei:ConditionBehavior>
-                        </i:Interaction.Behaviors>
-                        <ei:ChangePropertyAction
-                            PropertyName="Visibility"
-                            TargetObject="{Binding ElementName=Contents_DockPanel}"
-                            Value="Visible" />
-                    </ei:PropertyChangedTrigger>
-                    <ei:PropertyChangedTrigger Binding="{Binding ActiveContent}">
-                        <i:Interaction.Behaviors>
-                            <ei:ConditionBehavior>
-                                <ei:ConditionalExpression>
-                                    <ei:ComparisonCondition LeftOperand="{Binding ActiveContent}" RightOperand="ImageView" />
-                                </ei:ConditionalExpression>
-                            </ei:ConditionBehavior>
-                        </i:Interaction.Behaviors>
-                        <ei:ChangePropertyAction
-                            PropertyName="Visibility"
-                            TargetObject="{Binding ElementName=Contents_DockPanel}"
-                            Value="Hidden" />
-                    </ei:PropertyChangedTrigger>
-                </i:Interaction.Triggers>
+            <DockPanel x:Name="Contents_DockPanel" Visibility="{Binding ContentListIsVisible, Converter={StaticResource BoolToVisibilityConverter}}">
                 <Grid DockPanel.Dock="Top">
                     <DockPanel>
                         <DockPanel.Resources>
@@ -538,48 +458,7 @@
                     </ListView.ItemsPanel>
                 </ListView>
             </DockPanel>
-            <DockPanel x:Name="ImageViewer_DockPanel" Visibility="Hidden">
-                <i:Interaction.Triggers>
-                    <ei:PropertyChangedTrigger Binding="{Binding ActiveContent}">
-                        <i:Interaction.Behaviors>
-                            <ei:ConditionBehavior>
-                                <ei:ConditionalExpression>
-                                    <ei:ComparisonCondition LeftOperand="{Binding ActiveContent}" RightOperand="BookView" />
-                                </ei:ConditionalExpression>
-                            </ei:ConditionBehavior>
-                        </i:Interaction.Behaviors>
-                        <ei:ChangePropertyAction
-                            PropertyName="Visibility"
-                            TargetObject="{Binding ElementName=ImageViewer_DockPanel}"
-                            Value="Hidden" />
-                    </ei:PropertyChangedTrigger>
-                    <ei:PropertyChangedTrigger Binding="{Binding ActiveContent}">
-                        <i:Interaction.Behaviors>
-                            <ei:ConditionBehavior>
-                                <ei:ConditionalExpression>
-                                    <ei:ComparisonCondition LeftOperand="{Binding ActiveContent}" RightOperand="PageView" />
-                                </ei:ConditionalExpression>
-                            </ei:ConditionBehavior>
-                        </i:Interaction.Behaviors>
-                        <ei:ChangePropertyAction
-                            PropertyName="Visibility"
-                            TargetObject="{Binding ElementName=ImageViewer_DockPanel}"
-                            Value="Hidden" />
-                    </ei:PropertyChangedTrigger>
-                    <ei:PropertyChangedTrigger Binding="{Binding ActiveContent}">
-                        <i:Interaction.Behaviors>
-                            <ei:ConditionBehavior>
-                                <ei:ConditionalExpression>
-                                    <ei:ComparisonCondition LeftOperand="{Binding ActiveContent}" RightOperand="ImageView" />
-                                </ei:ConditionalExpression>
-                            </ei:ConditionBehavior>
-                        </i:Interaction.Behaviors>
-                        <ei:ChangePropertyAction
-                            PropertyName="Visibility"
-                            TargetObject="{Binding ElementName=ImageViewer_DockPanel}"
-                            Value="Visible" />
-                    </ei:PropertyChangedTrigger>
-                </i:Interaction.Triggers>
+            <DockPanel x:Name="ImageViewer_DockPanel" Visibility="{Binding ImageIsVisible, Converter={StaticResource BoolToVisibilityConverter}}">
                 <Grid DockPanel.Dock="Top">
                     <DockPanel>
                         <DockPanel.Resources>

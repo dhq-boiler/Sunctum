@@ -37,5 +37,7 @@ namespace Sunctum.Domain.ViewModels
         void NewSearchTab(ObservableCollection<BookViewModel> onStage);
 
         void CloseTab(IDocumentViewModelBase documentViewModelBase);
+
+        void NewContentTab(BookViewModel bookViewModel);
     }
 }

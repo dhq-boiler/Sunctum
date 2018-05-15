@@ -212,6 +212,23 @@
                                 <Setter.Value>
                                     <DataTemplate DataType="{x:Type viewModel:SearchDocumentViewModel}">
                                         <DockPanel>
+                                            <Label DockPanel.Dock="Top" Content="{Binding}" />
+                                            <local:BookShowcase DataContext="{Binding}" />
+                                        </DockPanel>
+                                    </DataTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+                            <Setter Property="Visibility" Value="Visible" />
+                        </Style>
+                    </local:TabItemTypedStyle>
+                    <local:TabItemTypedStyle DataType="{x:Type viewModel:ContentDocumentViewModel}">
+                        <Style TargetType="{x:Type TabItem}">
+                            <Setter Property="ContentTemplate">
+                                <Setter.Value>
+                                    <DataTemplate DataType="{x:Type viewModel:ContentDocumentViewModel}">
+                                        <DockPanel>
+                                            <Label DockPanel.Dock="Top" Content="{Binding}" />
                                             <local:BookShowcase DataContext="{Binding}" />
                                         </DockPanel>
                                     </DataTemplate>
@@ -266,9 +283,43 @@
                                 Margin="5,1,1,1"
                                 Background="Transparent"
                                 BorderBrush="Transparent"
+                                Command="{Binding CloseTabCommand}"
                                 DockPanel.Dock="Right"
-                                Visibility="{Binding CanClose, Converter={StaticResource BoolToVisibilityConverter}}"
-                                Command="{Binding CloseTabCommand}">
+                                Visibility="{Binding CanClose, Converter={StaticResource BoolToVisibilityConverter}}">
+                                <Canvas
+                                    Name="canvas"
+                                    Width="11"
+                                    Height="11">
+                                    <Path Stroke="Black" StrokeThickness="1.5">
+                                        <Path.Data>
+                                            <PathGeometry>
+                                                <PathGeometry.Figures>
+                                                    <PathFigure StartPoint="1,1">
+                                                        <LineSegment Point="10,10" />
+                                                    </PathFigure>
+                                                    <PathFigure StartPoint="1,10">
+                                                        <LineSegment Point="10,1" />
+                                                    </PathFigure>
+                                                </PathGeometry.Figures>
+                                            </PathGeometry>
+                                        </Path.Data>
+                                    </Path>
+                                </Canvas>
+                            </Button>
+                            <TextBlock Height="20" Text="{Binding Title}" />
+                        </DockPanel>
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type viewModel:ContentDocumentViewModel}">
+                        <DockPanel Margin="0">
+                            <Button
+                                Width="15"
+                                Height="15"
+                                Margin="5,1,1,1"
+                                Background="Transparent"
+                                BorderBrush="Transparent"
+                                Command="{Binding CloseTabCommand}"
+                                DockPanel.Dock="Right"
+                                Visibility="{Binding CanClose, Converter={StaticResource BoolToVisibilityConverter}}">
                                 <Canvas
                                     Name="canvas"
                                     Width="11"

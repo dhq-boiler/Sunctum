@@ -491,6 +491,24 @@ namespace Sunctum.ViewModels
             SelectedTabIndex = TabItemViewModels.Count - 1;
         }
 
+        public void NewContentTab(BookViewModel bookViewModel)
+        {
+            var newTabViewModel = new ContentDocumentViewModel(bookViewModel.Title);
+            newTabViewModel.BookCabinet = LibraryVM.CreateBookStorage();
+            newTabViewModel.BookCabinet.BookSource = new ObservableCollection<BookViewModel>();
+            newTabViewModel.BookCabinet.BookSource.Add(bookViewModel);
+            newTabViewModel.MainWindowViewModel = this;
+            TabItemViewModels.Add(newTabViewModel);
+
+            (LibraryVM as IObservable<BookCollectionChanged>)
+                .Subscribe(newTabViewModel.BookCabinet as IObserver<BookCollectionChanged>)
+                .AddTo(_disposable);
+
+            newTabViewModel.IsVisible = true;
+            newTabViewModel.IsSelected = true;
+            SelectedTabIndex = TabItemViewModels.Count - 1;
+        }
+
         public void CloseTab(IDocumentViewModelBase documentViewModelBase)
         {
             TabItemViewModels.Remove((DocumentViewModelBase)documentViewModelBase);
