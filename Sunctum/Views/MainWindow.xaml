@@ -212,7 +212,6 @@
                                 <Setter.Value>
                                     <DataTemplate DataType="{x:Type viewModel:SearchDocumentViewModel}">
                                         <DockPanel>
-                                            <Label DockPanel.Dock="Top" Content="{Binding}" />
                                             <local:BookShowcase DataContext="{Binding}" />
                                         </DockPanel>
                                     </DataTemplate>
@@ -228,7 +227,6 @@
                                 <Setter.Value>
                                     <DataTemplate DataType="{x:Type viewModel:ContentDocumentViewModel}">
                                         <DockPanel>
-                                            <Label DockPanel.Dock="Top" Content="{Binding}" />
                                             <local:BookShowcase DataContext="{Binding}" />
                                         </DockPanel>
                                     </DataTemplate>
