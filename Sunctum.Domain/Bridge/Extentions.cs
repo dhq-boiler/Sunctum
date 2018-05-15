@@ -256,6 +256,11 @@ namespace Sunctum.Domain.Bridge
             return obj.Select(i => i.ToEntity());
         }
 
+        public static IEnumerable<BookTag> ToEntity(this IEnumerable<BookTagViewModel> obj)
+        {
+            return obj.Select(i => i.ToEntity());
+        }
+
         public static IEnumerable<BookViewModel> ToViewModel(this IEnumerable<Book> obj)
         {
             return obj.Select(i => i.ToViewModel());
@@ -297,6 +302,11 @@ namespace Sunctum.Domain.Bridge
         }
 
         public static IEnumerable<ThumbnailViewModel> ToViewModel(this IEnumerable<Thumbnail> obj)
+        {
+            return obj.Select(i => i.ToViewModel());
+        }
+
+        public static IEnumerable<BookTagViewModel> ToViewModel(this IEnumerable<BookTag> obj)
         {
             return obj.Select(i => i.ToViewModel());
         }

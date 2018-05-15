@@ -30,5 +30,11 @@ namespace Sunctum.Domain.Data.DaoFacade
             var dao = new BookTagDao();
             dao.Delete(new Dictionary<string, object>() { { "BookID", deleteEntity.BookID }, { "TagID", deleteEntity.TagID } });
         }
+
+        public static IEnumerable<BookTagViewModel> FindAll()
+        {
+            var dao = new BookTagDao();
+            return dao.FindAll().ToViewModel();
+        }
     }
 }

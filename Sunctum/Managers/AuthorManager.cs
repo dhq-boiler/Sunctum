@@ -60,13 +60,14 @@ namespace Sunctum.Managers
 
         private void Filter(ObservableCollection<BookViewModel> bookSource)
         {
+            var bookAuthorSet = new HashSet<Guid>(bookSource.Select(b => b.AuthorID));
             var timeKeeper = new TimeKeeper();
             ProgressManager.UpdateProgress(0, AuthorCount.Count, timeKeeper);
 
             var i = 0;
             foreach (var authorCount in AuthorCount)
             {
-                authorCount.IsVisible = bookSource.Any(b => b.AuthorID.Equals(authorCount.Author.ID));
+                authorCount.IsVisible = bookAuthorSet.Contains(authorCount.Author.ID);
                 ++i;
                 ProgressManager.UpdateProgress(i, AuthorCount.Count, timeKeeper);
             }

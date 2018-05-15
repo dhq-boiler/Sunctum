@@ -6,7 +6,6 @@ using Prism.Commands;
 using Prism.Mvvm;
 using Sunctum.Core.Notifications;
 using Sunctum.Domail.Util;
-using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Async;
 using Sunctum.Domain.Logic.ImageTagCountSorting;
@@ -87,6 +86,7 @@ namespace Sunctum.Managers
 
             LoadTag();
             LoadImageTag();
+            LoadBookTag();
             TagCount = new ObservableCollection<TagCountViewModel>(GenerateTagCount());
             SelectedEntries = new List<EntryViewModel>();
             ObserveSelectedEntityTags();
@@ -159,6 +159,14 @@ namespace Sunctum.Managers
             get
             { return _Chains; }
             set { SetProperty(ref _Chains, value); }
+        }
+
+        public ObservableCollection<BookTagViewModel> BookTagChains
+        {
+            [DebuggerStepThrough]
+            get
+            { return _BookTagChains; }
+            set { SetProperty(ref _BookTagChains, value); }
         }
 
         public List<EntryViewModel> SelectedEntries
@@ -329,20 +337,34 @@ namespace Sunctum.Managers
             }
         }
 
+        private void LoadBookTag()
+        {
+            var sw = new Stopwatch();
+            s_logger.Info("Loading BookTag list...");
+            sw.Start();
+            try
+            {
+                BookTagChains = new ObservableCollection<BookTagViewModel>(BookTagFacade.FindAll());
+            }
+            finally
+            {
+                s_logger.Info($"Completed to load BookTag list. {sw.ElapsedMilliseconds}ms");
+            }
+        }
+
         private void Filter(ObservableCollection<BookViewModel> books)
         {
             var timeKeeper = new TimeKeeper();
 
             ProgressManager.UpdateProgress(0, OnStage.Count, timeKeeper);
 
-            var bookTags = new BookTagDao().FindAll().ToList();
-            var bookIds = books.Select(b => b.ID);
-            var filteredBookTags = bookTags.Where(bt => bookIds.Contains(bt.BookID)).ToList();
+            var bookIds = new HashSet<Guid>(books.Select(b => b.ID));
+            var filteredBookTags = new HashSet<Guid>(BookTagChains.Where(bt => bookIds.Contains(bt.BookID)).Select(bt => bt.TagID));
 
             var i = 0;
             foreach (var tagCount in OnStage.Reverse())
             {
-                tagCount.IsVisible = filteredBookTags.Any(bt => bt.TagID.Equals(tagCount.Tag.ID));
+                tagCount.IsVisible = filteredBookTags.Contains(tagCount.Tag.ID);
 
                 ++i;
                 ProgressManager.UpdateProgress(i, TagCount.Count, timeKeeper);
@@ -615,6 +637,7 @@ namespace Sunctum.Managers
 
         private object _lock_object = new object();
         private CancellationTokenSource _tokenSource;
+        private ObservableCollection<BookTagViewModel> _BookTagChains;
 
         public void OnNext(ActiveTabChanged value)
         {
