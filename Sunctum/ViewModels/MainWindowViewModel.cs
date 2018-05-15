@@ -462,14 +462,12 @@ namespace Sunctum.ViewModels
                     this.Subscribe((IObserver<ActiveTabChanged>)AuthorManager)
                         .AddTo(_disposable);
 
-                    if (starting)
+                    var sorting = Configuration.ApplicationConfiguration.BookSorting;
+                    if (sorting != null)
                     {
-                        var sorting = Configuration.ApplicationConfiguration.BookSorting;
-                        if (sorting != null)
-                        {
-                            HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.GetReferenceByName(sorting);
-                        }
+                        HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.GetReferenceByName(sorting);
                     }
+
                     SetEvent();
 
                     SelectedTabIndex = 0;
