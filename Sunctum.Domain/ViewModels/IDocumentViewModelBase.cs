@@ -18,6 +18,7 @@ namespace Sunctum.Domain.ViewModels
         ObservableCollection<Control> ContentsContextMenuItems { get; set; }
         List<PageViewModel> ContentsListViewSelectedItems { get; set; }
         int CurrentPage { get; }
+        bool IsVisible { get; set; }
         ILibrary LibraryManager { get; set; }
         IMainWindowViewModel MainWindowViewModel { get; set; }
         BookViewModel OpenedBook { get; set; }

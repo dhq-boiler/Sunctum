@@ -167,6 +167,7 @@ namespace Sunctum.ViewModels
                 bool changed = OpenSwitchLibraryDialogAndChangeWorkingDirectory();
                 if (changed)
                 {
+                    CloseAllTab();
                     await LibraryVM.Reset();
                     await Initialize(false);
                 }
@@ -177,6 +178,7 @@ namespace Sunctum.ViewModels
             });
             ReloadLibraryCommand = new DelegateCommand(async () =>
             {
+                CloseAllTab();
                 await LibraryVM.Reset();
                 await Initialize(false);
             });
@@ -434,9 +436,6 @@ namespace Sunctum.ViewModels
             TabItemViewModels = new ObservableCollection<DocumentViewModelBase>();
             TabItemViewModels.Add((DocumentViewModelBase)HomeDocumentViewModel);
 
-            ((DocumentViewModelBase)HomeDocumentViewModel).IsVisible = true;
-            ((DocumentViewModelBase)HomeDocumentViewModel).IsSelected = true;
-
             ((DocumentViewModelBase)HomeDocumentViewModel).MainWindowViewModel = this;
 
             SetMainWindowTitle();
@@ -467,6 +466,9 @@ namespace Sunctum.ViewModels
                     {
                         HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.GetReferenceByName(sorting);
                     }
+
+                    ((DocumentViewModelBase)HomeDocumentViewModel).IsVisible = true;
+                    ((DocumentViewModelBase)HomeDocumentViewModel).IsSelected = true;
 
                     SetEvent();
 
@@ -515,6 +517,7 @@ namespace Sunctum.ViewModels
 
         public void CloseTab(IDocumentViewModelBase documentViewModelBase)
         {
+            documentViewModelBase.IsVisible = false;
             int index = TabItemViewModels.IndexOf((DocumentViewModelBase)documentViewModelBase);
             if (SelectedTabIndex == index)
             {

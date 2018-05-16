@@ -203,7 +203,7 @@
                                 </Setter.Value>
                             </Setter>
                             <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-                            <Setter Property="Visibility" Value="Visible" />
+                            <Setter Property="Visibility" Value="{Binding IsVisible, Converter={StaticResource BoolToVisibilityConverter}, Mode=TwoWay}" />
                         </Style>
                     </local:TabItemTypedStyle>
                     <local:TabItemTypedStyle DataType="{x:Type viewModel:SearchDocumentViewModel}">
@@ -218,7 +218,7 @@
                                 </Setter.Value>
                             </Setter>
                             <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-                            <Setter Property="Visibility" Value="Visible" />
+                            <Setter Property="Visibility" Value="{Binding IsVisible, Converter={StaticResource BoolToVisibilityConverter}, Mode=TwoWay}" />
                         </Style>
                     </local:TabItemTypedStyle>
                     <local:TabItemTypedStyle DataType="{x:Type viewModel:ContentDocumentViewModel}">
@@ -233,7 +233,7 @@
                                 </Setter.Value>
                             </Setter>
                             <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
-                            <Setter Property="Visibility" Value="Visible" />
+                            <Setter Property="Visibility" Value="{Binding IsVisible, Converter={StaticResource BoolToVisibilityConverter}, Mode=TwoWay}" />
                         </Style>
                     </local:TabItemTypedStyle>
                 </local:TabItemContainerStyleSelector>
