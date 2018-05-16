@@ -268,7 +268,7 @@ namespace Sunctum.Views
         private void AutoScrollingHyperlink_HyperlinkClicked(object sender, RoutedEventArgs e)
         {
             AutoScrollingHyperlink hyperlink = (AutoScrollingHyperlink)sender;
-            var author = hyperlink.DataContext as AuthorViewModel;
+            var author = (hyperlink.DataContext as BookViewModel).Author;
             var viewModel = (DocumentViewModelBase)DataContext;
             viewModel.SearchText = author.Name;
         }

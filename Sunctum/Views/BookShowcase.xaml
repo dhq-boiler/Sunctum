@@ -344,9 +344,8 @@
                             <ui.ctrl:AutoScrollingHyperlink
                                 Grid.Row="1"
                                 Width="{Binding Configuration.BookListViewItemWidth}"
-                                DataContext="{Binding Author}"
                                 HyperlinkClicked="AutoScrollingHyperlink_HyperlinkClicked"
-                                Text="{Binding UnescapedName}" />
+                                Text="{Binding Author.UnescapedName}" />
                             <ui.ctrl:AutoScrollingLabel
                                 x:Name="Book_Title_AutoScrollingLabel"
                                 Grid.Row="2"
