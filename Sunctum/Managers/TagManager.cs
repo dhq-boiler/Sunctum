@@ -19,6 +19,7 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -589,7 +590,22 @@ namespace Sunctum.Managers
                      join tg in SelectedItems on ic.TagID equals tg.ID
                      select bk).Distinct();
 
+            activeViewModel.SearchText = $"{ToSearchText(SelectedItems)}";
             activeViewModel.BookCabinet.SearchedBooks = new ObservableCollection<BookViewModel>(books.ToList());
+        }
+
+        private string ToSearchText(List<TagViewModel> selectedItems)
+        {
+            var sb = new StringBuilder();
+            foreach (var item in selectedItems)
+            {
+                sb.Append(item.Name);
+                if (selectedItems.Last() != item)
+                {
+                    sb.Append(" ");
+                }
+            }
+            return sb.ToString();
         }
 
         public void ShowBySelectedItems(IEnumerable<TagViewModel> searchItems)

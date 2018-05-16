@@ -16,6 +16,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -326,7 +327,22 @@ namespace Sunctum.Managers
                         join s in SelectedItems on b.AuthorID equals s.ID
                         select b;
 
+            activeViewModel.SearchText = $"{ToSearchText(SelectedItems)}";
             activeViewModel.BookCabinet.SearchedBooks = new ObservableCollection<BookViewModel>(books.ToList());
+        }
+
+        private object ToSearchText(List<AuthorViewModel> selectedItems)
+        {
+            var sb = new StringBuilder();
+            foreach (var item in selectedItems)
+            {
+                sb.Append(item.Name);
+                if (selectedItems.Last() != item)
+                {
+                    sb.Append(" ");
+                }
+            }
+            return sb.ToString();
         }
 
         public void ShowBySelectedItems(IEnumerable<AuthorViewModel> searchItems)
