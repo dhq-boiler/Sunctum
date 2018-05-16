@@ -186,51 +186,51 @@ namespace Sunctum.ViewModels
             });
             SortBookByAuthorAscCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.ByAuthorAsc;
+                ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByAuthorAsc;
             });
             SortBookByAuthorDescCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.ByAuthorDesc;
+                ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByAuthorDesc;
             });
             SortBookByCoverBlueAscCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.ByCoverBlueAsc;
+                ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByCoverBlueAsc;
             });
             SortBookByCoverBlueDescCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.ByCoverBlueDesc;
+                ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByCoverBlueDesc;
             });
             SortBookByCoverGreenAscCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.ByCoverGreenAsc;
+                ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByCoverGreenAsc;
             });
             SortBookByCoverGreenDescCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.ByCoverGreenDesc;
+                ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByCoverGreenDesc;
             });
             SortBookByCoverRedAscCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.ByCoverRedAsc;
+                ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByCoverRedAsc;
             });
             SortBookByCoverRedDescCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.ByCoverRedDesc;
+                ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByCoverRedDesc;
             });
             SortBookByLoadedAscCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.ByLoadedAsc;
+                ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByLoadedAsc;
             });
             SortBookByLoadedDescCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.ByLoadedDesc;
+                ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByLoadedDesc;
             });
             SortBookByTitleAscCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.ByTitleAsc;
+                ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByTitleAsc;
             });
             SortBookByTitleDescCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.ByTitleDesc;
+                ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByTitleDesc;
             });
             SwitchLibraryCommand = new DelegateCommand<RecentOpenedLibrary>(async (p) =>
             {
