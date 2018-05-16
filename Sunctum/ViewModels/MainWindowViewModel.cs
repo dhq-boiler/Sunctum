@@ -436,6 +436,7 @@ namespace Sunctum.ViewModels
             TabItemViewModels = new ObservableCollection<DocumentViewModelBase>();
             TabItemViewModels.Add((DocumentViewModelBase)HomeDocumentViewModel);
 
+            HomeDocumentViewModel.LibraryManager = LibraryVM;
             ((DocumentViewModelBase)HomeDocumentViewModel).MainWindowViewModel = this;
 
             SetMainWindowTitle();
@@ -481,6 +482,7 @@ namespace Sunctum.ViewModels
             var newTabViewModel = new SearchDocumentViewModel("Search results");
             newTabViewModel.BuildContextMenus_Books();
             newTabViewModel.BuildContextMenus_Contents();
+            newTabViewModel.LibraryManager = LibraryVM;
             newTabViewModel.BookCabinet = LibraryVM.CreateBookStorage();
             newTabViewModel.BookCabinet.BookSource = new ObservableCollection<BookViewModel>(onStage);
             newTabViewModel.MainWindowViewModel = this;
@@ -500,6 +502,7 @@ namespace Sunctum.ViewModels
             var newTabViewModel = new ContentDocumentViewModel(bookViewModel.Title);
             newTabViewModel.BuildContextMenus_Books();
             newTabViewModel.BuildContextMenus_Contents();
+            newTabViewModel.LibraryManager = LibraryVM;
             newTabViewModel.BookCabinet = LibraryVM.CreateBookStorage();
             newTabViewModel.BookCabinet.BookSource = new ObservableCollection<BookViewModel>();
             newTabViewModel.BookCabinet.BookSource.Add(bookViewModel);
