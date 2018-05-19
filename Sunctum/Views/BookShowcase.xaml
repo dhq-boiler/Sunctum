@@ -2,6 +2,7 @@
     x:Class="Sunctum.Views.BookShowcase"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behavior="clr-namespace:Sunctum.Views.Behaviors"
     xmlns:cvt="clr-namespace:Sunctum.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
@@ -266,6 +267,7 @@
             Grid.ColumnSpan="2">
             <ListView
                 x:Name="Book_ListView"
+                behavior:MultiSelectorBehaviours.SynchronizedSelectedItems="{Binding BookListViewSelectedItems}"
                 AllowDrop="True"
                 Drop="Book_ListView_Drop"
                 ItemsSource="{Binding BookCabinet.OnStage}"

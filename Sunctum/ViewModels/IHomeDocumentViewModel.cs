@@ -7,22 +7,19 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace Sunctum.ViewModels
 {
     public interface IHomeDocumentViewModel
     {
         IArrangedBookStorage BookCabinet { get; set; }
-        List<BookViewModel> BookListViewSelectedItems { get; set; }
+        ObservableCollection<BookViewModel> BookListViewSelectedItems { get; set; }
         ObservableCollection<Control> BooksContextMenuItems { get; set; }
         string ContentId { get; }
         ObservableCollection<Control> ContentsContextMenuItems { get; set; }
         List<PageViewModel> ContentsListViewSelectedItems { get; set; }
         int CurrentPage { get; }
-        ICommand LeftKeyDownCommand { get; set; }
         ILibrary LibraryManager { get; set; }
-        ICommand MouseWheelCommand { get; set; }
         BookViewModel OpenedBook { get; set; }
         PageViewModel OpenedPage { get; set; }
         bool SearchPaneIsVisible { get; set; }

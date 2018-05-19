@@ -12,7 +12,7 @@ namespace Sunctum.Domain.ViewModels
     public interface IDocumentViewModelBase
     {
         IArrangedBookStorage BookCabinet { get; set; }
-        List<BookViewModel> BookListViewSelectedItems { get; set; }
+        ObservableCollection<BookViewModel> BookListViewSelectedItems { get; set; }
         ObservableCollection<Control> BooksContextMenuItems { get; set; }
         bool CanClose { get; }
         ObservableCollection<Control> ContentsContextMenuItems { get; set; }

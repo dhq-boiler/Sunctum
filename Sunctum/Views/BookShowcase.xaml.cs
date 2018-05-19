@@ -62,8 +62,6 @@ namespace Sunctum.Views
             var viewModel = (DocumentViewModelBase)DataContext;
             if (viewModel == null) return;
 
-            viewModel.BookListViewSelectedItems = Book_ListView.SelectedItems.Cast<BookViewModel>().ToList();
-
             viewModel.RemoveFromSelectedEntries(e.RemovedItems.Cast<EntryViewModel>());
             viewModel.MainWindowViewModel.LibraryVM.TagMng.Unselect(e.RemovedItems.Cast<EntryViewModel>());
 

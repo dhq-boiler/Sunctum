@@ -30,7 +30,7 @@ namespace Sunctum.ViewModels
         private IArrangedBookStorage _Cabinet;
         private Dictionary<Guid, Point> _scrollOffset;
         private List<EntryViewModel> _SelectedEntries;
-        private List<BookViewModel> _BookListViewSelectedItems;
+        private ObservableCollection<BookViewModel> _BookListViewSelectedItems;
         private List<PageViewModel> _ContentsListViewSelectedItems;
         private bool _SearchPaneIsVisible;
         private BookViewModel _OpenedBook;
@@ -119,7 +119,7 @@ namespace Sunctum.ViewModels
             protected set { SetProperty(ref _SelectedEntries, value); }
         }
 
-        public List<BookViewModel> BookListViewSelectedItems
+        public ObservableCollection<BookViewModel> BookListViewSelectedItems
         {
             get { return _BookListViewSelectedItems; }
             set { SetProperty(ref _BookListViewSelectedItems, value); }
@@ -239,6 +239,7 @@ namespace Sunctum.ViewModels
             BookListIsVisible = true;
             ContentListIsVisible = false;
             ImageIsVisible = false;
+            BookListViewSelectedItems = new ObservableCollection<BookViewModel>();
         }
 
         private void RegisterCommands()
@@ -480,7 +481,7 @@ namespace Sunctum.ViewModels
 
         public void ClearSelectedItems()
         {
-            BookListViewSelectedItems = new List<BookViewModel>();
+            BookListViewSelectedItems = new ObservableCollection<BookViewModel>();
             ContentsListViewSelectedItems = new List<PageViewModel>();
         }
 
