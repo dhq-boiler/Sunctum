@@ -499,13 +499,19 @@ namespace Sunctum.Managers
 
                 if (SelectedEntries.Count == 0 && images.Count() > 0)
                 {
-                    IEnumerable<TagViewModel> tags = Chains.Where(a => a.ImageID == images.First().ID).Select(a => a.Tag).ToList();
+                    var tags = (from c in Chains
+                                where c.ImageID == images.First().ID
+                                join t in Tags on c.TagID equals t.ID
+                                select t).ToList();
                     temp.AddRange(tags);
                 }
 
                 foreach (var image in images)
                 {
-                    IEnumerable<TagViewModel> tags = Chains.Where(a => a.ImageID == image.ID).Select(a => a.Tag).ToList();
+                    var tags = (from c in Chains
+                                where c.ImageID == image.ID
+                                join t in Tags on c.TagID equals t.ID
+                                select t).ToList();
                     temp = temp.Intersect(tags).ToList();
                 }
                 SelectedEntityTags = temp;

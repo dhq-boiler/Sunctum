@@ -2,6 +2,7 @@
 
 using Ninject;
 using Prism.Commands;
+using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,9 @@ namespace Sunctum.ViewModels
 
         [Inject]
         public IMainWindowViewModel MainWindowViewModel { get; set; }
+
+        [Inject]
+        public ITagManager TagManager { get; set; }
 
         public override string Title
         {
