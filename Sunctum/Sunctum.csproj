@@ -166,6 +166,7 @@
     </ApplicationDefinition>
     <Compile Include="Converters\MarginConverter.cs" />
     <Compile Include="Converters\PathToMenuItem.cs" />
+    <Compile Include="Converters\StarLevelToStringConverter.cs" />
     <Compile Include="Core\ExportAttributeBindingGenerator.cs" />
     <Compile Include="Core\Notifications\ActiveTabChanged.cs" />
     <Compile Include="Core\SunctumBootstrapper.cs" />
@@ -179,6 +180,7 @@
     <Compile Include="ViewModels\AuthorPaneViewModel.cs" />
     <Compile Include="ViewModels\BookPropertyDialogViewModel.cs" />
     <Compile Include="Exceptions\BrokenPageIndexException.cs" />
+    <Compile Include="ViewModels\ChangeStarViewModel.cs" />
     <Compile Include="ViewModels\ContentDocumentViewModel.cs" />
     <Compile Include="ViewModels\DirectoryNameParserViewModel.cs" />
     <Compile Include="ViewModels\DocumentViewModelBase.cs" />
@@ -212,6 +214,9 @@
     <Compile Include="Views\Behaviors\TwoListSynchronizer.cs" />
     <Compile Include="Views\BlinkBlackWhiteButton.xaml.cs">
       <DependentUpon>BlinkBlackWhiteButton.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ChangeStar.xaml.cs">
+      <DependentUpon>ChangeStar.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EditMetadataImportSetting.xaml.cs">
       <DependentUpon>EditMetadataImportSetting.xaml</DependentUpon>
@@ -278,6 +283,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\BlinkBlackWhiteButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ChangeStar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

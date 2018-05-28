@@ -102,6 +102,7 @@
     <Compile Include="Data\DaoFacade\ImageTagFacade.cs" />
     <Compile Include="Data\DaoFacade\PageFacade.cs" />
     <Compile Include="Data\DaoFacade\QueryFailedException.cs" />
+    <Compile Include="Data\DaoFacade\StarFacade.cs" />
     <Compile Include="Data\DaoFacade\TagFacade.cs" />
     <Compile Include="Data\DaoFacade\ThumbnailFacade.cs" />
     <Compile Include="Data\Dao\BookTagDao.cs" />
@@ -124,6 +125,7 @@
     <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Image_VersionOrigin.cs" />
     <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Image_Version_1.cs" />
     <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Page_VersionOrigin.cs" />
+    <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Star_VersionOrigin.cs" />
     <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Tag_VersionOrigin.cs" />
     <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Thumbnail_VersionOrigin.cs" />
     <Compile Include="Data\Dao\Migration\Plan\ChangePlan_VersionOrigin.cs" />
@@ -131,6 +133,7 @@
     <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Version_2.cs" />
     <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Version_3.cs" />
     <Compile Include="Data\Dao\RecentOpenedLibraryDao.cs" />
+    <Compile Include="Data\Dao\StarDao.cs" />
     <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Extensions\UILogicExtensions.cs" />
     <Compile Include="Logic\Async\BookLoading.cs" />
@@ -175,6 +178,7 @@
     <Compile Include="Models\NoPkIdEntity.cs" />
     <Compile Include="Models\Page.cs" />
     <Compile Include="Models\PkIdEntity.cs" />
+    <Compile Include="Models\Star.cs" />
     <Compile Include="Models\Tag.cs" />
     <Compile Include="Models\Thumbnail.cs" />
     <Compile Include="Data\Rdbms\SQLiteDataOperationUnit.cs" />

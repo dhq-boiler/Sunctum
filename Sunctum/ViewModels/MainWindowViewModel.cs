@@ -589,25 +589,25 @@ namespace Sunctum.ViewModels
                     {
                         case MenuType.MainWindow_Book_ContextMenu:
                             var menu = plugin.GetMenu(MenuType.MainWindow_Book_ContextMenu, () => HomeDocumentViewModel.SelectedEntries.Where(e => e is BookViewModel).Cast<BookViewModel>()) as System.Windows.Controls.MenuItem;
-                            HomeDocumentViewModel.BooksContextMenuItems.Where(m => m is System.Windows.Controls.MenuItem && ((System.Windows.Controls.MenuItem)m).Header.Equals("Ex"))
+                            HomeDocumentViewModel.BooksContextMenuItems.Where(m => m is System.Windows.Controls.MenuItem && ((System.Windows.Controls.MenuItem)m).Header != null && ((System.Windows.Controls.MenuItem)m).Header.Equals("Ex"))
                                 .Cast<System.Windows.Controls.MenuItem>()
                                 .Single().Items.Add(menu);
                             break;
                         case MenuType.MainWindow_Page_ContextMenu:
                             menu = plugin.GetMenu(MenuType.MainWindow_Page_ContextMenu, () => HomeDocumentViewModel.SelectedEntries.Where(e => e is PageViewModel).Cast<PageViewModel>()) as System.Windows.Controls.MenuItem;
-                            HomeDocumentViewModel.ContentsContextMenuItems.Where(m => m is System.Windows.Controls.MenuItem && ((System.Windows.Controls.MenuItem)m).Header.Equals("Ex"))
+                            HomeDocumentViewModel.ContentsContextMenuItems.Where(m => m is System.Windows.Controls.MenuItem && ((System.Windows.Controls.MenuItem)m).Header != null && ((System.Windows.Controls.MenuItem)m).Header.Equals("Ex"))
                                 .Cast<System.Windows.Controls.MenuItem>()
                                 .Single().Items.Add(menu);
                             break;
                         case MenuType.MainWindow_Tag_ContextMenu:
                             menu = plugin.GetMenu(MenuType.MainWindow_Tag_ContextMenu, () => TagManager.TagCount.Where(e => e is TagCountViewModel).Cast<TagCountViewModel>()) as System.Windows.Controls.MenuItem;
-                            TagPaneViewModel.TagContextMenuItems.Where(m => m is System.Windows.Controls.MenuItem && ((System.Windows.Controls.MenuItem)m).Header.Equals("Ex"))
+                            TagPaneViewModel.TagContextMenuItems.Where(m => m is System.Windows.Controls.MenuItem && ((System.Windows.Controls.MenuItem)m).Header != null && ((System.Windows.Controls.MenuItem)m).Header.Equals("Ex"))
                                 .Cast<System.Windows.Controls.MenuItem>()
                                 .Single().Items.Add(menu);
                             break;
                         case MenuType.MainWindow_Author_ContextMenu:
                             menu = plugin.GetMenu(MenuType.MainWindow_Author_ContextMenu, () => AuthorManager.SelectedItems.Where(e => e is AuthorViewModel).Cast<AuthorViewModel>()) as System.Windows.Controls.MenuItem;
-                            AuthorPaneViewModel.AuthorContextMenuItems.Where(m => m is System.Windows.Controls.MenuItem && ((System.Windows.Controls.MenuItem)m).Header.Equals("Ex"))
+                            AuthorPaneViewModel.AuthorContextMenuItems.Where(m => m is System.Windows.Controls.MenuItem && ((System.Windows.Controls.MenuItem)m).Header != null && ((System.Windows.Controls.MenuItem)m).Header.Equals("Ex"))
                                 .Cast<System.Windows.Controls.MenuItem>()
                                 .Single().Items.Add(menu);
                             break;

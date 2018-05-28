@@ -13,6 +13,7 @@ namespace Sunctum.Domain.Data.Dao.Migration.Plan
             get
             {
                 yield return new ChangePlan_BookTag_VersionOrigin();
+                yield return new ChangePlan_Star_VersionOrigin();
             }
         }
     }

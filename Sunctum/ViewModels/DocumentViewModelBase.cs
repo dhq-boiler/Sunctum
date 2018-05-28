@@ -3,6 +3,9 @@
 using NLog;
 using Prism.Commands;
 using Prism.Interactivity.InteractionRequest;
+using Reactive.Bindings;
+using Reactive.Bindings.Extensions;
+using Sunctum.Converters;
 using Sunctum.Domain.Extensions;
 using Sunctum.Domain.Logic.Load;
 using Sunctum.Domain.Logic.Query;
@@ -16,10 +19,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace Sunctum.ViewModels
@@ -48,6 +53,8 @@ namespace Sunctum.ViewModels
         public IMainWindowViewModel MainWindowViewModel { get; set; }
 
         #region コマンド
+
+        public ICommand ChangeStarCommand { get; set; }
 
         public ICommand CloseSearchPaneCommand { get; set; }
 
@@ -90,6 +97,8 @@ namespace Sunctum.ViewModels
         #endregion //コマンド
 
         #region プロパティ
+
+        public InteractionRequest<Notification> ChangeStarRequest { get; } = new InteractionRequest<Notification>();
 
         public InteractionRequest<Notification> ResetScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
 
@@ -230,6 +239,8 @@ namespace Sunctum.ViewModels
             set { SetProperty(ref _ImageIsVisible, value); }
         }
 
+        public ReactiveProperty<int?> StarLevel { get; } = new ReactiveProperty<int?>();
+
         #endregion //プロパティ
 
         public DocumentViewModelBase()
@@ -240,10 +251,25 @@ namespace Sunctum.ViewModels
             ContentListIsVisible = false;
             ImageIsVisible = false;
             BookListViewSelectedItems = new ObservableCollection<BookViewModel>();
+            BookListViewSelectedItems.CollectionChangedAsObservable()
+                .Subscribe(x =>
+                {
+                    UpdateStarLevel();
+                });
+        }
+
+        private void UpdateStarLevel()
+        {
+            StarLevel.Value = BookListViewSelectedItems.Any() ? BookListViewSelectedItems.First().StarLevel : null;
         }
 
         private void RegisterCommands()
         {
+            ChangeStarCommand = new DelegateCommand(() =>
+            {
+                ChangeStarRequest.Raise(new Notification() { Title = "Change Star", Content = BookListViewSelectedItems.First() });
+                UpdateStarLevel();
+            });
             CloseTabCommand = new DelegateCommand(() =>
             {
                 MainWindowViewModel.CloseTab(this);
@@ -481,7 +507,7 @@ namespace Sunctum.ViewModels
 
         public void ClearSelectedItems()
         {
-            BookListViewSelectedItems = new ObservableCollection<BookViewModel>();
+            BookListViewSelectedItems.Clear();
             ContentsListViewSelectedItems = new List<PageViewModel>();
         }
 
@@ -505,6 +531,15 @@ namespace Sunctum.ViewModels
                 Header = "新しいタブで開く",
                 Command = OpenBookInNewTabCommand
             };
+            BooksContextMenuItems.Add(menuitem);
+
+            menuitem = new MenuItem()
+            {
+                Header = "DUMMY",
+                Command = ChangeStarCommand
+            };
+            var binding = new Binding("StarLevel.Value") { Converter = new StarLevelToStringConverter(), UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged };
+            menuitem.SetBinding(MenuItem.HeaderProperty, binding);
             BooksContextMenuItems.Add(menuitem);
 
             menuitem = new System.Windows.Controls.MenuItem()
