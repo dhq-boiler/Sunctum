@@ -14,7 +14,7 @@ namespace Sunctum.Domain.Logic.Async
         public IAuthorManager AuthorManager { get; set; }
 
         [Inject]
-        public ILibraryManager LibraryManager { get; set; }
+        public ILibrary LibraryManager { get; set; }
 
         [Inject]
         public ITagManager TagManager { get; set; }
@@ -42,7 +42,7 @@ namespace Sunctum.Domain.Logic.Async
 
             sequence.Add(() => TaskManager.Enqueue(RecentOpenedLibraryUpdating.GetTaskSequence()));
 
-            sequence.Add(() => TagManager.LoadAsync());
+            sequence.Add(() => TagManager.Load());
 
             sequence.Add(() => AuthorManager.LoadAsync());
 

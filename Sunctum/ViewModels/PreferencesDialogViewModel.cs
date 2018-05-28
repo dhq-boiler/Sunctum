@@ -4,6 +4,7 @@ using Ninject;
 using Prism.Mvvm;
 using Reactive.Bindings;
 using Sunctum.Domain.Models;
+using Sunctum.Domain.ViewModels;
 using Sunctum.UI.Controls;
 using System;
 using System.Diagnostics;
@@ -90,7 +91,7 @@ namespace Sunctum.ViewModels
 
                     if (willRestart)
                     {
-                        MainWindowViewModel.Exit();
+                        MainWindowViewModel.Close();
                         Process.Start(Process.GetCurrentProcess().MainModule.FileName);
                     }
                 });

@@ -2,6 +2,7 @@
 
 using Ninject;
 using NLog;
+using Sunctum.Domain.ViewModels;
 using Sunctum.ViewModels;
 using System;
 using System.Windows;
@@ -32,7 +33,6 @@ namespace Sunctum.Views
             DataContext = MainWindowVM;
             bool ShiftPressed = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
             await MainWindowVM.Initialize(true, ShiftPressed);
-            HomeDocumentViewModel.BookSource = MainWindowVM.LibraryVM.LoadedBooks;
         }
 
         private void DockPanel_SizeChanged(object sender, SizeChangedEventArgs e)

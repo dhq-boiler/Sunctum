@@ -1,9 +1,7 @@
 ﻿
 
-using Ninject;
 using NLog;
 using Sunctum.Domain.Models;
-using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using Sunctum.UI.Controls;
 using Sunctum.ViewModels;
@@ -20,11 +18,11 @@ namespace Sunctum.Views
     /// <summary>
     /// HomeDocument.xaml の相互作用ロジック
     /// </summary>
-    public partial class HomeDocument : UserControl
+    public partial class BookShowcase : UserControl
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
-        public HomeDocument()
+        public BookShowcase()
         {
             InitializeComponent();
         }
@@ -61,16 +59,16 @@ namespace Sunctum.Views
 
         private void Book_ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var viewModel = (HomeDocumentViewModel)DataContext;
-            viewModel.BookListViewSelectedItems = Book_ListView.SelectedItems.Cast<BookViewModel>().ToList();
+            var viewModel = (DocumentViewModelBase)DataContext;
+            if (viewModel == null) return;
 
             viewModel.RemoveFromSelectedEntries(e.RemovedItems.Cast<EntryViewModel>());
-            viewModel.TagManager.Unselect(e.RemovedItems.Cast<EntryViewModel>());
+            viewModel.MainWindowViewModel.LibraryVM.TagMng.Unselect(e.RemovedItems.Cast<EntryViewModel>());
 
             viewModel.AddToSelectedEntries(e.AddedItems.Cast<EntryViewModel>());
-            viewModel.TagManager.AddToSelectedEntries(e.AddedItems.Cast<EntryViewModel>());
+            viewModel.MainWindowViewModel.LibraryVM.TagMng.AddToSelectedEntries(e.AddedItems.Cast<EntryViewModel>());
 
-            viewModel.TagManager.ObserveSelectedEntityTags();
+            viewModel.MainWindowViewModel.LibraryVM.TagMng.ObserveSelectedEntityTags();
         }
 
         private void Book_ListViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -80,7 +78,7 @@ namespace Sunctum.Views
 
             s_logger.Debug(obj as BookViewModel);
 
-            var viewModel = (HomeDocumentViewModel)DataContext;
+            var viewModel = (DocumentViewModelBase)DataContext;
             viewModel.OpenBook(obj as BookViewModel);
         }
 
@@ -154,22 +152,22 @@ namespace Sunctum.Views
             var str = obj.ToString();
             if (str.Equals("{DisconnectedItem}")) return;
 
-            var viewModel = (HomeDocumentViewModel)DataContext;
+            var viewModel = (DocumentViewModelBase)DataContext;
             viewModel.OpenImage((PageViewModel)obj);
         }
 
         private void Contents_ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var viewModel = (HomeDocumentViewModel)DataContext;
+            var viewModel = (DocumentViewModelBase)DataContext;
             viewModel.ContentsListViewSelectedItems = Contents_ListView.SelectedItems.Cast<PageViewModel>().ToList();
 
             viewModel.RemoveFromSelectedEntries(e.RemovedItems.Cast<EntryViewModel>());
-            viewModel.TagManager.Unselect(e.RemovedItems.Cast<EntryViewModel>());
+            viewModel.MainWindowViewModel.LibraryVM.TagMng.Unselect(e.RemovedItems.Cast<EntryViewModel>());
 
             viewModel.AddToSelectedEntries(e.AddedItems.Cast<EntryViewModel>());
-            viewModel.TagManager.AddToSelectedEntries(e.AddedItems.Cast<EntryViewModel>());
+            viewModel.MainWindowViewModel.LibraryVM.TagMng.AddToSelectedEntries(e.AddedItems.Cast<EntryViewModel>());
 
-            viewModel.TagManager.ObserveSelectedEntityTags();
+            viewModel.MainWindowViewModel.LibraryVM.TagMng.ObserveSelectedEntityTags();
         }
 
         private void Contents_ListViewItem_PreviewDragOver(object sender, DragEventArgs e)
@@ -198,37 +196,37 @@ namespace Sunctum.Views
 
         private void BackToBooks_Button_Click(object sender, RoutedEventArgs e)
         {
-            var viewModel = (HomeDocumentViewModel)DataContext;
+            var viewModel = (DocumentViewModelBase)DataContext;
             viewModel.CloseBook();
         }
 
         private void BackToPages_Button_Click(object sender, RoutedEventArgs e)
         {
-            var viewModel = (HomeDocumentViewModel)DataContext;
+            var viewModel = (DocumentViewModelBase)DataContext;
             viewModel.CloseImage();
         }
 
         private void GoBack_Button_Click(object sender, RoutedEventArgs e)
         {
-            var viewModel = (HomeDocumentViewModel)DataContext;
+            var viewModel = (DocumentViewModelBase)DataContext;
             viewModel.GoPreviousImage();
         }
 
         private void GoNext_Button_Click(object sender, RoutedEventArgs e)
         {
-            var viewModel = (HomeDocumentViewModel)DataContext;
+            var viewModel = (DocumentViewModelBase)DataContext;
             viewModel.GoNextImage();
         }
 
         private void MoveBackword_Button_Click(object sender, RoutedEventArgs e)
         {
-            var viewModel = (HomeDocumentViewModel)DataContext;
+            var viewModel = (DocumentViewModelBase)DataContext;
             viewModel.MovePageBackward((PageViewModel)(sender as Button).DataContext);
         }
 
         private void MoveForward_Button_Click(object sender, RoutedEventArgs e)
         {
-            var viewModel = (HomeDocumentViewModel)DataContext;
+            var viewModel = (DocumentViewModelBase)DataContext;
             viewModel.MovePageForward((PageViewModel)(sender as Button).DataContext);
         }
 
@@ -245,7 +243,7 @@ namespace Sunctum.Views
             else
             {
                 Contents_ListView.ItemTemplate = (DataTemplate)(this.Resources["Contents_ListViewItem_DataTemplate"]);
-                var viewModel = (HomeDocumentViewModel)DataContext;
+                var viewModel = (DocumentViewModelBase)DataContext;
                 await viewModel.SaveOpenedBookContentsOrder();
                 SwitchSorting_Button.Content = "Sort";
                 SortingBookContents = false;
@@ -254,13 +252,13 @@ namespace Sunctum.Views
 
         private void CloseSearchPane_Button_Click(object sender, RoutedEventArgs e)
         {
-            var viewModel = (HomeDocumentViewModel)DataContext;
+            var viewModel = (DocumentViewModelBase)DataContext;
             viewModel.CloseSearchPane();
         }
 
         private void Search_TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            var viewModel = (HomeDocumentViewModel)DataContext;
+            var viewModel = (DocumentViewModelBase)DataContext;
             viewModel.Search();
             e.Handled = true;
         }
@@ -268,15 +266,15 @@ namespace Sunctum.Views
         private void AutoScrollingHyperlink_HyperlinkClicked(object sender, RoutedEventArgs e)
         {
             AutoScrollingHyperlink hyperlink = (AutoScrollingHyperlink)sender;
-            var author = hyperlink.DataContext as AuthorViewModel;
-            var viewModel = (HomeDocumentViewModel)DataContext;
+            var author = (hyperlink.DataContext as BookViewModel).Author;
+            var viewModel = (DocumentViewModelBase)DataContext;
             viewModel.SearchText = author.Name;
         }
 
         private void Hyperlink_Click(object sender, RoutedEventArgs e)
         {
             var author = ((FrameworkContentElement)sender).DataContext as Author;
-            var viewModel = (HomeDocumentViewModel)DataContext;
+            var viewModel = (DocumentViewModelBase)DataContext;
             viewModel.SearchText = author.Name;
         }
 
@@ -292,16 +290,16 @@ namespace Sunctum.Views
 
         private void ProcessInDrop(object sender, DragEventArgs e)
         {
-            if (e.Data.GetDataPresent(typeof(TagCount)))
+            if (e.Data.GetDataPresent(typeof(TagCountViewModel)))
             {
                 var beDropped = (EntryViewModel)((ListViewItem)sender).DataContext;
-                var viewModel = (HomeDocumentViewModel)DataContext;
+                var viewModel = (DocumentViewModelBase)DataContext;
                 var entries = viewModel.SelectedEntries.Contains(beDropped) ? viewModel.SelectedEntries.ToList() : new EntryViewModel[] { beDropped }.ToList();
                 var imageTagCount = (TagCountViewModel)e.Data.GetData(typeof(TagCountViewModel));
 
                 try
                 {
-                    viewModel.TagManager.AddTagTo(entries, imageTagCount.Tag.Name);
+                    viewModel.MainWindowViewModel.LibraryVM.TagMng.AddTagTo(entries, imageTagCount.Tag.Name);
                 }
                 catch (ArgumentException)
                 {

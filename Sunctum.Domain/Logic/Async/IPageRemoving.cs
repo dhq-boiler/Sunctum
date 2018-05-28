@@ -8,7 +8,7 @@ namespace Sunctum.Domain.Logic.Async
 {
     public interface IPageRemoving : IAsyncTaskMaker
     {
-        ILibraryManager LibraryManager { get; set; }
+        ILibrary LibraryManager { get; set; }
 
         IEnumerable<PageViewModel> TargetPages { get; set; }
     }

@@ -57,6 +57,12 @@ namespace Sunctum.Domain.Data.DaoFacade
             return dao.FindByBookIdTop1(bookId, dataOpUnit?.CurrentConnection).FirstOrDefault().ToViewModel();
         }
 
+        public static PageViewModel FindByImageId(Guid imageId)
+        {
+            var dao = new PageDao();
+            return dao.FindBy(new Dictionary<string, object>() { { "ImageID", imageId } }).FirstOrDefault().ToViewModel(); ;
+        }
+
         public static IEnumerable<PageViewModel> FindAll(DataOperationUnit dataOpUnit = null)
         {
             PageDao dao = new PageDao();

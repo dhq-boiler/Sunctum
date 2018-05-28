@@ -19,7 +19,7 @@ namespace Sunctum.Domain.Logic.Async
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
         [Inject]
-        public ILibraryManager LibraryManager { get; set; }
+        public ILibrary LibraryManager { get; set; }
 
         public IEnumerable<BookViewModel> TargetBooks { get; set; }
 
@@ -43,7 +43,7 @@ namespace Sunctum.Domain.Logic.Async
                 }
 
                 sequence.Add(new Task(() => DeleteRecordFromStorage(book)));
-                sequence.Add(new Task(() => LibraryManager.RemoveBookFromMemory(book)));
+                sequence.Add(new Task(() => LibraryManager.RemoveFromMemory(book)));
                 sequence.Add(new Task(() => s_logger.Info($"Removed Book:{book}")));
             }
         }
@@ -53,7 +53,7 @@ namespace Sunctum.Domain.Logic.Async
             sequence.Add(() => s_logger.Info($"Finish BookRemoving"));
         }
 
-        private static void RemoveImageTagByImage(ILibraryManager libraryManager, PageViewModel page)
+        private static void RemoveImageTagByImage(ILibrary libraryManager, PageViewModel page)
         {
             try
             {

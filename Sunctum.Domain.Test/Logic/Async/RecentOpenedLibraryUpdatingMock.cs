@@ -9,7 +9,7 @@ namespace Sunctum.Domain.Test.Logic.Async
     {
         public IDataAccessManager DataAccessManager { get; set; }
 
-        public ILibraryManager LibraryManager { get; set; }
+        public ILibrary LibraryManager { get; set; }
 
         public override void ConfigureTaskImplementation(AsyncTaskSequence sequence)
         { }

@@ -46,7 +46,7 @@ namespace Sunctum.Domain.Logic.Import
             //Do nothing
         }
 
-        public override IEnumerable<System.Threading.Tasks.Task> GenerateTasks(ILibraryManager library, string copyTo, string entryName, DataOperationUnit dataOpUnit)
+        public override IEnumerable<System.Threading.Tasks.Task> GenerateTasks(ILibrary library, string copyTo, string entryName, DataOperationUnit dataOpUnit)
         {
             List<System.Threading.Tasks.Task> ret = new List<System.Threading.Tasks.Task>();
 

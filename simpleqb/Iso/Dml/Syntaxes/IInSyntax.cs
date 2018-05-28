@@ -11,6 +11,6 @@ namespace simpleqb.Iso.Dml.Syntaxes
 
         IInValueSyntax Value(params object[] values);
 
-        IInValueSyntax Value(IEnumerable<object> values);
+        IInValueSyntax Array(IEnumerable<object> values);
     }
 }

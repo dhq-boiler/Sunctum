@@ -53,7 +53,7 @@ namespace Sunctum.Domain.Data.Dao
                                                    .From.Table(new Table<Book>().Name, "b")
                                                    .Inner.Join(new Table<Page>().Name, "p").On.Column("p", "BookID").EqualTo.Column("b", "ID")
                                                    .Inner.Join(new Table<Image>().Name, "i").On.Column("p", "ImageID").EqualTo.Column("i", "ID")
-                                                   .Where.Column("b", "ID").In.Value(bookIds.Cast<object>())
+                                                   .Where.Column("b", "ID").In.Array(bookIds.Cast<object>())
                                                .Union
                                                    .Select
                                                    .Column("i", "ID")
@@ -61,14 +61,14 @@ namespace Sunctum.Domain.Data.Dao
                                                    .Column("i", "MasterPath")
                                                    .From.Table(new Table<Page>().Name, "p")
                                                    .Inner.Join(new Table<Image>().Name, "i").On.Column("p", "ImageID").EqualTo.Column("i", "ID")
-                                                   .Where.Column("p", "ID").In.Value(pageIds.Cast<object>())
+                                                   .Where.Column("p", "ID").In.Array(pageIds.Cast<object>())
                                                 .Union
                                                     .Select
                                                     .Column("i", "ID")
                                                     .Column("i", "Title")
                                                     .Column("i", "MasterPath")
                                                     .From.Table(new Table<Image>().Name, "i")
-                                                    .Where.Column("ID").In.Value(imageIds.Cast<object>()))
+                                                    .Where.Column("ID").In.Array(imageIds.Cast<object>()))
                     {
                         string sql = query.ToSql();
                         command.CommandText = sql;

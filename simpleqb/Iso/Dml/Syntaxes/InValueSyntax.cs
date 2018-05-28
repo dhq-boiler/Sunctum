@@ -171,6 +171,10 @@ namespace simpleqb.Iso.Dml.Syntaxes
             foreach (var parameter in LocalParameters)
             {
                 ret += $"{parameter.ToString()}";
+                if (!LocalParameters.Last().Equals(parameter))
+                {
+                    ret += ", ";
+                }
             }
             return ret;
         }

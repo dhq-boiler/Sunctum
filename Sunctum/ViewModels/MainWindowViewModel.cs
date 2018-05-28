@@ -5,6 +5,8 @@ using NLog;
 using Prism.Commands;
 using Prism.Interactivity.InteractionRequest;
 using Prism.Mvvm;
+using Reactive.Bindings.Extensions;
+using Sunctum.Core.Notifications;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Data.Dao.Migration.Plan;
 using Sunctum.Domain.Data.DaoFacade;
@@ -26,6 +28,7 @@ using System.Collections.ObjectModel;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
@@ -33,11 +36,11 @@ using System.Windows.Input;
 
 namespace Sunctum.ViewModels
 {
-    public class MainWindowViewModel : BindableBase, IMainWindowViewModel
+    public class MainWindowViewModel : BindableBase, IMainWindowViewModel, IDisposable, IObservable<ActiveTabChanged>
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
-        private ILibraryManager _LibraryVM;
+        private ILibrary _LibraryVM;
         private string _MainWindowTitle;
         private bool _DisplayTagPane;
         private bool _DisplayInformationPane;
@@ -48,6 +51,10 @@ namespace Sunctum.ViewModels
         private double _WindowTop;
         private double _WindowWidth;
         private double _WindowHeight;
+        private ObservableCollection<DocumentViewModelBase> _TabItemViewModels;
+        private int _SelectedTabIndex;
+        private CompositeDisposable _disposable = new CompositeDisposable();
+        protected List<IObserver<ActiveTabChanged>> observerList = new List<IObserver<ActiveTabChanged>>();
 
         #region コマンド
 
@@ -125,11 +132,11 @@ namespace Sunctum.ViewModels
             });
             ClearSearchResultCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.ClearSearchResult();
+                ActiveDocumentViewModel.BookCabinet.ClearSearchResult();
             });
             ExitApplicationCommand = new DelegateCommand(() =>
             {
-                Exit();
+                Close();
             });
             GeneralCancelCommand = new DelegateCommand(() =>
             {
@@ -160,6 +167,7 @@ namespace Sunctum.ViewModels
                 bool changed = OpenSwitchLibraryDialogAndChangeWorkingDirectory();
                 if (changed)
                 {
+                    CloseAllTab();
                     await LibraryVM.Reset();
                     await Initialize(false);
                 }
@@ -170,6 +178,7 @@ namespace Sunctum.ViewModels
             });
             ReloadLibraryCommand = new DelegateCommand(async () =>
             {
+                CloseAllTab();
                 await LibraryVM.Reset();
                 await Initialize(false);
             });
@@ -179,51 +188,51 @@ namespace Sunctum.ViewModels
             });
             SortBookByAuthorAscCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.Sorting = BookSorting.ByAuthorAsc;
+                ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByAuthorAsc;
             });
             SortBookByAuthorDescCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.Sorting = BookSorting.ByAuthorDesc;
+                ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByAuthorDesc;
             });
             SortBookByCoverBlueAscCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.Sorting = BookSorting.ByCoverBlueAsc;
+                ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByCoverBlueAsc;
             });
             SortBookByCoverBlueDescCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.Sorting = BookSorting.ByCoverBlueDesc;
+                ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByCoverBlueDesc;
             });
             SortBookByCoverGreenAscCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.Sorting = BookSorting.ByCoverGreenAsc;
+                ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByCoverGreenAsc;
             });
             SortBookByCoverGreenDescCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.Sorting = BookSorting.ByCoverGreenDesc;
+                ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByCoverGreenDesc;
             });
             SortBookByCoverRedAscCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.Sorting = BookSorting.ByCoverRedAsc;
+                ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByCoverRedAsc;
             });
             SortBookByCoverRedDescCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.Sorting = BookSorting.ByCoverRedDesc;
+                ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByCoverRedDesc;
             });
             SortBookByLoadedAscCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.Sorting = BookSorting.ByLoadedAsc;
+                ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByLoadedAsc;
             });
             SortBookByLoadedDescCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.Sorting = BookSorting.ByLoadedDesc;
+                ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByLoadedDesc;
             });
             SortBookByTitleAscCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.Sorting = BookSorting.ByTitleAsc;
+                ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByTitleAsc;
             });
             SortBookByTitleDescCommand = new DelegateCommand(() =>
             {
-                HomeDocumentViewModel.Sorting = BookSorting.ByTitleDesc;
+                ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByTitleDesc;
             });
             SwitchLibraryCommand = new DelegateCommand<RecentOpenedLibrary>(async (p) =>
             {
@@ -275,7 +284,7 @@ namespace Sunctum.ViewModels
         }
 
         [Inject]
-        public ILibraryManager LibraryVM
+        public ILibrary LibraryVM
         {
             [DebuggerStepThrough]
             get
@@ -369,6 +378,38 @@ namespace Sunctum.ViewModels
         [Inject]
         public IHomeDocumentViewModel HomeDocumentViewModel { get; set; }
 
+        public ObservableCollection<DocumentViewModelBase> TabItemViewModels
+        {
+            get { return _TabItemViewModels; }
+            set
+            {
+                SetProperty(ref _TabItemViewModels, value);
+                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => ActiveDocumentViewModel));
+            }
+        }
+
+        public int SelectedTabIndex
+        {
+            get { return _SelectedTabIndex; }
+            set
+            {
+                SetProperty(ref _SelectedTabIndex, value);
+                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => ActiveDocumentViewModel));
+                NotifyActiveTabChanged();
+            }
+        }
+
+        public IDocumentViewModelBase ActiveDocumentViewModel
+        {
+            get { return TabItemViewModels != null && SelectedTabIndex >= 0 && TabItemViewModels.Count > SelectedTabIndex ? TabItemViewModels[SelectedTabIndex] : null; }
+        }
+
+        [Inject]
+        public ITagManager TagManager { get; set; }
+
+        [Inject]
+        public IAuthorManager AuthorManager { get; set; }
+
         #endregion
 
         #region 一般
@@ -377,6 +418,7 @@ namespace Sunctum.ViewModels
         {
             if (starting)
             {
+                LibraryVM.ProgressManager.PropertyChanged += ProgressManager_PropertyChanged;
                 HomeDocumentViewModel.BuildContextMenus_Books();
                 HomeDocumentViewModel.BuildContextMenus_Contents();
                 TagPaneViewModel.BuildContextMenus_Tags();
@@ -389,33 +431,129 @@ namespace Sunctum.ViewModels
                 OpenSwitchLibraryDialogAndChangeWorkingDirectory();
             }
 
-            if (starting)
-            {
-                var sorting = Configuration.ApplicationConfiguration.BookSorting;
-                if (sorting != null)
-                {
-                    HomeDocumentViewModel.Sorting = BookSorting.GetReferenceByName(sorting);
-                }
-            }
+            CloseAllTab();
+
+            TabItemViewModels = new ObservableCollection<DocumentViewModelBase>();
+            TabItemViewModels.Add((DocumentViewModelBase)HomeDocumentViewModel);
+
+            HomeDocumentViewModel.LibraryManager = LibraryVM;
+            ((DocumentViewModelBase)HomeDocumentViewModel).MainWindowViewModel = this;
 
             SetMainWindowTitle();
             HomeDocumentViewModel.ClearSearchResult();
             InitializeWindowComponent();
-            SetEventToLibraryManager();
             ManageAppDB();
 
             Configuration.ApplicationConfiguration.ConnectionString = Specifications.GenerateConnectionString(Configuration.ApplicationConfiguration.WorkingDirectory);
             ConnectionManager.SetDefaultConnection(Configuration.ApplicationConfiguration.ConnectionString, typeof(SQLiteConnection));
             DataAccessManager.WorkingDao = new DaoBuilder(new Connection(Specifications.GenerateConnectionString(Configuration.ApplicationConfiguration.WorkingDirectory), typeof(SQLiteConnection)));
 
-            try
+            await LibraryVM.Initialize();
+            await LibraryVM.Load()
+                .ContinueWith(_ =>
+                {
+                    HomeDocumentViewModel.BookCabinet = LibraryVM.CreateBookStorage();
+
+                    (LibraryVM as IObservable<BookCollectionChanged>)
+                        .Subscribe(HomeDocumentViewModel.BookCabinet as IObserver<BookCollectionChanged>)
+                        .AddTo(_disposable);
+                    this.Subscribe((IObserver<ActiveTabChanged>)TagManager)
+                        .AddTo(_disposable);
+                    this.Subscribe((IObserver<ActiveTabChanged>)AuthorManager)
+                        .AddTo(_disposable);
+
+                    var sorting = Configuration.ApplicationConfiguration.BookSorting;
+                    if (sorting != null)
+                    {
+                        HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.GetReferenceByName(sorting);
+                    }
+
+                    ((DocumentViewModelBase)HomeDocumentViewModel).IsVisible = true;
+                    ((DocumentViewModelBase)HomeDocumentViewModel).IsSelected = true;
+
+                    SetEvent();
+
+                    SelectedTabIndex = 0;
+                });
+        }
+
+        public void NewSearchTab(ObservableCollection<BookViewModel> onStage)
+        {
+            var newTabViewModel = new SearchDocumentViewModel("Search results");
+            newTabViewModel.BuildContextMenus_Books();
+            newTabViewModel.BuildContextMenus_Contents();
+            newTabViewModel.LibraryManager = LibraryVM;
+            newTabViewModel.BookCabinet = LibraryVM.CreateBookStorage();
+            newTabViewModel.BookCabinet.BookSource = new ObservableCollection<BookViewModel>(onStage);
+            newTabViewModel.MainWindowViewModel = this;
+            TabItemViewModels.Add(newTabViewModel);
+
+            (LibraryVM as IObservable<BookCollectionChanged>)
+                .Subscribe(newTabViewModel.BookCabinet as IObserver<BookCollectionChanged>)
+                .AddTo(_disposable);
+
+            newTabViewModel.IsVisible = true;
+            newTabViewModel.IsSelected = true;
+            SelectedTabIndex = TabItemViewModels.Count - 1;
+        }
+
+        public void NewContentTab(BookViewModel bookViewModel)
+        {
+            var newTabViewModel = new ContentDocumentViewModel(bookViewModel.Title);
+            newTabViewModel.BuildContextMenus_Books();
+            newTabViewModel.BuildContextMenus_Contents();
+            newTabViewModel.LibraryManager = LibraryVM;
+            newTabViewModel.BookCabinet = LibraryVM.CreateBookStorage();
+            newTabViewModel.BookCabinet.BookSource = new ObservableCollection<BookViewModel>();
+            newTabViewModel.BookCabinet.BookSource.Add(bookViewModel);
+            newTabViewModel.MainWindowViewModel = this;
+            TabItemViewModels.Add(newTabViewModel);
+
+            (LibraryVM as IObservable<BookCollectionChanged>)
+                .Subscribe(newTabViewModel.BookCabinet as IObserver<BookCollectionChanged>)
+                .AddTo(_disposable);
+
+            newTabViewModel.IsVisible = true;
+            newTabViewModel.IsSelected = true;
+            SelectedTabIndex = TabItemViewModels.Count - 1;
+        }
+
+        public void CloseTab(IDocumentViewModelBase documentViewModelBase)
+        {
+            documentViewModelBase.IsVisible = false;
+            int index = TabItemViewModels.IndexOf((DocumentViewModelBase)documentViewModelBase);
+            if (SelectedTabIndex == index)
             {
-                await LibraryVM.Initialize();
-                await LibraryVM.Load();
+                if (SelectedTabIndex >= 0)
+                {
+                    --SelectedTabIndex;
+                }
             }
-            catch (FailedOpeningDatabaseException)
+            TabItemViewModels.Remove((DocumentViewModelBase)documentViewModelBase);
+        }
+
+        public void CloseAllTab()
+        {
+            if (TabItemViewModels == null) return;
+
+            while (TabItemViewModels.Count > 0)
             {
-                Exit();
+                var viewModel = TabItemViewModels.Last();
+                CloseTab(viewModel);
+            }
+        }
+
+        private void NotifyActiveTabChanged()
+        {
+            if (observerList.Any())
+            {
+                foreach (var observer in observerList)
+                {
+                    if (ActiveDocumentViewModel != null)
+                    {
+                        observer.OnNext(new ActiveTabChanged(ActiveDocumentViewModel.BookCabinet));
+                    }
+                }
             }
         }
 
@@ -451,25 +589,25 @@ namespace Sunctum.ViewModels
                     {
                         case MenuType.MainWindow_Book_ContextMenu:
                             var menu = plugin.GetMenu(MenuType.MainWindow_Book_ContextMenu, () => HomeDocumentViewModel.SelectedEntries.Where(e => e is BookViewModel).Cast<BookViewModel>()) as System.Windows.Controls.MenuItem;
-                            HomeDocumentViewModel.BooksContextMenuItems.Where(m => m is System.Windows.Controls.MenuItem && ((System.Windows.Controls.MenuItem)m).Header.Equals("Ex"))
+                            HomeDocumentViewModel.BooksContextMenuItems.Where(m => m is System.Windows.Controls.MenuItem && ((System.Windows.Controls.MenuItem)m).Header != null && ((System.Windows.Controls.MenuItem)m).Header.Equals("Ex"))
                                 .Cast<System.Windows.Controls.MenuItem>()
                                 .Single().Items.Add(menu);
                             break;
                         case MenuType.MainWindow_Page_ContextMenu:
                             menu = plugin.GetMenu(MenuType.MainWindow_Page_ContextMenu, () => HomeDocumentViewModel.SelectedEntries.Where(e => e is PageViewModel).Cast<PageViewModel>()) as System.Windows.Controls.MenuItem;
-                            HomeDocumentViewModel.ContentsContextMenuItems.Where(m => m is System.Windows.Controls.MenuItem && ((System.Windows.Controls.MenuItem)m).Header.Equals("Ex"))
+                            HomeDocumentViewModel.ContentsContextMenuItems.Where(m => m is System.Windows.Controls.MenuItem && ((System.Windows.Controls.MenuItem)m).Header != null && ((System.Windows.Controls.MenuItem)m).Header.Equals("Ex"))
                                 .Cast<System.Windows.Controls.MenuItem>()
                                 .Single().Items.Add(menu);
                             break;
                         case MenuType.MainWindow_Tag_ContextMenu:
-                            menu = plugin.GetMenu(MenuType.MainWindow_Tag_ContextMenu, () => LibraryVM.TagMng.TagCount.Where(e => e is TagCountViewModel).Cast<TagCountViewModel>()) as System.Windows.Controls.MenuItem;
-                            TagPaneViewModel.TagContextMenuItems.Where(m => m is System.Windows.Controls.MenuItem && ((System.Windows.Controls.MenuItem)m).Header.Equals("Ex"))
+                            menu = plugin.GetMenu(MenuType.MainWindow_Tag_ContextMenu, () => TagManager.TagCount.Where(e => e is TagCountViewModel).Cast<TagCountViewModel>()) as System.Windows.Controls.MenuItem;
+                            TagPaneViewModel.TagContextMenuItems.Where(m => m is System.Windows.Controls.MenuItem && ((System.Windows.Controls.MenuItem)m).Header != null && ((System.Windows.Controls.MenuItem)m).Header.Equals("Ex"))
                                 .Cast<System.Windows.Controls.MenuItem>()
                                 .Single().Items.Add(menu);
                             break;
                         case MenuType.MainWindow_Author_ContextMenu:
-                            menu = plugin.GetMenu(MenuType.MainWindow_Author_ContextMenu, () => LibraryVM.AuthorManager.SelectedItems.Where(e => e is AuthorViewModel).Cast<AuthorViewModel>()) as System.Windows.Controls.MenuItem;
-                            AuthorPaneViewModel.AuthorContextMenuItems.Where(m => m is System.Windows.Controls.MenuItem && ((System.Windows.Controls.MenuItem)m).Header.Equals("Ex"))
+                            menu = plugin.GetMenu(MenuType.MainWindow_Author_ContextMenu, () => AuthorManager.SelectedItems.Where(e => e is AuthorViewModel).Cast<AuthorViewModel>()) as System.Windows.Controls.MenuItem;
+                            AuthorPaneViewModel.AuthorContextMenuItems.Where(m => m is System.Windows.Controls.MenuItem && ((System.Windows.Controls.MenuItem)m).Header != null && ((System.Windows.Controls.MenuItem)m).Header.Equals("Ex"))
                                 .Cast<System.Windows.Controls.MenuItem>()
                                 .Single().Items.Add(menu);
                             break;
@@ -484,11 +622,10 @@ namespace Sunctum.ViewModels
             }
         }
 
-        private void SetEventToLibraryManager()
+        private void SetEvent()
         {
-            LibraryVM.ProgressManager.PropertyChanged += ProgressManager_PropertyChanged;
-            LibraryVM.SearchCleared += LibraryVM_SearchCleared;
-            LibraryVM.Searched += LibraryVM_Searched;
+            HomeDocumentViewModel.BookCabinet.SearchCleared += LibraryVM_SearchCleared;
+            HomeDocumentViewModel.BookCabinet.Searched += LibraryVM_Searched;
         }
 
         private void InitializeWindowComponent()
@@ -583,7 +720,7 @@ namespace Sunctum.ViewModels
         public void Terminate()
         {
             var config = Configuration.ApplicationConfiguration;
-            config.BookSorting = BookSorting.GetPropertyName(HomeDocumentViewModel.Sorting);
+            config.BookSorting = BookSorting.GetPropertyName(HomeDocumentViewModel.BookCabinet.Sorting);
             config.DisplayAuthorPane = DisplayAuthorPane;
             config.DisplayInformationPane = DisplayInformationPane;
             config.DisplayTagPane = DisplayTagPane;
@@ -596,9 +733,11 @@ namespace Sunctum.ViewModels
                 config.WindowRect = null;
             }
             Configuration.Save(config);
+
+            Dispose();
         }
 
-        public void Exit()
+        public void Close()
         {
             CloseRequest.Raise(new Notification());
         }
@@ -641,10 +780,10 @@ namespace Sunctum.ViewModels
                 new Action<Guid>((id) =>
                 {
                     TagFacade.Delete(id);
-                    var willDelete = LibraryVM.TagMng.Chains.Where(t => t.TagID == id).ToList();
+                    var willDelete = TagManager.Chains.Where(t => t.TagID == id).ToList();
                     foreach (var del in willDelete)
                     {
-                        LibraryVM.TagMng.Chains.Remove(del);
+                        TagManager.Chains.Remove(del);
                     }
                 }),
                 null);
@@ -695,7 +834,7 @@ namespace Sunctum.ViewModels
                 new Action<AuthorViewModel>((target) =>
                 {
                     AuthorFacade.Update(target);
-                    var willUpdate = LibraryVM.LoadedBooks.Where(b => b.AuthorID == target.ID);
+                    var willUpdate = LibraryVM.BookSource.Where(b => b.AuthorID == target.ID);
                     foreach (var x in willUpdate)
                     {
                         x.Author = target.Clone() as AuthorViewModel;
@@ -704,7 +843,7 @@ namespace Sunctum.ViewModels
                 new Action<Guid>((id) =>
                 {
                     AuthorFacade.Delete(id);
-                    var willUpdate = LibraryVM.LoadedBooks.Where(b => b.AuthorID == id);
+                    var willUpdate = LibraryVM.BookSource.Where(b => b.AuthorID == id);
                     foreach (var x in willUpdate)
                     {
                         x.Author = null;
@@ -713,7 +852,7 @@ namespace Sunctum.ViewModels
                 new Action<AuthorViewModel, AuthorViewModel>((willDiscard, into) =>
                 {
                     AuthorFacade.Delete(willDiscard.ID);
-                    var willUpdate = LibraryVM.LoadedBooks.Where(b => b.AuthorID == willDiscard.ID);
+                    var willUpdate = LibraryVM.BookSource.Where(b => b.AuthorID == willDiscard.ID);
                     foreach (var x in willUpdate)
                     {
                         x.Author = into.Clone() as AuthorViewModel;
@@ -744,6 +883,34 @@ namespace Sunctum.ViewModels
             if (dialog.ShowDialog() == true)
             {
                 await LibraryVM.ImportAsync(new string[] { dialog.FileName });
+            }
+        }
+
+        public void Dispose()
+        {
+            _disposable.Dispose();
+        }
+
+        public IDisposable Subscribe(IObserver<ActiveTabChanged> observer)
+        {
+            observerList.Add(observer);
+            return new ActiveTabChangedDisposable(this, observer);
+        }
+
+        private class ActiveTabChangedDisposable : IDisposable
+        {
+            private MainWindowViewModel _mainWindowViewModel;
+            private IObserver<ActiveTabChanged> _observer;
+
+            public ActiveTabChangedDisposable(MainWindowViewModel mainWindowViewModel, IObserver<ActiveTabChanged> observer)
+            {
+                _mainWindowViewModel = mainWindowViewModel;
+                _observer = observer;
+            }
+
+            public void Dispose()
+            {
+                _mainWindowViewModel.observerList.Remove(_observer);
             }
         }
     }

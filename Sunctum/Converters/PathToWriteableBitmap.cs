@@ -45,7 +45,7 @@ namespace Sunctum.Converters
                         s_logger.Error($"Retry to load bitmap:{path}");
                         return LoadBitmap(path);
                     }
-                    return WriteableBitmapConverter.ToWriteableBitmap(mat);
+                    return mat.ToWriteableBitmap();
                 }
             }
             catch (OutOfMemoryException e)

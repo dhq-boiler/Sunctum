@@ -166,17 +166,22 @@
     </ApplicationDefinition>
     <Compile Include="Converters\MarginConverter.cs" />
     <Compile Include="Converters\PathToMenuItem.cs" />
+    <Compile Include="Converters\StarLevelToStringConverter.cs" />
     <Compile Include="Core\ExportAttributeBindingGenerator.cs" />
+    <Compile Include="Core\Notifications\ActiveTabChanged.cs" />
     <Compile Include="Core\SunctumBootstrapper.cs" />
     <Compile Include="Core\Extensions\NinjectBindingExtensions.cs" />
-    <Compile Include="Core\Extensions\UILogicExtensions.cs" />
+    <Compile Include="Managers\BookCabinet.cs" />
+    <Compile Include="Managers\BookStorage.cs" />
     <Compile Include="Managers\DataAccessManager.cs" />
+    <Compile Include="Managers\ArrangedBookStorage.cs" />
     <Compile Include="Managers\TaskManager.cs" />
     <Compile Include="ViewModels\AboutSunctumDialogViewModel.cs" />
     <Compile Include="ViewModels\AuthorPaneViewModel.cs" />
-    <Compile Include="ViewModels\DockElementViewModelBase.cs" />
     <Compile Include="ViewModels\BookPropertyDialogViewModel.cs" />
     <Compile Include="Exceptions\BrokenPageIndexException.cs" />
+    <Compile Include="ViewModels\ChangeStarViewModel.cs" />
+    <Compile Include="ViewModels\ContentDocumentViewModel.cs" />
     <Compile Include="ViewModels\DirectoryNameParserViewModel.cs" />
     <Compile Include="ViewModels\DocumentViewModelBase.cs" />
     <Compile Include="ViewModels\EditMetadataImportSettingViewModel.cs" />
@@ -186,9 +191,8 @@
     <Compile Include="ViewModels\IAuthorPaneViewModel.cs" />
     <Compile Include="ViewModels\IHomeDocumentViewModel.cs" />
     <Compile Include="ViewModels\IInformationPaneViewModel.cs" />
-    <Compile Include="ViewModels\IMainWindowViewModel.cs" />
     <Compile Include="Managers\AuthorManager.cs" />
-    <Compile Include="Managers\LibraryManager.cs" />
+    <Compile Include="Managers\Library.cs" />
     <Compile Include="Managers\TagManager.cs" />
     <Compile Include="ViewModels\ITagPaneViewModel.cs" />
     <Compile Include="ViewModels\MetadataImportSettingDialogViewModel.cs" />
@@ -197,6 +201,7 @@
     <Compile Include="Converters\BookCoverThumbnailLoader.cs" />
     <Compile Include="Converters\FileSizeFormatter.cs" />
     <Compile Include="Converters\PageThumbnailLoader.cs" />
+    <Compile Include="ViewModels\SearchDocumentViewModel.cs" />
     <Compile Include="ViewModels\TagPaneViewModel.cs" />
     <Compile Include="Views\AboutSunctumDialog.xaml.cs">
       <DependentUpon>AboutSunctumDialog.xaml</DependentUpon>
@@ -210,6 +215,9 @@
     <Compile Include="Views\BlinkBlackWhiteButton.xaml.cs">
       <DependentUpon>BlinkBlackWhiteButton.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ChangeStar.xaml.cs">
+      <DependentUpon>ChangeStar.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\EditMetadataImportSetting.xaml.cs">
       <DependentUpon>EditMetadataImportSetting.xaml</DependentUpon>
     </Compile>
@@ -219,8 +227,8 @@
     <Compile Include="Views\ExportDialog.xaml.cs">
       <DependentUpon>ExportDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\HomeDocument.xaml.cs">
-      <DependentUpon>HomeDocument.xaml</DependentUpon>
+    <Compile Include="Views\BookShowcase.xaml.cs">
+      <DependentUpon>BookShowcase.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\IMainWindow.cs" />
     <Compile Include="Managers\FillContentsTaskManager.cs" />
@@ -245,6 +253,8 @@
     <Compile Include="Views\ProgressBar.xaml.cs">
       <DependentUpon>ProgressBar.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\TabItemContainerStyleSelector.cs" />
+    <Compile Include="Views\TabItemTemplateSelector.cs" />
     <Compile Include="Views\TagPane.xaml.cs">
       <DependentUpon>TagPane.xaml</DependentUpon>
     </Compile>
@@ -276,11 +286,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\ChangeStar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\EditMetadataImportSetting.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\HomeDocument.xaml">
+    <Page Include="Views\BookShowcase.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

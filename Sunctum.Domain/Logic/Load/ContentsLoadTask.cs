@@ -1,6 +1,5 @@
 ﻿
 
-using Sunctum.Domain.Bridge;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Generate;
 using Sunctum.Domain.Models;
@@ -13,13 +12,13 @@ namespace Sunctum.Domain.Logic.Load
 {
     public static class ContentsLoadTask
     {
-        public static void FillContents(ILibraryManager libVm, BookViewModel book)
+        public static void FillContents(IBookStorage bookStorage, BookViewModel book)
         {
             var pages = PageFacade.FindByBookId(book.ID).OrderBy(p => p.PageIndex);
 
-            libVm.AccessDispatcherObject(() => book.ClearContents());
+            bookStorage.AccessDispatcherObject(() => book.ClearContents());
 
-            libVm.AccessDispatcherObject(() =>
+            bookStorage.AccessDispatcherObject(() =>
             {
                 foreach (var page in pages)
                 {
@@ -28,13 +27,13 @@ namespace Sunctum.Domain.Logic.Load
             });
         }
 
-        public static void FillContentsWithImage(ILibraryManager libVm, BookViewModel book)
+        public static void FillContentsWithImage(IBookStorage bookStorage, BookViewModel book)
         {
             var pages = PageFacade.FindByBookId(book.ID).OrderBy(p => p.PageIndex);
 
-            libVm.AccessDispatcherObject(() => book.ClearContents());
+            bookStorage.AccessDispatcherObject(() => book.ClearContents());
 
-            libVm.AccessDispatcherObject(() =>
+            bookStorage.AccessDispatcherObject(() =>
             {
                 foreach (var page in pages)
                 {

@@ -26,7 +26,7 @@ namespace Sunctum.Domain.Test.Core
         {
             base.ConfigureKernel();
 
-            Kernel.Bind<ILibraryManager>().To<LibraryManager>().InSingletonScope();
+            Kernel.Bind<ILibrary>().To<Library>().InSingletonScope();
             Kernel.Bind<IAuthorManager>().To<AuthorManager>().InSingletonScope();
             Kernel.Bind<ITagManager>().To<TagManager>().InSingletonScope();
             Kernel.Bind<IProgressManager>().To<ProgressManager>().InSingletonScope();

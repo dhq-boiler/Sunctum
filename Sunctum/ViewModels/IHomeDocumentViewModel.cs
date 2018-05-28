@@ -1,6 +1,5 @@
 ﻿
 
-using Sunctum.Domain.Logic.BookSorting;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using System;
@@ -8,32 +7,25 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace Sunctum.ViewModels
 {
     public interface IHomeDocumentViewModel
     {
-        List<BookViewModel> BookListViewSelectedItems { get; set; }
+        IArrangedBookStorage BookCabinet { get; set; }
+        ObservableCollection<BookViewModel> BookListViewSelectedItems { get; set; }
         ObservableCollection<Control> BooksContextMenuItems { get; set; }
-        ObservableCollection<BookViewModel> BookSource { get; set; }
         string ContentId { get; }
         ObservableCollection<Control> ContentsContextMenuItems { get; set; }
         List<PageViewModel> ContentsListViewSelectedItems { get; set; }
         int CurrentPage { get; }
-        bool IsSearching { get; }
-        ICommand LeftKeyDownCommand { get; set; }
-        ILibraryManager LibraryManager { get; set; }
-        ICommand MouseWheelCommand { get; set; }
-        ObservableCollection<BookViewModel> OnStage { get; }
+        ILibrary LibraryManager { get; set; }
         BookViewModel OpenedBook { get; set; }
         PageViewModel OpenedPage { get; set; }
-        ObservableCollection<BookViewModel> SearchedBooks { get; set; }
         bool SearchPaneIsVisible { get; set; }
         string SearchStatusText { get; }
         string SearchText { get; set; }
         List<EntryViewModel> SelectedEntries { get; }
-        IBookSorting Sorting { get; set; }
         string Title { get; }
         string UnescapedSearchText { get; set; }
 

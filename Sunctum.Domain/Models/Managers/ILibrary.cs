@@ -1,37 +1,15 @@
 ﻿
 
-using Sunctum.Domain.Logic.BookSorting;
 using Sunctum.Domain.ViewModels;
-using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
 namespace Sunctum.Domain.Models.Managers
 {
-    public interface ILibraryManager
+    public interface ILibrary : IBookStorage
     {
-        ObservableCollection<BookViewModel> LoadedBooks { get; set; }
-
-        ObservableCollection<BookViewModel> SearchedBooks { get; set; }
-
-        ObservableCollection<BookViewModel> OnStage { get; }
-
         ObservableCollection<RecentOpenedLibrary> RecentOpenedLibraryList { get; set; }
-
-        void FireFillContents(BookViewModel target);
-
-        void RunFillContents(BookViewModel target);
-
-        void FireFillContentsWithImage(BookViewModel target);
-
-        void RunFillContentsWithImage(BookViewModel target);
-
-        void AddToMemory(BookViewModel target);
-
-        void RemoveBookFromMemory(BookViewModel target);
-
-        void AccessDispatcherObject(Action accessAction);
 
         Task Load();
 
@@ -47,10 +25,6 @@ namespace Sunctum.Domain.Models.Managers
 
         Task RemakeThumbnail(IEnumerable<PageViewModel> pages);
 
-        void Search(string searchText);
-
-        void ClearSearchResult();
-
         Task ImportAsync(string[] objectPaths);
 
         Task ImportLibrary(string directory);
@@ -61,17 +35,7 @@ namespace Sunctum.Domain.Models.Managers
 
         Task SaveBookContentsOrder(BookViewModel book);
 
-        void RunTasks(List<System.Threading.Tasks.Task> tasks, bool progressEnables = true);
-
-        void UpdateInMemory(BookViewModel book);
-
-        bool SortingSelected(string name);
-
         bool IsDirty(BookViewModel book);
-
-        bool IsSearching { get; }
-
-        IBookSorting Sorting { get; set; }
 
         ITagManager TagMng { get; }
 
@@ -81,10 +45,6 @@ namespace Sunctum.Domain.Models.Managers
 
         ITaskManager TaskManager { get; }
 
-        event EventHandler SearchCleared;
-
-        event SearchedEventHandler Searched;
-
         Task UpdateBookByteSizeAll();
 
         Task UpdateBookByteSizeStillNull();
@@ -92,6 +52,8 @@ namespace Sunctum.Domain.Models.Managers
         Task Initialize();
 
         Task Reset();
+
+        IArrangedBookStorage CreateBookStorage();
     }
 
     public delegate void SearchedEventHandler(object sender, SearchedEventArgs e);

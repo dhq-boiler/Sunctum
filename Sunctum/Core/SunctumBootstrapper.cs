@@ -9,6 +9,7 @@ using Sunctum.Domain.Logic.Async;
 using Sunctum.Domain.Logic.Parse;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
+using Sunctum.Domain.ViewModels;
 using Sunctum.Infrastructure.Data.Rdbms;
 using Sunctum.Managers;
 using Sunctum.ViewModels;
@@ -36,7 +37,7 @@ namespace Sunctum.Core
             Kernel.Bind<ITagPaneViewModel>().To<TagPaneViewModel>().InSingletonScope();
             Kernel.Bind<IInformationPaneViewModel>().To<InformationPaneViewModel>().InSingletonScope();
 
-            Kernel.Bind<ILibraryManager>().To<LibraryManager>().InSingletonScope();
+            Kernel.Bind<ILibrary>().To<Library>().InSingletonScope();
             Kernel.Bind<ITagManager>().To<TagManager>().InSingletonScope();
             Kernel.Bind<IAuthorManager>().To<AuthorManager>().InSingletonScope();
             Kernel.Bind<IProgressManager>().To<ProgressManager>().InSingletonScope();
@@ -62,6 +63,7 @@ namespace Sunctum.Core
             Kernel.Bind<IDirectoryNameParserManager>().To<DirectoryNameParserManager>().InSingletonScope();
             Kernel.Bind<ILibraryResetting>().To<LibraryResetting>().InSingletonScope();
             Kernel.Bind<IBookLoading>().To<BookLoading>().InSingletonScope();
+            Kernel.Bind<IBookTagInitializing>().To<BookTagInitializing>().InSingletonScope();
 
             Kernel.Bind<IValueConverter>().To<BookSortingToBool>().InSingletonScope().Named("BookSortingToBool");
 

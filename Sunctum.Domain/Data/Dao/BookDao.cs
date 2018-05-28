@@ -82,8 +82,10 @@ namespace Sunctum.Domain.Data.Dao
                                                    .Column("b", "ByteSize").As("bByteSize")
                                                    .Column("a", "ID").As("aId")
                                                    .Column("a", "Name").As("aName")
+                                                   .Column("s", "Level").As("sLevel")
                                                    .From.Table(new Table<Book>().Name, "b")
-                                                   .Left.Join(new Table<Author>().Name, "a").On.Column("a", "ID").EqualTo.Column("bAuthorId"))
+                                                   .Left.Join(new Table<Author>().Name, "a").On.Column("a", "ID").EqualTo.Column("bAuthorId")
+                                                   .Left.Join(new Table<Star>().Name, "s").On.Column("s", "TypeId").EqualTo.Value(0).And().Column("s", "ID").EqualTo.Column("bId"))
                     {
                         string sql = query.ToSql();
                         command.CommandText = sql;
@@ -105,6 +107,7 @@ namespace Sunctum.Domain.Data.Dao
                                     author.Name = rdr.SafeGetString("aName");
                                     book.Author = author;
                                 }
+                                book.StarLevel = rdr.SafeGetNullableInt("sLevel");
                                 book.ContentsRegistered = true;
 
                                 yield return book;

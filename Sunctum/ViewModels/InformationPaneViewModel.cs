@@ -32,6 +32,8 @@ namespace Sunctum.ViewModels
             get { return "information"; }
         }
 
+        public override bool CanClose => true;
+
         public List<TagViewModel> TagListBoxSelectedItems
         {
             get { return _TagListBoxSelectedItems; }
@@ -64,7 +66,7 @@ namespace Sunctum.ViewModels
                 var items = TagListBoxSelectedItems;
                 foreach (var item in items)
                 {
-                    TagManager.RemoveImageTag(item.Name);
+                    MainWindowViewModel.LibraryVM.TagMng.RemoveImageTag(item.Name);
                 }
             });
             DropTagCommand = new DelegateCommand<IDataObject>(data =>
@@ -72,7 +74,7 @@ namespace Sunctum.ViewModels
                 var imageTagCount = (TagCountViewModel)data.GetData(typeof(TagCountViewModel));
                 try
                 {
-                    TagManager.AddImageTagToSelectedObject(imageTagCount.Tag.Name);
+                    MainWindowViewModel.LibraryVM.TagMng.AddImageTagToSelectedObject(imageTagCount.Tag.Name);
                 }
                 catch (ArgumentException)
                 {
@@ -81,14 +83,14 @@ namespace Sunctum.ViewModels
             });
             TagPlusCommand = new DelegateCommand<string>(async text =>
             {
-                await TagManager.AddImageTagToSelectedObject(text);
+                await MainWindowViewModel.LibraryVM.TagMng.AddImageTagToSelectedObject(text);
             });
             TagMinusCommand = new DelegateCommand(() =>
             {
                 var items = TagListBoxSelectedItems;
                 foreach (var item in items)
                 {
-                    TagManager.RemoveImageTag(item.Name);
+                    MainWindowViewModel.LibraryVM.TagMng.RemoveImageTag(item.Name);
                 }
             });
         }

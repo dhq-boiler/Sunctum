@@ -17,12 +17,14 @@ namespace Sunctum.Domain.Logic.Load
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
-        public static async Task LoadBookListAsync(ILibraryManager libVM)
+        [Obsolete]
+        public static async Task LoadBookListAsync(ILibrary libVM)
         {
             await Task.Run(() => LoadBookList(libVM));
         }
 
-        public static void LoadBookList(ILibraryManager libVM)
+        [Obsolete]
+        public static void LoadBookList(ILibrary libVM)
         {
             Stopwatch sw = new Stopwatch();
             s_logger.Info("Loading Book list...");
@@ -31,11 +33,11 @@ namespace Sunctum.Domain.Logic.Load
             {
                 dataOpUnit.Open(ConnectionManager.DefaultConnection);
 
-                libVM.LoadedBooks.CollectionChanged -= libVM.AuthorManager.LoadedBooks_CollectionChanged;
+                libVM.BookSource.CollectionChanged -= libVM.AuthorManager.LoadedBooks_CollectionChanged;
 
-                libVM.LoadedBooks = new ObservableCollection<BookViewModel>(BookFacade.FindAllWithAuthor(dataOpUnit));
+                libVM.BookSource = new ObservableCollection<BookViewModel>(BookFacade.FindAllWithAuthor(dataOpUnit));
                 libVM.AuthorManager.LoadAuthorCount();
-                libVM.LoadedBooks.CollectionChanged += libVM.AuthorManager.LoadedBooks_CollectionChanged;
+                libVM.BookSource.CollectionChanged += libVM.AuthorManager.LoadedBooks_CollectionChanged;
             }
             sw.Stop();
             s_logger.Info($"Completed to load Book list. {sw.ElapsedMilliseconds}ms");

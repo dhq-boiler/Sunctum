@@ -52,6 +52,9 @@
                 IsChecked="{Binding AuthorManager.EnableOrderByName}" />
             <Label>Author</Label>
         </DockPanel>
+        <local:ProgressBar DockPanel.Dock="Top"
+                           Height="2"
+                           ProgressionRate="{Binding AuthorManager.ProgressManager.Progress}" />
         <ListBox
             x:Name="Author_ListBox"
             behavior:MultiSelectorBehaviours.SynchronizedSelectedItems="{Binding AuthorListBoxSelectedItems}"
@@ -79,6 +82,12 @@
                         </DataTrigger>
                         <DataTrigger Binding="{Binding IsSearchingKey}" Value="False">
                             <Setter Property="Background" Value="Transparent" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsVisible}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsVisible}" Value="False">
+                            <Setter Property="Visibility" Value="Collapsed" />
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
