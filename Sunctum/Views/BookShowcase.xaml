@@ -17,7 +17,7 @@
     mc:Ignorable="d">
     <i:Interaction.Triggers>
         <prism:InteractionRequestTrigger SourceObject="{Binding ChangeStarRequest}">
-            <prism:PopupWindowAction CenterOverAssociatedObject="True" IsModal="True">
+            <prism:PopupWindowAction IsModal="True">
                 <prism:PopupWindowAction.WindowContent>
                     <local:ChangeStar />
                 </prism:PopupWindowAction.WindowContent>
