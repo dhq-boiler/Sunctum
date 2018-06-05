@@ -1,11 +1,14 @@
 ﻿
 
+using Reactive.Bindings;
+using Reactive.Bindings.Extensions;
 using Sunctum.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Linq;
 
 namespace Sunctum.Domain.ViewModels
 {
@@ -22,6 +25,10 @@ namespace Sunctum.Domain.ViewModels
         public BookViewModel()
         {
             Contents = new ObservableCollection<PageViewModel>();
+            NumberOfPages = Contents
+                .PropertyChangedAsObservable()
+                .Select(x => Contents.Count())
+                .ToReactiveProperty();
         }
 
         public BookViewModel(Guid id, string title)
@@ -46,12 +53,7 @@ namespace Sunctum.Domain.ViewModels
             set { SetProperty(ref _Contents, value); }
         }
 
-        public int NumberOfPages
-        {
-            [DebuggerStepThrough]
-            get
-            { return Contents.Count(); }
-        }
+        public ReactiveProperty<int> NumberOfPages { get; set; }
 
         public Guid AuthorID
         {
@@ -233,9 +235,11 @@ namespace Sunctum.Domain.ViewModels
             {
                 if (disposing)
                 {
+                    NumberOfPages.Dispose();
                 }
 
                 Contents = null;
+                NumberOfPages = null;
 
                 _disposedValue = true;
             }

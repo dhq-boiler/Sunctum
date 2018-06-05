@@ -63,6 +63,9 @@
       <Name>Sunctum.Infrastructure</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>"$(SolutionDir)CodeFormatter\CodeFormatter" "$(ProjectDir)$(ProjectFileName)" /nounicode /nocopyright</PreBuildEvent>
