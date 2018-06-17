@@ -48,6 +48,8 @@ namespace Sunctum.ViewModels
         private bool _ContentListIsVisible;
         private bool _ImageIsVisible;
 
+        public static readonly Guid BeforeSearchPosition = Guid.Parse("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF");
+
         public ILibrary LibraryManager { get; set; }
 
         public IMainWindowViewModel MainWindowViewModel { get; set; }
@@ -402,6 +404,7 @@ namespace Sunctum.ViewModels
                     {
                         ClearSearchResult();
                         CloseSearchPane();
+                        RestoreScrollOffset(BeforeSearchPosition);
                     }
                 }
             });
@@ -431,8 +434,10 @@ namespace Sunctum.ViewModels
         {
             if (_scrollOffset == null) return;
 
-            if (bookId.Equals(Guid.Empty))
+            if (bookId.Equals(Guid.Empty) || bookId.Equals(BeforeSearchPosition))
             {
+                if (_scrollOffset.ContainsKey(bookId)) return;
+
                 Application.Current.Dispatcher.Invoke(() =>
                 {
                     StoreBookScrollOffsetRequest.Raise(new Notification()
@@ -454,7 +459,7 @@ namespace Sunctum.ViewModels
         {
             if (_scrollOffset == null) return;
 
-            if (bookId.Equals(Guid.Empty))
+            if (bookId.Equals(Guid.Empty) || bookId.Equals(BeforeSearchPosition))
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
@@ -471,6 +476,8 @@ namespace Sunctum.ViewModels
                     Content = new Tuple<Dictionary<Guid, Point>, Guid>(_scrollOffset, bookId)
                 });
             }
+
+            _scrollOffset.Remove(bookId);
         }
 
         public void ResetScrollOffset()

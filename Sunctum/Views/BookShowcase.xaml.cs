@@ -1,7 +1,6 @@
 ﻿
 
 using NLog;
-using Sunctum.Domain.Models;
 using Sunctum.Domain.ViewModels;
 using Sunctum.UI.Controls;
 using Sunctum.ViewModels;
@@ -259,7 +258,9 @@ namespace Sunctum.Views
         private void Search_TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             var viewModel = (DocumentViewModelBase)DataContext;
+            viewModel.StoreScrollOffset(DocumentViewModelBase.BeforeSearchPosition);
             viewModel.Search();
+            viewModel.ResetScrollOffset();
             e.Handled = true;
         }
 
@@ -268,14 +269,9 @@ namespace Sunctum.Views
             AutoScrollingHyperlink hyperlink = (AutoScrollingHyperlink)sender;
             var author = (hyperlink.DataContext as BookViewModel).Author;
             var viewModel = (DocumentViewModelBase)DataContext;
+            viewModel.StoreScrollOffset(DocumentViewModelBase.BeforeSearchPosition);
             viewModel.SearchText = author.Name;
-        }
-
-        private void Hyperlink_Click(object sender, RoutedEventArgs e)
-        {
-            var author = ((FrameworkContentElement)sender).DataContext as Author;
-            var viewModel = (DocumentViewModelBase)DataContext;
-            viewModel.SearchText = author.Name;
+            viewModel.ResetScrollOffset();
         }
 
         private static void ProcessDragEventArgsInPreviewDragOver(ref DragEventArgs e)
