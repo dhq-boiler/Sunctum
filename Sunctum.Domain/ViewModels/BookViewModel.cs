@@ -35,6 +35,10 @@ namespace Sunctum.Domain.ViewModels
             : base(id, title)
         {
             Contents = new ObservableCollection<PageViewModel>();
+            NumberOfPages = Contents
+                .PropertyChangedAsObservable()
+                .Select(x => Contents.Count())
+                .ToReactiveProperty();
         }
 
         public Configuration Configuration
