@@ -64,6 +64,8 @@ namespace Sunctum.ViewModels
 
         public ICommand ExportBooksCommand { get; set; }
 
+        public ICommand FilterBooksCommand { get; set; }
+
         public ICommand LeftKeyDownCommand { get; set; }
 
         public ICommand MouseWheelCommand { get; set; }
@@ -284,6 +286,10 @@ namespace Sunctum.ViewModels
             {
                 var books = BookListViewSelectedItems;
                 OpenExportDialog(books.ToArray());
+            });
+            FilterBooksCommand = new DelegateCommand(() =>
+            {
+                MainWindowViewModel.NewContentTab(BookListViewSelectedItems);
             });
             LeftKeyDownCommand = new DelegateCommand(() =>
             {
@@ -537,6 +543,13 @@ namespace Sunctum.ViewModels
             {
                 Header = "新しいタブで開く",
                 Command = OpenBookInNewTabCommand
+            };
+            BooksContextMenuItems.Add(menuitem);
+
+            menuitem = new MenuItem()
+            {
+                Header = "選択したアイテムで絞り込む",
+                Command = FilterBooksCommand
             };
             BooksContextMenuItems.Add(menuitem);
 

@@ -1,6 +1,7 @@
 ﻿
 
 using Sunctum.Domain.Models.Managers;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 
@@ -39,5 +40,7 @@ namespace Sunctum.Domain.ViewModels
         void CloseTab(IDocumentViewModelBase documentViewModelBase);
 
         void NewContentTab(BookViewModel bookViewModel);
+
+        void NewContentTab(IEnumerable<BookViewModel> list);
     }
 }
