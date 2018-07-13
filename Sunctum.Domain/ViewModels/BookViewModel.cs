@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
+using YamlDotNet.Serialization;
 
 namespace Sunctum.Domain.ViewModels
 {
@@ -57,6 +58,7 @@ namespace Sunctum.Domain.ViewModels
             set { SetProperty(ref _Contents, value); }
         }
 
+        [YamlIgnore]
         public ReactiveProperty<int> NumberOfPages { get; set; }
 
         public Guid AuthorID
