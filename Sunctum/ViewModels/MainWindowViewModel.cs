@@ -32,6 +32,7 @@ using System.Reactive.Disposables;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace Sunctum.ViewModels
@@ -51,7 +52,7 @@ namespace Sunctum.ViewModels
         private double _WindowTop;
         private double _WindowWidth;
         private double _WindowHeight;
-        private ObservableCollection<DocumentViewModelBase> _TabItemViewModels;
+        private ObservableCollection<IDocumentViewModelBase> _TabItemViewModels;
         private int _SelectedTabIndex;
         private CompositeDisposable _disposable = new CompositeDisposable();
         protected List<IObserver<ActiveTabChanged>> observerList = new List<IObserver<ActiveTabChanged>>();
@@ -378,7 +379,7 @@ namespace Sunctum.ViewModels
         [Inject]
         public IHomeDocumentViewModel HomeDocumentViewModel { get; set; }
 
-        public ObservableCollection<DocumentViewModelBase> TabItemViewModels
+        public ObservableCollection<IDocumentViewModelBase> TabItemViewModels
         {
             get { return _TabItemViewModels; }
             set
@@ -410,6 +411,14 @@ namespace Sunctum.ViewModels
         [Inject]
         public IAuthorManager AuthorManager { get; set; }
 
+        public List<MenuItem> ExtraBookContextMenu { get; set; } = new List<MenuItem>();
+
+        public List<MenuItem> ExtraPageContextMenu { get; set; } = new List<MenuItem>();
+
+        public List<MenuItem> ExtraTagContextMenu { get; set; } = new List<MenuItem>();
+
+        public List<MenuItem> ExtraAuthorContextMenu { get; set; } = new List<MenuItem>();
+
         #endregion
 
         #region 一般
@@ -419,8 +428,6 @@ namespace Sunctum.ViewModels
             if (starting)
             {
                 LibraryVM.ProgressManager.PropertyChanged += ProgressManager_PropertyChanged;
-                HomeDocumentViewModel.BuildContextMenus_Books();
-                HomeDocumentViewModel.BuildContextMenus_Contents();
                 TagPaneViewModel.BuildContextMenus_Tags();
                 AuthorPaneViewModel.BuildContextMenus_Authors();
                 LoadPlugins();
@@ -433,7 +440,7 @@ namespace Sunctum.ViewModels
 
             CloseAllTab();
 
-            TabItemViewModels = new ObservableCollection<DocumentViewModelBase>();
+            TabItemViewModels = new ObservableCollection<IDocumentViewModelBase>();
             TabItemViewModels.Add((DocumentViewModelBase)HomeDocumentViewModel);
 
             HomeDocumentViewModel.LibraryManager = LibraryVM;
@@ -480,8 +487,6 @@ namespace Sunctum.ViewModels
         public void NewSearchTab(ObservableCollection<BookViewModel> onStage)
         {
             var newTabViewModel = new SearchDocumentViewModel("Search results");
-            newTabViewModel.BuildContextMenus_Books();
-            newTabViewModel.BuildContextMenus_Contents();
             newTabViewModel.LibraryManager = LibraryVM;
             newTabViewModel.BookCabinet = LibraryVM.CreateBookStorage();
             newTabViewModel.BookCabinet.BookSource = new ObservableCollection<BookViewModel>(onStage);
@@ -500,8 +505,6 @@ namespace Sunctum.ViewModels
         public void NewContentTab(BookViewModel bookViewModel)
         {
             var newTabViewModel = new ContentDocumentViewModel(bookViewModel.Title);
-            newTabViewModel.BuildContextMenus_Books();
-            newTabViewModel.BuildContextMenus_Contents();
             newTabViewModel.LibraryManager = LibraryVM;
             newTabViewModel.BookCabinet = LibraryVM.CreateBookStorage();
             newTabViewModel.BookCabinet.BookSource = new ObservableCollection<BookViewModel>();
@@ -521,8 +524,6 @@ namespace Sunctum.ViewModels
         public void NewContentTab(IEnumerable<BookViewModel> list)
         {
             var newTabViewModel = new ContentDocumentViewModel("Filtered");
-            newTabViewModel.BuildContextMenus_Books();
-            newTabViewModel.BuildContextMenus_Contents();
             newTabViewModel.LibraryManager = LibraryVM;
             newTabViewModel.BookCabinet = LibraryVM.CreateBookStorage();
             newTabViewModel.BookCabinet.BookSource = new ObservableCollection<BookViewModel>();
@@ -608,27 +609,19 @@ namespace Sunctum.ViewModels
                     {
                         case MenuType.MainWindow_Book_ContextMenu:
                             var menu = plugin.GetMenu(MenuType.MainWindow_Book_ContextMenu, () => HomeDocumentViewModel.SelectedEntries.Where(e => e is BookViewModel).Cast<BookViewModel>()) as System.Windows.Controls.MenuItem;
-                            HomeDocumentViewModel.BooksContextMenuItems.Where(m => m is System.Windows.Controls.MenuItem && ((System.Windows.Controls.MenuItem)m).Header != null && ((System.Windows.Controls.MenuItem)m).Header.Equals("Ex"))
-                                .Cast<System.Windows.Controls.MenuItem>()
-                                .Single().Items.Add(menu);
+                            ExtraBookContextMenu.Add(menu);
                             break;
                         case MenuType.MainWindow_Page_ContextMenu:
                             menu = plugin.GetMenu(MenuType.MainWindow_Page_ContextMenu, () => HomeDocumentViewModel.SelectedEntries.Where(e => e is PageViewModel).Cast<PageViewModel>()) as System.Windows.Controls.MenuItem;
-                            HomeDocumentViewModel.ContentsContextMenuItems.Where(m => m is System.Windows.Controls.MenuItem && ((System.Windows.Controls.MenuItem)m).Header != null && ((System.Windows.Controls.MenuItem)m).Header.Equals("Ex"))
-                                .Cast<System.Windows.Controls.MenuItem>()
-                                .Single().Items.Add(menu);
+                            ExtraPageContextMenu.Add(menu);
                             break;
                         case MenuType.MainWindow_Tag_ContextMenu:
                             menu = plugin.GetMenu(MenuType.MainWindow_Tag_ContextMenu, () => TagManager.TagCount.Where(e => e is TagCountViewModel).Cast<TagCountViewModel>()) as System.Windows.Controls.MenuItem;
-                            TagPaneViewModel.TagContextMenuItems.Where(m => m is System.Windows.Controls.MenuItem && ((System.Windows.Controls.MenuItem)m).Header != null && ((System.Windows.Controls.MenuItem)m).Header.Equals("Ex"))
-                                .Cast<System.Windows.Controls.MenuItem>()
-                                .Single().Items.Add(menu);
+                            ExtraTagContextMenu.Add(menu);
                             break;
                         case MenuType.MainWindow_Author_ContextMenu:
                             menu = plugin.GetMenu(MenuType.MainWindow_Author_ContextMenu, () => AuthorManager.SelectedItems.Where(e => e is AuthorViewModel).Cast<AuthorViewModel>()) as System.Windows.Controls.MenuItem;
-                            AuthorPaneViewModel.AuthorContextMenuItems.Where(m => m is System.Windows.Controls.MenuItem && ((System.Windows.Controls.MenuItem)m).Header != null && ((System.Windows.Controls.MenuItem)m).Header.Equals("Ex"))
-                                .Cast<System.Windows.Controls.MenuItem>()
-                                .Single().Items.Add(menu);
+                            ExtraAuthorContextMenu.Add(menu);
                             break;
                     }
                 }

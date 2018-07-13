@@ -27,6 +27,8 @@ namespace Sunctum.Domain.ViewModels
         string SearchStatusText { get; }
         string SearchText { get; set; }
         List<EntryViewModel> SelectedEntries { get; }
+        string Title { get; }
+        string ContentId { get; }
         string UnescapedSearchText { get; set; }
 
         event EventHandler SearchCleared;

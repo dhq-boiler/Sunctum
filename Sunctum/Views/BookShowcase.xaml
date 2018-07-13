@@ -295,6 +295,9 @@
                     <trigger:EndKeyDownEventTrigger>
                         <trigger:ScrollEndAction TargetObject="{Binding ElementName=Book_ListView}" />
                     </trigger:EndKeyDownEventTrigger>
+                    <trigger:ContextMenuOpeningEventTrigger EventName="ContextMenuOpening">
+                        <prism:InvokeCommandAction Command="{Binding BuildBookContextMenuCommand}" TriggerParameterPath="Source" />
+                    </trigger:ContextMenuOpeningEventTrigger>
                 </i:Interaction.Triggers>
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
@@ -449,6 +452,11 @@
                     Style="{StaticResource Contents_ListView_Style}"
                     VirtualizingPanel.IsVirtualizing="True"
                     VirtualizingPanel.VirtualizationMode="Recycling">
+                    <i:Interaction.Triggers>
+                        <trigger:ContextMenuOpeningEventTrigger EventName="ContextMenuOpening">
+                            <prism:InvokeCommandAction Command="{Binding BuildContentsContextMenuCommand}" TriggerParameterPath="Source" />
+                        </trigger:ContextMenuOpeningEventTrigger>
+                    </i:Interaction.Triggers>
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ui.ctrl:VirtualizingWrapPanel>

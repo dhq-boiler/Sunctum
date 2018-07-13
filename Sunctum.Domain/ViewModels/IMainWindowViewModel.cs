@@ -4,6 +4,7 @@ using Sunctum.Domain.Models.Managers;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System.Windows.Controls;
 
 namespace Sunctum.Domain.ViewModels
 {
@@ -42,5 +43,15 @@ namespace Sunctum.Domain.ViewModels
         void NewContentTab(BookViewModel bookViewModel);
 
         void NewContentTab(IEnumerable<BookViewModel> list);
+
+        ObservableCollection<IDocumentViewModelBase> TabItemViewModels { get; }
+
+        List<MenuItem> ExtraBookContextMenu { get; }
+
+        List<MenuItem> ExtraPageContextMenu { get; }
+
+        List<MenuItem> ExtraTagContextMenu { get; }
+
+        List<MenuItem> ExtraAuthorContextMenu { get; }
     }
 }

@@ -56,6 +56,10 @@ namespace Sunctum.ViewModels
 
         #region コマンド
 
+        public ICommand BuildBookContextMenuCommand { get; set; }
+
+        public ICommand BuildContentsContextMenuCommand { get; set; }
+
         public ICommand ChangeStarCommand { get; set; }
 
         public ICommand CloseSearchPaneCommand { get; set; }
@@ -91,6 +95,10 @@ namespace Sunctum.ViewModels
         public ICommand RightKeyDownCommand { get; set; }
 
         public ICommand SearchInNewTabCommand { get; set; }
+
+        public ICommand SendBookToExistTabCommand { get; set; }
+
+        public ICommand SendBookToNewTabCommand { get; set; }
 
         public ICommand ScrapPagesCommand { get; set; }
 
@@ -269,6 +277,16 @@ namespace Sunctum.ViewModels
 
         private void RegisterCommands()
         {
+            BuildBookContextMenuCommand = new DelegateCommand<FrameworkElement>(fe =>
+            {
+                BuildContextMenus_Books();
+                fe.ContextMenu.IsOpen = true;
+            });
+            BuildContentsContextMenuCommand = new DelegateCommand<FrameworkElement>(fe =>
+            {
+                BuildContextMenus_Contents();
+                fe.ContextMenu.IsOpen = true;
+            });
             ChangeStarCommand = new DelegateCommand(() =>
             {
                 ChangeStarRequest.Raise(new Notification() { Title = "Change Star", Content = BookListViewSelectedItems.First() });
@@ -389,6 +407,17 @@ namespace Sunctum.ViewModels
             SearchInNewTabCommand = new DelegateCommand(() =>
             {
                 MainWindowViewModel.NewSearchTab(BookCabinet.OnStage);
+            });
+            SendBookToExistTabCommand = new DelegateCommand<IDocumentViewModelBase>(p =>
+            {
+                foreach (var item in BookListViewSelectedItems)
+                {
+                    p.BookCabinet.AddToMemory(item);
+                }
+            });
+            SendBookToNewTabCommand = new DelegateCommand(() =>
+            {
+                MainWindowViewModel.NewContentTab(BookListViewSelectedItems);
             });
             ScrapPagesCommand = new DelegateCommand<object>(async (p) =>
             {
@@ -530,28 +559,48 @@ namespace Sunctum.ViewModels
 
         public void BuildContextMenus_Books()
         {
-            BooksContextMenuItems = new ObservableCollection<System.Windows.Controls.Control>();
+            var menulist = new ObservableCollection<System.Windows.Controls.Control>();
 
             var menuitem = new MenuItem()
             {
                 Header = "開く",
                 Command = OpenBookCommand
             };
-            BooksContextMenuItems.Add(menuitem);
+            menulist.Add(menuitem);
 
             menuitem = new MenuItem()
             {
                 Header = "新しいタブで開く",
                 Command = OpenBookInNewTabCommand
             };
-            BooksContextMenuItems.Add(menuitem);
+            menulist.Add(menuitem);
 
             menuitem = new MenuItem()
             {
                 Header = "選択したアイテムで絞り込む",
                 Command = FilterBooksCommand
             };
-            BooksContextMenuItems.Add(menuitem);
+            menulist.Add(menuitem);
+
+            menuitem = new MenuItem()
+            {
+                Header = "送る"
+            };
+            menuitem.Items.Add(new MenuItem()
+            {
+                Header = "新しいタブ",
+                Command = SendBookToNewTabCommand
+            });
+            foreach (var item in MainWindowViewModel.TabItemViewModels.Where(t => !t.ContentId.Equals("home") && !t.ContentId.Equals(this.ContentId)))
+            {
+                menuitem.Items.Add(new MenuItem()
+                {
+                    Header = item.Title,
+                    Command = SendBookToExistTabCommand,
+                    CommandParameter = item
+                });
+            }
+            menulist.Add(menuitem);
 
             menuitem = new MenuItem()
             {
@@ -560,14 +609,14 @@ namespace Sunctum.ViewModels
             };
             var binding = new Binding("StarLevel.Value") { Converter = new StarLevelToStringConverter(), UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged };
             menuitem.SetBinding(MenuItem.HeaderProperty, binding);
-            BooksContextMenuItems.Add(menuitem);
+            menulist.Add(menuitem);
 
             menuitem = new System.Windows.Controls.MenuItem()
             {
                 Header = "書き出し",
                 Command = ExportBooksCommand
             };
-            BooksContextMenuItems.Add(menuitem);
+            menulist.Add(menuitem);
 
             var manageMenu = new System.Windows.Controls.MenuItem()
             {
@@ -587,27 +636,31 @@ namespace Sunctum.ViewModels
                 Command = RemoveBookCommand
             };
             manageMenu.Items.Add(menuitem);
-            BooksContextMenuItems.Add(manageMenu);
+            menulist.Add(manageMenu);
 
             menuitem = new System.Windows.Controls.MenuItem()
             {
                 Header = "プロパティ",
                 Command = OpenBookPropertyDialogCommand,
             };
-            BooksContextMenuItems.Add(menuitem);
+            menulist.Add(menuitem);
 
-            BooksContextMenuItems.Add(new System.Windows.Controls.Separator());
+            menulist.Add(new System.Windows.Controls.Separator());
 
             menuitem = new System.Windows.Controls.MenuItem()
             {
-                Header = "Ex",
+                Header = "Extra",
             };
-            BooksContextMenuItems.Add(menuitem);
+            binding = new Binding("MainWindowViewModel.ExtraBookContextMenu");
+            menuitem.SetBinding(ItemsControl.ItemsSourceProperty, binding);
+            menulist.Add(menuitem);
+
+            BooksContextMenuItems = menulist;
         }
 
         public void BuildContextMenus_Contents()
         {
-            ContentsContextMenuItems = new ObservableCollection<System.Windows.Controls.Control>();
+            var menulist = new ObservableCollection<System.Windows.Controls.Control>();
 
             var menuitem = new System.Windows.Controls.MenuItem()
             {
@@ -615,7 +668,7 @@ namespace Sunctum.ViewModels
                 Command = OpenImageByDefaultProgramCommand,
                 CommandParameter = SelectedEntries.Where(x => x is PageViewModel).Cast<PageViewModel>()
             };
-            ContentsContextMenuItems.Add(menuitem);
+            menulist.Add(menuitem);
 
             menuitem = new System.Windows.Controls.MenuItem()
             {
@@ -623,7 +676,7 @@ namespace Sunctum.ViewModels
                 Command = ScrapPagesCommand,
                 CommandParameter = SelectedEntries.Where(x => x is PageViewModel).Cast<PageViewModel>()
             };
-            ContentsContextMenuItems.Add(menuitem);
+            menulist.Add(menuitem);
 
             var manageMenu = new System.Windows.Controls.MenuItem()
             {
@@ -644,15 +697,19 @@ namespace Sunctum.ViewModels
                 CommandParameter = SelectedEntries.Where(x => x is PageViewModel).Cast<PageViewModel>()
             };
             manageMenu.Items.Add(menuitem);
-            ContentsContextMenuItems.Add(manageMenu);
+            menulist.Add(manageMenu);
 
-            ContentsContextMenuItems.Add(new System.Windows.Controls.Separator());
+            menulist.Add(new System.Windows.Controls.Separator());
 
             menuitem = new System.Windows.Controls.MenuItem()
             {
-                Header = "Ex",
+                Header = "Extra",
             };
-            ContentsContextMenuItems.Add(menuitem);
+            var binding = new Binding("MainWindowViewModel.ExtraPageContextMenu");
+            menuitem.SetBinding(ItemsControl.ItemsSourceProperty, binding);
+            menulist.Add(menuitem);
+
+            ContentsContextMenuItems = menulist;
         }
 
         private void OpenBookPropertyDialog(BookViewModel book)

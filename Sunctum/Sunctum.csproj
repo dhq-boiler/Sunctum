@@ -271,6 +271,7 @@
       <DependentUpon>TagPane.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Triggers\CloseWindowAction.cs" />
+    <Compile Include="Views\Triggers\ContextMenuOpeningEventTrigger.cs" />
     <Compile Include="Views\Triggers\DeleteKeyDownEventTrigger.cs" />
     <Compile Include="Views\Triggers\DropEventTrigger.cs" />
     <Compile Include="Views\Triggers\EndKeyDownEventTrigger.cs" />
