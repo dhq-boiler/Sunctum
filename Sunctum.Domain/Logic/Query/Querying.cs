@@ -1,5 +1,6 @@
 ﻿
 
+using Sunctum.Domain.Bridge;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Logic.BookSorting;
 using Sunctum.Domain.Models.Managers;
@@ -15,7 +16,8 @@ namespace Sunctum.Domain.Logic.Query
     {
         public static bool IsDirty(ILibrary libVM, BookViewModel book)
         {
-            BookViewModel refBook = libVM.BookSource.Where(b => b.ID.Equals(book.ID)).Single();
+            var dao = new BookDao();
+            BookViewModel refBook = dao.FindBy(new Dictionary<string, object>() { { "ID", book.ID } }).Single().ToViewModel();
             return !book.Equals(refBook);
         }
 
