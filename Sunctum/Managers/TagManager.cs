@@ -37,15 +37,8 @@ namespace Sunctum.Managers
         private List<TagViewModel> _SelectedEntityTags;
         private List<TagViewModel> _SelectedItems;
         private bool _OrderAscending;
-        private bool _EnableOrderByName;
         private ObservableCollection<TagCountViewModel> _SearchedImageTags;
         private IImageTagCountSorting _ImageTagCountSorting;
-
-        #region コマンド
-
-        public ICommand RemoveTagFromEntriesCommand { get; set; }
-
-        #endregion //コマンド
 
         [Inject]
         public IMainWindowViewModel MainWindowViewModel { get; set; }
@@ -129,13 +122,47 @@ namespace Sunctum.Managers
             }
         }
 
+        #region コマンド
+
+        public ICommand RemoveTagFromEntriesCommand { get; set; }
+
+        public ICommand SortByNameAscCommand { get; set; }
+
+        public ICommand SortByNameDescCommand { get; set; }
+
+        public ICommand SortByCountAscCommand { get; set; }
+
+        public ICommand SortByCountDescCommand { get; set; }
+
+        #endregion //コマンド
+
+        #region コマンド登録
+
         private void RegisterCommands()
         {
             RemoveTagFromEntriesCommand = new DelegateCommand<object>(async (p) =>
             {
                 await RemoveImageTag(p as string);
             });
+            SortByNameAscCommand = new DelegateCommand(() =>
+            {
+                Sorting = ImageTagCountSorting.ByNameAsc;
+            });
+            SortByNameDescCommand = new DelegateCommand(() =>
+            {
+                Sorting = ImageTagCountSorting.ByNameDesc;
+            });
+            SortByCountAscCommand = new DelegateCommand(() =>
+            {
+                Sorting = ImageTagCountSorting.ByCountAsc;
+            });
+            SortByCountDescCommand = new DelegateCommand(() =>
+            {
+                Sorting = ImageTagCountSorting.ByCountDesc;
+            });
         }
+
+        #endregion //コマンド登録
 
         #region プロパティ
 
@@ -204,16 +231,6 @@ namespace Sunctum.Managers
             set { SetProperty(ref _SelectedItems, value); }
         }
 
-        public bool EnableOrderByName
-        {
-            get { return _EnableOrderByName; }
-            set
-            {
-                SetProperty(ref _EnableOrderByName, value);
-                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
-            }
-        }
-
         public IImageTagCountSorting Sorting
         {
             [DebuggerStepThrough]
@@ -222,6 +239,7 @@ namespace Sunctum.Managers
             set
             {
                 SetProperty(ref _ImageTagCountSorting, value);
+                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
             }
         }
 
@@ -267,29 +285,6 @@ namespace Sunctum.Managers
         {
             get
             {
-                if (EnableOrderByName)
-                {
-                    if (_OrderAscending)
-                    {
-                        Sorting = ImageTagCountSorting.ByNameAsc;
-                    }
-                    else
-                    {
-                        Sorting = ImageTagCountSorting.ByNameDesc;
-                    }
-                }
-                else
-                {
-                    if (_OrderAscending)
-                    {
-                        Sorting = ImageTagCountSorting.ByCountAsc;
-                    }
-                    else
-                    {
-                        Sorting = ImageTagCountSorting.ByCountDesc;
-                    }
-                }
-
                 var newCollection = Sorting.Sort(DisplayableImageTagCountSource).ToArray();
                 return new ObservableCollection<TagCountViewModel>(newCollection);
             }
@@ -642,19 +637,7 @@ namespace Sunctum.Managers
         {
             _OrderAscending = !_OrderAscending;
 
-            RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OrderText));
             RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
-        }
-
-        public string OrderText
-        {
-            get
-            {
-                if (_OrderAscending)
-                    return "↑";
-                else
-                    return "↓";
-            }
         }
 
         private object _lock_object = new object();

@@ -2,11 +2,13 @@
 
 using Ninject;
 using Prism.Commands;
+using Sunctum.Domain.Logic.Query;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace Sunctum.ViewModels
@@ -27,6 +29,9 @@ namespace Sunctum.ViewModels
 
         [Inject]
         public IAuthorManager AuthorManager { get; set; }
+
+        [Inject, Named("AuthorSortingToBool")]
+        public IValueConverter AuthorSortingToBool { get; set; }
 
         public override string Title
         {
@@ -56,10 +61,6 @@ namespace Sunctum.ViewModels
 
         public ICommand SearchByAuthorCommand { get; set; }
 
-        public ICommand SwitchOrderCommand { get; set; }
-
-        public ICommand CloseCommand { get; set; }
-
         public AuthorPaneViewModel()
         {
             RegisterCommands();
@@ -81,14 +82,6 @@ namespace Sunctum.ViewModels
             {
                 var items = AuthorListBoxSelectedItems;
                 SearchByAuthor(items);
-            });
-            SwitchOrderCommand = new DelegateCommand(() =>
-            {
-                AuthorManager.SwitchOrdering();
-            });
-            CloseCommand = new DelegateCommand(() =>
-            {
-                MainWindowViewModel.DisplayAuthorPane = false;
             });
         }
 
@@ -112,9 +105,61 @@ namespace Sunctum.ViewModels
 
             menuitem = new System.Windows.Controls.MenuItem()
             {
+                Header = "表示"
+            };
+            AuthorContextMenuItems.Add(menuitem);
+
+            var sortMenuitem = new System.Windows.Controls.MenuItem()
+            {
+                Header = "ソート"
+            };
+            menuitem.Items.Add(sortMenuitem);
+
+            var childMenuitem = new System.Windows.Controls.MenuItem()
+            {
+                Header = "名前 昇順",
+                Command = AuthorManager.SortByNameAscCommand,
+            };
+            SetBindingForIsChecked(childMenuitem, "ByNameAsc");
+            sortMenuitem.Items.Add(childMenuitem);
+
+            childMenuitem = new System.Windows.Controls.MenuItem()
+            {
+                Header = "名前 降順",
+                Command = AuthorManager.SortByNameDescCommand
+            };
+            SetBindingForIsChecked(childMenuitem, "ByNameDesc");
+            sortMenuitem.Items.Add(childMenuitem);
+
+            childMenuitem = new System.Windows.Controls.MenuItem()
+            {
+                Header = "カウント 昇順",
+                Command = AuthorManager.SortByCountAscCommand
+            };
+            SetBindingForIsChecked(childMenuitem, "ByCountAsc");
+            sortMenuitem.Items.Add(childMenuitem);
+
+            childMenuitem = new System.Windows.Controls.MenuItem()
+            {
+                Header = "カウント 降順",
+                Command = AuthorManager.SortByCountDescCommand
+            };
+            SetBindingForIsChecked(childMenuitem, "ByCountDesc");
+            sortMenuitem.Items.Add(childMenuitem);
+
+            menuitem = new System.Windows.Controls.MenuItem()
+            {
                 Header = "Ex",
             };
             AuthorContextMenuItems.Add(menuitem);
+        }
+
+        private void SetBindingForIsChecked(System.Windows.Controls.MenuItem childMenuitem, string converterParameter)
+        {
+            Binding binding = new Binding("AuthorManager.Sorting");
+            binding.Converter = AuthorSortingToBool;
+            binding.ConverterParameter = converterParameter;
+            childMenuitem.SetBinding(System.Windows.Controls.MenuItem.IsCheckedProperty, binding);
         }
 
         private void ClearResultSearchingByAuthor()
@@ -134,6 +179,11 @@ namespace Sunctum.ViewModels
             }
             AuthorManager.ShowBySelectedItems(items.Select(ac => ac.Author));
             HomeDocumentViewModel.ResetScrollOffset();
+        }
+
+        public bool SortingSelected(string name)
+        {
+            return Querying.SortingSelected(AuthorManager.Sorting, name);
         }
     }
 }

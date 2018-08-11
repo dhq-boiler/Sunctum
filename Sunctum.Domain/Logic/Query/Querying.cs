@@ -2,7 +2,9 @@
 
 using Sunctum.Domain.Bridge;
 using Sunctum.Domain.Data.Dao;
+using Sunctum.Domain.Logic.AuthorSorting;
 using Sunctum.Domain.Logic.BookSorting;
+using Sunctum.Domain.Logic.ImageTagCountSorting;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using Sunctum.Infrastructure.Data.Rdbms;
@@ -30,6 +32,20 @@ namespace Sunctum.Domain.Logic.Query
         public static bool SortingSelected(IBookSorting currentSorting, string name)
         {
             var sorting = BookSorting.BookSorting.GetReferenceByName(name);
+            var sortingType = sorting.GetType();
+            return currentSorting.GetType().Equals(sortingType);
+        }
+
+        public static bool SortingSelected(IImageTagCountSorting currentSorting, string name)
+        {
+            var sorting = ImageTagCountSorting.ImageTagCountSorting.GetReferenceByName(name);
+            var sortingType = sorting.GetType();
+            return currentSorting.GetType().Equals(sortingType);
+        }
+
+        public static bool SortingSelected(IAuthorSorting currentSorting, string name)
+        {
+            var sorting = AuthorSorting.AuthorSorting.GetReferenceByName(name);
             var sortingType = sorting.GetType();
             return currentSorting.GetType().Equals(sortingType);
         }

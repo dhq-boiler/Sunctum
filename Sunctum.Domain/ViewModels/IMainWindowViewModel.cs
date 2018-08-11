@@ -34,6 +34,8 @@ namespace Sunctum.Domain.ViewModels
 
         void ShowPreferenceDialog();
 
+        ObservableCollection<IDocumentViewModelBase> DockingDocumentViewModels { get; }
+
         IDocumentViewModelBase ActiveDocumentViewModel { get; }
 
         void NewSearchTab(ObservableCollection<BookViewModel> onStage);
@@ -43,8 +45,6 @@ namespace Sunctum.Domain.ViewModels
         void NewContentTab(BookViewModel bookViewModel);
 
         void NewContentTab(IEnumerable<BookViewModel> list);
-
-        ObservableCollection<IDocumentViewModelBase> TabItemViewModels { get; }
 
         List<MenuItem> ExtraBookContextMenu { get; }
 

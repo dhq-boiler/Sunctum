@@ -2,6 +2,7 @@
 
 using Ninject;
 using NLog;
+using Prism.Commands;
 using Prism.Mvvm;
 using Sunctum.Core.Notifications;
 using Sunctum.Domail.Util;
@@ -19,6 +20,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace Sunctum.Managers
 {
@@ -28,8 +30,6 @@ namespace Sunctum.Managers
 
         private ObservableCollection<AuthorViewModel> _Authors;
         private List<AuthorViewModel> _SelectedItems;
-        private bool _EnableOrderByName;
-        private bool _OrderAscending;
         private ObservableCollection<AuthorCountViewModel> _AuthorCount;
         private ObservableCollection<AuthorCountViewModel> _SearchedAuthors;
         private IAuthorSorting _AuthorSorting;
@@ -39,18 +39,30 @@ namespace Sunctum.Managers
 
         public IProgressManager ProgressManager { get; set; } = new ProgressManager();
 
+        #region コマンド
+
+        public ICommand SortByNameAscCommand { get; set; }
+
+        public ICommand SortByNameDescCommand { get; set; }
+
+        public ICommand SortByCountAscCommand { get; set; }
+
+        public ICommand SortByCountDescCommand { get; set; }
+
+        #endregion //コマンド
+
         public AuthorManager()
         {
             RegisterCommands();
             _AuthorCount = new ObservableCollection<AuthorCountViewModel>();
-            _AuthorSorting = AuthorSorting.ByNameAsc;
+            _AuthorSorting = AuthorSorting.ByCountDesc;
         }
 
         public void Load()
         {
             SelectedItems = new List<AuthorViewModel>();
             Authors = new ObservableCollection<AuthorViewModel>(AuthorFacade.FindAll());
-            Sorting = AuthorSorting.ByNameAsc;
+            Sorting = AuthorSorting.ByCountDesc;
             LoadAuthorCount();
         }
 
@@ -127,6 +139,22 @@ namespace Sunctum.Managers
 
         private void RegisterCommands()
         {
+            SortByNameAscCommand = new DelegateCommand(() =>
+            {
+                Sorting = AuthorSorting.ByNameAsc;
+            });
+            SortByNameDescCommand = new DelegateCommand(() =>
+            {
+                Sorting = AuthorSorting.ByNameDesc;
+            });
+            SortByCountAscCommand = new DelegateCommand(() =>
+            {
+                Sorting = AuthorSorting.ByCountAsc;
+            });
+            SortByCountDescCommand = new DelegateCommand(() =>
+            {
+                Sorting = AuthorSorting.ByCountDesc;
+            });
         }
 
         public ObservableCollection<AuthorViewModel> Authors
@@ -194,29 +222,6 @@ namespace Sunctum.Managers
         {
             get
             {
-                if (EnableOrderByName)
-                {
-                    if (_OrderAscending)
-                    {
-                        Sorting = AuthorSorting.ByNameAsc;
-                    }
-                    else
-                    {
-                        Sorting = AuthorSorting.ByNameDesc;
-                    }
-                }
-                else
-                {
-                    if (_OrderAscending)
-                    {
-                        Sorting = AuthorSorting.ByCountAsc;
-                    }
-                    else
-                    {
-                        Sorting = AuthorSorting.ByCountDesc;
-                    }
-                }
-
                 var newCollection = Sorting.Sort(DisplayableAuthorCountSource).ToArray();
                 return new ObservableCollection<AuthorCountViewModel>(newCollection);
             }
@@ -229,27 +234,6 @@ namespace Sunctum.Managers
             { return SearchedAuthorCounts != null; }
         }
 
-        public bool EnableOrderByName
-        {
-            get { return _EnableOrderByName; }
-            set
-            {
-                SetProperty(ref _EnableOrderByName, value);
-                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
-            }
-        }
-
-        public string OrderText
-        {
-            get
-            {
-                if (_OrderAscending)
-                    return "↑";
-                else
-                    return "↓";
-            }
-        }
-
         public IAuthorSorting Sorting
         {
             [DebuggerStepThrough]
@@ -258,15 +242,8 @@ namespace Sunctum.Managers
             set
             {
                 SetProperty(ref _AuthorSorting, value);
+                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
             }
-        }
-
-        public void SwitchOrdering()
-        {
-            _OrderAscending = !_OrderAscending;
-
-            RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OrderText));
-            RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
         }
 
         private IEnumerable<AuthorCountViewModel> GenerateAuthorCount()
@@ -282,30 +259,7 @@ namespace Sunctum.Managers
 
             try
             {
-                var authors = Authors.ToList();
-
-                if (EnableOrderByName)
-                {
-                    if (_OrderAscending)
-                    {
-                        return AuthorFacade.FindAllAsCountOrderByNameAsc();
-                    }
-                    else
-                    {
-                        return AuthorFacade.FindAllAsCountOrderByNameDesc();
-                    }
-                }
-                else
-                {
-                    if (_OrderAscending)
-                    {
-                        return AuthorFacade.FindAllAsCountOrderByCountAsc();
-                    }
-                    else
-                    {
-                        return AuthorFacade.FindAllAsCountOrderByCountDesc();
-                    }
-                }
+                return AuthorFacade.FindAllAsCountOrderByCountDesc();
             }
             finally
             {

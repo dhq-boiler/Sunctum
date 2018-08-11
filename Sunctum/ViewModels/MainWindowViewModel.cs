@@ -10,7 +10,9 @@ using Sunctum.Core.Notifications;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Data.Dao.Migration.Plan;
 using Sunctum.Domain.Data.DaoFacade;
+using Sunctum.Domain.Logic.AuthorSorting;
 using Sunctum.Domain.Logic.BookSorting;
+using Sunctum.Domain.Logic.ImageTagCountSorting;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
@@ -34,6 +36,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Xceed.Wpf.AvalonDock.Layout;
 
 namespace Sunctum.ViewModels
 {
@@ -52,10 +55,11 @@ namespace Sunctum.ViewModels
         private double _WindowTop;
         private double _WindowWidth;
         private double _WindowHeight;
-        private ObservableCollection<IDocumentViewModelBase> _TabItemViewModels;
-        private int _SelectedTabIndex;
         private CompositeDisposable _disposable = new CompositeDisposable();
         protected List<IObserver<ActiveTabChanged>> observerList = new List<IObserver<ActiveTabChanged>>();
+        private ObservableCollection<IDocumentViewModelBase> _DockingDocumentViewModels;
+        private ObservableCollection<PaneViewModelBase> _DockingPaneViewModels;
+        private IDocumentViewModelBase _ActiveDocumentViewModel;
 
         #region コマンド
 
@@ -245,14 +249,47 @@ namespace Sunctum.ViewModels
             ToggleDisplayAuthorPaneCommand = new DelegateCommand(() =>
             {
                 DisplayAuthorPane = !DisplayAuthorPane;
+                if (DisplayAuthorPane)
+                {
+                    if (!DockingPaneViewModels.Contains((PaneViewModelBase)AuthorPaneViewModel))
+                    {
+                        DockingPaneViewModels.Add((PaneViewModelBase)AuthorPaneViewModel);
+                    }
+                }
+                else
+                {
+                    DockingPaneViewModels.Remove((PaneViewModelBase)AuthorPaneViewModel);
+                }
             });
             ToggleDisplayInformationPaneCommand = new DelegateCommand(() =>
             {
                 DisplayInformationPane = !DisplayInformationPane;
+                if (DisplayInformationPane)
+                {
+                    if (!DockingPaneViewModels.Contains((PaneViewModelBase)InformationPaneViewModel))
+                    {
+                        DockingPaneViewModels.Add((PaneViewModelBase)InformationPaneViewModel);
+                    }
+                }
+                else
+                {
+                    DockingPaneViewModels.Remove((PaneViewModelBase)InformationPaneViewModel);
+                }
             });
             ToggleDisplayTagPaneCommand = new DelegateCommand(() =>
             {
                 DisplayTagPane = !DisplayTagPane;
+                if (DisplayTagPane)
+                {
+                    if (!DockingPaneViewModels.Contains((PaneViewModelBase)TagPaneViewModel))
+                    {
+                        DockingPaneViewModels.Add((PaneViewModelBase)TagPaneViewModel);
+                    }
+                }
+                else
+                {
+                    DockingPaneViewModels.Remove((PaneViewModelBase)TagPaneViewModel);
+                }
             });
             UpdateBookByteSizeAllCommand = new DelegateCommand(async () =>
             {
@@ -379,32 +416,6 @@ namespace Sunctum.ViewModels
         [Inject]
         public IHomeDocumentViewModel HomeDocumentViewModel { get; set; }
 
-        public ObservableCollection<IDocumentViewModelBase> TabItemViewModels
-        {
-            get { return _TabItemViewModels; }
-            set
-            {
-                SetProperty(ref _TabItemViewModels, value);
-                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => ActiveDocumentViewModel));
-            }
-        }
-
-        public int SelectedTabIndex
-        {
-            get { return _SelectedTabIndex; }
-            set
-            {
-                SetProperty(ref _SelectedTabIndex, value);
-                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => ActiveDocumentViewModel));
-                NotifyActiveTabChanged();
-            }
-        }
-
-        public IDocumentViewModelBase ActiveDocumentViewModel
-        {
-            get { return TabItemViewModels != null && SelectedTabIndex >= 0 && TabItemViewModels.Count > SelectedTabIndex ? TabItemViewModels[SelectedTabIndex] : null; }
-        }
-
         [Inject]
         public ITagManager TagManager { get; set; }
 
@@ -418,6 +429,38 @@ namespace Sunctum.ViewModels
         public List<MenuItem> ExtraTagContextMenu { get; set; } = new List<MenuItem>();
 
         public List<MenuItem> ExtraAuthorContextMenu { get; set; } = new List<MenuItem>();
+
+        public ObservableCollection<IDocumentViewModelBase> DockingDocumentViewModels
+        {
+            get { return _DockingDocumentViewModels; }
+            set { SetProperty(ref _DockingDocumentViewModels, value); }
+        }
+
+        public ObservableCollection<PaneViewModelBase> DockingPaneViewModels
+        {
+            get { return _DockingPaneViewModels; }
+            set { SetProperty(ref _DockingPaneViewModels, value); }
+        }
+
+        public IDocumentViewModelBase ActiveDocumentViewModel
+        {
+            get { return _ActiveDocumentViewModel; }
+            set
+            {
+                SetProperty(ref _ActiveDocumentViewModel, value);
+                NotifyActiveTabChanged();
+            }
+        }
+
+        public InteractionRequest<Notification> LoadLayoutRequest { get; } = new InteractionRequest<Notification>();
+
+        public InteractionRequest<Notification> SaveLayoutRequest { get; } = new InteractionRequest<Notification>();
+
+        public LayoutAnchorable AuthorPane { get; set; }
+
+        public LayoutAnchorable TagPane { get; set; }
+
+        public LayoutAnchorable InformationPane { get; set; }
 
         #endregion
 
@@ -440,11 +483,21 @@ namespace Sunctum.ViewModels
 
             CloseAllTab();
 
-            TabItemViewModels = new ObservableCollection<IDocumentViewModelBase>();
-            TabItemViewModels.Add((DocumentViewModelBase)HomeDocumentViewModel);
-
             HomeDocumentViewModel.LibraryManager = LibraryVM;
             ((DocumentViewModelBase)HomeDocumentViewModel).MainWindowViewModel = this;
+
+            var authorSorting = Configuration.ApplicationConfiguration.AuthorSorting;
+            if (authorSorting != null)
+            {
+                AuthorManager.Sorting = AuthorSorting.GetReferenceByName(authorSorting);
+            }
+
+            var tagSorting = Configuration.ApplicationConfiguration.TagSorting;
+            if (tagSorting != null)
+            {
+                TagManager.Sorting = ImageTagCountSorting.GetReferenceByName(tagSorting);
+            }
+
 
             SetMainWindowTitle();
             HomeDocumentViewModel.ClearSearchResult();
@@ -480,7 +533,7 @@ namespace Sunctum.ViewModels
 
                     SetEvent();
 
-                    SelectedTabIndex = 0;
+                    NotifyActiveTabChanged();
                 });
         }
 
@@ -491,7 +544,7 @@ namespace Sunctum.ViewModels
             newTabViewModel.BookCabinet = LibraryVM.CreateBookStorage();
             newTabViewModel.BookCabinet.BookSource = new ObservableCollection<BookViewModel>(onStage);
             newTabViewModel.MainWindowViewModel = this;
-            TabItemViewModels.Add(newTabViewModel);
+            DockingDocumentViewModels.Add(newTabViewModel);
 
             (LibraryVM as IObservable<BookCollectionChanged>)
                 .Subscribe(newTabViewModel.BookCabinet as IObserver<BookCollectionChanged>)
@@ -499,7 +552,7 @@ namespace Sunctum.ViewModels
 
             newTabViewModel.IsVisible = true;
             newTabViewModel.IsSelected = true;
-            SelectedTabIndex = TabItemViewModels.Count - 1;
+            ActiveDocumentViewModel = newTabViewModel;
         }
 
         public void NewContentTab(BookViewModel bookViewModel)
@@ -510,7 +563,7 @@ namespace Sunctum.ViewModels
             newTabViewModel.BookCabinet.BookSource = new ObservableCollection<BookViewModel>();
             newTabViewModel.BookCabinet.BookSource.Add(bookViewModel);
             newTabViewModel.MainWindowViewModel = this;
-            TabItemViewModels.Add(newTabViewModel);
+            DockingDocumentViewModels.Add(newTabViewModel);
 
             (LibraryVM as IObservable<BookCollectionChanged>)
                 .Subscribe(newTabViewModel.BookCabinet as IObserver<BookCollectionChanged>)
@@ -518,7 +571,7 @@ namespace Sunctum.ViewModels
 
             newTabViewModel.IsVisible = true;
             newTabViewModel.IsSelected = true;
-            SelectedTabIndex = TabItemViewModels.Count - 1;
+            ActiveDocumentViewModel = newTabViewModel;
         }
 
         public void NewContentTab(IEnumerable<BookViewModel> list)
@@ -529,7 +582,7 @@ namespace Sunctum.ViewModels
             newTabViewModel.BookCabinet.BookSource = new ObservableCollection<BookViewModel>();
             newTabViewModel.BookCabinet.BookSource.AddRange(list);
             newTabViewModel.MainWindowViewModel = this;
-            TabItemViewModels.Add(newTabViewModel);
+            DockingDocumentViewModels.Add(newTabViewModel);
 
             (LibraryVM as IObservable<BookCollectionChanged>)
                 .Subscribe(newTabViewModel.BookCabinet as IObserver<BookCollectionChanged>)
@@ -540,27 +593,14 @@ namespace Sunctum.ViewModels
 
         public void CloseTab(IDocumentViewModelBase documentViewModelBase)
         {
-            documentViewModelBase.IsVisible = false;
-            int index = TabItemViewModels.IndexOf((DocumentViewModelBase)documentViewModelBase);
-            if (SelectedTabIndex == index)
-            {
-                if (SelectedTabIndex >= 0)
-                {
-                    --SelectedTabIndex;
-                }
-            }
-            TabItemViewModels.Remove((DocumentViewModelBase)documentViewModelBase);
+            DockingDocumentViewModels.Remove(documentViewModelBase);
         }
 
         public void CloseAllTab()
         {
-            if (TabItemViewModels == null) return;
+            if (DockingDocumentViewModels == null) return;
 
-            while (TabItemViewModels.Count > 0)
-            {
-                var viewModel = TabItemViewModels.Last();
-                CloseTab(viewModel);
-            }
+            DockingDocumentViewModels.Clear();
         }
 
         private void NotifyActiveTabChanged()
@@ -642,6 +682,29 @@ namespace Sunctum.ViewModels
 
         private void InitializeWindowComponent()
         {
+            DisplayAuthorPane = Configuration.ApplicationConfiguration.DisplayAuthorPane;
+            DisplayTagPane = Configuration.ApplicationConfiguration.DisplayTagPane;
+            DisplayInformationPane = Configuration.ApplicationConfiguration.DisplayInformationPane;
+
+            DockingDocumentViewModels = new ObservableCollection<IDocumentViewModelBase>();
+            DockingDocumentViewModels.Add((HomeDocumentViewModel)HomeDocumentViewModel);
+
+            DockingPaneViewModels = new ObservableCollection<PaneViewModelBase>();
+            if (DisplayAuthorPane)
+            {
+                DockingPaneViewModels.Add((AuthorPaneViewModel)AuthorPaneViewModel);
+            }
+            if (DisplayTagPane)
+            {
+                DockingPaneViewModels.Add((TagPaneViewModel)TagPaneViewModel);
+            }
+            if (DisplayInformationPane)
+            {
+                DockingPaneViewModels.Add((InformationPaneViewModel)InformationPaneViewModel);
+            }
+
+            LoadLayoutRequest.Raise(new Notification() { Content = this });
+
             HomeDocumentViewModel.CloseSearchPane();
             HomeDocumentViewModel.CloseImage();
             HomeDocumentViewModel.CloseBook();
@@ -652,10 +715,6 @@ namespace Sunctum.ViewModels
             HomeDocumentViewModel.ClearSelectedItems();
             AuthorPaneViewModel.ClearSelectedItems();
             TagPaneViewModel.ClearSelectedItems();
-
-            DisplayAuthorPane = Configuration.ApplicationConfiguration.DisplayAuthorPane;
-            DisplayTagPane = Configuration.ApplicationConfiguration.DisplayTagPane;
-            DisplayInformationPane = Configuration.ApplicationConfiguration.DisplayInformationPane;
         }
 
         private void SetMainWindowTitle()
@@ -736,6 +795,10 @@ namespace Sunctum.ViewModels
             config.DisplayAuthorPane = DisplayAuthorPane;
             config.DisplayInformationPane = DisplayInformationPane;
             config.DisplayTagPane = DisplayTagPane;
+            config.BookSorting = BookSorting.GetPropertyName(HomeDocumentViewModel.BookCabinet.Sorting);
+            config.AuthorSorting = AuthorSorting.GetPropertyName(AuthorManager.Sorting);
+            config.TagSorting = ImageTagCountSorting.GetPropertyName(TagManager.Sorting);
+
             if (config.StoreWindowPosition)
             {
                 config.WindowRect = new Domain.Models.Rect(WindowLeft, WindowTop, WindowWidth, WindowHeight);
@@ -745,6 +808,7 @@ namespace Sunctum.ViewModels
                 config.WindowRect = null;
             }
             Configuration.Save(config);
+            SaveLayoutRequest.Raise(new Notification());
 
             Dispose();
         }

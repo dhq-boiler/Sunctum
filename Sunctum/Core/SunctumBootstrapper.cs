@@ -66,11 +66,17 @@ namespace Sunctum.Core
             Kernel.Bind<IBookTagInitializing>().To<BookTagInitializing>().InSingletonScope();
 
             Kernel.Bind<IValueConverter>().To<BookSortingToBool>().InSingletonScope().Named("BookSortingToBool");
+            Kernel.Bind<IValueConverter>().To<TagSortingToBool>().InSingletonScope().Named("TagSortingToBool");
+            Kernel.Bind<IValueConverter>().To<AuthorSortingToBool>().InSingletonScope().Named("AuthorSortingToBool");
 
             Kernel.Get<IDataAccessManager>().AppDao = new DaoBuilder(new Connection(ConnectionStringBuilder.Build(Specifications.APP_DB_FILENAME), typeof(SQLiteConnection)));
 
             BookSortingToBool.Resolve = (type) => Kernel.Get(type);
             BookSortingToBool.ResolveNamed = (type, name) => Kernel.Get(type, name);
+            AuthorSortingToBool.Resolve = (type) => Kernel.Get(type);
+            AuthorSortingToBool.ResolveNamed = (type, name) => Kernel.Get(type, name);
+            TagSortingToBool.Resolve = (type) => Kernel.Get(type);
+            TagSortingToBool.ResolveNamed = (type, name) => Kernel.Get(type, name);
 
             //var config = Configuration.Load();
             //Kernel.Inject(config);

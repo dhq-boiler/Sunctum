@@ -15,5 +15,6 @@ namespace Sunctum.ViewModels
 
         void BuildContextMenus_Authors();
         void ClearSelectedItems();
+        bool SortingSelected(string name);
     }
 }

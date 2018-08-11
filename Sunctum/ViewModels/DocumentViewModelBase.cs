@@ -591,7 +591,7 @@ namespace Sunctum.ViewModels
                 Header = "新しいタブ",
                 Command = SendBookToNewTabCommand
             });
-            foreach (var item in MainWindowViewModel.TabItemViewModels.Where(t => !t.ContentId.Equals("home") && !t.ContentId.Equals(this.ContentId)))
+            foreach (var item in MainWindowViewModel.DockingDocumentViewModels.Where(t => !t.ContentId.Equals("home") && !t.ContentId.Equals(this.ContentId)))
             {
                 menuitem.Items.Add(new MenuItem()
                 {
