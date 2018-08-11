@@ -54,13 +54,9 @@ namespace Sunctum.ViewModels
 
         public ICommand ClearResultSearchingByTagCommand { get; set; }
 
-        public ICommand CloseCommand { get; set; }
-
         public ICommand DeleteTagEntryCommand { get; set; }
 
         public ICommand SearchByTagCommand { get; set; }
-
-        public ICommand SwitchOrderCommand { get; set; }
 
         public TagPaneViewModel()
         {
@@ -73,10 +69,6 @@ namespace Sunctum.ViewModels
             {
                 ClearResultSearchingByTag();
             });
-            CloseCommand = new DelegateCommand(() =>
-            {
-                MainWindowViewModel.DisplayTagPane = false;
-            });
             DeleteTagEntryCommand = new DelegateCommand(() =>
             {
                 var item = TagListBoxSelectedItems;
@@ -86,10 +78,6 @@ namespace Sunctum.ViewModels
             {
                 var items = TagListBoxSelectedItems;
                 SearchByTag(items);
-            });
-            SwitchOrderCommand = new DelegateCommand(() =>
-            {
-                TagManager.SwitchOrdering();
             });
         }
 

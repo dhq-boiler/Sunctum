@@ -13,46 +13,6 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
     <DockPanel>
-        <DockPanel Background="LightGray" DockPanel.Dock="Top">
-            <Button
-                x:Name="Button_Close_TagPane"
-                Margin="3"
-                Padding="2"
-                Background="#e81123"
-                BorderBrush="Transparent"
-                Command="{Binding CloseCommand}"
-                DockPanel.Dock="Right">
-                <Path Fill="White" Stroke="Transparent">
-                    <Path.Data>
-                        <CombinedGeometry GeometryCombineMode="Union">
-                            <CombinedGeometry.Geometry1>
-                                <RectangleGeometry Rect="0,3,7.5,1.5" />
-                            </CombinedGeometry.Geometry1>
-                            <CombinedGeometry.Geometry2>
-                                <RectangleGeometry Rect="3,0,1.5,7.5" />
-                            </CombinedGeometry.Geometry2>
-                        </CombinedGeometry>
-                    </Path.Data>
-                    <Path.LayoutTransform>
-                        <RotateTransform Angle="45" />
-                    </Path.LayoutTransform>
-                </Path>
-            </Button>
-            <Button
-                x:Name="Button_TagPane_Order"
-                Width="18"
-                Margin="3"
-                Command="{Binding SwitchOrderCommand}"
-                Content="{Binding TagManager.OrderText}"
-                DockPanel.Dock="Right" />
-            <ToggleButton
-                Width="18"
-                Margin="3"
-                Content="A"
-                DockPanel.Dock="Right"
-                IsChecked="{Binding TagManager.EnableOrderByName}" />
-            <Label>Tag</Label>
-        </DockPanel>
         <local:ProgressBar DockPanel.Dock="Top"
                            Height="2"
                            ProgressionRate="{Binding TagManager.ProgressManager.Progress}" />

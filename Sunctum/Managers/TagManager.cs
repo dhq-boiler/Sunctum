@@ -37,7 +37,6 @@ namespace Sunctum.Managers
         private List<TagViewModel> _SelectedEntityTags;
         private List<TagViewModel> _SelectedItems;
         private bool _OrderAscending;
-        private bool _EnableOrderByName;
         private ObservableCollection<TagCountViewModel> _SearchedImageTags;
         private IImageTagCountSorting _ImageTagCountSorting;
 
@@ -204,16 +203,6 @@ namespace Sunctum.Managers
             set { SetProperty(ref _SelectedItems, value); }
         }
 
-        public bool EnableOrderByName
-        {
-            get { return _EnableOrderByName; }
-            set
-            {
-                SetProperty(ref _EnableOrderByName, value);
-                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
-            }
-        }
-
         public IImageTagCountSorting Sorting
         {
             [DebuggerStepThrough]
@@ -267,29 +256,6 @@ namespace Sunctum.Managers
         {
             get
             {
-                if (EnableOrderByName)
-                {
-                    if (_OrderAscending)
-                    {
-                        Sorting = ImageTagCountSorting.ByNameAsc;
-                    }
-                    else
-                    {
-                        Sorting = ImageTagCountSorting.ByNameDesc;
-                    }
-                }
-                else
-                {
-                    if (_OrderAscending)
-                    {
-                        Sorting = ImageTagCountSorting.ByCountAsc;
-                    }
-                    else
-                    {
-                        Sorting = ImageTagCountSorting.ByCountDesc;
-                    }
-                }
-
                 var newCollection = Sorting.Sort(DisplayableImageTagCountSource).ToArray();
                 return new ObservableCollection<TagCountViewModel>(newCollection);
             }
@@ -642,19 +608,7 @@ namespace Sunctum.Managers
         {
             _OrderAscending = !_OrderAscending;
 
-            RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OrderText));
             RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
-        }
-
-        public string OrderText
-        {
-            get
-            {
-                if (_OrderAscending)
-                    return "↑";
-                else
-                    return "↓";
-            }
         }
 
         private object _lock_object = new object();

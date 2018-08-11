@@ -56,10 +56,6 @@ namespace Sunctum.ViewModels
 
         public ICommand SearchByAuthorCommand { get; set; }
 
-        public ICommand SwitchOrderCommand { get; set; }
-
-        public ICommand CloseCommand { get; set; }
-
         public AuthorPaneViewModel()
         {
             RegisterCommands();
@@ -81,14 +77,6 @@ namespace Sunctum.ViewModels
             {
                 var items = AuthorListBoxSelectedItems;
                 SearchByAuthor(items);
-            });
-            SwitchOrderCommand = new DelegateCommand(() =>
-            {
-                AuthorManager.SwitchOrdering();
-            });
-            CloseCommand = new DelegateCommand(() =>
-            {
-                MainWindowViewModel.DisplayAuthorPane = false;
             });
         }
 

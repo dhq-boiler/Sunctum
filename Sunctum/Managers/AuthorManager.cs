@@ -28,7 +28,6 @@ namespace Sunctum.Managers
 
         private ObservableCollection<AuthorViewModel> _Authors;
         private List<AuthorViewModel> _SelectedItems;
-        private bool _EnableOrderByName;
         private bool _OrderAscending;
         private ObservableCollection<AuthorCountViewModel> _AuthorCount;
         private ObservableCollection<AuthorCountViewModel> _SearchedAuthors;
@@ -43,14 +42,14 @@ namespace Sunctum.Managers
         {
             RegisterCommands();
             _AuthorCount = new ObservableCollection<AuthorCountViewModel>();
-            _AuthorSorting = AuthorSorting.ByNameAsc;
+            _AuthorSorting = AuthorSorting.ByCountDesc;
         }
 
         public void Load()
         {
             SelectedItems = new List<AuthorViewModel>();
             Authors = new ObservableCollection<AuthorViewModel>(AuthorFacade.FindAll());
-            Sorting = AuthorSorting.ByNameAsc;
+            Sorting = AuthorSorting.ByCountDesc;
             LoadAuthorCount();
         }
 
@@ -194,29 +193,6 @@ namespace Sunctum.Managers
         {
             get
             {
-                if (EnableOrderByName)
-                {
-                    if (_OrderAscending)
-                    {
-                        Sorting = AuthorSorting.ByNameAsc;
-                    }
-                    else
-                    {
-                        Sorting = AuthorSorting.ByNameDesc;
-                    }
-                }
-                else
-                {
-                    if (_OrderAscending)
-                    {
-                        Sorting = AuthorSorting.ByCountAsc;
-                    }
-                    else
-                    {
-                        Sorting = AuthorSorting.ByCountDesc;
-                    }
-                }
-
                 var newCollection = Sorting.Sort(DisplayableAuthorCountSource).ToArray();
                 return new ObservableCollection<AuthorCountViewModel>(newCollection);
             }
@@ -229,27 +205,6 @@ namespace Sunctum.Managers
             { return SearchedAuthorCounts != null; }
         }
 
-        public bool EnableOrderByName
-        {
-            get { return _EnableOrderByName; }
-            set
-            {
-                SetProperty(ref _EnableOrderByName, value);
-                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
-            }
-        }
-
-        public string OrderText
-        {
-            get
-            {
-                if (_OrderAscending)
-                    return "↑";
-                else
-                    return "↓";
-            }
-        }
-
         public IAuthorSorting Sorting
         {
             [DebuggerStepThrough]
@@ -259,14 +214,6 @@ namespace Sunctum.Managers
             {
                 SetProperty(ref _AuthorSorting, value);
             }
-        }
-
-        public void SwitchOrdering()
-        {
-            _OrderAscending = !_OrderAscending;
-
-            RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OrderText));
-            RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
         }
 
         private IEnumerable<AuthorCountViewModel> GenerateAuthorCount()
@@ -282,30 +229,7 @@ namespace Sunctum.Managers
 
             try
             {
-                var authors = Authors.ToList();
-
-                if (EnableOrderByName)
-                {
-                    if (_OrderAscending)
-                    {
-                        return AuthorFacade.FindAllAsCountOrderByNameAsc();
-                    }
-                    else
-                    {
-                        return AuthorFacade.FindAllAsCountOrderByNameDesc();
-                    }
-                }
-                else
-                {
-                    if (_OrderAscending)
-                    {
-                        return AuthorFacade.FindAllAsCountOrderByCountAsc();
-                    }
-                    else
-                    {
-                        return AuthorFacade.FindAllAsCountOrderByCountDesc();
-                    }
-                }
+                return AuthorFacade.FindAllAsCountOrderByCountDesc();
             }
             finally
             {
