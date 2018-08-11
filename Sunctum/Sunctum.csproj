@@ -177,9 +177,11 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Converters\ActiveDocumentConverter.cs" />
+    <Compile Include="Converters\AuthorSortingToBool.cs" />
     <Compile Include="Converters\MarginConverter.cs" />
     <Compile Include="Converters\PathToMenuItem.cs" />
     <Compile Include="Converters\StarLevelToStringConverter.cs" />
+    <Compile Include="Converters\TagSortingToBool.cs" />
     <Compile Include="Core\ExportAttributeBindingGenerator.cs" />
     <Compile Include="Core\Notifications\ActiveTabChanged.cs" />
     <Compile Include="Core\SunctumBootstrapper.cs" />

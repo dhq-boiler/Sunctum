@@ -2,11 +2,13 @@
 
 using Ninject;
 using Prism.Commands;
+using Sunctum.Domain.Logic.Query;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Data;
 using System.Windows.Input;
 
 namespace Sunctum.ViewModels
@@ -51,6 +53,9 @@ namespace Sunctum.ViewModels
 
         [Inject]
         public ITagManager TagManager { get; set; }
+
+        [Inject, Named("TagSortingToBool")]
+        public IValueConverter TagSortingToBool { get; set; }
 
         public ICommand ClearResultSearchingByTagCommand { get; set; }
 
@@ -106,9 +111,61 @@ namespace Sunctum.ViewModels
 
             menuitem = new System.Windows.Controls.MenuItem()
             {
+                Header = "表示"
+            };
+            TagContextMenuItems.Add(menuitem);
+
+            var sortMenuitem = new System.Windows.Controls.MenuItem()
+            {
+                Header = "ソート"
+            };
+            menuitem.Items.Add(sortMenuitem);
+
+            var childMenuitem = new System.Windows.Controls.MenuItem()
+            {
+                Header = "名前 昇順",
+                Command = TagManager.SortByNameAscCommand,
+            };
+            SetBindingForIsChecked(childMenuitem, "ByNameAsc");
+            sortMenuitem.Items.Add(childMenuitem);
+
+            childMenuitem = new System.Windows.Controls.MenuItem()
+            {
+                Header = "名前 降順",
+                Command = TagManager.SortByNameDescCommand
+            };
+            SetBindingForIsChecked(childMenuitem, "ByNameDesc");
+            sortMenuitem.Items.Add(childMenuitem);
+
+            childMenuitem = new System.Windows.Controls.MenuItem()
+            {
+                Header = "カウント 昇順",
+                Command = TagManager.SortByCountAscCommand
+            };
+            SetBindingForIsChecked(childMenuitem, "ByCountAsc");
+            sortMenuitem.Items.Add(childMenuitem);
+
+            childMenuitem = new System.Windows.Controls.MenuItem()
+            {
+                Header = "カウント 降順",
+                Command = TagManager.SortByCountDescCommand
+            };
+            SetBindingForIsChecked(childMenuitem, "ByCountDesc");
+            sortMenuitem.Items.Add(childMenuitem);
+
+            menuitem = new System.Windows.Controls.MenuItem()
+            {
                 Header = "Ex",
             };
             TagContextMenuItems.Add(menuitem);
+        }
+
+        private void SetBindingForIsChecked(System.Windows.Controls.MenuItem childMenuitem, string converterParameter)
+        {
+            Binding binding = new Binding("TagManager.Sorting");
+            binding.Converter = TagSortingToBool;
+            binding.ConverterParameter = converterParameter;
+            childMenuitem.SetBinding(System.Windows.Controls.MenuItem.IsCheckedProperty, binding);
         }
 
         private void ClearResultSearchingByTag()
@@ -127,6 +184,11 @@ namespace Sunctum.ViewModels
             }
             TagManager.ShowBySelectedItems(items.Select(itc => itc.Tag));
             activeViewModel.ResetScrollOffset();
+        }
+
+        public bool SortingSelected(string name)
+        {
+            return Querying.SortingSelected(TagManager.Sorting, name);
         }
     }
 }

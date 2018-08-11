@@ -40,12 +40,6 @@ namespace Sunctum.Managers
         private ObservableCollection<TagCountViewModel> _SearchedImageTags;
         private IImageTagCountSorting _ImageTagCountSorting;
 
-        #region コマンド
-
-        public ICommand RemoveTagFromEntriesCommand { get; set; }
-
-        #endregion //コマンド
-
         [Inject]
         public IMainWindowViewModel MainWindowViewModel { get; set; }
 
@@ -128,13 +122,47 @@ namespace Sunctum.Managers
             }
         }
 
+        #region コマンド
+
+        public ICommand RemoveTagFromEntriesCommand { get; set; }
+
+        public ICommand SortByNameAscCommand { get; set; }
+
+        public ICommand SortByNameDescCommand { get; set; }
+
+        public ICommand SortByCountAscCommand { get; set; }
+
+        public ICommand SortByCountDescCommand { get; set; }
+
+        #endregion //コマンド
+
+        #region コマンド登録
+
         private void RegisterCommands()
         {
             RemoveTagFromEntriesCommand = new DelegateCommand<object>(async (p) =>
             {
                 await RemoveImageTag(p as string);
             });
+            SortByNameAscCommand = new DelegateCommand(() =>
+            {
+                Sorting = ImageTagCountSorting.ByNameAsc;
+            });
+            SortByNameDescCommand = new DelegateCommand(() =>
+            {
+                Sorting = ImageTagCountSorting.ByNameDesc;
+            });
+            SortByCountAscCommand = new DelegateCommand(() =>
+            {
+                Sorting = ImageTagCountSorting.ByCountAsc;
+            });
+            SortByCountDescCommand = new DelegateCommand(() =>
+            {
+                Sorting = ImageTagCountSorting.ByCountDesc;
+            });
         }
+
+        #endregion //コマンド登録
 
         #region プロパティ
 
@@ -211,6 +239,7 @@ namespace Sunctum.Managers
             set
             {
                 SetProperty(ref _ImageTagCountSorting, value);
+                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
             }
         }
 

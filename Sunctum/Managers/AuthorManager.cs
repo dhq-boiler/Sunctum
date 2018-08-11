@@ -2,6 +2,7 @@
 
 using Ninject;
 using NLog;
+using Prism.Commands;
 using Prism.Mvvm;
 using Sunctum.Core.Notifications;
 using Sunctum.Domail.Util;
@@ -19,6 +20,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace Sunctum.Managers
 {
@@ -28,7 +30,6 @@ namespace Sunctum.Managers
 
         private ObservableCollection<AuthorViewModel> _Authors;
         private List<AuthorViewModel> _SelectedItems;
-        private bool _OrderAscending;
         private ObservableCollection<AuthorCountViewModel> _AuthorCount;
         private ObservableCollection<AuthorCountViewModel> _SearchedAuthors;
         private IAuthorSorting _AuthorSorting;
@@ -37,6 +38,18 @@ namespace Sunctum.Managers
         public IMainWindowViewModel MainWindowViewModel { get; set; }
 
         public IProgressManager ProgressManager { get; set; } = new ProgressManager();
+
+        #region コマンド
+
+        public ICommand SortByNameAscCommand { get; set; }
+
+        public ICommand SortByNameDescCommand { get; set; }
+
+        public ICommand SortByCountAscCommand { get; set; }
+
+        public ICommand SortByCountDescCommand { get; set; }
+
+        #endregion //コマンド
 
         public AuthorManager()
         {
@@ -126,6 +139,22 @@ namespace Sunctum.Managers
 
         private void RegisterCommands()
         {
+            SortByNameAscCommand = new DelegateCommand(() =>
+            {
+                Sorting = AuthorSorting.ByNameAsc;
+            });
+            SortByNameDescCommand = new DelegateCommand(() =>
+            {
+                Sorting = AuthorSorting.ByNameDesc;
+            });
+            SortByCountAscCommand = new DelegateCommand(() =>
+            {
+                Sorting = AuthorSorting.ByCountAsc;
+            });
+            SortByCountDescCommand = new DelegateCommand(() =>
+            {
+                Sorting = AuthorSorting.ByCountDesc;
+            });
         }
 
         public ObservableCollection<AuthorViewModel> Authors
@@ -213,6 +242,7 @@ namespace Sunctum.Managers
             set
             {
                 SetProperty(ref _AuthorSorting, value);
+                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
             }
         }
 

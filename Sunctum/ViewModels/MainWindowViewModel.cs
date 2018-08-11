@@ -10,7 +10,9 @@ using Sunctum.Core.Notifications;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Data.Dao.Migration.Plan;
 using Sunctum.Domain.Data.DaoFacade;
+using Sunctum.Domain.Logic.AuthorSorting;
 using Sunctum.Domain.Logic.BookSorting;
+using Sunctum.Domain.Logic.ImageTagCountSorting;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
@@ -451,6 +453,19 @@ namespace Sunctum.ViewModels
             HomeDocumentViewModel.LibraryManager = LibraryVM;
             ((DocumentViewModelBase)HomeDocumentViewModel).MainWindowViewModel = this;
 
+            var authorSorting = Configuration.ApplicationConfiguration.AuthorSorting;
+            if (authorSorting != null)
+            {
+                AuthorManager.Sorting = AuthorSorting.GetReferenceByName(authorSorting);
+            }
+
+            var tagSorting = Configuration.ApplicationConfiguration.TagSorting;
+            if (tagSorting != null)
+            {
+                TagManager.Sorting = ImageTagCountSorting.GetReferenceByName(tagSorting);
+            }
+
+
             SetMainWindowTitle();
             HomeDocumentViewModel.ClearSearchResult();
             InitializeWindowComponent();
@@ -738,6 +753,10 @@ namespace Sunctum.ViewModels
             config.DisplayAuthorPane = DisplayAuthorPane;
             config.DisplayInformationPane = DisplayInformationPane;
             config.DisplayTagPane = DisplayTagPane;
+            config.BookSorting = BookSorting.GetPropertyName(HomeDocumentViewModel.BookCabinet.Sorting);
+            config.AuthorSorting = AuthorSorting.GetPropertyName(AuthorManager.Sorting);
+            config.TagSorting = ImageTagCountSorting.GetPropertyName(TagManager.Sorting);
+
             if (config.StoreWindowPosition)
             {
                 config.WindowRect = new Domain.Models.Rect(WindowLeft, WindowTop, WindowWidth, WindowHeight);

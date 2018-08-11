@@ -1,9 +1,11 @@
 ﻿
 
+using Sunctum.Domain.Logic.ImageTagCountSorting;
 using Sunctum.Domain.ViewModels;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace Sunctum.Domain.Models.Managers
 {
@@ -53,6 +55,14 @@ namespace Sunctum.Domain.Models.Managers
 
         bool IsSearching();
 
-        void SwitchOrdering();
+        ICommand SortByNameAscCommand { get; set; }
+
+        ICommand SortByNameDescCommand { get; set; }
+
+        ICommand SortByCountAscCommand { get; set; }
+
+        ICommand SortByCountDescCommand { get; set; }
+
+        IImageTagCountSorting Sorting { get; set; }
     }
 }
