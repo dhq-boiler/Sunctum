@@ -108,15 +108,15 @@
                     <MenuItem
                         Command="{Binding ToggleDisplayInformationPaneCommand}"
                         Header="{Binding MainWindow_Display_Window_Information, Source={StaticResource resources}}"
-                        IsChecked="{Binding InformationPane.IsVisible}" />
+                        IsChecked="{Binding DisplayInformationPane}" />
                     <MenuItem
                         Command="{Binding ToggleDisplayTagPaneCommand}"
                         Header="{Binding MainWindow_Display_Window_Tag, Source={StaticResource resources}}"
-                        IsChecked="{Binding TagPane.IsVisible}" />
+                        IsChecked="{Binding DisplayTagPane}" />
                     <MenuItem
                         Command="{Binding ToggleDisplayAuthorPaneCommand}"
                         Header="{Binding MainWindow_Display_Window_Author, Source={StaticResource resources}}"
-                        IsChecked="{Binding AuthorPane.IsVisible}" />
+                        IsChecked="{Binding DisplayAuthorPane}" />
                 </MenuItem>
                 <Separator />
                 <MenuItem Header="{Binding MainWindow_Display_Sorting, Source={StaticResource resources}}">

@@ -249,14 +249,47 @@ namespace Sunctum.ViewModels
             ToggleDisplayAuthorPaneCommand = new DelegateCommand(() =>
             {
                 DisplayAuthorPane = !DisplayAuthorPane;
+                if (DisplayAuthorPane)
+                {
+                    if (!DockingPaneViewModels.Contains((PaneViewModelBase)AuthorPaneViewModel))
+                    {
+                        DockingPaneViewModels.Add((PaneViewModelBase)AuthorPaneViewModel);
+                    }
+                }
+                else
+                {
+                    DockingPaneViewModels.Remove((PaneViewModelBase)AuthorPaneViewModel);
+                }
             });
             ToggleDisplayInformationPaneCommand = new DelegateCommand(() =>
             {
                 DisplayInformationPane = !DisplayInformationPane;
+                if (DisplayInformationPane)
+                {
+                    if (!DockingPaneViewModels.Contains((PaneViewModelBase)InformationPaneViewModel))
+                    {
+                        DockingPaneViewModels.Add((PaneViewModelBase)InformationPaneViewModel);
+                    }
+                }
+                else
+                {
+                    DockingPaneViewModels.Remove((PaneViewModelBase)InformationPaneViewModel);
+                }
             });
             ToggleDisplayTagPaneCommand = new DelegateCommand(() =>
             {
                 DisplayTagPane = !DisplayTagPane;
+                if (DisplayTagPane)
+                {
+                    if (!DockingPaneViewModels.Contains((PaneViewModelBase)TagPaneViewModel))
+                    {
+                        DockingPaneViewModels.Add((PaneViewModelBase)TagPaneViewModel);
+                    }
+                }
+                else
+                {
+                    DockingPaneViewModels.Remove((PaneViewModelBase)TagPaneViewModel);
+                }
             });
             UpdateBookByteSizeAllCommand = new DelegateCommand(async () =>
             {
@@ -649,13 +682,26 @@ namespace Sunctum.ViewModels
 
         private void InitializeWindowComponent()
         {
+            DisplayAuthorPane = Configuration.ApplicationConfiguration.DisplayAuthorPane;
+            DisplayTagPane = Configuration.ApplicationConfiguration.DisplayTagPane;
+            DisplayInformationPane = Configuration.ApplicationConfiguration.DisplayInformationPane;
+
             DockingDocumentViewModels = new ObservableCollection<IDocumentViewModelBase>();
             DockingDocumentViewModels.Add((HomeDocumentViewModel)HomeDocumentViewModel);
 
             DockingPaneViewModels = new ObservableCollection<PaneViewModelBase>();
-            DockingPaneViewModels.Add((AuthorPaneViewModel)AuthorPaneViewModel);
-            DockingPaneViewModels.Add((TagPaneViewModel)TagPaneViewModel);
-            DockingPaneViewModels.Add((InformationPaneViewModel)InformationPaneViewModel);
+            if (DisplayAuthorPane)
+            {
+                DockingPaneViewModels.Add((AuthorPaneViewModel)AuthorPaneViewModel);
+            }
+            if (DisplayTagPane)
+            {
+                DockingPaneViewModels.Add((TagPaneViewModel)TagPaneViewModel);
+            }
+            if (DisplayInformationPane)
+            {
+                DockingPaneViewModels.Add((InformationPaneViewModel)InformationPaneViewModel);
+            }
 
             LoadLayoutRequest.Raise(new Notification() { Content = this });
 
@@ -669,10 +715,6 @@ namespace Sunctum.ViewModels
             HomeDocumentViewModel.ClearSelectedItems();
             AuthorPaneViewModel.ClearSelectedItems();
             TagPaneViewModel.ClearSelectedItems();
-
-            DisplayAuthorPane = Configuration.ApplicationConfiguration.DisplayAuthorPane;
-            DisplayTagPane = Configuration.ApplicationConfiguration.DisplayTagPane;
-            DisplayInformationPane = Configuration.ApplicationConfiguration.DisplayInformationPane;
         }
 
         private void SetMainWindowTitle()
