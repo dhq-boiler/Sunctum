@@ -10,6 +10,7 @@ using Sunctum.Domain.ViewModels;
 using Sunctum.Infrastructure.Data.Rdbms;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -89,11 +90,26 @@ namespace Sunctum.Domain.Logic.Import
 
             ret.Add(new Task(() => TagImage(library.TagMng)));
 
+            ret.Add(new Task(() => TagBook(library.TagMng)));
+
             ret.Add(new Task(() => SwitchContentsRegisteredToTrue()));
 
             ret.Add(new Task(() => Log()));
 
             return ret;
+        }
+
+        private void TagBook(ITagManager tagMng)
+        {
+            foreach (var tagName in TagNames)
+            {
+                var tag = TagFacade.FindByTagName(tagName);
+                Debug.Assert(tag != null);
+                var newBookTag = new BookTagViewModel(_book, tag);
+
+                BookTagFacade.Insert(newBookTag);
+                tagMng.BookTagChains.Add(newBookTag);
+            }
         }
 
         protected void WriteFilesSize()

@@ -17,6 +17,8 @@ namespace Sunctum.Domain.Models.Managers
 
         ObservableCollection<TagCountViewModel> TagCount { get; }
 
+        ObservableCollection<BookTagViewModel> BookTagChains { get; }
+
         List<TagViewModel> SelectedEntityTags { get; set; }
 
         List<EntryViewModel> SelectedEntries { get; }
