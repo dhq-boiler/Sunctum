@@ -54,6 +54,7 @@ namespace Sunctum.Domain.Models.Managers
         Task Reset();
 
         IArrangedBookStorage CreateBookStorage();
+        Task UpdateBookTag();
     }
 
     public delegate void SearchedEventHandler(object sender, SearchedEventArgs e);

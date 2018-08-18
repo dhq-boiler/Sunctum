@@ -89,6 +89,9 @@
                     <MenuItem Command="{Binding UpdateBookByteSizeAllCommand}" Header="{Binding MainWindow_Data_BookSize_UpdateSizeAllBooks, Source={StaticResource resources}}" />
                     <MenuItem Command="{Binding UpdateBookByteSizeStillNullCommand}" Header="{Binding MainWindow_Data_BookSize_UpdateSizeQuickly, Source={StaticResource resources}}" />
                 </MenuItem>
+                <MenuItem Header="{Binding MainWindow_Data_BookTag, Source={StaticResource resources}}">
+                    <MenuItem Command="{Binding UpdateBookTagCommand}" Header="{Binding MainWindow_Data_BookTag_UpdateBookTagAll, Source={StaticResource resources}}" />
+                </MenuItem>
                 <Separator />
                 <MenuItem Command="{Binding OpenAuthorManagementDialogCommand}" Header="{Binding MainWindow_Data_AuthorManagement, Source={StaticResource resources}}" />
                 <MenuItem Command="{Binding OpenTagManagementDialogCommand}" Header="{Binding MainWindow_Data_TagManagement, Source={StaticResource resources}}" />

@@ -125,6 +125,8 @@ namespace Sunctum.ViewModels
 
         public ICommand UpdateBookByteSizeStillNullCommand { get; set; }
 
+        public ICommand UpdateBookTagCommand { get; set; }
+
         #endregion //コマンド
 
         #region コマンド登録
@@ -298,6 +300,10 @@ namespace Sunctum.ViewModels
             UpdateBookByteSizeStillNullCommand = new DelegateCommand(async () =>
             {
                 await LibraryVM.UpdateBookByteSizeStillNull();
+            });
+            UpdateBookTagCommand = new DelegateCommand(async () =>
+            {
+                await LibraryVM.UpdateBookTag();
             });
         }
 

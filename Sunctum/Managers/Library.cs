@@ -86,6 +86,9 @@ namespace Sunctum.Managers
         public IByteSizeCalculating ByteSizeCalculatingService { get; set; }
 
         [Inject]
+        public IBookTagInitializing BookTagInitializingService { get; set; }
+
+        [Inject]
         public IDataAccessManager DataAccessManager {[DebuggerStepThrough] get; set; }
 
         #endregion //プロパティ
@@ -264,6 +267,11 @@ namespace Sunctum.Managers
         }
 
         #endregion //サイズ更新
+
+        public async Task UpdateBookTag()
+        {
+            await TaskManager.Enqueue(BookTagInitializingService.GetTaskSequence());
+        }
 
         public IArrangedBookStorage CreateBookStorage()
         {

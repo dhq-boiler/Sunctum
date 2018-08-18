@@ -47,7 +47,7 @@ namespace Sunctum.Properties {
         }
         
         /// <summary>
-        ///   厳密に型指定されたこのリソース クラスを使用して、すべての検索リソースに対し、
+        ///   すべてについて、現在のスレッドの CurrentUICulture プロパティをオーバーライドします
         ///   現在のスレッドの CurrentUICulture プロパティをオーバーライドします。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
@@ -426,6 +426,24 @@ namespace Sunctum.Properties {
         public static string MainWindow_Data_BookSize_UpdateSizeQuickly {
             get {
                 return ResourceManager.GetString("MainWindow_Data_BookSize_UpdateSizeQuickly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Book-tag に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MainWindow_Data_BookTag {
+            get {
+                return ResourceManager.GetString("MainWindow_Data_BookTag", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Update book-tag all に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MainWindow_Data_BookTag_UpdateBookTagAll {
+            get {
+                return ResourceManager.GetString("MainWindow_Data_BookTag_UpdateBookTagAll", resourceCulture);
             }
         }
         

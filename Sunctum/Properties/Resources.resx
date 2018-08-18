@@ -240,6 +240,12 @@
   <data name="MainWindow_Data_BookSize_UpdateSizeQuickly" xml:space="preserve">
     <value>Update Size quickly</value>
   </data>
+  <data name="MainWindow_Data_BookTag" xml:space="preserve">
+    <value>Book-tag</value>
+  </data>
+  <data name="MainWindow_Data_BookTag_UpdateBookTagAll" xml:space="preserve">
+    <value>Update book-tag all</value>
+  </data>
   <data name="MainWindow_Data_MetadataImportSetting" xml:space="preserve">
     <value>Metadata Import setting...</value>
   </data>
