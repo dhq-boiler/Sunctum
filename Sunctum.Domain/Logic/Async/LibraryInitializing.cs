@@ -115,19 +115,6 @@ namespace Sunctum.Domain.Logic.Async
         private async void LibraryInitializing_FinishToUpgradeTo_Version_3(object sender, VersionChangeEventArgs e)
         {
             await LibraryManager.TaskManager.Enqueue(BookTagInitializingService.GetTaskSequence());
-            //var bookImageChains = new IntermediateTableDao().FindAll();
-            //foreach (var chain in bookImageChains)
-            //{
-            //    var imageTags = ImageTagFacade.FindByImageId(chain.ImageId);
-            //    foreach (var imageTag in imageTags)
-            //    {
-            //        var newEntity = new BookTagViewModel(chain.BookId, imageTag.TagID);
-            //        if (!BookTagFacade.Exists(newEntity))
-            //        {
-            //            BookTagFacade.Insert(newEntity);
-            //        }
-            //    }
-            //}
         }
     }
 }
