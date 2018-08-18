@@ -13,7 +13,7 @@ namespace Sunctum.Domain.Data.Dao
 {
     public class IntermediateTableDao : SQLiteBaseDao<Dummy>
     {
-        public IEnumerable<BookImageChain> FindAll(DbConnection conn = null)
+        public IEnumerable<BookTag> FindAll(DbConnection conn = null)
         {
             bool isTransaction = conn != null;
 
@@ -26,11 +26,13 @@ namespace Sunctum.Domain.Data.Dao
 
                 using (var command = conn.CreateCommand())
                 {
-                    using (var query = new Select().Column("b", "ID").As("bId")
-                                                   .Column("i", "ID").As("iId")
+                    using (var query = new Select().Distinct
+                                                   .Column("b", "ID").As("bId")
+                                                   .Column("it", "TagID").As("itTagId")
                                                    .From.Table(new Table<Book>().Name, "b")
                                                    .Inner.Join(new Table<Page>().Name, "p").On.Column("p", "BookID").EqualTo.Column("b", "ID")
-                                                   .Inner.Join(new Table<Image>().Name, "i").On.Column("i", "ID").EqualTo.Column("p", "ImageID"))
+                                                   .Inner.Join(new Table<Image>().Name, "i").On.Column("i", "ID").EqualTo.Column("p", "ImageID")
+                                                   .Inner.Join(new Table<ImageTag>().Name, "it").On.Column("it", "ImageID").EqualTo.Column("i", "ID"))
                     {
                         string sql = query.ToSql();
                         command.CommandText = sql;
@@ -40,10 +42,10 @@ namespace Sunctum.Domain.Data.Dao
                         {
                             while (reader.Read())
                             {
-                                yield return new BookImageChain()
+                                yield return new BookTag()
                                 {
-                                    BookId = reader.SafeGetGuid("bId"),
-                                    ImageId = reader.SafeGetGuid("iId")
+                                    BookID = reader.SafeGetGuid("bId"),
+                                    TagID = reader.SafeGetGuid("itTagId")
                                 };
                             }
                         }
