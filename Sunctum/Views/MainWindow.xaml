@@ -40,6 +40,13 @@
         <trigger:MouseWheelEventTrigger EventName="MouseWheel">
             <prism:InvokeCommandAction Command="{Binding ActiveDocumentViewModel.MouseWheelCommand}" TriggerParameterPath="Delta" />
         </trigger:MouseWheelEventTrigger>
+        <prism:InteractionRequestTrigger SourceObject="{Binding OpenPowerSearchRequest}">
+            <prism:PopupWindowAction IsModal="False">
+                <prism:PopupWindowAction.WindowContent>
+                    <local:PowerSearch />
+                </prism:PopupWindowAction.WindowContent>
+            </prism:PopupWindowAction>
+        </prism:InteractionRequestTrigger>
     </i:Interaction.Triggers>
     <Window.InputBindings>
         <KeyBinding
@@ -103,6 +110,7 @@
                     IsEnabled="False"
                     Visibility="{Binding LibraryVM.IsSearching, Converter={StaticResource BoolToVisibilityConverter}}" />
                 <MenuItem Command="{Binding OpenSearchPaneCommand}" Header="{Binding MainWindow_Search_Search, Source={StaticResource resources}}" />
+                <MenuItem Command="{Binding OpenPowerSearchCommand}" Header="Power search" />
                 <Separator />
                 <MenuItem Command="{Binding ClearSearchResultCommand}" Header="{Binding MainWindow_Search_ClearSearchResult, Source={StaticResource resources}}" />
             </MenuItem>

@@ -81,6 +81,8 @@ namespace Sunctum.ViewModels
 
         public ICommand OpenMetadataImportSettingDialogCommand { get; set; }
 
+        public ICommand OpenPowerSearchCommand { get; set; }
+
         public ICommand OpenSwitchLibraryCommand { get; set; }
 
         public ICommand OpenTagManagementDialogCommand { get; set; }
@@ -129,6 +131,8 @@ namespace Sunctum.ViewModels
 
         #endregion //コマンド
 
+        public InteractionRequest<Notification> OpenPowerSearchRequest { get; } = new InteractionRequest<Notification>();
+
         #region コマンド登録
 
         private void RegisterCommands()
@@ -168,6 +172,10 @@ namespace Sunctum.ViewModels
             OpenMetadataImportSettingDialogCommand = new DelegateCommand(() =>
             {
                 OpenMetadataImportSettingDialog();
+            });
+            OpenPowerSearchCommand = new DelegateCommand(() =>
+            {
+                OpenPowerSearchRequest.Raise(new Notification() { Title = "Power search", Content = ActiveDocumentViewModel.BookCabinet });
             });
             OpenSwitchLibraryCommand = new DelegateCommand(async () =>
             {
@@ -982,7 +990,7 @@ namespace Sunctum.ViewModels
         private class ActiveTabChangedDisposable : IDisposable
         {
             private MainWindowViewModel _mainWindowViewModel;
-            private IObserver<ActiveTabChanged> _observer;
+            private readonly IObserver<ActiveTabChanged> _observer;
 
             public ActiveTabChangedDisposable(MainWindowViewModel mainWindowViewModel, IObserver<ActiveTabChanged> observer)
             {
