@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{2CFDB688-BBBE-4F1D-876A-CAE825761B57}</ProjectGuid>
+    <ProjectGuid>{99514C96-792F-4493-807D-E717283DA621}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sunctum.Plugin</RootNamespace>
-    <AssemblyName>Sunctum.Plugin</AssemblyName>
+    <RootNamespace>FolderFilesImporter</RootNamespace>
+    <AssemblyName>FolderFilesImporter</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,51 +31,47 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
+    </Reference>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.5.9\lib\net45\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\ExportAttribute.cs" />
-    <Compile Include="Core\ExportScope.cs" />
-    <Compile Include="Extensions.cs" />
-    <Compile Include="IAddMenuPlugin.cs" />
-    <Compile Include="IDropPlugin.cs" />
-    <Compile Include="PluginMenuItem.cs" />
-    <Compile Include="MenuType.cs" />
-    <Compile Include="PluginMenuParameter.cs" />
+    <Compile Include="FolderFilesImporterPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sunctum.Domain\Sunctum.Domain.csproj">
-      <Project>{df4f0810-0869-4124-8240-10c3c2d716d8}</Project>
+      <Project>{DF4F0810-0869-4124-8240-10C3C2D716D8}</Project>
       <Name>Sunctum.Domain</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sunctum.Infrastructure\Sunctum.Infrastructure.csproj">
-      <Project>{2CF31D9A-E84A-415A-8063-47BD28BA52AC}</Project>
-      <Name>Sunctum.Infrastructure</Name>
+    <ProjectReference Include="..\Sunctum.Plugin\Sunctum.Plugin.csproj">
+      <Project>{2cfdb688-bbbe-4f1d-876a-cae825761b57}</Project>
+      <Name>Sunctum.Plugin</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>"$(SolutionDir)CodeFormatter\CodeFormatter" "$(ProjectDir)$(ProjectFileName)" /nounicode /nocopyright</PreBuildEvent>
+    <PostBuildEvent>copy /Y "$(SolutionDir)$(ProjectName)\$(OutDir)FolderFilesImporter.dll" "$(SolutionDir)Sunctum\$(OutDir)plugins\FolderFilesImporter.dll"</PostBuildEvent>
   </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

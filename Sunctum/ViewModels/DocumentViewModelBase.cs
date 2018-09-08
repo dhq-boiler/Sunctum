@@ -1,5 +1,6 @@
 ﻿
 
+using Ninject;
 using NLog;
 using Prism.Commands;
 using Prism.Interactivity.InteractionRequest;
@@ -13,6 +14,7 @@ using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using Sunctum.Infrastructure.Core;
+using Sunctum.Plugin;
 using Sunctum.Views;
 using System;
 using System.Collections.Generic;
@@ -255,6 +257,9 @@ namespace Sunctum.ViewModels
 
         public ReactiveProperty<int?> StarLevel { get; } = new ReactiveProperty<int?>();
 
+        [Inject]
+        public IEnumerable<IDropPlugin> DropPlugins { get; set; }
+
         #endregion //プロパティ
 
         public DocumentViewModelBase()
@@ -302,10 +307,12 @@ namespace Sunctum.ViewModels
             {
                 CloseSearchPane();
             });
-            DropCommand = new DelegateCommand<IDataObject>(async dataObject =>
+            DropCommand = new DelegateCommand<IDataObject>(dataObject =>
             {
-                string[] objects = dataObject.GetData(DataFormats.FileDrop) as string[];
-                await ImportAsync(objects);
+                foreach (var dropPlugin in DropPlugins)
+                {
+                    dropPlugin.Execute(dataObject);
+                }
             });
             ExportBooksCommand = new DelegateCommand(() =>
             {
