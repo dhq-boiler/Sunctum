@@ -26,17 +26,6 @@ namespace Sunctum.Views
             InitializeComponent();
         }
 
-        private async void Book_ListView_Drop(object sender, DragEventArgs e)
-        {
-            string[] objects = e.Data.GetData(DataFormats.FileDrop) as string[];
-
-            if (objects != null)
-            {
-                var viewModel = (HomeDocumentViewModel)DataContext;
-                await viewModel.ImportAsync(objects);
-            }
-        }
-
         private void Book_ListView_PreviewDragOver(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop, true))

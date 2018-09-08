@@ -47,7 +47,7 @@
     <Compile Include="Core\ExportAttribute.cs" />
     <Compile Include="Core\ExportScope.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="IPlugin.cs" />
+    <Compile Include="IAddMenuPlugin.cs" />
     <Compile Include="PluginMenuItem.cs" />
     <Compile Include="MenuType.cs" />
     <Compile Include="PluginMenuParameter.cs" />

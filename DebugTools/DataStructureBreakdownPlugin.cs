@@ -16,8 +16,8 @@ namespace DebugTools
 {
 #if DEBUG
 
-    [Export(typeof(IPlugin))]
-    public class DataStructureBreakdownPlugin : IPlugin
+    [Export(typeof(IAddMenuPlugin))]
+    public class DataStructureBreakdownPlugin : IAddMenuPlugin
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 

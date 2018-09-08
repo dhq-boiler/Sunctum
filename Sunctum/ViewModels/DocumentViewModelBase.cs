@@ -66,6 +66,8 @@ namespace Sunctum.ViewModels
 
         public ICommand CloseTabCommand { get; set; }
 
+        public ICommand DropCommand { get; set; }
+
         public ICommand ExportBooksCommand { get; set; }
 
         public ICommand FilterBooksCommand { get; set; }
@@ -299,6 +301,11 @@ namespace Sunctum.ViewModels
             CloseSearchPaneCommand = new DelegateCommand(() =>
             {
                 CloseSearchPane();
+            });
+            DropCommand = new DelegateCommand<IDataObject>(async dataObject =>
+            {
+                string[] objects = dataObject.GetData(DataFormats.FileDrop) as string[];
+                await ImportAsync(objects);
             });
             ExportBooksCommand = new DelegateCommand(() =>
             {

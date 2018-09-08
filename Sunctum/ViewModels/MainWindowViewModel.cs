@@ -49,7 +49,7 @@ namespace Sunctum.ViewModels
         private bool _DisplayTagPane;
         private bool _DisplayInformationPane;
         private bool _DisplayAuthorPane;
-        private IEnumerable<IPlugin> _Plugins;
+        private IEnumerable<IAddMenuPlugin> _Plugins;
         private string _TooltipOnProgressBar;
         private double _WindowLeft;
         private double _WindowTop;
@@ -383,7 +383,7 @@ namespace Sunctum.ViewModels
         }
 
         [Inject]
-        public IEnumerable<IPlugin> Plugins
+        public IEnumerable<IAddMenuPlugin> Plugins
         {
             get { return _Plugins; }
             set { SetProperty(ref _Plugins, value); }

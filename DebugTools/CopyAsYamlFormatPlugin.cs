@@ -14,8 +14,8 @@ namespace DebugTools
 {
 #if DEBUG
 
-    [Export(typeof(IPlugin))]
-    public class CopyAsYamlFormatPlugin : IPlugin
+    [Export(typeof(IAddMenuPlugin))]
+    public class CopyAsYamlFormatPlugin : IAddMenuPlugin
     {
         private static readonly ICommand s_command = new DelegateCommand<PluginMenuParameter>((p) =>
         {

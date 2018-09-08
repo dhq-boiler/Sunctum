@@ -5,7 +5,7 @@ using System.Windows;
 
 namespace Sunctum.Plugin
 {
-    public interface IPlugin
+    public interface IAddMenuPlugin
     {
         FrameworkElement GetMenu(MenuType callFrom, Func<object> commandParameter);
 

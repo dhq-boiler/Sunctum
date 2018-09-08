@@ -278,7 +278,6 @@
                 x:Name="Book_ListView"
                 behavior:MultiSelectorBehaviours.SynchronizedSelectedItems="{Binding BookListViewSelectedItems}"
                 AllowDrop="True"
-                Drop="Book_ListView_Drop"
                 ItemsSource="{Binding BookCabinet.OnStage}"
                 PreviewDragOver="Book_ListView_PreviewDragOver"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -298,6 +297,9 @@
                     <trigger:ContextMenuOpeningEventTrigger EventName="ContextMenuOpening">
                         <prism:InvokeCommandAction Command="{Binding BuildBookContextMenuCommand}" TriggerParameterPath="Source" />
                     </trigger:ContextMenuOpeningEventTrigger>
+                    <i:EventTrigger EventName="Drop">
+                        <prism:InvokeCommandAction Command="{Binding DropCommand}" TriggerParameterPath="Data" />
+                    </i:EventTrigger>
                 </i:Interaction.Triggers>
                 <ListView.ItemsPanel>
                     <ItemsPanelTemplate>
