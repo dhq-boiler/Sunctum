@@ -184,6 +184,10 @@ namespace Sunctum.Domain.ViewModels
         public override string ToString()
         {
             string contentsStr = "";
+            if (Contents == null)
+            {
+                return "{BookViewModel}";
+            }
             foreach (var page in Contents)
             {
                 contentsStr += page.ToString();
@@ -245,6 +249,7 @@ namespace Sunctum.Domain.ViewModels
                 }
 
                 Contents = null;
+                FirstPage = null;
                 NumberOfPages = null;
 
                 _disposedValue = true;
