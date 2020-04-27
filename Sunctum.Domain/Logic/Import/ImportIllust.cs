@@ -89,6 +89,11 @@ namespace Sunctum.Domain.Logic.Import
             }
             var tasks = child.GenerateTasks(library, directoryPath, System.IO.Path.GetFileNameWithoutExtension(child.Path), dataOpUnit);
             ret.AddRange(tasks);
+            if (child is ImportPage)
+            {
+                var ip = child as ImportPage;
+                ret.Add(new System.Threading.Tasks.Task(() => library.AccessDispatcherObject(() => _book.AddPage(ip.GeneratedPage))));
+            }
             ++Processed;
         }
 

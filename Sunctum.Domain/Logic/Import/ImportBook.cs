@@ -22,7 +22,7 @@ namespace Sunctum.Domain.Logic.Import
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
         protected List<Importer> _children;
-        private BookViewModel _book;
+        protected BookViewModel _book;
         private Guid _AuthorID;
         private Guid _BookID;
         private List<ImageViewModel> _images;
