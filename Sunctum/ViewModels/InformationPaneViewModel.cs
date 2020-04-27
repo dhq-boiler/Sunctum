@@ -12,7 +12,7 @@ using System.Windows.Input;
 
 namespace Sunctum.ViewModels
 {
-    internal class InformationPaneViewModel : PaneViewModelBase, IInformationPaneViewModel
+    public class InformationPaneViewModel : PaneViewModelBase, IInformationPaneViewModel
     {
         private List<TagViewModel> _TagListBoxSelectedItems;
 

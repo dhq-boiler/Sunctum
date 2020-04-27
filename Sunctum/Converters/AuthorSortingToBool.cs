@@ -12,7 +12,7 @@ using System.Windows.Markup;
 
 namespace Sunctum.Converters
 {
-    internal class AuthorSortingToBool : MarkupExtension, IValueConverter
+    public class AuthorSortingToBool : MarkupExtension, IValueConverter
     {
         [Inject]
         public IAuthorPaneViewModel AuthorPaneViewModel { get; set; }

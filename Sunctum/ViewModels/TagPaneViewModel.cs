@@ -13,7 +13,7 @@ using System.Windows.Input;
 
 namespace Sunctum.ViewModels
 {
-    internal class TagPaneViewModel : PaneViewModelBase, ITagPaneViewModel
+    public class TagPaneViewModel : PaneViewModelBase, ITagPaneViewModel
     {
         private List<TagCountViewModel> _TagListBoxSelectedItems;
         private ObservableCollection<System.Windows.Controls.Control> _TagContextMenuItems;

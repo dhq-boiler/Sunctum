@@ -12,7 +12,7 @@ using System.Windows.Markup;
 
 namespace Sunctum.Converters
 {
-    internal class TagSortingToBool : MarkupExtension, IValueConverter
+    public class TagSortingToBool : MarkupExtension, IValueConverter
     {
         [Inject]
         public ITagPaneViewModel TagPaneViewModel { get; set; }

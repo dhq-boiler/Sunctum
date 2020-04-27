@@ -13,7 +13,7 @@ using System.Windows.Input;
 
 namespace Sunctum.ViewModels
 {
-    internal class AuthorPaneViewModel : PaneViewModelBase, IAuthorPaneViewModel
+    public class AuthorPaneViewModel : PaneViewModelBase, IAuthorPaneViewModel
     {
         private ObservableCollection<System.Windows.Controls.Control> _AuthorContextMenuItems;
         private List<AuthorCountViewModel> _AuthorListBoxSelectedItems;

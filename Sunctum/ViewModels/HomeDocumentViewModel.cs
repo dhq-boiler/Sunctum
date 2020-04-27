@@ -4,7 +4,7 @@ using NLog;
 
 namespace Sunctum.ViewModels
 {
-    internal class HomeDocumentViewModel : DocumentViewModelBase, IHomeDocumentViewModel
+    public class HomeDocumentViewModel : DocumentViewModelBase, IHomeDocumentViewModel
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
