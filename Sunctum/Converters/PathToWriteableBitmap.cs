@@ -8,6 +8,8 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Data;
+using System.Windows.Media;
+using System.Windows.Media.Converters;
 using System.Windows.Media.Imaging;
 
 namespace Sunctum.Converters
@@ -73,7 +75,7 @@ namespace Sunctum.Converters
 
         private WriteableBitmap ToWriteableBitmap(Mat mat)
         {
-            WriteableBitmap bitmap = new WriteableBitmap(mat.Cols, mat.Rows, 92, 92, System.Windows.Media.PixelFormats.Bgr24, null);
+            WriteableBitmap bitmap = new WriteableBitmap(mat.Cols, mat.Rows, 92, 92, SelectChannels(mat), null);
 
             unsafe
             {
@@ -82,20 +84,23 @@ namespace Sunctum.Converters
                     bitmap.Lock();
 
                     byte* p_dst = (byte*)bitmap.BackBuffer.ToPointer();
-                    byte* p_src = (byte*)mat.Data.ToPointer();
-                    int step = bitmap.BackBufferStride;
-                    int channels = 3;
+                    int step_dst = bitmap.BackBufferStride;
+                    int channels = mat.Channels();
+                    long step_src = mat.Step();
 
                     for (int y = 0; y < bitmap.PixelHeight; ++y)
                     {
                         for (int x = 0; x < bitmap.PixelWidth; ++x)
                         {
+                            var vector = PickPixel(mat, y, x);
                             for (int c = 0; c < channels; ++c)
                             {
-                                *(p_dst + y * step + x * channels + c) = *(p_src + y * step + x * channels + c);
+                                *(p_dst + y * step_dst + x * channels + c) = vector[c];
                             }
                         }
                     }
+
+                    bitmap.AddDirtyRect(new System.Windows.Int32Rect(0, 0, bitmap.PixelWidth, bitmap.PixelHeight));
                 }
                 finally
                 {
@@ -104,6 +109,32 @@ namespace Sunctum.Converters
             }
 
             return bitmap;
+        }
+
+        private IVec<byte> PickPixel(Mat mat, int y, int x)
+        {
+            switch (mat.Channels())
+            {
+                case 3:
+                    return mat.At<Vec3b>(y, x);
+                case 4:
+                    return mat.At<Vec4b>(y, x);
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
+        private PixelFormat SelectChannels(Mat mat)
+        {
+            switch (mat.Channels())
+            {
+                case 3:
+                    return System.Windows.Media.PixelFormats.Bgr24;
+                case 4:
+                    return System.Windows.Media.PixelFormats.Bgra32;
+                default:
+                    throw new NotSupportedException();
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
