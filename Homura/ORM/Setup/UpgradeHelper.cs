@@ -43,7 +43,7 @@ namespace Homura.ORM.Setup
 
         public static Type GetTableType(Type entity)
         {
-            return Type.GetType($"Sunctum.Infrastructure.Data.Rdbms.Table`1[[{entity.AssemblyQualifiedName}]]");
+            return Type.GetType($"Homura.ORM.Table`1[[{entity.AssemblyQualifiedName}]]");
         }
 
         public static IEnumerable<EntityVersionKey> ConvertTablenameToKey(Dictionary<EntityVersionKey, IEntityVersionChangePlan> _planMap, IEnumerable<string> existingTableNames)
