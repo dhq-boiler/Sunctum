@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Homura.Core;
 using OpenCvSharp;
 using Sunctum.Domain.Models;
 using Sunctum.Infrastructure.Core;

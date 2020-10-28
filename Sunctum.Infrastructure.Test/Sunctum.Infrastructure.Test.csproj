@@ -66,78 +66,9 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="IntegrationTest\Data\Rdbms\Statement\DeleteStatementTest.cs" />
-    <Compile Include="IntegrationTest\Data\Rdbms\Statement\InsertStatementTest.cs" />
-    <Compile Include="IntegrationTest\Data\Rdbms\Statement\SelectStatementTest.cs" />
-    <Compile Include="IntegrationTest\Data\Rdbms\Statement\UpdateStatementTest.cs" />
-    <Compile Include="IntegrationTest\Data\Rdbms\VersionControl\TableMigrationTest.cs" />
-    <Compile Include="IntegrationTest\Data\Rdbms\VersionControl\SchemaTest.cs" />
-    <Compile Include="TestFixture\Dao\AlphaDao.cs" />
-    <Compile Include="TestFixture\Dao\BetaDao.cs" />
-    <Compile Include="TestFixture\Dao\DetailDao.cs" />
-    <Compile Include="TestFixture\Dao\GammaDao.cs" />
-    <Compile Include="TestFixture\Dao\HeaderDao.cs" />
-    <Compile Include="TestFixture\Dao\OriginDao.cs" />
-    <Compile Include="TestFixture\Entity\Alpha.cs" />
-    <Compile Include="TestFixture\Entity\AnotherEntity.cs" />
-    <Compile Include="TestFixture\Entity\Beta.cs" />
-    <Compile Include="TestFixture\Entity\Detail.cs" />
-    <Compile Include="TestFixture\DummyAbstractTable.cs" />
-    <Compile Include="TestFixture\Entity\Gamma.cs" />
-    <Compile Include="TestFixture\Entity\Origin.cs" />
-    <Compile Include="TestFixture\Entity\SomeEntity.cs" />
-    <Compile Include="TestFixture\Migration\Plan\AlphaChangePlan_Abstract.cs" />
-    <Compile Include="TestFixture\Migration\Plan\AlphaChangePlan_VersionOrigin.cs" />
-    <Compile Include="TestFixture\Migration\Plan\AlphaChangePlan_Version_1.cs" />
-    <Compile Include="TestFixture\Migration\Plan\AlphaChangePlan_Version_2.cs" />
-    <Compile Include="TestFixture\Migration\Plan\BetaChangePlan_Abstract.cs" />
-    <Compile Include="TestFixture\Migration\Plan\BetaChangePlan_VersionOrigin.cs" />
-    <Compile Include="TestFixture\Migration\Plan\BetaChangePlan_Version_1.cs" />
-    <Compile Include="TestFixture\Migration\Plan\BetaChangePlan_Version_2.cs" />
-    <Compile Include="TestFixture\Migration\Plan\DetailChangePlan_Abstract.cs" />
-    <Compile Include="TestFixture\Migration\Plan\DetailChangePlan_Version_2.cs" />
-    <Compile Include="TestFixture\Migration\Plan\DetailChangePlan_Version_3.cs" />
-    <Compile Include="TestFixture\Migration\Plan\GammaChangePlan_Abstract.cs" />
-    <Compile Include="TestFixture\Migration\Plan\GammaChangePlan_VersionOrigin.cs" />
-    <Compile Include="TestFixture\Migration\Plan\GammaChangePlan_Version_1.cs" />
-    <Compile Include="TestFixture\Migration\Plan\HeaderChangePlan_Abstract.cs" />
-    <Compile Include="TestFixture\Migration\Plan\DetailChangePlan_VersionOrigin.cs" />
-    <Compile Include="TestFixture\Migration\Plan\HeaderChangePlan_VersionOrigin.cs" />
-    <Compile Include="TestFixture\Migration\Plan\DetailChangePlan_Version_1.cs" />
-    <Compile Include="TestFixture\Migration\Plan\HeaderChangePlan_Version_1.cs" />
-    <Compile Include="TestFixture\Migration\Plan\HeaderChangePlan_Version_2.cs" />
-    <Compile Include="TestFixture\Migration\Plan\HeaderChangePlan_Version_3.cs" />
-    <Compile Include="TestFixture\Migration\Plan\VersionChangePlan_VersionOrigin.cs" />
-    <Compile Include="TestFixture\Migration\Plan\VersionChangePlan_Version_1.cs" />
-    <Compile Include="UnitTest\Data\Rdbms\Statement\DeleteStatementTest.cs" />
-    <Compile Include="TestFixture\DummyImageTagTable.cs" />
-    <Compile Include="TestFixture\DummyTagTable.cs" />
-    <Compile Include="TestFixture\DummyAuthorTable.cs" />
-    <Compile Include="TestFixture\DummyBookTable.cs" />
-    <Compile Include="TestFixture\DummyImageTable.cs" />
-    <Compile Include="TestFixture\DummyThumbnailTable.cs" />
-    <Compile Include="UnitTest\Data\Rdbms\Statement\InsertStatementTest.cs" />
-    <Compile Include="UnitTest\Data\Rdbms\Statement\SelectStatementTest.cs" />
-    <Compile Include="TestFixture\DummyPageTable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UnitTest\Data\Rdbms\Statement\UnionStatementTest.cs" />
-    <Compile Include="UnitTest\Data\Rdbms\Statement\UpdateStatementTest.cs" />
-    <Compile Include="TestFixture\Entity\Header.cs" />
-    <Compile Include="TestFixture\Migration\Plan\OriginChangePlan_Abstract.cs" />
-    <Compile Include="TestFixture\Migration\Plan\OriginChangePlan_VersionOrigin.cs" />
-    <Compile Include="TestFixture\Migration\Plan\OriginChangePlan_Version_1.cs" />
-    <Compile Include="TestFixture\Migration\Version_1.cs" />
-    <Compile Include="TestFixture\Migration\Version_2.cs" />
-    <Compile Include="TestFixture\Migration\Version_3.cs" />
-    <Compile Include="UnitTest\Data\Setup\DataVersionManagerTest.cs" />
-    <Compile Include="UnitTest\Data\Rdbms\TableTest.cs" />
-    <Compile Include="UnitTest\Data\Setup\UpgradeHelperTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\simpleqb\simpleqb.csproj">
-      <Project>{52d5e5cc-a861-433b-bfa0-7f69dd5d92b8}</Project>
-      <Name>simpleqb</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Sunctum.Infrastructure\Sunctum.Infrastructure.csproj">
       <Project>{2cf31d9a-e84a-415a-8063-47bd28ba52ac}</Project>
       <Name>Sunctum.Infrastructure</Name>

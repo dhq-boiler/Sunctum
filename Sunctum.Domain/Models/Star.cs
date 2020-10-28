@@ -1,6 +1,6 @@
 ﻿
 
-using Sunctum.Infrastructure.Data.Rdbms.Ddl.Mapping;
+using Homura.ORM.Mapping;
 using System.Diagnostics;
 
 namespace Sunctum.Domain.Models

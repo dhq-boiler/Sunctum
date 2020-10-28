@@ -1,5 +1,6 @@
 ﻿
 
+using Homura.Core;
 using NLog;
 using Prism.Mvvm;
 using Sunctum.Domain.Data.DaoFacade;

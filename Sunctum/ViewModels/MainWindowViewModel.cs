@@ -1,5 +1,8 @@
 ﻿
 
+using Homura.Core;
+using Homura.ORM;
+using Homura.ORM.Setup;
 using Ninject;
 using NLog;
 using Prism.Commands;
@@ -16,9 +19,6 @@ using Sunctum.Domain.Logic.ImageTagCountSorting;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
-using Sunctum.Infrastructure.Core;
-using Sunctum.Infrastructure.Data.Rdbms;
-using Sunctum.Infrastructure.Data.Setup;
 using Sunctum.Plugin;
 using Sunctum.UI.Controls;
 using Sunctum.UI.Dialogs;

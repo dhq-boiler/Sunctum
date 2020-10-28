@@ -1,7 +1,7 @@
 ﻿
 
+using Homura.ORM.Mapping;
 using Sunctum.Domain.Models.Conversion;
-using Sunctum.Infrastructure.Data.Rdbms.Ddl.Mapping;
 using System;
 using System.Diagnostics;
 

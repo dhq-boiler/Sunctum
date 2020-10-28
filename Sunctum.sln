@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27428.2043
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30104.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sunctum", "Sunctum\Sunctum.csproj", "{98CE041B-C971-4963-8A82-7E3F56CA4BC6}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -11,6 +11,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sunctum.Infrastructure", "Sunctum.Infrastructure\Sunctum.Infrastructure.csproj", "{2CF31D9A-E84A-415A-8063-47BD28BA52AC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sunctum.Domain", "Sunctum.Domain\Sunctum.Domain.csproj", "{DF4F0810-0869-4124-8240-10C3C2D716D8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{61479EA0-7CC7-46C8-A54C-30325AD08BDF} = {61479EA0-7CC7-46C8-A54C-30325AD08BDF}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sunctum.Infrastructure.Test", "Sunctum.Infrastructure.Test\Sunctum.Infrastructure.Test.csproj", "{730A9503-C8BE-4C42-98CD-6F3B8B93FBAF}"
 EndProject
@@ -24,13 +27,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sunctum.UI", "Sunctum.UI\Su
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sunctum.UI.Test", "Sunctum.UI.Test\Sunctum.UI.Test.csproj", "{8EDF4429-251A-416D-BB68-93F227191BCF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "simpleqb", "simpleqb\simpleqb.csproj", "{52D5E5CC-A861-433B-BFA0-7F69DD5D92B8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "simpleqb.Test", "simpleqb.Test\simpleqb.Test.csproj", "{750AE4C3-5045-4E19-8580-E16EB4020C03}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{FD8C26B5-FBDC-4457-BBAD-2A8F1FF0929D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FolderFilesImporter", "FolderFilesImporter\FolderFilesImporter.csproj", "{99514C96-792F-4493-807D-E717283DA621}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Homura", "Homura\Homura.csproj", "{61479EA0-7CC7-46C8-A54C-30325AD08BDF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Homura.Test", "Homura.Test\Homura.Test.csproj", "{82098222-623A-4B30-B980-8DDC8553E174}"
+	ProjectSection(ProjectDependencies) = postProject
+		{61479EA0-7CC7-46C8-A54C-30325AD08BDF} = {61479EA0-7CC7-46C8-A54C-30325AD08BDF}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -74,18 +80,18 @@ Global
 		{8EDF4429-251A-416D-BB68-93F227191BCF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8EDF4429-251A-416D-BB68-93F227191BCF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8EDF4429-251A-416D-BB68-93F227191BCF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{52D5E5CC-A861-433B-BFA0-7F69DD5D92B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{52D5E5CC-A861-433B-BFA0-7F69DD5D92B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{52D5E5CC-A861-433B-BFA0-7F69DD5D92B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{52D5E5CC-A861-433B-BFA0-7F69DD5D92B8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{750AE4C3-5045-4E19-8580-E16EB4020C03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{750AE4C3-5045-4E19-8580-E16EB4020C03}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{750AE4C3-5045-4E19-8580-E16EB4020C03}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{750AE4C3-5045-4E19-8580-E16EB4020C03}.Release|Any CPU.Build.0 = Release|Any CPU
 		{99514C96-792F-4493-807D-E717283DA621}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{99514C96-792F-4493-807D-E717283DA621}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99514C96-792F-4493-807D-E717283DA621}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{99514C96-792F-4493-807D-E717283DA621}.Release|Any CPU.Build.0 = Release|Any CPU
+		{61479EA0-7CC7-46C8-A54C-30325AD08BDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{61479EA0-7CC7-46C8-A54C-30325AD08BDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{61479EA0-7CC7-46C8-A54C-30325AD08BDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{61479EA0-7CC7-46C8-A54C-30325AD08BDF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82098222-623A-4B30-B980-8DDC8553E174}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82098222-623A-4B30-B980-8DDC8553E174}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82098222-623A-4B30-B980-8DDC8553E174}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82098222-623A-4B30-B980-8DDC8553E174}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -2,8 +2,8 @@
 
 using System.Collections.Generic;
 using System.Data;
+using Homura.ORM;
 using NLog;
-using Sunctum.Infrastructure.Data.Rdbms;
 
 namespace Sunctum.Domain.Data.Rdbms
 {

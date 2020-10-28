@@ -2,13 +2,13 @@
 
 using NLog;
 using OpenCvSharp;
-using OpenCvSharp.Extensions;
 using System;
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Data;
+using System.Windows.Media.Imaging;
 
 namespace Sunctum.Converters
 {
@@ -45,7 +45,7 @@ namespace Sunctum.Converters
                         s_logger.Error($"Retry to load bitmap:{path}");
                         return LoadBitmap(path);
                     }
-                    return mat.ToWriteableBitmap();
+                    return ToWriteableBitmap(mat);
                 }
             }
             catch (OutOfMemoryException e)
@@ -69,6 +69,41 @@ namespace Sunctum.Converters
                 GC.Collect();
                 return null;
             }
+        }
+
+        private WriteableBitmap ToWriteableBitmap(Mat mat)
+        {
+            WriteableBitmap bitmap = new WriteableBitmap(mat.Cols, mat.Rows, 92, 92, System.Windows.Media.PixelFormats.Bgr24, null);
+
+            unsafe
+            {
+                try
+                {
+                    bitmap.Lock();
+
+                    byte* p_dst = (byte*)bitmap.BackBuffer.ToPointer();
+                    byte* p_src = (byte*)mat.Data.ToPointer();
+                    int step = bitmap.BackBufferStride;
+                    int channels = 3;
+
+                    for (int y = 0; y < bitmap.PixelHeight; ++y)
+                    {
+                        for (int x = 0; x < bitmap.PixelWidth; ++x)
+                        {
+                            for (int c = 0; c < channels; ++c)
+                            {
+                                *(p_dst + y * step + x * channels + c) = *(p_src + y * step + x * channels + c);
+                            }
+                        }
+                    }
+                }
+                finally
+                {
+                    bitmap.Unlock();
+                }
+            }
+
+            return bitmap;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

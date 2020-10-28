@@ -1,9 +1,9 @@
 ﻿
 
+using Homura.Core;
+using Homura.ORM;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
-using Sunctum.Infrastructure.Core;
-using Sunctum.Infrastructure.Data.Rdbms;
 using Sunctum.UI.Dialogs;
 using System;
 using System.Collections.Generic;

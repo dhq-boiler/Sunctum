@@ -1,5 +1,6 @@
 ﻿
 
+using Homura.Core;
 using Ninject;
 using Prism.Mvvm;
 using Reactive.Bindings;

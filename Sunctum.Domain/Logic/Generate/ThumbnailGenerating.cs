@@ -1,10 +1,10 @@
 ﻿
 
+using Homura.ORM;
 using NLog;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Util;
 using Sunctum.Domain.ViewModels;
-using Sunctum.Infrastructure.Data.Rdbms;
 using System;
 using System.IO;
 using System.Threading;

@@ -1,12 +1,12 @@
 ﻿
 
+using Homura.ORM;
+using Homura.QueryBuilder.Iso.Dml;
+using Homura.QueryBuilder.Vendor.SQLite.Dml;
 using NLog;
-using simpleqb.Iso.Dml;
-using simpleqb.Vendor.SQLite.Dml;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Util;
 using Sunctum.Domain.ViewModels;
-using Sunctum.Infrastructure.Data.Rdbms;
 using System;
 using System.Collections.Generic;
 using System.Data;

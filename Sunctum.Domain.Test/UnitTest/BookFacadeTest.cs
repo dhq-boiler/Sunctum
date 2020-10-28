@@ -1,13 +1,12 @@
 ﻿
 
+using Homura.ORM;
 using NUnit.Framework;
 using Sunctum.Domain.Data.DaoFacade;
-using Sunctum.Domain.Data.Entity;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.Test.Core;
 using Sunctum.Domain.ViewModels;
-using Sunctum.Infrastructure.Data.Rdbms;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;

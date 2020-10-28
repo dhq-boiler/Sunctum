@@ -1,5 +1,6 @@
 ﻿
 
+using Homura.ORM;
 using Ninject;
 using Prism.Ninject;
 using Sunctum.Converters;
@@ -9,7 +10,6 @@ using Sunctum.Domain.Logic.Parse;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.Test.Logic.Async;
 using Sunctum.Domain.ViewModels;
-using Sunctum.Infrastructure.Data.Rdbms;
 using Sunctum.Managers;
 using Sunctum.ViewModels;
 using System.Data.SQLite;

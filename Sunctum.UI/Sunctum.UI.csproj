@@ -115,6 +115,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Homura\Homura.csproj">
+      <Project>{61479EA0-7CC7-46C8-A54C-30325AD08BDF}</Project>
+      <Name>Homura</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Sunctum.Domain\Sunctum.Domain.csproj">
       <Project>{df4f0810-0869-4124-8240-10c3c2d716d8}</Project>
       <Name>Sunctum.Domain</Name>

@@ -1,7 +1,7 @@
 ﻿
 
+using Homura.ORM.Migration;
 using Sunctum.Domain.Models.Conversion;
-using Sunctum.Infrastructure.Data.Rdbms.Ddl.Migration;
 using System.Collections.Generic;
 
 namespace Sunctum.Domain.Data.Dao.Migration.Plan

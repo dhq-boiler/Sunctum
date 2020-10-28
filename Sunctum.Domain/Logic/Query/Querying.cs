@@ -1,5 +1,6 @@
 ﻿
 
+using Homura.ORM;
 using Sunctum.Domain.Bridge;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Logic.AuthorSorting;
@@ -7,7 +8,6 @@ using Sunctum.Domain.Logic.BookSorting;
 using Sunctum.Domain.Logic.ImageTagCountSorting;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
-using Sunctum.Infrastructure.Data.Rdbms;
 using System;
 using System.Collections.Generic;
 using System.Linq;

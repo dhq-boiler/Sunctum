@@ -1,5 +1,6 @@
 ﻿
 
+using Homura.Core;
 using NLog;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.BookSorting;

@@ -1,11 +1,11 @@
 ﻿
 
+using Homura.ORM;
 using Nito.AsyncEx;
 using NUnit.Framework;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.Test.Core;
-using Sunctum.Infrastructure.Data.Rdbms;
 using System;
 using System.Data.SQLite;
 using System.IO;

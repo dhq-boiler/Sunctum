@@ -1,5 +1,6 @@
 ﻿
 
+using Homura.Core;
 using Sunctum.Infrastructure.Core;
 using System;
 using System.Diagnostics;

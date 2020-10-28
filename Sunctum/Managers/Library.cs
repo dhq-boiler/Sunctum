@@ -1,5 +1,6 @@
 ﻿
 
+using Homura.ORM;
 using Ninject;
 using NLog;
 using Sunctum.Domain.Logic.Async;
@@ -8,7 +9,6 @@ using Sunctum.Domain.Logic.Query;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
-using Sunctum.Infrastructure.Data.Rdbms;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

@@ -1,5 +1,6 @@
 ﻿
 
+using Homura.Core;
 using Ninject;
 using NLog;
 using Prism.Commands;
