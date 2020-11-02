@@ -63,12 +63,6 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Homura\Homura.csproj">
-      <Project>{61479ea0-7cc7-46c8-a54c-30325ad08bdf}</Project>
-      <Name>Homura</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>"$(SolutionDir)CodeFormatter\CodeFormatter" "$(ProjectDir)$(ProjectFileName)" /nounicode /nocopyright</PreBuildEvent>
