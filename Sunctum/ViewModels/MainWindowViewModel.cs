@@ -67,6 +67,8 @@ namespace Sunctum.ViewModels
 
         public ICommand ClearSearchResultCommand { get; set; }
 
+        public ICommand EncryptionStartingCommand { get; set; }
+
         public ICommand ExitApplicationCommand { get; set; }
 
         public ICommand GeneralCancelCommand { get; set; }
@@ -144,6 +146,10 @@ namespace Sunctum.ViewModels
             ClearSearchResultCommand = new DelegateCommand(() =>
             {
                 ActiveDocumentViewModel.BookCabinet.ClearSearchResult();
+            });
+            EncryptionStartingCommand = new DelegateCommand(async () =>
+            {
+                await OpenEncryptionStartingDialog();
             });
             ExitApplicationCommand = new DelegateCommand(() =>
             {
@@ -523,6 +529,7 @@ namespace Sunctum.ViewModels
             DataAccessManager.WorkingDao = new DaoBuilder(new Connection(Specifications.GenerateConnectionString(Configuration.ApplicationConfiguration.WorkingDirectory), typeof(SQLiteConnection)));
 
             await LibraryVM.Initialize();
+            LibraryVM.UnlockIfLocked();
             await LibraryVM.Load()
                 .ContinueWith(_ =>
                 {
@@ -973,6 +980,16 @@ namespace Sunctum.ViewModels
             if (dialog.ShowDialog() == true)
             {
                 await LibraryVM.ImportAsync(new string[] { dialog.FileName });
+            }
+        }
+
+        private async Task OpenEncryptionStartingDialog()
+        {
+            var dialog = new EncryptionStartingDialog();
+
+            if (dialog.ShowDialog() == true)
+            {
+                await LibraryVM.StartEncryption(dialog.Password);
             }
         }
 

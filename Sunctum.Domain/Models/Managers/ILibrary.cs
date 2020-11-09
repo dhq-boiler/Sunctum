@@ -29,6 +29,8 @@ namespace Sunctum.Domain.Models.Managers
 
         Task ImportLibrary(string directory);
 
+        Task StartEncryption(string password);
+
         BookViewModel OrderForward(PageViewModel page, BookViewModel book);
 
         BookViewModel OrderBackward(PageViewModel page, BookViewModel book);
@@ -55,6 +57,7 @@ namespace Sunctum.Domain.Models.Managers
 
         IArrangedBookStorage CreateBookStorage();
         Task UpdateBookTag();
+        bool UnlockIfLocked();
     }
 
     public delegate void SearchedEventHandler(object sender, SearchedEventArgs e);

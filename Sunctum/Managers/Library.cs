@@ -3,16 +3,20 @@
 using Homura.ORM;
 using Ninject;
 using NLog;
+using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Async;
 using Sunctum.Domain.Logic.PageSorting;
 using Sunctum.Domain.Logic.Query;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
+using Sunctum.UI.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
+using System.Runtime.Hosting;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -87,6 +91,9 @@ namespace Sunctum.Managers
 
         [Inject]
         public IBookTagInitializing BookTagInitializingService { get; set; }
+
+        [Inject]
+        public IEncryptionStarting EncryptionStartingService { get; set; }
 
         [Inject]
         public IDataAccessManager DataAccessManager {[DebuggerStepThrough] get; set; }
@@ -276,6 +283,34 @@ namespace Sunctum.Managers
         public IArrangedBookStorage CreateBookStorage()
         {
             return new BookCabinet(this.BookSource);
+        }
+
+        public async Task StartEncryption(string password)
+        {
+            EncryptionStartingService.LibraryManager = this;
+            EncryptionStartingService.Password = password;
+            await TaskManager.Enqueue(EncryptionStartingService.GetTaskSequence());
+        }
+
+        public bool UnlockIfLocked()
+        {
+            var encryptedItems = EncryptImageFacade.FindAll();
+            if (encryptedItems.Count() == 0)
+            {
+                return false;
+            }
+
+            InputPasswordDialog dialog = new InputPasswordDialog();
+
+            if (dialog.ShowDialog() == true)
+            {
+                Configuration.ApplicationConfiguration.Password = dialog.Password;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

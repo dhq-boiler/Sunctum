@@ -246,6 +246,9 @@
   <data name="MainWindow_Data_BookTag_UpdateBookTagAll" xml:space="preserve">
     <value>すべてのブックタグを更新する</value>
   </data>
+  <data name="MainWindow_Data_EncryptionStart" xml:space="preserve">
+    <value>暗号化を開始する...</value>
+  </data>
   <data name="MainWindow_Data_MetadataImportSetting" xml:space="preserve">
     <value>メタデータインポート設定...</value>
   </data>

@@ -2,8 +2,11 @@
 
 using Homura.Core;
 using Sunctum.Domain.Data.Dao;
+using Sunctum.Domain.Data.DaoFacade;
+using Sunctum.Domain.Logic.Encrypt;
 using Sunctum.Domain.Logic.Generate;
 using Sunctum.Domain.Models;
+using Sunctum.Domain.Models.Managers;
 using Sunctum.Infrastructure.Core;
 using System;
 using System.Collections.Generic;
@@ -64,8 +67,28 @@ namespace Sunctum.Domain.ViewModels
         {
             get
             {
+                var encryptImage = EncryptImageFacade.FindBy(this.ID);
+                if (encryptImage != null)
+                {
+                    if (string.IsNullOrEmpty(Configuration.Password))
+                    {
+                        return $"{Configuration.ApplicationConfiguration.ExecutingDirectory}\\{Specifications.LOCK_ICON_FILE}";
+                    }
+                    DecryptImage();
+                    return this.ID.ToString("D");
+                }
+
                 if (string.IsNullOrWhiteSpace(RelativeMasterPath)) return null;
                 return $"{Configuration.WorkingDirectory}\\{RelativeMasterPath}";
+            }
+        }
+
+        private void DecryptImage()
+        {
+            if (!OnmemoryImageManager.Instance.Exists(this.ID))
+            {
+                var image = EncryptImageFacade.FindBy(this.ID);
+                Encryptor.Decrypt(image.EncryptFilePath, Configuration.Password);
             }
         }
 
@@ -108,6 +131,16 @@ namespace Sunctum.Domain.ViewModels
         {
             get
             {
+                if (EncryptImageFacade.AnyEncrypted())
+                {
+                    if (string.IsNullOrEmpty(Configuration.Password))
+                    {
+                        return $"{Configuration.ApplicationConfiguration.ExecutingDirectory}\\{Specifications.LOCK_ICON_FILE}";
+                    }
+                    DecryptImage();
+                    return this.ID.ToString("D");
+                }
+
                 if (ThumbnailLoaded && !ThumbnailGenerated && MasterFileSize > Configuration.LowerLimitFileSizeThatImageMustBeDisplayAsThumbnail)
                 {
                     ThumbnailGenerating.GenerateThumbnail(this);
@@ -125,7 +158,17 @@ namespace Sunctum.Domain.ViewModels
 
         public long MasterFileSize
         {
-            get { return new FileInfo(AbsoluteMasterPath).Length; }
+            get
+            {
+                if (EncryptImageFacade.AnyEncrypted())
+                {
+                    var image = EncryptImageFacade.FindBy(this.ID);
+                    Encryptor.Decrypt(image.EncryptFilePath, Configuration.Password);
+                    return OnmemoryImageManager.Instance.PullAsMemoryStream(this.ID).Length;
+                }
+
+                return new FileInfo(AbsoluteMasterPath).Length;
+            }
         }
 
         public bool ThumbnailRecorded

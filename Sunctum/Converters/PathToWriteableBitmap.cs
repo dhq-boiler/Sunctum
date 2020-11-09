@@ -2,6 +2,8 @@
 
 using NLog;
 using OpenCvSharp;
+using Sunctum.Domain.Models;
+using Sunctum.Domain.Models.Managers;
 using System;
 using System.Globalization;
 using System.IO;
@@ -29,25 +31,34 @@ namespace Sunctum.Converters
         {
             try
             {
-                using (Mat mat = new Mat(path, ImreadModes.Unchanged))
+                Guid guid;
+                if (Guid.TryParse(path, out guid))
                 {
-                    if (mat.Rows == 0 || mat.Cols == 0)
+                    var bitmap = OnmemoryImageManager.Instance.PullAsWriteableBitmap(guid);
+                    return bitmap;
+                }
+                else
+                {
+                    using (Mat mat = new Mat(path, ImreadModes.Unchanged))
                     {
-                        var fileInfo = new FileInfo(path);
-                        if (fileInfo.Length == 0)
+                        if (mat.Rows == 0 || mat.Cols == 0)
                         {
-                            s_logger.Error($"File is broken:{path}");
-                            return null;
+                            var fileInfo = new FileInfo(path);
+                            if (fileInfo.Length == 0)
+                            {
+                                s_logger.Error($"File is broken:{path}");
+                                return null;
+                            }
+                            if (Path.GetExtension(path) == ".gif")
+                            {
+                                return null;
+                            }
+                            Thread.Sleep(100);
+                            s_logger.Error($"Retry to load bitmap:{path}");
+                            return LoadBitmap(path);
                         }
-                        if (Path.GetExtension(path) == ".gif")
-                        {
-                            return null;
-                        }
-                        Thread.Sleep(100);
-                        s_logger.Error($"Retry to load bitmap:{path}");
-                        return LoadBitmap(path);
+                        return ToWriteableBitmap(mat);
                     }
-                    return ToWriteableBitmap(mat);
                 }
             }
             catch (OutOfMemoryException e)
@@ -70,6 +81,13 @@ namespace Sunctum.Converters
                 GC.WaitForPendingFinalizers();
                 GC.Collect();
                 return null;
+            }
+            catch (FileNotFoundException e)
+            {
+                s_logger.Error(e);
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
+                return LoadBitmap($"{Configuration.ApplicationConfiguration.ExecutingDirectory}\\{Specifications.LOCK_ICON_FILE}");
             }
         }
 

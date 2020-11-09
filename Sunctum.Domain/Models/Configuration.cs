@@ -46,6 +46,14 @@ namespace Sunctum.Domain.Models
 
         public static Configuration ApplicationConfiguration { get; set; }
 
+        public string ExecutingDirectory
+        {
+            get
+            {
+                return Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName;
+            }
+        }
+
         #region Configuration Data
 
         [ConfigurationData]
@@ -259,6 +267,18 @@ namespace Sunctum.Domain.Models
         }
 
         #endregion //Configuration Data
+
+        #region Transient Data
+
+        private string _Password;
+
+        public string Password
+        {
+            get { return _Password; }
+            set { SetProperty(ref _Password, value); }
+        }
+
+        #endregion // Transient Data
 
         public Configuration()
         { }

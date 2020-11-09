@@ -246,6 +246,9 @@
   <data name="MainWindow_Data_BookTag_UpdateBookTagAll" xml:space="preserve">
     <value>Update book-tag all</value>
   </data>
+  <data name="MainWindow_Data_EncryptionStart" xml:space="preserve">
+    <value>Encryption start...</value>
+  </data>
   <data name="MainWindow_Data_MetadataImportSetting" xml:space="preserve">
     <value>Metadata Import setting...</value>
   </data>

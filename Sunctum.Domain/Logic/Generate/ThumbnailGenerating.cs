@@ -20,6 +20,16 @@ namespace Sunctum.Domain.Logic.Generate
         {
             try
             {
+                var encryptImage = EncryptImageFacade.FindBy(target.ID);
+                if (encryptImage != null)
+                {
+                    //暗号化実施時はサムネイル画像を出力しない
+                    s_logger.Info($"Sunctum will not output a thumbnail image because it is in encrypted. {target.ID}");
+                    return;
+                }
+
+                s_logger.Info($"thumbnail will be output.{target.ID}");
+
                 while (!InternalGenerateThumbnail(target, dataOpUnit))
                 {
                     Thread.Sleep(500);

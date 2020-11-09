@@ -58,6 +58,7 @@ namespace Sunctum.Domain.Logic.Async
                     dvManager.RegisterChangePlan(new ChangePlan_Version_2());
                     dvManager.RegisterChangePlan(new ChangePlan_Version_3());
                     dvManager.GetPlan(new Version_3()).FinishedToUpgradeTo += LibraryInitializing_FinishToUpgradeTo_Version_3;
+                    dvManager.RegisterChangePlan(new ChangePlan_Version_4());
                     dvManager.FinishedToUpgradeTo += DvManager_FinishedToUpgradeTo;
 
                     dvManager.UpgradeToTargetVersion();
