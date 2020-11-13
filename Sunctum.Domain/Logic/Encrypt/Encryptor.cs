@@ -122,7 +122,7 @@ namespace Sunctum.Domain.Logic.Encrypt
                 }
             }
 
-            OnmemoryImageManager.Instance.put(Guid.Parse(Path.GetFileNameWithoutExtension(encryptedFilePath)), outstream);
+            OnmemoryImageManager.Instance.Put(Guid.Parse(Path.GetFileNameWithoutExtension(encryptedFilePath)), outstream);
         }
     }
 }

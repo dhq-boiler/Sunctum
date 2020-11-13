@@ -18,7 +18,7 @@ namespace Sunctum.Domain.Models.Managers
 
         public static OnmemoryImageManager Instance { get { return s_instance; } }
 
-        public void put(Guid key, MemoryStream stream)
+        public void Put(Guid key, MemoryStream stream)
         {
             _map.Add(key, stream);
         }
