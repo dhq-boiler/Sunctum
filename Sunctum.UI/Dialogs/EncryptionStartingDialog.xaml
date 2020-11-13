@@ -17,6 +17,7 @@
                     x:Name="password"
                     Width="300"
                     MaxLength="16"
+                    PasswordChanged="PasswordChanged"
                     PasswordChar="●" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">
@@ -25,9 +26,17 @@
                     x:Name="passwordConfirm"
                     Width="300"
                     MaxLength="16"
+                    PasswordChanged="PasswordChanged"
                     PasswordChar="●" />
             </StackPanel>
-            <Button Margin="10" Click="Button_Click">Start encryption</Button>
+            <Button
+                x:Name="StartEncryption"
+                Margin="10"
+                Click="Button_Click">
+                <Button.Content>
+                    Start encryption
+                </Button.Content>
+            </Button>
         </StackPanel>
         <StackPanel>
             <Label>画像ファイルを暗号化できます。暗号化するにはパスワードを入力してStart encryptionボタンを押下して下さい。</Label>
