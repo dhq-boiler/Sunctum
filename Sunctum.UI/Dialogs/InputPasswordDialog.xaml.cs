@@ -32,5 +32,15 @@ namespace Sunctum.UI.Dialogs
         {
             DialogResult = true;
         }
+
+        private void password_KeyDown(object sender, KeyEventArgs e)
+        {
+            switch (e.Key)
+            {
+                case Key.Enter:
+                    this.OKButton.Focus();
+                    break;
+            }
+        }
     }
 }
