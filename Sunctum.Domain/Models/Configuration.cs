@@ -47,14 +47,6 @@ namespace Sunctum.Domain.Models
 
         public static Configuration ApplicationConfiguration { get; set; }
 
-        public string ExecutingDirectory
-        {
-            get
-            {
-                return Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName;
-            }
-        }
-
         #region Configuration Data
 
         [ConfigurationData]
@@ -287,6 +279,15 @@ namespace Sunctum.Domain.Models
             get
             { return _LibraryIsEncrypted; }
             set { SetProperty(ref _LibraryIsEncrypted, value); }
+        }
+
+        [YamlIgnore]
+        public string ExecutingDirectory
+        {
+            get
+            {
+                return Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName;
+            }
         }
 
         #endregion // Transient Data
