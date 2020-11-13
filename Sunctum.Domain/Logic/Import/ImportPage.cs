@@ -3,6 +3,7 @@
 using Homura.ORM;
 using NLog;
 using Sunctum.Domain.Data.DaoFacade;
+using Sunctum.Domain.Logic.Encrypt;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.Util;
@@ -62,6 +63,12 @@ namespace Sunctum.Domain.Logic.Import
                 ret.Add(new System.Threading.Tasks.Task(() => CreateTaskToInsertPage(entryName, dataOpUnit)));
             }
             ret.Add(new System.Threading.Tasks.Task(() => Dispose()));
+
+            if (_isContent && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+            {
+                ret.Add(new System.Threading.Tasks.Task(() => Encryptor.Encrypt(InsertedImage, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{InsertedImage.ID}{System.IO.Path.GetExtension(InsertedImage.AbsoluteMasterPath)}", Configuration.ApplicationConfiguration.Password)));
+                ret.Add(new System.Threading.Tasks.Task(() => Encryptor.DeleteOriginal(GeneratedPage)));
+            }
 
             return ret;
         }
