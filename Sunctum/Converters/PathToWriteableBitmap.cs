@@ -2,6 +2,7 @@
 
 using NLog;
 using OpenCvSharp;
+using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using System;
@@ -34,6 +35,11 @@ namespace Sunctum.Converters
                 Guid guid;
                 if (Guid.TryParse(path, out guid))
                 {
+                    var image = ImageFacade.FindBy(guid);
+                    if (!image.IsDecrypted)
+                    {
+                        image.DecryptImage();
+                    }
                     var bitmap = OnmemoryImageManager.Instance.PullAsWriteableBitmap(guid);
                     return bitmap;
                 }

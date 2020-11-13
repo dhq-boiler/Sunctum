@@ -74,7 +74,6 @@ namespace Sunctum.Domain.ViewModels
                     {
                         return $"{Configuration.ApplicationConfiguration.ExecutingDirectory}\\{Specifications.LOCK_ICON_FILE}";
                     }
-                    DecryptImage();
                     return this.ID.ToString("D");
                 }
 
@@ -83,7 +82,15 @@ namespace Sunctum.Domain.ViewModels
             }
         }
 
-        private void DecryptImage()
+        public bool IsDecrypted
+        {
+            get
+            {
+                return OnmemoryImageManager.Instance.Exists(this.ID);
+            }
+        }
+
+        public void DecryptImage()
         {
             if (!OnmemoryImageManager.Instance.Exists(this.ID))
             {
@@ -115,7 +122,7 @@ namespace Sunctum.Domain.ViewModels
             { return _Thumbnail; }
             set
             {
-                if (value != null && !System.IO.Path.GetFileNameWithoutExtension(value.AbsoluteMasterPath).Equals(value.ImageID.ToString("N")))
+                if (value != null && string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password) && !System.IO.Path.GetFileNameWithoutExtension(value.AbsoluteMasterPath).Equals(value.ImageID.ToString("N")))
                 {
                     ThumbnailGenerating.GenerateThumbnail(this);
                 }
@@ -137,7 +144,6 @@ namespace Sunctum.Domain.ViewModels
                     {
                         return $"{Configuration.ApplicationConfiguration.ExecutingDirectory}\\{Specifications.LOCK_ICON_FILE}";
                     }
-                    DecryptImage();
                     return this.ID.ToString("D");
                 }
 

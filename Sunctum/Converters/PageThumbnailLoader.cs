@@ -17,6 +17,7 @@ namespace Sunctum.Converters
             var task = Task.Run(() =>
             {
                 ContentsLoadTask.Load(page);
+                page.Image.DecryptImage();
             });
             return new TaskCompletionSource<object>(task);
         }

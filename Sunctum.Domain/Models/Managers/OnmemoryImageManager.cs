@@ -20,7 +20,16 @@ namespace Sunctum.Domain.Models.Managers
 
         public void Put(Guid key, MemoryStream stream)
         {
+            if (_map.ContainsKey(key))
+            {
+                _map.Remove(key);
+            }
             _map.Add(key, stream);
+        }
+
+        public void Clear()
+        {
+            _map.Clear();
         }
 
         public MemoryStream PullAsMemoryStream(Guid key)

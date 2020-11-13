@@ -3,6 +3,7 @@
 using Homura.ORM;
 using NLog;
 using Sunctum.Domain.Data.DaoFacade;
+using Sunctum.Domain.Models;
 using Sunctum.Domain.Util;
 using Sunctum.Domain.ViewModels;
 using System;
@@ -20,16 +21,6 @@ namespace Sunctum.Domain.Logic.Generate
         {
             try
             {
-                var encryptImage = EncryptImageFacade.FindBy(target.ID);
-                if (encryptImage != null)
-                {
-                    //暗号化実施時はサムネイル画像を出力しない
-                    s_logger.Info($"Sunctum will not output a thumbnail image because it is in encrypted. {target.ID}");
-                    return;
-                }
-
-                s_logger.Info($"thumbnail will be output.{target.ID}");
-
                 while (!InternalGenerateThumbnail(target, dataOpUnit))
                 {
                     Thread.Sleep(500);
@@ -45,7 +36,8 @@ namespace Sunctum.Domain.Logic.Generate
         {
             lock (target)
             {
-                if (!File.Exists(target.AbsoluteMasterPath))
+                //暗号化している場合は無視する
+                if (string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password) && !File.Exists(target.AbsoluteMasterPath))
                 {
                     throw new FileNotFoundException(target.AbsoluteMasterPath);
                 }
@@ -54,17 +46,26 @@ namespace Sunctum.Domain.Logic.Generate
                 thumbnail.ID = target.ID;
                 thumbnail.ImageID = target.ID;
 
-                try
+                var encryptImage = EncryptImageFacade.FindBy(target.ID);
+                if (encryptImage != null)
                 {
-                    thumbnail.RelativeMasterPath = ThumbnailGenerator.SaveThumbnail(target.AbsoluteMasterPath, target.ID.ToString("N") + System.IO.Path.GetExtension(target.AbsoluteMasterPath));
+                    //暗号化実施時はサムネイル画像を出力しない
+                    s_logger.Info($"Sunctum will not output a thumbnail image because it is in encrypted. {target.ID}");
                 }
-                catch (Exception e)
+                else
                 {
-                    s_logger.Warn(e);
-                    return false;
-                }
+                    try
+                    {
+                        thumbnail.RelativeMasterPath = ThumbnailGenerator.SaveThumbnail(target.AbsoluteMasterPath, target.ID.ToString("N") + System.IO.Path.GetExtension(target.AbsoluteMasterPath));
+                    }
+                    catch (Exception e)
+                    {
+                        s_logger.Warn(e);
+                        return false;
+                    }
 
-                s_logger.Debug($"Generate thumbnail ImageID={target.ID}");
+                    s_logger.Debug($"Generate thumbnail ImageID={target.ID}");
+                }
 
                 Task.Factory.StartNew(() => RecordThumbnail(thumbnail));
 
