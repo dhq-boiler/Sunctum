@@ -34,6 +34,7 @@ namespace Sunctum.Domain.Logic.Async
         {
             var books = LibraryManager.BookSource;
 
+            sequence.Add(() => Configuration.ApplicationConfiguration.LibraryIsEncrypted = true);
             sequence.Add(() => Configuration.ApplicationConfiguration.Password = Password);
             sequence.Add(() => Directory.Delete($"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.CACHE_DIRECTORY}", true));
 

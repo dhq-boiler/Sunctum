@@ -1,6 +1,7 @@
 ﻿
 
 using Sunctum.Domain.Logic.Load;
+using Sunctum.Domain.Models;
 using Sunctum.Domain.ViewModels;
 using System;
 using System.Globalization;
@@ -17,7 +18,10 @@ namespace Sunctum.Converters
             var task = Task.Run(() =>
             {
                 ContentsLoadTask.Load(page);
-                page.Image.DecryptImage();
+                if (Configuration.ApplicationConfiguration.LibraryIsEncrypted)
+                {
+                    page.Image.DecryptImage();
+                }
             });
             return new TaskCompletionSource<object>(task);
         }

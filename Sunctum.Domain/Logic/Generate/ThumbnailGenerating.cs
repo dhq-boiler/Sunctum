@@ -37,7 +37,7 @@ namespace Sunctum.Domain.Logic.Generate
             lock (target)
             {
                 //暗号化している場合は無視する
-                if (string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password) && !File.Exists(target.AbsoluteMasterPath))
+                if (!Configuration.ApplicationConfiguration.LibraryIsEncrypted && !File.Exists(target.AbsoluteMasterPath))
                 {
                     throw new FileNotFoundException(target.AbsoluteMasterPath);
                 }

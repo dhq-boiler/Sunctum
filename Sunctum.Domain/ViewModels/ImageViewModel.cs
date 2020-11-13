@@ -130,7 +130,7 @@ namespace Sunctum.Domain.ViewModels
             { return _Thumbnail; }
             set
             {
-                if (value != null && string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password) && !System.IO.Path.GetFileNameWithoutExtension(value.AbsoluteMasterPath).Equals(value.ImageID.ToString("N")))
+                if (value != null && !Configuration.ApplicationConfiguration.LibraryIsEncrypted && !System.IO.Path.GetFileNameWithoutExtension(value.AbsoluteMasterPath).Equals(value.ImageID.ToString("N")))
                 {
                     ThumbnailGenerating.GenerateThumbnail(this);
                 }

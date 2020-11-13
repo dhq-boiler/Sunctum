@@ -64,7 +64,7 @@ namespace Sunctum.Domain.Logic.Import
             }
             ret.Add(new System.Threading.Tasks.Task(() => Dispose()));
 
-            if (_isContent && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+            if (_isContent && Configuration.ApplicationConfiguration.LibraryIsEncrypted)
             {
                 ret.Add(new System.Threading.Tasks.Task(() => Encryptor.Encrypt(InsertedImage, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{InsertedImage.ID}{System.IO.Path.GetExtension(InsertedImage.AbsoluteMasterPath)}", Configuration.ApplicationConfiguration.Password)));
                 ret.Add(new System.Threading.Tasks.Task(() => Encryptor.DeleteOriginal(GeneratedPage)));
