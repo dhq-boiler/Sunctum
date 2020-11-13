@@ -114,8 +114,6 @@ namespace Sunctum.Domain.Logic.Encrypt
 
                     using (CryptoStream cse = new CryptoStream(fs, decryptor, CryptoStreamMode.Read))
                     {
-                        //cse.Read(buffer, 0, 32);
-
                         while ((len = cse.Read(buffer, 0, 4096)) > 0)
                         {
                             outstream.Write(buffer, 0, len);
