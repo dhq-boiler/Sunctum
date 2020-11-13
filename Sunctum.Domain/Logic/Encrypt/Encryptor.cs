@@ -1,6 +1,7 @@
 ﻿
 
 using Sunctum.Domain.Data.Dao;
+using Sunctum.Domain.Logic.Load;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
@@ -73,6 +74,10 @@ namespace Sunctum.Domain.Logic.Encrypt
 
         public static void DeleteOriginal(PageViewModel page)
         {
+            if (page.Image == null)
+            {
+                ContentsLoadTask.SetImageToPage(page);
+            }
             File.Delete(page.Image.AbsoluteMasterPath);
         }
 
