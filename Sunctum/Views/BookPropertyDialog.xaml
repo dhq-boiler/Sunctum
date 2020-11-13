@@ -125,7 +125,7 @@
                 <Label
                     Grid.Row="4"
                     Grid.Column="1"
-                    Content="{Binding Book.NumberOfPages}" />
+                    Content="{Binding Book.NumberOfPages.Value}" />
                 <Label
                     Grid.Row="5"
                     Grid.Column="0"
