@@ -63,7 +63,7 @@ namespace Sunctum.Domain.ViewModels
 
         #endregion //Configuration
 
-        public string AbsoluteMasterPath
+        public string OnStagePath
         {
             get
             {
@@ -77,6 +77,14 @@ namespace Sunctum.Domain.ViewModels
                     return this.ID.ToString("D");
                 }
 
+                return AbsoluteMasterPath;
+            }
+        }
+
+        public string AbsoluteMasterPath
+        {
+            get
+            {
                 if (string.IsNullOrWhiteSpace(RelativeMasterPath)) return null;
                 return $"{Configuration.WorkingDirectory}\\{RelativeMasterPath}";
             }

@@ -20,7 +20,7 @@ namespace Sunctum.Domain.Models
             set { SetProperty(ref _ImageID, value); }
         }
 
-        [Column("Path", "TEXT", 2), NotNull]
+        [Column("Path", "TEXT", 2)]
         [Since(typeof(VersionOrigin))]
         public string RelativeMasterPath
         {

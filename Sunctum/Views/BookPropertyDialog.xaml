@@ -184,7 +184,7 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <DockPanel>
-                            <Image Source="{Binding Image.AbsoluteMasterPath, Converter={StaticResource ImageConverter}}" />
+                            <Image Source="{Binding Image.OnStagePath, Converter={StaticResource ImageConverter}}" />
                             <ContentPresenter Content="{Binding Converter={StaticResource PageThumbnailLoader}}" Visibility="Collapsed" />
                         </DockPanel>
                     </DataTemplate>

@@ -29,7 +29,7 @@ namespace Sunctum.Domain.ViewModels
             set { SetProperty(ref _ImageID, value); }
         }
 
-        public string AbsoluteMasterPath
+        public string OnStagePath
         {
             get
             {
@@ -42,7 +42,14 @@ namespace Sunctum.Domain.ViewModels
                     }
                     return this.ID.ToString("D");
                 }
+                return AbsoluteMasterPath;
+            }
+        }
 
+        public string AbsoluteMasterPath
+        {
+            get
+            {
                 return $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{RelativeMasterPath}";
             }
         }

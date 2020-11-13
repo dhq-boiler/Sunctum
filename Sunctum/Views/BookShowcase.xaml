@@ -515,7 +515,7 @@
                 </Grid>
                 <Grid>
                     <Grid>
-                        <Image Source="{Binding OpenedPage.Image.AbsoluteMasterPath, Converter={StaticResource ImageConverter}}" Stretch="Uniform" />
+                        <Image Source="{Binding OpenedPage.Image.OnStagePath, Converter={StaticResource ImageConverter}}" Stretch="Uniform" />
                     </Grid>
                     <Grid
                         x:Name="Grid_ImageViewer_Panel_BlackWhite_Button_MouseOverArea"
