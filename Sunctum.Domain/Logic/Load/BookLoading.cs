@@ -54,14 +54,16 @@ namespace Sunctum.Domain.Logic.Load
                     {
                         book.IsLoaded = true;
                     }
+                    if (!Configuration.ApplicationConfiguration.LibraryIsEncrypted && !book.FirstPage.Image.ThumbnailGenerated)
+                    {
+                        GenerateThumbnailCondition(book, dataOpUnit);
+                    }
                 }
                 else
                 {
                     book.IsLoaded = true;
                 }
             }
-
-            GenerateThumbnailCondition(book, dataOpUnit);
         }
 
         public static void GenerateThumbnailCondition(BookViewModel book, DataOperationUnit dataOpUnit = null)
