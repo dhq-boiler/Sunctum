@@ -139,6 +139,8 @@ namespace Sunctum.Converters
         {
             switch (mat.Channels())
             {
+                case 1:
+                    return mat.At<Vec3b>(y, x);
                 case 3:
                     return mat.At<Vec3b>(y, x);
                 case 4:
@@ -152,6 +154,8 @@ namespace Sunctum.Converters
         {
             switch (mat.Channels())
             {
+                case 1:
+                    return System.Windows.Media.PixelFormats.Gray8;
                 case 3:
                     return System.Windows.Media.PixelFormats.Bgr24;
                 case 4:
