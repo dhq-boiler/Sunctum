@@ -482,6 +482,8 @@ namespace Sunctum.ViewModels
 
         public LayoutAnchorable InformationPane { get; set; }
 
+        public Configuration Configuration { get { return Configuration.ApplicationConfiguration; } }
+
         #endregion
 
         #region 一般

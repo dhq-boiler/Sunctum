@@ -100,7 +100,22 @@
                     <MenuItem Command="{Binding UpdateBookTagCommand}" Header="{Binding MainWindow_Data_BookTag_UpdateBookTagAll, Source={StaticResource resources}}" />
                 </MenuItem>
                 <Separator />
-                <MenuItem Command="{Binding EncryptionStartingCommand}" Header="{Binding MainWindow_Data_EncryptionStart, Source={StaticResource resources}}" />
+                <MenuItem
+                    Command="{Binding EncryptionStartingCommand}"
+                    Header="{Binding MainWindow_Data_EncryptionStart, Source={StaticResource resources}}">
+                    <MenuItem.Style>
+                        <Style TargetType="{x:Type MenuItem}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Configuration.LibraryIsEncrypted}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Configuration.LibraryIsEncrypted}" Value="False">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </MenuItem.Style>
+                </MenuItem>
                 <Separator />
                 <MenuItem Command="{Binding OpenAuthorManagementDialogCommand}" Header="{Binding MainWindow_Data_AuthorManagement, Source={StaticResource resources}}" />
                 <MenuItem Command="{Binding OpenTagManagementDialogCommand}" Header="{Binding MainWindow_Data_TagManagement, Source={StaticResource resources}}" />
