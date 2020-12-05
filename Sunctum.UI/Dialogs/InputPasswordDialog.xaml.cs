@@ -23,9 +23,10 @@ namespace Sunctum.UI.Dialogs
     {
         public string Password { get { return this.password.Password; } }
 
-        public InputPasswordDialog()
+        public InputPasswordDialog(string message)
         {
             InitializeComponent();
+            this.Message.Content = message;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

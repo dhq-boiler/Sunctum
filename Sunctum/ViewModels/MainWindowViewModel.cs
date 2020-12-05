@@ -1003,7 +1003,7 @@ namespace Sunctum.ViewModels
 
         private async Task OpenUnencryptingDialog()
         {
-            var dialog = new InputPasswordDialog();
+            var dialog = new InputPasswordDialog("暗号化を解除するにはパスワードを入力する必要があります。");
 
             if (dialog.ShowDialog() == true)
             {

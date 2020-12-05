@@ -303,7 +303,7 @@ namespace Sunctum.Managers
                 return false;
             }
 
-            InputPasswordDialog dialog = new InputPasswordDialog();
+            InputPasswordDialog dialog = new InputPasswordDialog("このライブラリは暗号化されています。閲覧するにはパスワードが必要です。");
 
             if (dialog.ShowDialog() == true)
             {
