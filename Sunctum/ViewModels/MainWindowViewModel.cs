@@ -125,6 +125,8 @@ namespace Sunctum.ViewModels
 
         public ICommand ToggleDisplayTagPaneCommand { get; set; }
 
+        public ICommand UnencryptionStartingCommand { get; set; }
+
         public ICommand UpdateBookByteSizeAllCommand { get; set; }
 
         public ICommand UpdateBookByteSizeStillNullCommand { get; set; }
@@ -306,6 +308,10 @@ namespace Sunctum.ViewModels
                 {
                     DockingPaneViewModels.Remove((PaneViewModelBase)TagPaneViewModel);
                 }
+            });
+            UnencryptionStartingCommand = new DelegateCommand(async () =>
+            {
+                await OpenUnencryptingDialog();
             });
             UpdateBookByteSizeAllCommand = new DelegateCommand(async () =>
             {
@@ -992,6 +998,16 @@ namespace Sunctum.ViewModels
             if (dialog.ShowDialog() == true)
             {
                 await LibraryVM.StartEncryption(dialog.Password);
+            }
+        }
+
+        private async Task OpenUnencryptingDialog()
+        {
+            var dialog = new InputPasswordDialog();
+
+            if (dialog.ShowDialog() == true)
+            {
+                await LibraryVM.StartUnencryption(dialog.Password);
             }
         }
 

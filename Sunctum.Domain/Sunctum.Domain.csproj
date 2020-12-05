@@ -200,7 +200,9 @@
     <Compile Include="Logic\Async\IBookTagInitializing.cs" />
     <Compile Include="Logic\Async\IEncryptionStarting.cs" />
     <Compile Include="Logic\Async\ILibraryResetting.cs" />
+    <Compile Include="Logic\Async\IUnencryptionStarting.cs" />
     <Compile Include="Logic\Async\LibraryResetting.cs" />
+    <Compile Include="Logic\Async\UnencryptionStarting.cs" />
     <Compile Include="Logic\Encrypt\Encryptor.cs" />
     <Compile Include="Logic\Parse\DirectoryNameParser.cs" />
     <Compile Include="Logic\Parse\DirectoryNameParserBase.cs" />

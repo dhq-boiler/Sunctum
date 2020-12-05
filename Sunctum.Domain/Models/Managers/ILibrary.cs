@@ -58,6 +58,7 @@ namespace Sunctum.Domain.Models.Managers
         IArrangedBookStorage CreateBookStorage();
         Task UpdateBookTag();
         bool UnlockIfLocked();
+        Task StartUnencryption(string password);
     }
 
     public delegate void SearchedEventHandler(object sender, SearchedEventArgs e);

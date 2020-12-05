@@ -96,6 +96,9 @@ namespace Sunctum.Managers
         public IEncryptionStarting EncryptionStartingService { get; set; }
 
         [Inject]
+        public IUnencryptionStarting UnencryptionStartingService { get; set; }
+
+        [Inject]
         public IDataAccessManager DataAccessManager {[DebuggerStepThrough] get; set; }
 
         #endregion //プロパティ
@@ -311,6 +314,13 @@ namespace Sunctum.Managers
             {
                 return false;
             }
+        }
+
+        public async Task StartUnencryption(string password)
+        {
+            UnencryptionStartingService.LibraryManager = this;
+            UnencryptionStartingService.Password = password;
+            await TaskManager.Enqueue(UnencryptionStartingService.GetTaskSequence());
         }
     }
 }

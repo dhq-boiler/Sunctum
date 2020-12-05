@@ -124,5 +124,48 @@ namespace Sunctum.Domain.Logic.Encrypt
 
             OnmemoryImageManager.Instance.Put(Guid.Parse(Path.GetFileNameWithoutExtension(encryptedFilePath)), outstream);
         }
+
+        public static void Decrypt(string encryptedFilePath, string outputFilePath, string password)
+        {
+            int len;
+            byte[] buffer = new byte[4096];
+
+            using (var outstream = new FileStream(outputFilePath, FileMode.Create))
+            {
+                using (var fs = new FileStream(encryptedFilePath, FileMode.Open, FileAccess.Read))
+                {
+                    using (var aes = new AesManaged())
+                    {
+                        aes.BlockSize = 128;
+                        aes.KeySize = 128;
+                        aes.Mode = CipherMode.CBC;
+                        aes.Padding = PaddingMode.PKCS7;
+
+                        byte[] salt = new byte[16];
+                        fs.Read(salt, 0, 16);
+
+                        byte[] iv = new byte[16];
+                        fs.Read(iv, 0, 16);
+                        aes.IV = iv;
+
+                        Rfc2898DeriveBytes deriveBytes = new Rfc2898DeriveBytes(password, salt);
+                        byte[] bufferKey = deriveBytes.GetBytes(16);
+                        aes.Key = bufferKey;
+
+                        fs.Seek(32, SeekOrigin.Begin);
+
+                        ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
+
+                        using (CryptoStream cse = new CryptoStream(fs, decryptor, CryptoStreamMode.Read))
+                        {
+                            while ((len = cse.Read(buffer, 0, 4096)) > 0)
+                            {
+                                outstream.Write(buffer, 0, len);
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

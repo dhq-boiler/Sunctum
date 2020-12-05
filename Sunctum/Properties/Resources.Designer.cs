@@ -475,6 +475,15 @@ namespace Sunctum.Properties {
         }
         
         /// <summary>
+        ///   Unencryption start... に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MainWindow_Data_UnencryptionStart {
+            get {
+                return ResourceManager.GetString("MainWindow_Data_UnencryptionStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   _DISPLAY に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string MainWindow_Display {

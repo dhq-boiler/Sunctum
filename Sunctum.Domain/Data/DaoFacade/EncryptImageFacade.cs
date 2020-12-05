@@ -27,6 +27,12 @@ namespace Sunctum.Domain.Data.DaoFacade
             return dao.FindBy(new Dictionary<string, object>() { { "TargetImageID", targetImageId } }).SingleOrDefault();
         }
 
+        internal static void DeleteBy(Guid targetImageId)
+        {
+            EncryptImageDao dao = new EncryptImageDao();
+            dao.Delete(new Dictionary<string, object>() { { "TargetImageID", targetImageId } });
+        }
+
         internal static bool AnyEncrypted()
         {
             EncryptImageDao dao = new EncryptImageDao();

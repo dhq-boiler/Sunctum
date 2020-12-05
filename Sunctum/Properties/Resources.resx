@@ -255,6 +255,9 @@
   <data name="MainWindow_Data_TagManagement" xml:space="preserve">
     <value>Tag Management...</value>
   </data>
+  <data name="MainWindow_Data_UnencryptionStart" xml:space="preserve">
+    <value>Unencryption start...</value>
+  </data>
   <data name="MainWindow_Display" xml:space="preserve">
     <value>_DISPLAY</value>
   </data>
