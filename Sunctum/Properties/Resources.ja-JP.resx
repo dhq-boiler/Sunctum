@@ -256,7 +256,7 @@
     <value>タグ管理...</value>
   </data>
   <data name="MainWindow_Data_UnencryptionStart" xml:space="preserve">
-    <value>暗号化解除を開始する...</value>
+    <value>暗号化解除...</value>
   </data>
   <data name="MainWindow_Display" xml:space="preserve">
     <value>表示(_I)</value>
