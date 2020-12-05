@@ -48,6 +48,7 @@ namespace Sunctum.Domain.Logic.Async
                     sequence.Add(() => EncryptImageFacade.DeleteBy(image.Image.ID));
                 }
             }
+            sequence.Add(() => OnmemoryImageManager.Instance.Clear());
             sequence.Add(() => Configuration.ApplicationConfiguration.Password = null);
             sequence.Add(() => Configuration.ApplicationConfiguration.LibraryIsEncrypted = false);
         }
