@@ -130,6 +130,11 @@ namespace Sunctum.Domain.Logic.Encrypt
             int len;
             byte[] buffer = new byte[4096];
 
+            if (!Directory.Exists(outputFilePath))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(outputFilePath));
+            }
+
             using (var outstream = new FileStream(outputFilePath, FileMode.Create))
             {
                 using (var fs = new FileStream(encryptedFilePath, FileMode.Open, FileAccess.Read))
