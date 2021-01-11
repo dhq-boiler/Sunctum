@@ -31,7 +31,7 @@ namespace Sunctum
 
             var version = Assembly.GetExecutingAssembly().GetName().Version;
             s_logger.Info($"Sunctum Personal Photo Library {version}");
-            s_logger.Info("Copyright (C) dhq_boiler 2015-2016. All rights reserved.");
+            s_logger.Info("Copyright (C) dhq_boiler 2015-2021. All rights reserved.");
             s_logger.Info("SUNCTUM IS LAUNCHING");
 
             Bootstrapper = new SunctumBootstrapper();
