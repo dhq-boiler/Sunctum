@@ -1,11 +1,11 @@
 ﻿
+using Homura.ORM;
 using NLog;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Generate;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
-using Sunctum.Infrastructure.Data.Rdbms;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -17,12 +17,14 @@ namespace Sunctum.Domain.Logic.Load
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
-        public static async Task LoadBookListAsync(ILibraryManager libVM)
+        [Obsolete]
+        public static async Task LoadBookListAsync(ILibrary libVM)
         {
             await Task.Run(() => LoadBookList(libVM));
         }
 
-        public static void LoadBookList(ILibraryManager libVM)
+        [Obsolete]
+        public static void LoadBookList(ILibrary libVM)
         {
             Stopwatch sw = new Stopwatch();
             s_logger.Info("Loading Book list...");
@@ -31,11 +33,11 @@ namespace Sunctum.Domain.Logic.Load
             {
                 dataOpUnit.Open(ConnectionManager.DefaultConnection);
 
-                libVM.LoadedBooks.CollectionChanged -= libVM.AuthorManager.LoadedBooks_CollectionChanged;
+                libVM.BookSource.CollectionChanged -= libVM.AuthorManager.LoadedBooks_CollectionChanged;
 
-                libVM.LoadedBooks = new ObservableCollection<BookViewModel>(BookFacade.FindAllWithAuthor(dataOpUnit));
+                libVM.BookSource = new ObservableCollection<BookViewModel>(BookFacade.FindAllWithAuthor(dataOpUnit));
                 libVM.AuthorManager.LoadAuthorCount();
-                libVM.LoadedBooks.CollectionChanged += libVM.AuthorManager.LoadedBooks_CollectionChanged;
+                libVM.BookSource.CollectionChanged += libVM.AuthorManager.LoadedBooks_CollectionChanged;
             }
             sw.Stop();
             s_logger.Info($"Completed to load Book list. {sw.ElapsedMilliseconds}ms");
@@ -48,9 +50,13 @@ namespace Sunctum.Domain.Logic.Load
                 if (book.FirstPage?.Image == null || book.FirstPage?.Image?.Thumbnail == null)
                 {
                     LoadFirstPageAndThumbnail(book, dataOpUnit);
-                    if (book.FirstPage?.Image != null && book.FirstPage.Image.ThumbnailLoaded)
+                    if (book.FirstPage?.Image != null && (Configuration.ApplicationConfiguration.LibraryIsEncrypted || book.FirstPage.Image.ThumbnailLoaded))
                     {
                         book.IsLoaded = true;
+                    }
+                    if (!Configuration.ApplicationConfiguration.LibraryIsEncrypted && !book.FirstPage.Image.ThumbnailGenerated)
+                    {
+                        GenerateThumbnailCondition(book, dataOpUnit);
                     }
                 }
                 else
@@ -58,8 +64,6 @@ namespace Sunctum.Domain.Logic.Load
                     book.IsLoaded = true;
                 }
             }
-
-            GenerateThumbnailCondition(book, dataOpUnit);
         }
 
         public static void GenerateThumbnailCondition(BookViewModel book, DataOperationUnit dataOpUnit = null)

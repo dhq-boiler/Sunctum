@@ -1,12 +1,15 @@
 ﻿
 
+using Reactive.Bindings;
+using Reactive.Bindings.Extensions;
 using Sunctum.Domain.Models;
-using Sunctum.Infrastructure.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Linq;
+using YamlDotNet.Serialization;
 
 namespace Sunctum.Domain.ViewModels
 {
@@ -23,20 +26,20 @@ namespace Sunctum.Domain.ViewModels
         public BookViewModel()
         {
             Contents = new ObservableCollection<PageViewModel>();
-            Contents.CollectionChanged += Children_CollectionChanged;
+            NumberOfPages = Contents
+                .PropertyChangedAsObservable()
+                .Select(x => Contents.Count())
+                .ToReactiveProperty();
         }
 
         public BookViewModel(Guid id, string title)
             : base(id, title)
         {
             Contents = new ObservableCollection<PageViewModel>();
-            Contents.CollectionChanged += Children_CollectionChanged;
-        }
-
-        private void Children_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            OnPropertyChanged(PropertyNameUtility.GetPropertyName(() => Contents),
-                              PropertyNameUtility.GetPropertyName(() => NumberOfPages));
+            NumberOfPages = Contents
+                .PropertyChangedAsObservable()
+                .Select(x => Contents.Count())
+                .ToReactiveProperty();
         }
 
         public Configuration Configuration
@@ -55,12 +58,8 @@ namespace Sunctum.Domain.ViewModels
             set { SetProperty(ref _Contents, value); }
         }
 
-        public int NumberOfPages
-        {
-            [DebuggerStepThrough]
-            get
-            { return Contents.Count(); }
-        }
+        [YamlIgnore]
+        public ReactiveProperty<int> NumberOfPages { get; set; }
 
         public Guid AuthorID
         {
@@ -164,9 +163,7 @@ namespace Sunctum.Domain.ViewModels
 
         public void ResetContents(IEnumerable<PageViewModel> pages)
         {
-            Contents.CollectionChanged -= Children_CollectionChanged;
             Contents = new ObservableCollection<PageViewModel>(pages);
-            Contents.CollectionChanged += Children_CollectionChanged;
         }
 
         public void ClearContents()
@@ -187,6 +184,10 @@ namespace Sunctum.Domain.ViewModels
         public override string ToString()
         {
             string contentsStr = "";
+            if (Contents == null)
+            {
+                return "{BookViewModel}";
+            }
             foreach (var page in Contents)
             {
                 contentsStr += page.ToString();
@@ -244,10 +245,12 @@ namespace Sunctum.Domain.ViewModels
             {
                 if (disposing)
                 {
-                    Contents.CollectionChanged -= Children_CollectionChanged;
+                    NumberOfPages.Dispose();
                 }
 
                 Contents = null;
+                FirstPage = null;
+                NumberOfPages = null;
 
                 _disposedValue = true;
             }

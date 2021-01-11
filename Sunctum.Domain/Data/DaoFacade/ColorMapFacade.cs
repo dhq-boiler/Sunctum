@@ -2,11 +2,11 @@
 
 using System;
 using System.Collections.Generic;
+using Homura.ORM;
 using NLog;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Data.Entity;
 using Sunctum.Domain.Models;
-using Sunctum.Infrastructure.Data.Rdbms;
 
 namespace Sunctum.Domain.Data.DaoFacade
 {

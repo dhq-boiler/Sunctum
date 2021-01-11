@@ -1,6 +1,6 @@
 ﻿
 
-using Sunctum.Infrastructure.Core;
+using Homura.Core;
 using System.Diagnostics;
 
 namespace Sunctum.Domain.Models

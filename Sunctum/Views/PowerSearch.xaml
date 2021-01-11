@@ -1,0 +1,73 @@
+﻿<UserControl
+    x:Class="Sunctum.Views.PowerSearch"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converter="clr-namespace:Sunctum.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Sunctum.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prism="http://prismlibrary.com/"
+    xmlns:properties="clr-namespace:Sunctum.Properties"
+    xmlns:ui="clr-namespace:Sunctum.UI.Controls;assembly=Sunctum.UI"
+    Width="Auto"
+    Height="Auto"
+    prism:ViewModelLocator.AutoWireViewModel="True"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <properties:Resources x:Key="resources" />
+        <converter:StringToGuidConverter x:Key="StringToGuid" />
+    </UserControl.Resources>
+    <DockPanel LastChildFill="True">
+        <DockPanel DockPanel.Dock="Bottom">
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                <Button
+                    Command="{Binding SearchCommand}"
+                    IsDefault="True"
+                    Style="{StaticResource RightBottomCommandButtonStyle}">
+                    Search
+                </Button>
+                <Button
+                    Command="{Binding CloseCommand}"
+                    IsCancel="True"
+                    Style="{StaticResource RightBottomCommandButtonStyle}">
+                    Close
+                </Button>
+            </StackPanel>
+            <DockPanel />
+        </DockPanel>
+        <StackPanel Orientation="Vertical">
+            <StackPanel.Resources>
+                <Style TargetType="{x:Type DockPanel}">
+                    <Setter Property="Margin" Value="10,10,10,0" />
+                </Style>
+                <Style TargetType="{x:Type Label}">
+                    <Setter Property="Width" Value="100" />
+                </Style>
+            </StackPanel.Resources>
+            <DockPanel>
+                <Label DockPanel.Dock="Left">Book ID</Label>
+                <ui:EasyEnterTextBox Text="{Binding BookId.Value, Converter={StaticResource StringToGuid}}" />
+            </DockPanel>
+            <DockPanel>
+                <Label DockPanel.Dock="Left">著者</Label>
+                <ui:EasyEnterTextBox Text="{Binding Author.Value}" />
+            </DockPanel>
+            <DockPanel>
+                <Label DockPanel.Dock="Left">タイトル</Label>
+                <ui:EasyEnterTextBox Text="{Binding Title.Value}" />
+            </DockPanel>
+            <DockPanel>
+                <Label DockPanel.Dock="Left">スター</Label>
+                <ComboBox SelectedIndex="{Binding ConditionStar.Value}">
+                    <ComboBoxItem>指定なし</ComboBoxItem>
+                    <ComboBoxItem>Not Evaluated</ComboBoxItem>
+                    <ComboBoxItem>★</ComboBoxItem>
+                    <ComboBoxItem>★★</ComboBoxItem>
+                    <ComboBoxItem>★★★</ComboBoxItem>
+                    <ComboBoxItem>★★★★</ComboBoxItem>
+                    <ComboBoxItem>★★★★★</ComboBoxItem>
+                </ComboBox>
+            </DockPanel>
+        </StackPanel>
+    </DockPanel>
+</UserControl>

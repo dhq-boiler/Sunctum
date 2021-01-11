@@ -31,12 +31,11 @@ namespace Sunctum.Infrastructure.Data.Yaml
         {
             try
             {
-                var deserializer = new Deserializer();
-
-                using (FileStream fs = new FileStream(filename, FileMode.Open))
-                using (StreamReader sr = new StreamReader(fs, Encoding.UTF8))
+                using (var input = File.OpenText(filename))
                 {
-                    return deserializer.Deserialize<T>(sr);
+                    var deserializerBuilder = new DeserializerBuilder();
+                    var deserializer = deserializerBuilder.Build();
+                    return deserializer.Deserialize<T>(input);
                 }
             }
             catch (Exception)

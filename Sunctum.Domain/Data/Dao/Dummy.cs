@@ -1,6 +1,6 @@
 ﻿
 
-using Sunctum.Infrastructure.Data.Rdbms;
+using Homura.ORM;
 
 namespace Sunctum.Domain.Data.Dao
 {

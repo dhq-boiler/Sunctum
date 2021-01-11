@@ -1,5 +1,6 @@
 ﻿
 
+using Homura.ORM;
 using Ninject;
 using Prism.Ninject;
 using Sunctum.Converters;
@@ -9,7 +10,7 @@ using Sunctum.Domain.Logic.Async;
 using Sunctum.Domain.Logic.Parse;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
-using Sunctum.Infrastructure.Data.Rdbms;
+using Sunctum.Domain.ViewModels;
 using Sunctum.Managers;
 using Sunctum.ViewModels;
 using Sunctum.Views;
@@ -30,7 +31,13 @@ namespace Sunctum.Core
 
             Kernel.Bind<IMainWindow>().To<MainWindow>().InSingletonScope();
             Kernel.Bind<IMainWindowViewModel>().To<MainWindowViewModel>().InSingletonScope();
-            Kernel.Bind<ILibraryManager>().To<LibraryManager>().InSingletonScope();
+
+            Kernel.Bind<IHomeDocumentViewModel>().To<HomeDocumentViewModel>().InSingletonScope();
+            Kernel.Bind<IAuthorPaneViewModel>().To<AuthorPaneViewModel>().InSingletonScope();
+            Kernel.Bind<ITagPaneViewModel>().To<TagPaneViewModel>().InSingletonScope();
+            Kernel.Bind<IInformationPaneViewModel>().To<InformationPaneViewModel>().InSingletonScope();
+
+            Kernel.Bind<ILibrary>().To<Library>().InSingletonScope();
             Kernel.Bind<ITagManager>().To<TagManager>().InSingletonScope();
             Kernel.Bind<IAuthorManager>().To<AuthorManager>().InSingletonScope();
             Kernel.Bind<IProgressManager>().To<ProgressManager>().InSingletonScope();
@@ -56,13 +63,22 @@ namespace Sunctum.Core
             Kernel.Bind<IDirectoryNameParserManager>().To<DirectoryNameParserManager>().InSingletonScope();
             Kernel.Bind<ILibraryResetting>().To<LibraryResetting>().InSingletonScope();
             Kernel.Bind<IBookLoading>().To<BookLoading>().InSingletonScope();
+            Kernel.Bind<IBookTagInitializing>().To<BookTagInitializing>().InSingletonScope();
+            Kernel.Bind<IEncryptionStarting>().To<EncryptionStarting>().InSingletonScope();
+            Kernel.Bind<IUnencryptionStarting>().To<UnencryptionStarting>().InSingletonScope();
 
             Kernel.Bind<IValueConverter>().To<BookSortingToBool>().InSingletonScope().Named("BookSortingToBool");
+            Kernel.Bind<IValueConverter>().To<TagSortingToBool>().InSingletonScope().Named("TagSortingToBool");
+            Kernel.Bind<IValueConverter>().To<AuthorSortingToBool>().InSingletonScope().Named("AuthorSortingToBool");
 
             Kernel.Get<IDataAccessManager>().AppDao = new DaoBuilder(new Connection(ConnectionStringBuilder.Build(Specifications.APP_DB_FILENAME), typeof(SQLiteConnection)));
 
             BookSortingToBool.Resolve = (type) => Kernel.Get(type);
             BookSortingToBool.ResolveNamed = (type, name) => Kernel.Get(type, name);
+            AuthorSortingToBool.Resolve = (type) => Kernel.Get(type);
+            AuthorSortingToBool.ResolveNamed = (type, name) => Kernel.Get(type, name);
+            TagSortingToBool.Resolve = (type) => Kernel.Get(type);
+            TagSortingToBool.ResolveNamed = (type, name) => Kernel.Get(type, name);
 
             //var config = Configuration.Load();
             //Kernel.Inject(config);
@@ -92,10 +108,12 @@ namespace Sunctum.Core
                 {
                     Application.Current.MainWindow.WindowStartupLocation = WindowStartupLocation.Manual;
 
-                    Application.Current.MainWindow.Left = rect.X;
-                    Application.Current.MainWindow.Top = rect.Y;
-                    Application.Current.MainWindow.Width = rect.Width;
-                    Application.Current.MainWindow.Height = rect.Height;
+                    var mainWindowVM = Kernel.Get<IMainWindowViewModel>();
+
+                    mainWindowVM.WindowLeft = rect.X;
+                    mainWindowVM.WindowTop = rect.Y;
+                    mainWindowVM.WindowWidth = rect.Width;
+                    mainWindowVM.WindowHeight = rect.Height;
                 }
             }
             Application.Current.MainWindow.Show();

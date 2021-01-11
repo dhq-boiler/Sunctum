@@ -12,12 +12,12 @@ namespace Sunctum.ViewModels
     public class ExportDialogViewModel : BindableBase
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
-        private ILibraryManager _libMng;
+        private ILibrary _libMng;
         private BookViewModel[] _willExportBooks;
         private string _OutputDirectory;
         private bool _IncludeTabIntoFodlerName;
 
-        public ExportDialogViewModel(ILibraryManager libMng, BookViewModel[] books)
+        public ExportDialogViewModel(ILibrary libMng, BookViewModel[] books)
         {
             _libMng = libMng;
             _willExportBooks = books;

@@ -48,114 +48,12 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="YamlDotNet, Version=4.3.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\YamlDotNet.4.3.1\lib\net45\YamlDotNet.dll</HintPath>
+    <Reference Include="YamlDotNet, Version=9.0.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e, processorArchitecture=MSIL">
+      <HintPath>..\packages\YamlDotNet.9.1.1\lib\net45\YamlDotNet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Core\BaseObject.cs" />
-    <Compile Include="Core\Delegate.cs" />
     <Compile Include="Core\File\FileSize.cs" />
-    <Compile Include="Core\IModifiedCounter.cs" />
-    <Compile Include="Core\ModifiedEventArgs.cs" />
-    <Compile Include="Core\MustInitialize.cs" />
-    <Compile Include="Core\PropertyNameUtility.cs" />
-    <Compile Include="Data\Rdbms\Connection.cs" />
-    <Compile Include="Data\Rdbms\ConnectionManager.cs" />
-    <Compile Include="Data\Rdbms\DaoConst.cs" />
-    <Compile Include="Data\Rdbms\DbSelector.cs" />
-    <Compile Include="Data\Rdbms\Ddl\Mapping\ISchemaVersion.cs" />
-    <Compile Include="Data\Rdbms\Ddl\Migration\ChangePlanByTable.cs" />
-    <Compile Include="Data\Rdbms\Ddl\Migration\IEntityVersionChangePlan.cs" />
-    <Compile Include="Data\Rdbms\Ddl\Migration\IVersionChangePlan.cs" />
-    <Compile Include="Data\Rdbms\Ddl\Migration\VersionChangeEventArgs.cs" />
-    <Compile Include="Data\Rdbms\Ddl\Migration\VersionHelper.cs" />
-    <Compile Include="Data\Rdbms\Ddl\Migration\VersionChangeUnit.cs" />
-    <Compile Include="Data\Rdbms\Ddl\Migration\ChangePlanByVersion.cs" />
-    <Compile Include="Data\Rdbms\Ddl\Mapping\ConvertAttribute.cs" />
-    <Compile Include="Data\Rdbms\Ddl\Mapping\IndexAttribute.cs" />
-    <Compile Include="Data\Rdbms\Ddl\Mapping\SinceAttribute.cs" />
-    <Compile Include="Data\Rdbms\Ddl\Mapping\UntilAttribute.cs" />
-    <Compile Include="Data\Rdbms\Ddl\Mapping\DefaultVersionAttribute.cs" />
-    <Compile Include="Data\Rdbms\Ddl\Mapping\VersionOrigin.cs" />
-    <Compile Include="Data\Rdbms\Ddl\Mapping\DiscontinuousVersionClassException.cs" />
-    <Compile Include="Data\Rdbms\Dml\ColumnNameDirectValuePair.cs" />
-    <Compile Include="Data\Rdbms\Dml\ColumnNameBindValuePair.cs" />
-    <Compile Include="Data\Rdbms\Dml\EqualityOperation.cs" />
-    <Compile Include="Data\Rdbms\Dml\CrudBase.cs" />
-    <Compile Include="Data\Rdbms\Dml\Delete.cs" />
-    <Compile Include="Data\Rdbms\Dml\DmlBase.cs" />
-    <Compile Include="Data\Rdbms\Dml\Exists.cs" />
-    <Compile Include="Data\Rdbms\Dml\GroupBy.cs" />
-    <Compile Include="Data\Rdbms\Dml\IComparisonOperation.cs" />
-    <Compile Include="Data\Rdbms\Dml\ICrud.cs" />
-    <Compile Include="Data\Rdbms\Dml\IExists.cs" />
-    <Compile Include="Data\Rdbms\Dml\IIn.cs" />
-    <Compile Include="Data\Rdbms\Dml\IIsNull.cs" />
-    <Compile Include="Data\Rdbms\Dml\IJoin.cs" />
-    <Compile Include="Data\Rdbms\Dml\ILimit.cs" />
-    <Compile Include="Data\Rdbms\Dml\InnerJoin.cs" />
-    <Compile Include="Data\Rdbms\Dml\In.cs" />
-    <Compile Include="Data\Rdbms\Dml\Insert.cs" />
-    <Compile Include="Data\Rdbms\Dml\IOrderBy.cs" />
-    <Compile Include="Data\Rdbms\Dml\IsNotNull.cs" />
-    <Compile Include="Data\Rdbms\Dml\IsNull.cs" />
-    <Compile Include="Data\Rdbms\Dml\LeftJoin.cs" />
-    <Compile Include="Data\Rdbms\Dml\NotExists.cs" />
-    <Compile Include="Data\Rdbms\Dml\NotIn.cs" />
-    <Compile Include="Data\Rdbms\Dml\Union.cs" />
-    <Compile Include="Data\Rdbms\IConnection.cs" />
-    <Compile Include="Data\Rdbms\IRightValue.cs" />
-    <Compile Include="Data\Rdbms\Dml\IQueryBuilder.cs" />
-    <Compile Include="Data\Rdbms\Dml\ISqlize.cs" />
-    <Compile Include="Data\Rdbms\Dml\IWhere.cs" />
-    <Compile Include="Data\Rdbms\Dml\JoinOn.cs" />
-    <Compile Include="Data\Rdbms\Dml\Limit.cs" />
-    <Compile Include="Data\Rdbms\Dml\LogicalOperator.cs" />
-    <Compile Include="Data\Rdbms\Dml\OrderBy.cs" />
-    <Compile Include="Data\Rdbms\MultiplePlaceholderRightValue.cs" />
-    <Compile Include="Data\Rdbms\Dml\SingleOrderBy.cs" />
-    <Compile Include="Data\Rdbms\Dml\Ordering.cs" />
-    <Compile Include="Data\Rdbms\Dml\Select.cs" />
-    <Compile Include="Data\Rdbms\Dml\Update.cs" />
-    <Compile Include="Data\Rdbms\Dml\Where.cs" />
-    <Compile Include="Data\Rdbms\ITable.cs" />
-    <Compile Include="Data\Rdbms\RightValueImpl.cs" />
-    <Compile Include="Data\Setup\DataVersionManager.cs" />
-    <Compile Include="Data\Rdbms\SubqueryRightValue.cs" />
-    <Compile Include="Data\Rdbms\Table.cs" />
-    <Compile Include="Data\Rdbms\DataOperationUnit.cs" />
-    <Compile Include="Data\Rdbms\EntityBaseObject.cs" />
-    <Compile Include="Core\NotifyPropertyChangedImpl.cs" />
-    <Compile Include="Data\Rdbms\BaseColumn.cs" />
-    <Compile Include="Data\Rdbms\Column.cs" />
-    <Compile Include="Data\Rdbms\Ddl\Mapping\ColumnAttribute.cs" />
-    <Compile Include="Data\Rdbms\IDao.cs" />
-    <Compile Include="Data\Rdbms\Dao.cs" />
-    <Compile Include="Data\Rdbms\DatabaseSchemaException.cs" />
-    <Compile Include="Data\Rdbms\Extensions.cs" />
-    <Compile Include="Data\Rdbms\FailedOpeningDatabaseException.cs" />
-    <Compile Include="Data\Rdbms\IColumn.cs" />
-    <Compile Include="Data\Rdbms\Ddl\IDdlConstraint.cs" />
-    <Compile Include="Data\Rdbms\Ddl\Mapping\IDdlConstraintAttribute.cs" />
-    <Compile Include="Data\Rdbms\IId.cs" />
-    <Compile Include="Data\Rdbms\NoEntityInsertedException.cs" />
-    <Compile Include="Data\Rdbms\NotExistColumnException.cs" />
-    <Compile Include="Data\Rdbms\NotMatchColumnException.cs" />
-    <Compile Include="Data\Rdbms\Ddl\NotNull.cs" />
-    <Compile Include="Data\Rdbms\Ddl\Mapping\NotNullAttribute.cs" />
-    <Compile Include="Data\Rdbms\OverridedColumn.cs" />
-    <Compile Include="Data\Rdbms\PlaceholderRightValue.cs" />
-    <Compile Include="Data\Rdbms\Ddl\PrimaryKey.cs" />
-    <Compile Include="Data\Rdbms\Ddl\Mapping\PrimaryKeyAttribute.cs" />
-    <Compile Include="Data\Setup\DbInfoRetriever.cs" />
-    <Compile Include="Data\Setup\EntityVersionKey.cs" />
-    <Compile Include="Data\Setup\UpgradeHelper.cs" />
-    <Compile Include="Data\Setup\VersioningStrategy.cs" />
-    <Compile Include="Data\Setup\VersioningStrategyByTable.cs" />
-    <Compile Include="Data\Setup\VersioningStrategyByTick.cs" />
-    <Compile Include="Data\Setup\VersioningStrategyNotSupported.cs" />
-    <Compile Include="Data\Setup\VersionKey.cs" />
     <Compile Include="Data\Xml\XmlFile.cs" />
     <Compile Include="Data\Yaml\YamlConverter.cs" />
     <Compile Include="Data\Yaml\YamlFile.cs" />
@@ -164,12 +62,6 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\simpleqb\simpleqb.csproj">
-      <Project>{52d5e5cc-a861-433b-bfa0-7f69dd5d92b8}</Project>
-      <Name>simpleqb</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

@@ -1,11 +1,12 @@
 ﻿
 
+using Homura.Core;
 using NLog;
-using Sunctum.Infrastructure.Core;
 using Sunctum.Infrastructure.Data.Yaml;
 using System;
 using System.IO;
 using System.Reflection;
+using YamlDotNet.Serialization;
 
 namespace Sunctum.Domain.Models
 {
@@ -41,6 +42,8 @@ namespace Sunctum.Domain.Models
         private int? _ContentListViewItemMarginTop = 0;
         private int? _ContentListViewItemMarginRight = 0;
         private int? _ContentListViewItemMarginBottom = 0;
+        private string _AuthorSorting;
+        private string _TagSorting;
 
         public static Configuration ApplicationConfiguration { get; set; }
 
@@ -242,7 +245,52 @@ namespace Sunctum.Domain.Models
             set { SetProperty(ref _ContentListViewItemMarginBottom, value); }
         }
 
+        [ConfigurationData]
+        public string AuthorSorting
+        {
+            get { return _AuthorSorting; }
+            set { SetProperty(ref _AuthorSorting, value); }
+        }
+
+        [ConfigurationData]
+        public string TagSorting
+        {
+            get { return _TagSorting; }
+            set { SetProperty(ref _TagSorting, value); }
+        }
+
         #endregion //Configuration Data
+
+        #region Transient Data
+
+        private string _Password;
+        private bool _LibraryIsEncrypted;
+
+        [YamlIgnore]
+        public string Password
+        {
+            get { return _Password; }
+            set { SetProperty(ref _Password, value); }
+        }
+
+        [YamlIgnore]
+        public bool LibraryIsEncrypted
+        {
+            get
+            { return _LibraryIsEncrypted; }
+            set { SetProperty(ref _LibraryIsEncrypted, value); }
+        }
+
+        [YamlIgnore]
+        public string ExecutingDirectory
+        {
+            get
+            {
+                return Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName;
+            }
+        }
+
+        #endregion // Transient Data
 
         public Configuration()
         { }

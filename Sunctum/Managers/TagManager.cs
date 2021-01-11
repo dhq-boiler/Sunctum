@@ -1,9 +1,12 @@
 ﻿
 
+using Homura.Core;
 using Ninject;
 using NLog;
 using Prism.Commands;
 using Prism.Mvvm;
+using Sunctum.Core.Notifications;
+using Sunctum.Domail.Util;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Async;
 using Sunctum.Domain.Logic.ImageTagCountSorting;
@@ -17,12 +20,14 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Sunctum.Managers
 {
-    public class TagManager : BindableBase, ITagManager
+    public class TagManager : BindableBase, ITagManager, IObserver<ActiveTabChanged>
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
@@ -33,15 +38,13 @@ namespace Sunctum.Managers
         private List<TagViewModel> _SelectedEntityTags;
         private List<TagViewModel> _SelectedItems;
         private bool _OrderAscending;
-        private bool _EnableOrderByName;
         private ObservableCollection<TagCountViewModel> _SearchedImageTags;
         private IImageTagCountSorting _ImageTagCountSorting;
 
-        #region コマンド
+        [Inject]
+        public IMainWindowViewModel MainWindowViewModel { get; set; }
 
-        public ICommand RemoveTagFromEntriesCommand { get; set; }
-
-        #endregion //コマンド
+        public IProgressManager ProgressManager { get; set; } = new ProgressManager();
 
         public TagManager()
         {
@@ -78,6 +81,7 @@ namespace Sunctum.Managers
 
             LoadTag();
             LoadImageTag();
+            LoadBookTag();
             TagCount = new ObservableCollection<TagCountViewModel>(GenerateTagCount());
             SelectedEntries = new List<EntryViewModel>();
             ObserveSelectedEntityTags();
@@ -119,13 +123,47 @@ namespace Sunctum.Managers
             }
         }
 
+        #region コマンド
+
+        public ICommand RemoveTagFromEntriesCommand { get; set; }
+
+        public ICommand SortByNameAscCommand { get; set; }
+
+        public ICommand SortByNameDescCommand { get; set; }
+
+        public ICommand SortByCountAscCommand { get; set; }
+
+        public ICommand SortByCountDescCommand { get; set; }
+
+        #endregion //コマンド
+
+        #region コマンド登録
+
         private void RegisterCommands()
         {
             RemoveTagFromEntriesCommand = new DelegateCommand<object>(async (p) =>
             {
                 await RemoveImageTag(p as string);
             });
+            SortByNameAscCommand = new DelegateCommand(() =>
+            {
+                Sorting = ImageTagCountSorting.ByNameAsc;
+            });
+            SortByNameDescCommand = new DelegateCommand(() =>
+            {
+                Sorting = ImageTagCountSorting.ByNameDesc;
+            });
+            SortByCountAscCommand = new DelegateCommand(() =>
+            {
+                Sorting = ImageTagCountSorting.ByCountAsc;
+            });
+            SortByCountDescCommand = new DelegateCommand(() =>
+            {
+                Sorting = ImageTagCountSorting.ByCountDesc;
+            });
         }
+
+        #endregion //コマンド登録
 
         #region プロパティ
 
@@ -150,6 +188,14 @@ namespace Sunctum.Managers
             get
             { return _Chains; }
             set { SetProperty(ref _Chains, value); }
+        }
+
+        public ObservableCollection<BookTagViewModel> BookTagChains
+        {
+            [DebuggerStepThrough]
+            get
+            { return _BookTagChains; }
+            set { SetProperty(ref _BookTagChains, value); }
         }
 
         public List<EntryViewModel> SelectedEntries
@@ -186,16 +232,6 @@ namespace Sunctum.Managers
             set { SetProperty(ref _SelectedItems, value); }
         }
 
-        public bool EnableOrderByName
-        {
-            get { return _EnableOrderByName; }
-            set
-            {
-                SetProperty(ref _EnableOrderByName, value);
-                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
-            }
-        }
-
         public IImageTagCountSorting Sorting
         {
             [DebuggerStepThrough]
@@ -204,6 +240,7 @@ namespace Sunctum.Managers
             set
             {
                 SetProperty(ref _ImageTagCountSorting, value);
+                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
             }
         }
 
@@ -249,29 +286,6 @@ namespace Sunctum.Managers
         {
             get
             {
-                if (EnableOrderByName)
-                {
-                    if (_OrderAscending)
-                    {
-                        Sorting = ImageTagCountSorting.ByNameAsc;
-                    }
-                    else
-                    {
-                        Sorting = ImageTagCountSorting.ByNameDesc;
-                    }
-                }
-                else
-                {
-                    if (_OrderAscending)
-                    {
-                        Sorting = ImageTagCountSorting.ByCountAsc;
-                    }
-                    else
-                    {
-                        Sorting = ImageTagCountSorting.ByCountDesc;
-                    }
-                }
-
                 var newCollection = Sorting.Sort(DisplayableImageTagCountSource).ToArray();
                 return new ObservableCollection<TagCountViewModel>(newCollection);
             }
@@ -318,6 +332,41 @@ namespace Sunctum.Managers
             {
                 s_logger.Info($"Completed to load ImageTag list. {sw.ElapsedMilliseconds}ms");
             }
+        }
+
+        private void LoadBookTag()
+        {
+            var sw = new Stopwatch();
+            s_logger.Info("Loading BookTag list...");
+            sw.Start();
+            try
+            {
+                BookTagChains = new ObservableCollection<BookTagViewModel>(BookTagFacade.FindAll());
+            }
+            finally
+            {
+                s_logger.Info($"Completed to load BookTag list. {sw.ElapsedMilliseconds}ms");
+            }
+        }
+
+        private void Filter(ObservableCollection<BookViewModel> books)
+        {
+            var timeKeeper = new TimeKeeper();
+
+            ProgressManager.UpdateProgress(0, OnStage.Count, timeKeeper);
+
+            var bookIds = new HashSet<Guid>(books.Select(b => b.ID));
+            var filteredBookTags = new HashSet<Guid>(BookTagChains.Where(bt => bookIds.Contains(bt.BookID)).Select(bt => bt.TagID));
+
+            var i = 0;
+            foreach (var tagCount in OnStage.Reverse())
+            {
+                tagCount.IsVisible = filteredBookTags.Contains(tagCount.Tag.ID);
+
+                ++i;
+                ProgressManager.UpdateProgress(i, TagCount.Count, timeKeeper);
+            }
+            ProgressManager.Complete();
         }
 
         private IEnumerable<TagCountViewModel> GenerateTagCount()
@@ -446,13 +495,19 @@ namespace Sunctum.Managers
 
                 if (SelectedEntries.Count == 0 && images.Count() > 0)
                 {
-                    IEnumerable<TagViewModel> tags = Chains.Where(a => a.ImageID == images.First().ID).Select(a => a.Tag).ToList();
+                    var tags = (from c in Chains
+                                where c.ImageID == images.First().ID
+                                join t in Tags on c.TagID equals t.ID
+                                select t).ToList();
                     temp.AddRange(tags);
                 }
 
                 foreach (var image in images)
                 {
-                    IEnumerable<TagViewModel> tags = Chains.Where(a => a.ImageID == image.ID).Select(a => a.Tag).ToList();
+                    var tags = (from c in Chains
+                                where c.ImageID == image.ID
+                                join t in Tags on c.TagID equals t.ID
+                                select t).ToList();
                     temp = temp.Intersect(tags).ToList();
                 }
                 SelectedEntityTags = temp;
@@ -522,31 +577,44 @@ namespace Sunctum.Managers
             }
         }
 
-        public void ShowBySelectedItems(ILibraryManager library)
+        public void ShowBySelectedItems()
         {
-            Contract.Requires(library != null);
-            Contract.Requires(library.TagMng != null);
-            Contract.Requires(library.TagMng.SelectedItems != null);
+            var activeViewModel = MainWindowViewModel.ActiveDocumentViewModel;
 
             var images = ImageFacade.FindAll();
             var pages = PageFacade.FindAll();
-            var books = library.LoadedBooks.Select(b => b);
+            var books = activeViewModel.BookCabinet.BookSource.Select(b => b);
 
             books = (from bk in books
                      join pg in pages on bk.ID equals pg.BookID
                      join img in images on pg.ImageID equals img.ID
-                     join ic in library.TagMng.Chains on img.ID equals ic.ImageID
-                     join tg in library.TagMng.SelectedItems on ic.TagID equals tg.ID
+                     join ic in Chains on img.ID equals ic.ImageID
+                     join tg in SelectedItems on ic.TagID equals tg.ID
                      select bk).Distinct();
 
-            library.SearchedBooks = new ObservableCollection<BookViewModel>(books.ToList());
+            activeViewModel.SearchText = $"{ToSearchText(SelectedItems)}";
+            activeViewModel.BookCabinet.SearchedBooks = new ObservableCollection<BookViewModel>(books.ToList());
         }
 
-        public void ShowBySelectedItems(ILibraryManager library, IEnumerable<TagViewModel> searchItems)
+        private string ToSearchText(List<TagViewModel> selectedItems)
+        {
+            var sb = new StringBuilder();
+            foreach (var item in selectedItems)
+            {
+                sb.Append(item.Name);
+                if (selectedItems.Last() != item)
+                {
+                    sb.Append(" ");
+                }
+            }
+            return sb.ToString();
+        }
+
+        public void ShowBySelectedItems(IEnumerable<TagViewModel> searchItems)
         {
             SelectedItems = searchItems.ToList();
 
-            ShowBySelectedItems(library);
+            ShowBySelectedItems();
         }
 
         public bool IsSearching()
@@ -570,19 +638,41 @@ namespace Sunctum.Managers
         {
             _OrderAscending = !_OrderAscending;
 
-            RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OrderText));
             RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
         }
 
-        public string OrderText
+        private object _lock_object = new object();
+        private CancellationTokenSource _tokenSource;
+        private ObservableCollection<BookTagViewModel> _BookTagChains;
+
+        public void OnNext(ActiveTabChanged value)
         {
-            get
+            lock (_lock_object)
             {
-                if (_OrderAscending)
-                    return "↑";
-                else
-                    return "↓";
+                if (_tokenSource != null)
+                {
+                    _tokenSource.Cancel();
+                }
             }
+            _tokenSource = new CancellationTokenSource();
+            Task.Run(() =>
+            {
+                Filter(value.BookStorage.BookSource);
+                lock (_lock_object)
+                {
+                    _tokenSource = null;
+                }
+            }, _tokenSource.Token);
+        }
+
+        public void OnError(Exception error)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnCompleted()
+        {
+            throw new NotImplementedException();
         }
     }
 }

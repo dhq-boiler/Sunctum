@@ -19,7 +19,7 @@ namespace Sunctum.Domain.Logic.Async
         private string _bookDir;
 
         [Inject]
-        public ILibraryManager LibraryManager { get; set; }
+        public ILibrary LibraryManager { get; set; }
 
         public IEnumerable<BookViewModel> TargetBooks { get; set; }
 
@@ -69,7 +69,7 @@ namespace Sunctum.Domain.Logic.Async
 
         private void CopyFiles(BookViewModel book, bool tag)
         {
-            int pageCount = book.NumberOfPages;
+            int pageCount = book.NumberOfPages.Value;
             for (int i = 0; i < pageCount; ++i)
             {
                 var page = book[i];

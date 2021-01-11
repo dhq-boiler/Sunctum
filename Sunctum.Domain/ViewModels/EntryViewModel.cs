@@ -1,5 +1,6 @@
 ﻿
 
+using Homura.Core;
 using Sunctum.Infrastructure.Core;
 using System;
 using System.Diagnostics;
@@ -11,6 +12,7 @@ namespace Sunctum.Domain.ViewModels
     {
         private string _Title;
         private bool _IsLoaded;
+        private int? _StarLevel;
 
         protected EntryViewModel()
         { }
@@ -32,6 +34,14 @@ namespace Sunctum.Domain.ViewModels
                 SetProperty(ref _Title, value);
                 OnPropertyChanged(PropertyNameUtility.GetPropertyName(() => UnescapedTitle));
             }
+        }
+
+        public int? StarLevel
+        {
+            [DebuggerStepThrough]
+            get
+            { return _StarLevel; }
+            set { SetProperty(ref _StarLevel, value); }
         }
 
         public string UnescapedTitle

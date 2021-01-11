@@ -6,7 +6,7 @@ namespace Sunctum.Domain.Logic.Async
 {
     public interface ILibraryLoading : IAsyncTaskMaker
     {
-        ILibraryManager LibraryManager { get; set; }
+        ILibrary LibraryManager { get; set; }
 
         ITaskManager TaskManager { get; set; }
 

@@ -73,6 +73,14 @@ namespace Sunctum.Domain.Logic.Async
                             _images.Add(p.Image);
                         }));
                     }
+                    sequence.Add(new Task(() =>
+                    {
+                        var newEntity = new BookTagViewModel(book, _tag);
+                        if (!BookTagFacade.Exists(newEntity))
+                        {
+                            BookTagFacade.Insert(newEntity);
+                        }
+                    }));
                     continue;
                 }
 
@@ -84,6 +92,15 @@ namespace Sunctum.Domain.Logic.Async
                         GetPropertyIfImageIsNull(ref page);
                         _images.Add(page.Image);
                     }));
+
+                    sequence.Add(new Task(() =>
+                    {
+                        var newEntity = new BookTagViewModel(page.BookID, _tag.ID);
+                        if (!BookTagFacade.Exists(newEntity))
+                        {
+                            BookTagFacade.Insert(newEntity);
+                        }
+                    }));
                     continue;
                 }
 
@@ -93,6 +110,16 @@ namespace Sunctum.Domain.Logic.Async
                     sequence.Add(new Task(() =>
                     {
                         _images.Add(image);
+                    }));
+
+                    sequence.Add(new Task(() =>
+                    {
+                        var tempPage = PageFacade.FindByImageId(image.ID);
+                        var newEntity = new BookTagViewModel(tempPage.BookID, _tag.ID);
+                        if (!BookTagFacade.Exists(newEntity))
+                        {
+                            BookTagFacade.Insert(newEntity);
+                        }
                     }));
                     continue;
                 }

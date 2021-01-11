@@ -1,11 +1,10 @@
 ﻿
 
+using Homura.ORM;
+using Homura.QueryBuilder.Iso.Dml;
 using NLog;
-using simpleqb.Iso.Dml;
-using Sunctum.Domain.Data.Entity;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Util;
-using Sunctum.Infrastructure.Data.Rdbms;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -169,10 +168,10 @@ namespace Sunctum.Domain.Data.Dao
 
                 using (var command = conn.CreateCommand())
                 {
-                    using (var query = new Select().Count("*").As("Count").Columns("ID", "Name")
-                                                   .From.Table(new Table<Author>().Name)
-                                                   .Inner.Join(new Table<Book>().Name).On.Column("ID").EqualTo.Column("AuthorID")
-                                                   .GroupBy.Column("ID")
+                    using (var query = new Select().Count("*").As("Count").Column("a", "ID").As("ID").Column("a", "Name").As("Name")
+                                                   .From.Table(new Table<Author>().Name, "a")
+                                                   .Inner.Join(new Table<Book>().Name, "b").On.Column("a", "ID").EqualTo.Column("b", "AuthorID")
+                                                   .GroupBy.Column("a", "ID")
                                                    .OrderBy.Column("Count"))
                     {
                         string sql = query.ToSql();

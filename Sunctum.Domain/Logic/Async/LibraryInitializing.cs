@@ -1,5 +1,9 @@
 ﻿
 
+using Homura.Core;
+using Homura.ORM;
+using Homura.ORM.Migration;
+using Homura.ORM.Setup;
 using Ninject;
 using NLog;
 using Sunctum.Domain.Data.Dao;
@@ -7,8 +11,6 @@ using Sunctum.Domain.Data.Dao.Migration.Plan;
 using Sunctum.Domain.Logic.Parse;
 using Sunctum.Domain.Models.Conversion;
 using Sunctum.Domain.Models.Managers;
-using Sunctum.Infrastructure.Data.Rdbms;
-using Sunctum.Infrastructure.Data.Setup;
 using System.Data.SQLite;
 using System.Diagnostics;
 
@@ -19,13 +21,16 @@ namespace Sunctum.Domain.Logic.Async
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
         [Inject]
-        public ILibraryManager LibraryManager { get; set; }
+        public ILibrary LibraryManager { get; set; }
 
         [Inject]
         public IByteSizeCalculating ByteSizeCalculatingService { get; set; }
 
         [Inject]
         public IDirectoryNameParserManager DirectoryNameParserManager { get; set; }
+
+        [Inject]
+        public IBookTagInitializing BookTagInitializingService { get; set; }
 
         public Stopwatch Stopwatch { get; private set; } = new Stopwatch();
 
@@ -51,6 +56,9 @@ namespace Sunctum.Domain.Logic.Async
                     dvManager.RegisterChangePlan(new ChangePlan_Version_1());
                     dvManager.GetPlan(new Version_1()).FinishedToUpgradeTo += LibraryInitializing_FinishToUpgradeTo_Version_1;
                     dvManager.RegisterChangePlan(new ChangePlan_Version_2());
+                    dvManager.RegisterChangePlan(new ChangePlan_Version_3());
+                    dvManager.GetPlan(new Version_3()).FinishedToUpgradeTo += LibraryInitializing_FinishToUpgradeTo_Version_3;
+                    dvManager.RegisterChangePlan(new ChangePlan_Version_4());
                     dvManager.FinishedToUpgradeTo += DvManager_FinishedToUpgradeTo;
 
                     dvManager.UpgradeToTargetVersion();
@@ -89,7 +97,7 @@ namespace Sunctum.Domain.Logic.Async
             sequence.Add(() => s_logger.Info($"Finish LibraryInitializing"));
         }
 
-        private static void DvManager_FinishedToUpgradeTo(object sender, Infrastructure.Core.ModifiedEventArgs e)
+        private static void DvManager_FinishedToUpgradeTo(object sender, ModifiedEventArgs e)
         {
             s_logger.Info($"Heavy Modifying DB Count : {e.ModifiedCount}");
 
@@ -99,11 +107,16 @@ namespace Sunctum.Domain.Logic.Async
             }
         }
 
-        private async void LibraryInitializing_FinishToUpgradeTo_Version_1(object sender, Infrastructure.Data.Rdbms.Ddl.Migration.VersionChangeEventArgs e)
+        private async void LibraryInitializing_FinishToUpgradeTo_Version_1(object sender, VersionChangeEventArgs e)
         {
             if (LibraryManager == null) return;
             ByteSizeCalculatingService.Range = ByteSizeCalculating.UpdateRange.IsAll;
             await LibraryManager.TaskManager.Enqueue(ByteSizeCalculatingService.GetTaskSequence());
+        }
+
+        private async void LibraryInitializing_FinishToUpgradeTo_Version_3(object sender, VersionChangeEventArgs e)
+        {
+            await LibraryManager.TaskManager.Enqueue(BookTagInitializingService.GetTaskSequence());
         }
     }
 }

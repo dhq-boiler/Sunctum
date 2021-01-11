@@ -1,9 +1,9 @@
 ﻿
 
+using Homura.Core;
+using Homura.ORM;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
-using Sunctum.Infrastructure.Core;
-using Sunctum.Infrastructure.Data.Rdbms;
 using Sunctum.UI.Dialogs;
 using System;
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ namespace Sunctum.UI.ViewModel
     public class EntityManagementDialogViewModel<E> : NotifyPropertyChangedImpl where E : class, IId, IName, ICloneable
     {
         private EntityManagementDialog<E> _parent;
-        private ILibraryManager _libVM;
+        private ILibrary _libVM;
         private string _title;
         private List<E> _Entities;
         private E _Selected;
@@ -28,7 +28,7 @@ namespace Sunctum.UI.ViewModel
         private Action<Guid> _remove;
         private Action<E, E> _integrate;
 
-        public EntityManagementDialogViewModel(EntityManagementDialog<E> dialog, ILibraryManager libVM, string title,
+        public EntityManagementDialogViewModel(EntityManagementDialog<E> dialog, ILibrary libVM, string title,
             Func<string, E> add,
             Func<IEnumerable<E>> readAll,
             Func<Guid, E> readBy,

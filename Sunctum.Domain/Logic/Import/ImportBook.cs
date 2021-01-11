@@ -1,5 +1,6 @@
 ﻿
 
+using Homura.ORM;
 using NLog;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Generate;
@@ -7,9 +8,9 @@ using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.Util;
 using Sunctum.Domain.ViewModels;
-using Sunctum.Infrastructure.Data.Rdbms;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ namespace Sunctum.Domain.Logic.Import
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
         protected List<Importer> _children;
-        private BookViewModel _book;
+        protected BookViewModel _book;
         private Guid _AuthorID;
         private Guid _BookID;
         private List<ImageViewModel> _images;
@@ -57,7 +58,7 @@ namespace Sunctum.Domain.Logic.Import
             Count = _children.Count();
         }
 
-        public override IEnumerable<Task> GenerateTasks(ILibraryManager library, string copyTo, string entryName, DataOperationUnit dataOpUnit)
+        public override IEnumerable<Task> GenerateTasks(ILibrary library, string copyTo, string entryName, DataOperationUnit dataOpUnit)
         {
             List<Task> ret = new List<Task>();
 
@@ -89,11 +90,26 @@ namespace Sunctum.Domain.Logic.Import
 
             ret.Add(new Task(() => TagImage(library.TagMng)));
 
+            ret.Add(new Task(() => TagBook(library.TagMng)));
+
             ret.Add(new Task(() => SwitchContentsRegisteredToTrue()));
 
             ret.Add(new Task(() => Log()));
 
             return ret;
+        }
+
+        private void TagBook(ITagManager tagMng)
+        {
+            foreach (var tagName in TagNames)
+            {
+                var tag = TagFacade.FindByTagName(tagName);
+                Debug.Assert(tag != null);
+                var newBookTag = new BookTagViewModel(_book, tag);
+
+                BookTagFacade.Insert(newBookTag);
+                tagMng.BookTagChains.Add(newBookTag);
+            }
         }
 
         protected void WriteFilesSize()
@@ -140,7 +156,7 @@ namespace Sunctum.Domain.Logic.Import
             _book.ContentsRegistered = true;
         }
 
-        private void ProcessChildren(ILibraryManager library, List<Task> ret, string directoryPath, Importer child, DataOperationUnit dataOpUnit)
+        private void ProcessChildren(ILibrary library, List<Task> ret, string directoryPath, Importer child, DataOperationUnit dataOpUnit)
         {
             if (child is ImportPage)
             {
@@ -159,7 +175,7 @@ namespace Sunctum.Domain.Logic.Import
             ++Processed;
         }
 
-        protected void SetDeliverables(ILibraryManager library)
+        protected void SetDeliverables(ILibrary library)
         {
             library.AddToMemory(_book);
         }

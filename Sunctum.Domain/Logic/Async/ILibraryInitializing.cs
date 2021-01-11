@@ -6,7 +6,7 @@ namespace Sunctum.Domain.Logic.Async
 {
     public interface ILibraryInitializing : IAsyncTaskMaker
     {
-        ILibraryManager LibraryManager { get; set; }
+        ILibrary LibraryManager { get; set; }
 
         IByteSizeCalculating ByteSizeCalculatingService { get; set; }
     }

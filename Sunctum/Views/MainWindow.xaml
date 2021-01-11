@@ -2,31 +2,58 @@
     x:Class="Sunctum.Views.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:avalonDock="http://schemas.xceed.com/wpf/xaml/avalondock"
+    xmlns:behavior="clr-namespace:Sunctum.Views.Behaviors"
     xmlns:cvt="clr-namespace:Sunctum.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-    xmlns:local="clr-namespace:Sunctum"
+    xmlns:local="clr-namespace:Sunctum.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
-    xmlns:ui.ctrl="clr-namespace:Sunctum.UI.Controls;assembly=Sunctum.UI"
     xmlns:properties="clr-namespace:Sunctum.Properties"
+    xmlns:trigger="clr-namespace:Sunctum.Views.Triggers"
+    xmlns:ui.ctrl="clr-namespace:Sunctum.UI.Controls;assembly=Sunctum.UI"
+    xmlns:viewModel="clr-namespace:Sunctum.ViewModels"
     Title="{Binding MainWindowTitle}"
-    Width="800"
-    Height="800"
+    Width="{Binding WindowWidth, Mode=TwoWay}"
+    Height="{Binding WindowHeight, Mode=TwoWay}"
     prism:ViewModelLocator.AutoWireViewModel="True"
-    Activated="Window_Activated"
     Closed="Window_Closed"
+    Left="{Binding WindowLeft, Mode=TwoWay}"
     Loaded="Window_Loaded"
-    PreviewKeyDown="Window_PreviewKeyDown"
-    PreviewMouseDown="Window_PreviewMouseDown"
-    PreviewMouseWheel="Window_PreviewMouseWheel"
+    Top="{Binding WindowTop, Mode=TwoWay}"
     mc:Ignorable="d">
+    <i:Interaction.Triggers>
+        <trigger:LeftKeyDownEventTrigger EventName="KeyDown">
+            <i:InvokeCommandAction Command="{Binding ActiveDocumentViewModel.LeftKeyDownCommand}" />
+        </trigger:LeftKeyDownEventTrigger>
+        <trigger:RightKeyDownEventTrigger EventName="KeyDown">
+            <i:InvokeCommandAction Command="{Binding ActiveDocumentViewModel.RightKeyDownCommand}" />
+        </trigger:RightKeyDownEventTrigger>
+        <trigger:XButton1MouseDownEventTrigger EventName="MouseDown">
+            <i:InvokeCommandAction Command="{Binding ActiveDocumentViewModel.XButton1MouseButtonDownCommand}" />
+        </trigger:XButton1MouseDownEventTrigger>
+        <trigger:XButton2MouseDownEventTrigger EventName="MouseDown">
+            <i:InvokeCommandAction Command="{Binding ActiveDocumentViewModel.XButton2MouseButtonDownCommand}" />
+        </trigger:XButton2MouseDownEventTrigger>
+        <trigger:MouseWheelEventTrigger EventName="MouseWheel">
+            <prism:InvokeCommandAction Command="{Binding ActiveDocumentViewModel.MouseWheelCommand}" TriggerParameterPath="Delta" />
+        </trigger:MouseWheelEventTrigger>
+        <prism:InteractionRequestTrigger SourceObject="{Binding OpenPowerSearchRequest}">
+            <prism:PopupWindowAction IsModal="False">
+                <prism:PopupWindowAction.WindowContent>
+                    <local:PowerSearch />
+                </prism:PopupWindowAction.WindowContent>
+            </prism:PopupWindowAction>
+        </prism:InteractionRequestTrigger>
+    </i:Interaction.Triggers>
     <Window.InputBindings>
-        <KeyBinding Key="Esc" Command="{Binding GeneralCancelCommand}" />
         <KeyBinding
             Key="F"
-            Command="{Binding OpenSearchPaneCommand}"
+            Command="{Binding ActiveDocumentViewModel.OpenSearchPaneCommand}"
             Modifiers="Ctrl" />
+        <KeyBinding Key="Esc" Command="{Binding GeneralCancelCommand}" />
         <KeyBinding
             Key="F4"
             Command="{Binding ExitApplicationCommand}"
@@ -34,176 +61,10 @@
     </Window.InputBindings>
     <Window.Resources>
         <properties:Resources x:Key="resources" />
-        <cvt:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-        <cvt:PathToWriteableBitmap x:Key="ImageConverter" />
-        <cvt:BookCoverThumbnailLoader x:Key="BookCoverThumbnailLoader" />
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <cvt:BookSortingToBool x:Key="BookSortingToBool" />
-        <cvt:PageThumbnailLoader x:Key="PageThumbnailLoader" />
         <cvt:PathToMenuItem x:Key="PathToMenuItem" />
-        <cvt:MarginConverter x:Key="MarginConverter" />
-        <ItemsPanelTemplate x:Key="Contents_ItemPanelTemplate">
-            <WrapPanel />
-        </ItemsPanelTemplate>
-        <Storyboard x:Key="appearItem">
-            <DoubleAnimation
-                Storyboard.TargetProperty="Opacity"
-                From="0.0"
-                To="1.0"
-                Duration="0:0:0.25" />
-        </Storyboard>
-        <Style x:Key="Contents_ListViewItem_Style" TargetType="{x:Type ListBoxItem}">
-            <Setter Property="AllowDrop" Value="True" />
-            <Setter Property="OverridesDefaultStyle" Value="True" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ContentControl}">
-                        <Border Background="{TemplateBinding Background}">
-                            <ContentPresenter />
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-            <EventSetter Event="Control.MouseDoubleClick" Handler="Contents_ListViewItem_MouseDoubleClick" />
-            <EventSetter Event="PreviewDragOver" Handler="Contents_ListViewItem_PreviewDragOver" />
-            <EventSetter Event="Drop" Handler="Contents_ListViewItem_Drop" />
-            <Style.Triggers>
-                <DataTrigger Binding="{Binding IsScrapped}" Value="true">
-                    <Setter Property="Background" Value="#88FFA500" />
-                </DataTrigger>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="PowderBlue" />
-                </Trigger>
-                <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Background" Value="SkyBlue" />
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-        <DataTemplate x:Key="Contents_ListViewItem_DataTemplate">
-            <Grid>
-                <Grid.Margin>
-                    <MultiBinding Converter="{StaticResource MarginConverter}">
-                        <Binding Path="Configuration.ContentListViewItemMarginLeft" />
-                        <Binding Path="Configuration.ContentListViewItemMarginTop" />
-                        <Binding Path="Configuration.ContentListViewItemMarginRight" />
-                        <Binding Path="Configuration.ContentListViewItemMarginBottom" />
-                    </MultiBinding>
-                </Grid.Margin>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="{Binding Configuration.ContentListViewItemImageHeight}" />
-                    <RowDefinition Height="{Binding Configuration.ContentListViewItemTitleHeight}" />
-                </Grid.RowDefinitions>
-                <ContentPresenter Content="{Binding Converter={StaticResource PageThumbnailLoader}}" Visibility="Collapsed" />
-                <Image
-                    Grid.Row="0"
-                    Width="{Binding Configuration.ContentListViewItemWidth}"
-                    Height="{Binding Configuration.ContentListViewItemImageHeight}"
-                    MaxWidth="{Binding Configuration.ContentListViewItemWidth}"
-                    MaxHeight="{Binding Configuration.ContentListViewItemImageHeight}"
-                    Margin="5"
-                    Source="{Binding Image.Path, Converter={StaticResource ImageConverter}}">
-                    <Image.Style>
-                        <Style TargetType="{x:Type Image}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsLoaded}" Value="True">
-                                    <DataTrigger.EnterActions>
-                                        <BeginStoryboard Storyboard="{StaticResource appearItem}" />
-                                    </DataTrigger.EnterActions>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Image.Style>
-                </Image>
-                <Label
-                    Grid.Row="1"
-                    Width="{Binding Configuration.ContentListViewItemWidth}"
-                    Height="{Binding Configuration.ContentListViewItemTitleHeight}"
-                    Margin="0"
-                    HorizontalAlignment="Center"
-                    HorizontalContentAlignment="Center"
-                    Content="{Binding UnescapedTitle}" />
-            </Grid>
-        </DataTemplate>
-        <DataTemplate x:Key="Contents_ListViewItem_Sorting_DataTemplate">
-            <Grid>
-                <Grid.Margin>
-                    <MultiBinding Converter="{StaticResource MarginConverter}">
-                        <Binding Path="Configuration.ContentListViewItemMarginLeft" />
-                        <Binding Path="Configuration.ContentListViewItemMarginTop" />
-                        <Binding Path="Configuration.ContentListViewItemMarginRight" />
-                        <Binding Path="Configuration.ContentListViewItemMarginBottom" />
-                    </MultiBinding>
-                </Grid.Margin>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="{Binding Configuration.ContentListViewItemImageHeight}" />
-                    <RowDefinition Height="{Binding Configuration.ContentListViewItemTitleHeight}" />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <ContentPresenter Content="{Binding Converter={StaticResource PageThumbnailLoader}}" Visibility="Collapsed" />
-                <Image
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="2"
-                    Width="{Binding Configuration.ContentListViewItemWidth}"
-                    Height="{Binding Configuration.ContentListViewItemImageHeight}"
-                    MaxWidth="{Binding Configuration.ContentListViewItemWidth}"
-                    MaxHeight="{Binding Configuration.ContentListViewItemImageHeight}"
-                    Margin="5"
-                    Source="{Binding Image.Path, Converter={StaticResource ImageConverter}}" />
-                <Label
-                    Grid.Row="1"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="2"
-                    Width="{Binding Configuration.ContentListViewItemWidth}"
-                    Height="{Binding Configuration.ContentListViewItemTitleHeight}"
-                    Margin="0"
-                    HorizontalAlignment="Center"
-                    HorizontalContentAlignment="Center"
-                    Content="{Binding UnescapedTitle}" />
-                <Button
-                    x:Name="MoveBackword_Button"
-                    Grid.Row="2"
-                    Grid.Column="0"
-                    Margin="5,0,0,0"
-                    Click="MoveBackword_Button_Click"
-                    Content="←" />
-                <Button
-                    x:Name="MoveForward_Button"
-                    Grid.Row="2"
-                    Grid.Column="1"
-                    Margin="0,0,5,0"
-                    Click="MoveForward_Button_Click"
-                    Content="→" />
-            </Grid>
-        </DataTemplate>
-        <Style x:Key="Contents_ListView_Style" TargetType="{x:Type ListView}">
-            <Setter Property="ItemsPanel" Value="{StaticResource Contents_ItemPanelTemplate}" />
-            <Setter Property="ItemContainerStyle" Value="{StaticResource Contents_ListViewItem_Style}" />
-            <Setter Property="ItemTemplate" Value="{StaticResource Contents_ListViewItem_DataTemplate}" />
-            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled" />
-            <Setter Property="ContextMenu">
-                <Setter.Value>
-                    <ContextMenu ItemsSource="{Binding ContentsContextMenuItems}" />
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="Tag_ListViewItem_Style" TargetType="{x:Type ListViewItem}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ListViewItem}">
-                        <TextBlock>
-                            <TextBlock Text="{Binding Tag.UnescapedName}" />
-                            <TextBlock Text="(" />
-                            <TextBlock Text="{Binding Count}" />
-                            <TextBlock Text=")" />
-                        </TextBlock>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+        <cvt:ActiveDocumentConverter x:Key="ActiveDocumentConverter" />
     </Window.Resources>
     <DockPanel SizeChanged="DockPanel_SizeChanged">
         <Menu DockPanel.Dock="Top">
@@ -235,6 +96,38 @@
                     <MenuItem Command="{Binding UpdateBookByteSizeAllCommand}" Header="{Binding MainWindow_Data_BookSize_UpdateSizeAllBooks, Source={StaticResource resources}}" />
                     <MenuItem Command="{Binding UpdateBookByteSizeStillNullCommand}" Header="{Binding MainWindow_Data_BookSize_UpdateSizeQuickly, Source={StaticResource resources}}" />
                 </MenuItem>
+                <MenuItem Header="{Binding MainWindow_Data_BookTag, Source={StaticResource resources}}">
+                    <MenuItem Command="{Binding UpdateBookTagCommand}" Header="{Binding MainWindow_Data_BookTag_UpdateBookTagAll, Source={StaticResource resources}}" />
+                </MenuItem>
+                <Separator />
+                <MenuItem Command="{Binding EncryptionStartingCommand}" Header="{Binding MainWindow_Data_EncryptionStart, Source={StaticResource resources}}">
+                    <MenuItem.Style>
+                        <Style TargetType="{x:Type MenuItem}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Configuration.LibraryIsEncrypted}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Configuration.LibraryIsEncrypted}" Value="False">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </MenuItem.Style>
+                </MenuItem>
+                <MenuItem Command="{Binding UnencryptionStartingCommand}" Header="{Binding MainWindow_Data_UnencryptionStart, Source={StaticResource resources}}">
+                    <MenuItem.Style>
+                        <Style TargetType="{x:Type MenuItem}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Configuration.LibraryIsEncrypted}" Value="False">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Configuration.LibraryIsEncrypted}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </MenuItem.Style>
+                </MenuItem>
                 <Separator />
                 <MenuItem Command="{Binding OpenAuthorManagementDialogCommand}" Header="{Binding MainWindow_Data_AuthorManagement, Source={StaticResource resources}}" />
                 <MenuItem Command="{Binding OpenTagManagementDialogCommand}" Header="{Binding MainWindow_Data_TagManagement, Source={StaticResource resources}}" />
@@ -242,10 +135,11 @@
             </MenuItem>
             <MenuItem Header="{Binding MainWindow_Search, Source={StaticResource resources}}">
                 <MenuItem
-                    Header="{Binding SearchStatusText}"
+                    Header="{Binding ActiveDocumentViewModel.SearchStatusText}"
                     IsEnabled="False"
                     Visibility="{Binding LibraryVM.IsSearching, Converter={StaticResource BoolToVisibilityConverter}}" />
                 <MenuItem Command="{Binding OpenSearchPaneCommand}" Header="{Binding MainWindow_Search_Search, Source={StaticResource resources}}" />
+                <MenuItem Command="{Binding OpenPowerSearchCommand}" Header="Power search" />
                 <Separator />
                 <MenuItem Command="{Binding ClearSearchResultCommand}" Header="{Binding MainWindow_Search_ClearSearchResult, Source={StaticResource resources}}" />
             </MenuItem>
@@ -269,598 +163,137 @@
                     <MenuItem
                         Command="{Binding SortBookByLoadedAscCommand}"
                         Header="{Binding MainWindow_Display_Sorting_LoadedAsc, Source={StaticResource resources}}"
-                        IsChecked="{Binding LibraryVM.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByLoadedAsc}" />
+                        IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByLoadedAsc}" />
                     <MenuItem
                         Command="{Binding SortBookByLoadedDescCommand}"
                         Header="{Binding MainWindow_Display_Sorting_LoadedDesc, Source={StaticResource resources}}"
-                        IsChecked="{Binding LibraryVM.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByLoadedDesc}" />
+                        IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByLoadedDesc}" />
                     <MenuItem
                         Command="{Binding SortBookByTitleAscCommand}"
                         Header="{Binding MainWindow_Display_Sorting_TitleAsc, Source={StaticResource resources}}"
-                        IsChecked="{Binding LibraryVM.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByTitleAsc}" />
+                        IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByTitleAsc}" />
                     <MenuItem
                         Command="{Binding SortBookByTitleDescCommand}"
                         Header="{Binding MainWindow_Display_Sorting_TitleDesc, Source={StaticResource resources}}"
-                        IsChecked="{Binding LibraryVM.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByTitleDesc}" />
+                        IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByTitleDesc}" />
                     <MenuItem
                         Command="{Binding SortBookByAuthorAscCommand}"
                         Header="{Binding MainWindow_Display_Sorting_AuthorAsc, Source={StaticResource resources}}"
-                        IsChecked="{Binding LibraryVM.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByAuthorAsc}" />
+                        IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByAuthorAsc}" />
                     <MenuItem
                         Command="{Binding SortBookByAuthorDescCommand}"
                         Header="{Binding MainWindow_Display_Sorting_AuthorDesc, Source={StaticResource resources}}"
-                        IsChecked="{Binding LibraryVM.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByAuthorDesc}" />
+                        IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByAuthorDesc}" />
                     <MenuItem
                         Command="{Binding SortBookByCoverBlueAscCommand}"
                         Header="{Binding MainWindow_Display_Sorting_CoverBlueAsc, Source={StaticResource resources}}"
-                        IsChecked="{Binding LibraryVM.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByCoverBlueAsc}" />
+                        IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByCoverBlueAsc}" />
                     <MenuItem
                         Command="{Binding SortBookByCoverBlueDescCommand}"
                         Header="{Binding MainWindow_Display_Sorting_CoverBlueDesc, Source={StaticResource resources}}"
-                        IsChecked="{Binding LibraryVM.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByCoverBlueDesc}" />
+                        IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByCoverBlueDesc}" />
                     <MenuItem
                         Command="{Binding SortBookByCoverGreenAscCommand}"
                         Header="{Binding MainWindow_Display_Sorting_CoverGreenAsc, Source={StaticResource resources}}"
-                        IsChecked="{Binding LibraryVM.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByCoverGreenAsc}" />
+                        IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByCoverGreenAsc}" />
                     <MenuItem
                         Command="{Binding SortBookByCoverGreenDescCommand}"
                         Header="{Binding MainWindow_Display_Sorting_CoverGreenDesc, Source={StaticResource resources}}"
-                        IsChecked="{Binding LibraryVM.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByCoverGreenDesc}" />
+                        IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByCoverGreenDesc}" />
                     <MenuItem
                         Command="{Binding SortBookByCoverRedAscCommand}"
                         Header="{Binding MainWindow_Display_Sorting_CoverRedAsc, Source={StaticResource resources}}"
-                        IsChecked="{Binding LibraryVM.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByCoverRedAsc}" />
+                        IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByCoverRedAsc}" />
                     <MenuItem
                         Command="{Binding SortBookByCoverRedDescCommand}"
                         Header="{Binding MainWindow_Display_Sorting_CoverRedDesc, Source={StaticResource resources}}"
-                        IsChecked="{Binding LibraryVM.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByCoverRedDesc}" />
+                        IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByCoverRedDesc}" />
                 </MenuItem>
             </MenuItem>
             <MenuItem Header="{Binding MainWindow_Help, Source={StaticResource resources}}">
                 <MenuItem Command="{Binding AboutSunctumCommand}" Header="{Binding MainWindow_Help_AboutSunctum, Source={StaticResource resources}}" />
             </MenuItem>
         </Menu>
-        <DockPanel
-            x:Name="Progress_DockPanel"
-            Height="5"
-            DockPanel.Dock="Bottom"
-            ToolTipService.ShowDuration="0x7fffffff">
-            <DockPanel.ToolTip>
-                <ToolTip Content="{Binding TooltipOnProgressBar, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
-            </DockPanel.ToolTip>
-            <Grid
-                x:Name="Progress_Left_Grid"
-                Background="#007ACC"
-                DockPanel.Dock="Left" />
-            <Grid Background="Gray" />
+        <DockPanel DockPanel.Dock="Bottom">
+            <local:ProgressBar
+                Height="5"
+                IsAborted="{Binding LibraryVM.ProgressManager.IsAbort}"
+                ProgressionRate="{Binding LibraryVM.ProgressManager.Progress}"
+                ToolTip="{Binding TooltipOnProgressBar, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
         </DockPanel>
-        <DockPanel DockPanel.Dock="Left" Visibility="{Binding DisplayTagPane, Converter={StaticResource BoolToVisibilityConverter}}">
-            <DockPanel Background="LightGray" DockPanel.Dock="Top">
-                <Button
-                    x:Name="Button_Close_TagPane"
-                    Margin="3"
-                    Padding="2"
-                    Background="#e81123"
-                    BorderBrush="Transparent"
-                    Click="Tag_Button_Close_Click"
-                    DockPanel.Dock="Right">
-                    <Path Fill="White" Stroke="Transparent">
-                        <Path.Data>
-                            <CombinedGeometry GeometryCombineMode="Union">
-                                <CombinedGeometry.Geometry1>
-                                    <RectangleGeometry Rect="0,3,7.5,1.5" />
-                                </CombinedGeometry.Geometry1>
-                                <CombinedGeometry.Geometry2>
-                                    <RectangleGeometry Rect="3,0,1.5,7.5" />
-                                </CombinedGeometry.Geometry2>
-                            </CombinedGeometry>
-                        </Path.Data>
-                        <Path.LayoutTransform>
-                            <RotateTransform Angle="45" />
-                        </Path.LayoutTransform>
-                    </Path>
-                </Button>
-                <Button
-                    x:Name="Button_TagPane_Order"
-                    Width="18"
-                    Margin="3"
-                    Click="Button_TagPane_Order_Click"
-                    Content="{Binding LibraryVM.TagMng.OrderText}"
-                    DockPanel.Dock="Right" />
-                <ToggleButton
-                    Width="18"
-                    Margin="3"
-                    Content="A"
-                    DockPanel.Dock="Right"
-                    IsChecked="{Binding LibraryVM.TagMng.EnableOrderByName}" />
-                <Label>Tag</Label>
-            </DockPanel>
-            <ListBox
-                x:Name="Tag_ListBox"
-                Width="200"
-                ItemsSource="{Binding LibraryVM.TagMng.OnStage}"
-                MouseMove="Tag_ListBox_MouseMove"
-                PreviewKeyDown="Tag_ListBox_PreviewKeyDown"
-                PreviewMouseLeftButtonDown="Tag_ListBox_MouseLeftButtonDown"
-                ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                SelectionMode="Extended">
-                <ListBox.ContextMenu>
-                    <ContextMenu ItemsSource="{Binding TagContextMenuItems}" />
-                </ListBox.ContextMenu>
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock>
-                            <Run Text="{Binding Tag.UnescapedName}" />
-                            <Run Text="(" />
-                            <Run Text="{Binding Count}" />
-                            <Run Text=")" />
-                        </TextBlock>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsSearchingKey}" Value="True">
-                                <Setter Property="Background" Value="#88FFA500" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding IsSearchingKey}" Value="False">
-                                <Setter Property="Background" Value="Transparent" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </ListBox.ItemContainerStyle>
-            </ListBox>
-        </DockPanel>
-        <DockPanel DockPanel.Dock="Left" Visibility="{Binding DisplayAuthorPane, Converter={StaticResource BoolToVisibilityConverter}}">
-            <DockPanel Background="LightGray" DockPanel.Dock="Top">
-                <Button
-                    x:Name="Button_Close_AuthorPane"
-                    Margin="3"
-                    Padding="2"
-                    Background="#e81123"
-                    BorderBrush="Transparent"
-                    Click="Author_Button_Close_Click"
-                    DockPanel.Dock="Right">
-                    <Path Fill="White" Stroke="Transparent">
-                        <Path.Data>
-                            <CombinedGeometry GeometryCombineMode="Union">
-                                <CombinedGeometry.Geometry1>
-                                    <RectangleGeometry Rect="0,3,7.5,1.5" />
-                                </CombinedGeometry.Geometry1>
-                                <CombinedGeometry.Geometry2>
-                                    <RectangleGeometry Rect="3,0,1.5,7.5" />
-                                </CombinedGeometry.Geometry2>
-                            </CombinedGeometry>
-                        </Path.Data>
-                        <Path.LayoutTransform>
-                            <RotateTransform Angle="45" />
-                        </Path.LayoutTransform>
-                    </Path>
-                </Button>
-                <Button
-                    x:Name="Button_AuthorPane_Order"
-                    Width="18"
-                    Margin="3"
-                    Click="Author_Button_Order_Click"
-                    Content="{Binding LibraryVM.AuthorManager.OrderText}"
-                    DockPanel.Dock="Right" />
-                <ToggleButton
-                    Width="18"
-                    Margin="3"
-                    Content="A"
-                    DockPanel.Dock="Right"
-                    IsChecked="{Binding LibraryVM.AuthorManager.EnableOrderByName}" />
-                <Label>Author</Label>
-            </DockPanel>
-            <ListBox
-                x:Name="Author_ListBox"
-                Width="200"
-                ItemsSource="{Binding LibraryVM.AuthorManager.OnStage}"
-                ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                SelectionMode="Extended">
-                <ListBox.ContextMenu>
-                    <ContextMenu ItemsSource="{Binding AuthorContextMenuItems}" />
-                </ListBox.ContextMenu>
-                <ListBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock>
-                            <Run Text="{Binding Author.UnescapedName}" />
-                            <Run Text="(" />
-                            <Run Text="{Binding Count}" />
-                            <Run Text=")" />
-                        </TextBlock>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-                <ListBox.ItemContainerStyle>
-                    <Style TargetType="ListBoxItem">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsSearchingKey}" Value="True">
-                                <Setter Property="Background" Value="#88FFA500" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding IsSearchingKey}" Value="False">
-                                <Setter Property="Background" Value="Transparent" />
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </ListBox.ItemContainerStyle>
-            </ListBox>
-        </DockPanel>
-        <DockPanel DockPanel.Dock="Right" Visibility="{Binding DisplayInformationPane, Converter={StaticResource BoolToVisibilityConverter}}">
-            <DockPanel Background="LightGray" DockPanel.Dock="Top">
-                <Button
-                    x:Name="Button_Close_InformationPane"
-                    Margin="3"
-                    Padding="2"
-                    Background="#e81123"
-                    BorderBrush="Transparent"
-                    Click="Information_Button_Close_Click"
-                    DockPanel.Dock="Right">
-                    <Path Fill="White" Stroke="Transparent">
-                        <Path.Data>
-                            <CombinedGeometry GeometryCombineMode="Union">
-                                <CombinedGeometry.Geometry1>
-                                    <RectangleGeometry Rect="0,3,7.5,1.5" />
-                                </CombinedGeometry.Geometry1>
-                                <CombinedGeometry.Geometry2>
-                                    <RectangleGeometry Rect="3,0,1.5,7.5" />
-                                </CombinedGeometry.Geometry2>
-                            </CombinedGeometry>
-                        </Path.Data>
-                        <Path.LayoutTransform>
-                            <RotateTransform Angle="45" />
-                        </Path.LayoutTransform>
-                    </Path>
-                </Button>
-                <Label>Information</Label>
-            </DockPanel>
-            <ui.ctrl:SimpleGrid
-                Background="LightGray"
-                Columns="3"
-                DockPanel.Dock="Bottom"
-                Rows="1">
-                <ui.ctrl:EasyEnterTextBox
-                    x:Name="TextBox_NewTag"
-                    Width="140"
-                    Height="25"
-                    Margin="3,3,0,3" />
-                <Button
-                    x:Name="Button_TagPlus"
-                    Margin="3"
-                    Padding="3"
-                    Background="Transparent"
-                    BorderBrush="Transparent"
-                    Click="Information_Button_TagPlus_Click">
-                    <Path Fill="gray" Stroke="Transparent">
-                        <Path.Data>
-                            <CombinedGeometry GeometryCombineMode="Union">
-                                <CombinedGeometry.Geometry1>
-                                    <RectangleGeometry Rect="1,7,15,3" />
-                                </CombinedGeometry.Geometry1>
-                                <CombinedGeometry.Geometry2>
-                                    <RectangleGeometry Rect="7,1,3,15" />
-                                </CombinedGeometry.Geometry2>
-                            </CombinedGeometry>
-                        </Path.Data>
-                    </Path>
-                </Button>
-                <Button
-                    x:Name="Button_TagMinus"
-                    Margin="3"
-                    Padding="3"
-                    Background="Transparent"
-                    BorderBrush="Transparent"
-                    Click="Information_Button_TagMinus_Click">
-                    <Path Fill="gray" Stroke="Transparent">
-                        <Path.Data>
-                            <RectangleGeometry Rect="1,1,15,3" />
-                        </Path.Data>
-                    </Path>
-                </Button>
-            </ui.ctrl:SimpleGrid>
-            <ListView
-                x:Name="Information_ListView_SelectedEntriesTags"
-                AllowDrop="True"
-                Drop="Information_ListView_SelectedEntriesTags_Drop"
-                ItemsSource="{Binding LibraryVM.TagMng.SelectedEntityTags}"
-                PreviewDragOver="Information_ListView_SelectedEntriesTags_PreviewDragOver"
-                PreviewKeyDown="Information_ListView_SelectedEntriesTags_PreviewKeyDown">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Label Content="{Binding UnescapedName}" />
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-        </DockPanel>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="27" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <Border
-                x:Name="SearchPane_Border"
-                Grid.Row="0"
-                Grid.Column="0"
-                Panel.ZIndex="1000"
-                BorderBrush="Gray"
-                BorderThickness="1"
-                Visibility="Collapsed">
-                <StackPanel Background="{x:Static SystemColors.ControlLightBrush}" Orientation="Horizontal">
-                    <Button
-                        x:Name="CloseSearchPane_Button"
-                        Width="15"
-                        Height="15"
-                        Margin="5"
-                        Click="CloseSearchPane_Button_Click">
-                        <Canvas
-                            Name="canvas"
-                            Width="11"
-                            Height="11">
-                            <Path Stroke="Black" StrokeThickness="2">
-                                <Path.Data>
-                                    <PathGeometry>
-                                        <PathGeometry.Figures>
-                                            <PathFigure StartPoint="1,1">
-                                                <LineSegment Point="10,10" />
-                                            </PathFigure>
-                                            <PathFigure StartPoint="1,10">
-                                                <LineSegment Point="10,1" />
-                                            </PathFigure>
-                                        </PathGeometry.Figures>
-                                    </PathGeometry>
-                                </Path.Data>
-                            </Path>
-                        </Canvas>
-                    </Button>
-                    <ui.ctrl:EasyEnterTextBox
-                        x:Name="Search_TextBox"
-                        Width="200"
-                        Margin="3"
-                        Text="{Binding UnescapedSearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        TextChanged="Search_TextBox_TextChanged" />
-                </StackPanel>
-            </Border>
-            <Grid
-                Grid.Row="0"
-                Grid.RowSpan="2"
-                Grid.Column="0"
-                Grid.ColumnSpan="2">
-                <ListView
-                    x:Name="Book_ListView"
-                    AllowDrop="True"
-                    Drop="Book_ListView_Drop"
-                    ItemsSource="{Binding LibraryVM.OnStage}"
-                    PreviewDragOver="Book_ListView_PreviewDragOver"
-                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                    SelectionChanged="Book_ListView_SelectionChanged"
-                    SelectionMode="Extended"
-                    SizeChanged="Book_ListView_SizeChanged"
-                    VirtualizingPanel.IsVirtualizing="True"
-                    VirtualizingPanel.VirtualizationMode="Recycling"
-                    Visibility="Visible">
-                    <ListView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <ui.ctrl:VirtualizingWrapPanel />
-                        </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <Grid.Margin>
-                                    <MultiBinding Converter="{StaticResource MarginConverter}">
-                                        <Binding Path="Configuration.BookListViewItemMarginLeft" />
-                                        <Binding Path="Configuration.BookListViewItemMarginTop" />
-                                        <Binding Path="Configuration.BookListViewItemMarginRight" />
-                                        <Binding Path="Configuration.BookListViewItemMarginBottom" />
-                                    </MultiBinding>
-                                </Grid.Margin>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition />
-                                    <RowDefinition Height="{Binding Configuration.BookListViewItemAuthorHeight}" />
-                                    <RowDefinition Height="{Binding Configuration.BookListViewItemTitleHeight}" />
-                                </Grid.RowDefinitions>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="{Binding Configuration.BookListViewItemWidth}" />
-                                </Grid.ColumnDefinitions>
-                                <ContentPresenter Content="{Binding Converter={StaticResource BookCoverThumbnailLoader}}" Visibility="Collapsed" />
-                                <Image
-                                    Grid.Row="0"
-                                    Height="{Binding Configuration.BookListViewItemImageHeight}"
-                                    MaxWidth="{Binding Configuration.BookListViewItemWidth}"
-                                    MaxHeight="{Binding Configuration.BookListViewItemImageHeight}"
-                                    Opacity="0.0"
-                                    Source="{Binding FirstPage.Image.Path, Converter={StaticResource ImageConverter}}">
-                                    <Image.Style>
-                                        <Style TargetType="{x:Type Image}">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsLoaded}" Value="True">
-                                                    <DataTrigger.EnterActions>
-                                                        <BeginStoryboard Storyboard="{StaticResource appearItem}" />
-                                                    </DataTrigger.EnterActions>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Image.Style>
-                                </Image>
-                                <ui.ctrl:AutoScrollingHyperlink
-                                    Grid.Row="1"
-                                    Width="{Binding Configuration.BookListViewItemWidth}"
-                                    DataContext="{Binding Author}"
-                                    HyperlinkClicked="AutoScrollingHyperlink_HyperlinkClicked"
-                                    Text="{Binding UnescapedName}" />
-                                <ui.ctrl:AutoScrollingLabel
-                                    x:Name="Book_Title_AutoScrollingLabel"
-                                    Grid.Row="2"
-                                    Width="{Binding Configuration.BookListViewItemWidth}"
-                                    Text="{Binding UnescapedTitle}" />
-                            </Grid>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="{x:Type ListViewItem}">
-                            <Setter Property="OverridesDefaultStyle" Value="True" />
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type ContentControl}">
-                                        <Border Background="{TemplateBinding Background}">
-                                            <ContentPresenter />
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                            <Setter Property="Opacity" Value="0.5" />
-                            <EventSetter Event="Control.MouseDoubleClick" Handler="Book_ListViewItem_MouseDoubleClick" />
-                            <EventSetter Event="PreviewDragOver" Handler="Book_ListViewItem_PreviewDragOver" />
-                            <EventSetter Event="Drop" Handler="Book_ListViewItem_Drop" />
-                            <EventSetter Event="MouseEnter" Handler="Book_ListViewItem_MouseEnter" />
-                            <EventSetter Event="MouseLeave" Handler="Book_ListViewItem_MouseLeave" />
-                            <Style.Triggers>
-                                <Trigger Property="IsMouseOver" Value="True">
-                                    <Setter Property="Background" Value="PowderBlue" />
-                                </Trigger>
-                                <Trigger Property="IsSelected" Value="True">
-                                    <Setter Property="Background" Value="SkyBlue" />
-                                </Trigger>
-                                <MultiDataTrigger>
-                                    <MultiDataTrigger.Conditions>
-                                        <Condition Binding="{Binding ContentsRegistered}" Value="True" />
-                                        <Condition Binding="{Binding IsLoaded}" Value="True" />
-                                    </MultiDataTrigger.Conditions>
-                                    <Setter Property="Opacity" Value="1.0" />
-                                </MultiDataTrigger>
-                            </Style.Triggers>
+        <avalonDock:DockingManager
+            ActiveContent="{Binding ActiveDocumentViewModel, Mode=TwoWay, Converter={StaticResource ActiveDocumentConverter}}"
+            AnchorablesSource="{Binding DockingPaneViewModels}"
+            DocumentsSource="{Binding DockingDocumentViewModels}">
+            <i:Interaction.Triggers>
+                <prism:InteractionRequestTrigger SourceObject="{Binding LoadLayoutRequest}">
+                    <trigger:LoadLayoutAction />
+                </prism:InteractionRequestTrigger>
+                <prism:InteractionRequestTrigger SourceObject="{Binding SaveLayoutRequest}">
+                    <trigger:SaveLayoutAction />
+                </prism:InteractionRequestTrigger>
+            </i:Interaction.Triggers>
+            <avalonDock:DockingManager.LayoutItemContainerStyleSelector>
+                <local:LayoutItemContainerStyleSelector>
+                    <local:LayoutItemTypedStyle DataType="{x:Type viewModel:DocumentViewModelBase}">
+                        <Style TargetType="{x:Type avalonDock:LayoutItem}">
+                            <Setter Property="Title" Value="{Binding Model.Title}" />
+                            <Setter Property="ContentId" Value="{Binding Model.ContentId}" />
+                            <Setter Property="CanClose" Value="{Binding Model.CanClose}" />
+
+                            <!--<Setter Property="Visibility" Value="{Binding Model.IsVisible, ConverterParameter={x:Static Visibility.Hidden}, Converter={StaticResource BoolToVisibilityConverter}, Mode=TwoWay}" />
+                            <Setter Property="IsActive" Value="{Binding Model.IsActive, Mode=TwoWay}" />-->
+
                         </Style>
-                    </ListView.ItemContainerStyle>
-                    <ListView.ContextMenu>
-                        <ContextMenu ItemsSource="{Binding BooksContextMenuItems}" />
-                    </ListView.ContextMenu>
-                </ListView>
-                <DockPanel x:Name="Contents_DockPanel" Visibility="Hidden">
-                    <Grid DockPanel.Dock="Top">
-                        <DockPanel>
-                            <DockPanel.Resources>
-                                <Style TargetType="{x:Type Button}">
-                                    <Setter Property="Width" Value="50" />
-                                    <Setter Property="Height" Value="50" />
-                                </Style>
-                            </DockPanel.Resources>
-                            <Button
-                                x:Name="BackToBooks_Button"
-                                Margin="5"
-                                Click="BackToBooks_Button_Click"
-                                Content="Back"
-                                DockPanel.Dock="Left" />
-                            <Button
-                                x:Name="SwitchSorting_Button"
-                                Margin="5"
-                                Click="SwitchSorting_Button_Click"
-                                Content="Sort"
-                                DockPanel.Dock="Right" />
-                            <Grid />
-                        </DockPanel>
-                        <StackPanel
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Center"
-                            Orientation="Vertical">
-                            <StackPanel.Resources>
-                                <Style TargetType="{x:Type Label}">
-                                    <Setter Property="VerticalAlignment" Value="Center" />
-                                    <Setter Property="HorizontalAlignment" Value="Center" />
-                                </Style>
-                            </StackPanel.Resources>
-                            <ui.ctrl:SelectableLabel HorizontalAlignment="Center" Text="{Binding OpenedBook.Author.UnescapedName}" />
-                            <ui.ctrl:SelectableLabel HorizontalAlignment="Center" Text="{Binding OpenedBook.UnescapedTitle}" />
-                        </StackPanel>
-                    </Grid>
-                    <ListView
-                        x:Name="Contents_ListView"
-                        ItemsSource="{Binding OpenedBook.Contents}"
-                        SelectionChanged="Contents_ListView_SelectionChanged"
-                        SizeChanged="Contents_ListView_SizeChanged"
-                        Style="{StaticResource Contents_ListView_Style}"
-                        VirtualizingPanel.IsVirtualizing="True"
-                        VirtualizingPanel.VirtualizationMode="Recycling">
-                        <ListView.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <ui.ctrl:VirtualizingWrapPanel />
-                            </ItemsPanelTemplate>
-                        </ListView.ItemsPanel>
-                    </ListView>
-                </DockPanel>
-                <DockPanel x:Name="ImageViewer_DockPanel" Visibility="Hidden">
-                    <Grid DockPanel.Dock="Top">
-                        <DockPanel>
-                            <DockPanel.Resources>
-                                <Style TargetType="{x:Type Button}">
-                                    <Setter Property="Width" Value="50" />
-                                    <Setter Property="Height" Value="50" />
-                                </Style>
-                            </DockPanel.Resources>
-                            <Button
-                                x:Name="BackToPages_Button"
-                                Margin="5"
-                                Click="BackToPages_Button_Click"
-                                Content="Back"
-                                DockPanel.Dock="Left" />
-                            <TextBlock
-                                Width="75"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                DockPanel.Dock="Right"><Run Text="{Binding CurrentPage, Mode=OneWay}" /><Run Text=" " /><Run Text=" / " /><Run Text=" " /><Run Text="{Binding OpenedBook.NumberOfPages, Mode=OneWay}" />
-                            </TextBlock>
-                            <Grid />
-                        </DockPanel>
-                        <StackPanel Orientation="Vertical">
-                            <StackPanel.Resources>
-                                <Style TargetType="{x:Type ui.ctrl:SelectableLabel}">
-                                    <Setter Property="VerticalAlignment" Value="Center" />
-                                    <Setter Property="HorizontalAlignment" Value="Center" />
-                                </Style>
-                            </StackPanel.Resources>
-                            <ui.ctrl:SelectableLabel Margin="0,14,0,0" Text="{Binding OpenedBook.Author.UnescapedName}" />
-                            <ui.ctrl:SelectableLabel Text="{Binding OpenedBook.UnescapedTitle}" />
-                            <ui.ctrl:SelectableLabel Text="{Binding OpenedPage.UnescapedTitle}" />
-                        </StackPanel>
-                    </Grid>
-                    <Grid>
-                        <Grid>
-                            <Image Source="{Binding OpenedPage.Image.AbsoluteMasterPath, Converter={StaticResource ImageConverter}}" Stretch="Uniform" />
-                        </Grid>
-                        <Grid
-                            x:Name="Grid_ImageViewer_Panel_BlackWhite_Button_MouseOverArea"
-                            Background="Transparent"
-                            MouseEnter="Grid_ImageViewer_Panel_BlackWhite_Button_MouseOverArea_MouseEnter"
-                            MouseLeave="Grid_ImageViewer_Panel_BlackWhite_Button_MouseOverArea_MouseLeave">
-                            <DockPanel>
-                                <Grid DockPanel.Dock="Left">
-                                    <Button
-                                        x:Name="GoBack_Button"
-                                        Width="75"
-                                        Height="75"
-                                        Click="GoBack_Button_Click"
-                                        Content="&lt;"
-                                        Style="{StaticResource BlackWhite_Button_Paging_Style}"
-                                        Template="{StaticResource BlackWhite_Button_Paging_ControlTemplate}" />
-                                </Grid>
-                                <Grid DockPanel.Dock="Right">
-                                    <Button
-                                        x:Name="GoNext_Button"
-                                        Width="75"
-                                        Height="75"
-                                        Click="GoNext_Button_Click"
-                                        Content="&gt;"
-                                        Style="{StaticResource BlackWhite_Button_Paging_Style}"
-                                        Template="{StaticResource BlackWhite_Button_Paging_ControlTemplate}" />
-                                </Grid>
-                                <Grid />
-                            </DockPanel>
-                        </Grid>
-                    </Grid>
-                </DockPanel>
-            </Grid>
-        </Grid>
+                    </local:LayoutItemTypedStyle>
+                    <local:LayoutItemTypedStyle DataType="{x:Type viewModel:PaneViewModelBase}">
+                        <Style TargetType="{x:Type avalonDock:LayoutItem}">
+                            <Setter Property="Title" Value="{Binding Model.Title}" />
+                            <Setter Property="ContentId" Value="{Binding Model.ContentId}" />
+
+                            <!--<Setter Property="Visibility" Value="{Binding Model.IsVisible, ConverterParameter={x:Static Visibility.Hidden}, Converter={StaticResource BoolToVisibilityConverter}, Mode=TwoWay}" />
+                            <Setter Property="IsActive" Value="{Binding Model.IsActive, Mode=TwoWay}" />-->
+
+                        </Style>
+                    </local:LayoutItemTypedStyle>
+                </local:LayoutItemContainerStyleSelector>
+            </avalonDock:DockingManager.LayoutItemContainerStyleSelector>
+            <avalonDock:DockingManager.LayoutItemTemplateSelector>
+                <local:LayoutItemTemplateSelector>
+                    <DataTemplate DataType="{x:Type viewModel:HomeDocumentViewModel}">
+                        <local:BookShowcase />
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type viewModel:SearchDocumentViewModel}">
+                        <local:BookShowcase />
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type viewModel:ContentDocumentViewModel}">
+                        <local:BookShowcase />
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type viewModel:AuthorPaneViewModel}">
+                        <local:AuthorPane />
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type viewModel:TagPaneViewModel}">
+                        <local:TagPane />
+                    </DataTemplate>
+                    <DataTemplate DataType="{x:Type viewModel:InformationPaneViewModel}">
+                        <local:InformationPane />
+                    </DataTemplate>
+                </local:LayoutItemTemplateSelector>
+            </avalonDock:DockingManager.LayoutItemTemplateSelector>
+            <avalonDock:DockingManager.LayoutUpdateStrategy>
+                <local:LayoutInitializer>
+                    <local:LayoutInsertTarget ContentId="author" TargetLayoutName="LeftSidePane" />
+                    <local:LayoutInsertTarget ContentId="tag" TargetLayoutName="LeftSidePane" />
+                    <local:LayoutInsertTarget ContentId="information" TargetLayoutName="RightSidePane" />
+                </local:LayoutInitializer>
+            </avalonDock:DockingManager.LayoutUpdateStrategy>
+            <avalonDock:LayoutRoot>
+                <avalonDock:LayoutPanel Orientation="Horizontal">
+                    <avalonDock:LayoutAnchorablePane Name="LeftSidePane" />
+                    <avalonDock:LayoutDocumentPane />
+                    <avalonDock:LayoutAnchorablePane Name="RightSidePane" />
+                </avalonDock:LayoutPanel>
+            </avalonDock:LayoutRoot>
+        </avalonDock:DockingManager>
     </DockPanel>
 </Window>

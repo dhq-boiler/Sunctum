@@ -1,12 +1,13 @@
 ﻿
 
+using Homura.ORM;
 using NLog;
 using Sunctum.Domain.Data.DaoFacade;
+using Sunctum.Domain.Logic.Encrypt;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.Util;
 using Sunctum.Domain.ViewModels;
-using Sunctum.Infrastructure.Data.Rdbms;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -46,7 +47,7 @@ namespace Sunctum.Domain.Logic.Import
             //Do nothing
         }
 
-        public override IEnumerable<System.Threading.Tasks.Task> GenerateTasks(ILibraryManager library, string copyTo, string entryName, DataOperationUnit dataOpUnit)
+        public override IEnumerable<System.Threading.Tasks.Task> GenerateTasks(ILibrary library, string copyTo, string entryName, DataOperationUnit dataOpUnit)
         {
             List<System.Threading.Tasks.Task> ret = new List<System.Threading.Tasks.Task>();
 
@@ -62,6 +63,12 @@ namespace Sunctum.Domain.Logic.Import
                 ret.Add(new System.Threading.Tasks.Task(() => CreateTaskToInsertPage(entryName, dataOpUnit)));
             }
             ret.Add(new System.Threading.Tasks.Task(() => Dispose()));
+
+            if (_isContent && Configuration.ApplicationConfiguration.LibraryIsEncrypted)
+            {
+                ret.Add(new System.Threading.Tasks.Task(() => Encryptor.Encrypt(InsertedImage, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{InsertedImage.ID}{System.IO.Path.GetExtension(InsertedImage.AbsoluteMasterPath)}", Configuration.ApplicationConfiguration.Password)));
+                ret.Add(new System.Threading.Tasks.Task(() => Encryptor.DeleteOriginal(GeneratedPage)));
+            }
 
             return ret;
         }

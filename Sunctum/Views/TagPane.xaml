@@ -1,0 +1,65 @@
+﻿<UserControl
+    x:Class="Sunctum.Views.TagPane"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behavior="clr-namespace:Sunctum.Views.Behaviors"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:local="clr-namespace:Sunctum.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:trigger="clr-namespace:Sunctum.Views.Triggers"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <DockPanel>
+        <local:ProgressBar DockPanel.Dock="Top"
+                           Height="2"
+                           ProgressionRate="{Binding TagManager.ProgressManager.Progress}" />
+        <ListBox
+            x:Name="Tag_ListBox"
+            behavior:MultiSelectorBehaviours.SynchronizedSelectedItems="{Binding TagListBoxSelectedItems}"
+            ItemsSource="{Binding TagManager.OnStage}"
+            MouseMove="Tag_ListBox_MouseMove"
+            PreviewMouseLeftButtonDown="Tag_ListBox_MouseLeftButtonDown"
+            ScrollViewer.HorizontalScrollBarVisibility="Auto"
+            SelectionMode="Extended">
+            <i:Interaction.Triggers>
+                <trigger:DeleteKeyDownEventTrigger>
+                    <i:InvokeCommandAction Command="{Binding DeleteTagEntryCommand}" />
+                </trigger:DeleteKeyDownEventTrigger>
+            </i:Interaction.Triggers>
+            <ListBox.ContextMenu>
+                <ContextMenu ItemsSource="{Binding TagContextMenuItems}" />
+            </ListBox.ContextMenu>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock>
+                        <Run Text="{Binding Tag.UnescapedName}" />
+                        <Run Text="(" />
+                        <Run Text="{Binding Count}" />
+                        <Run Text=")" />
+                    </TextBlock>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSearchingKey}" Value="True">
+                            <Setter Property="Background" Value="#88FFA500" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsSearchingKey}" Value="False">
+                            <Setter Property="Background" Value="Transparent" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsVisible}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsVisible}" Value="False">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </ListBox.ItemContainerStyle>
+        </ListBox>
+    </DockPanel>
+</UserControl>

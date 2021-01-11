@@ -1,5 +1,6 @@
 ﻿
 
+using Homura.Core;
 using Prism.Mvvm;
 using Sunctum.Domail.Util;
 using Sunctum.Domain.Models.Managers;
@@ -59,7 +60,7 @@ namespace Sunctum.Managers
 
         public double GetProgress()
         {
-            if (_TotalCount == 0.0) throw new InvalidOperationException("TotalCount is not set");
+            if (_TotalCount == 0.0) return 0.0;
             return (double)_Current / _TotalCount;
         }
 
@@ -103,7 +104,7 @@ namespace Sunctum.Managers
 
         public void Complete()
         {
-            Current = TotalCount;
+            Current = TotalCount = 1;
         }
 
         public void Abort()

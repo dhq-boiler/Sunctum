@@ -1,0 +1,22 @@
+﻿<UserControl
+    x:Class="Sunctum.Views.ChangeStar"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Sunctum.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prism="http://prismlibrary.com/"
+    Width="200"
+    prism:ViewModelLocator.AutoWireViewModel="True"
+    mc:Ignorable="d">
+    <DockPanel>
+        <StackPanel Margin="10" Orientation="Vertical">
+            <Button Command="{Binding Star5Command}" Content="★★★★★" />
+            <Button Command="{Binding Star4Command}" Content="★★★★" />
+            <Button Command="{Binding Star3Command}" Content="★★★" />
+            <Button Command="{Binding Star2Command}" Content="★★" />
+            <Button Command="{Binding Star1Command}" Content="★" />
+            <Button Command="{Binding NotEvaluatedCommand}" Content="Not Evaluated" />
+        </StackPanel>
+    </DockPanel>
+</UserControl>

@@ -1,0 +1,45 @@
+﻿<Window
+    x:Class="Sunctum.UI.Dialogs.EncryptionStartingDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Sunctum.UI.Dialogs"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="EncryptionStartingDialog"
+    Width="800"
+    Height="450"
+    mc:Ignorable="d">
+    <DockPanel>
+        <StackPanel DockPanel.Dock="Bottom">
+            <StackPanel Orientation="Horizontal">
+                <Label Width="120">Password:</Label>
+                <PasswordBox
+                    x:Name="password"
+                    Width="300"
+                    MaxLength="16"
+                    PasswordChanged="PasswordChanged"
+                    PasswordChar="●" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <Label Width="120">Password confirm:</Label>
+                <PasswordBox
+                    x:Name="passwordConfirm"
+                    Width="300"
+                    MaxLength="16"
+                    PasswordChanged="PasswordChanged"
+                    PasswordChar="●" />
+            </StackPanel>
+            <Button
+                x:Name="StartEncryption"
+                Margin="10"
+                Click="Button_Click">
+                <Button.Content>
+                    Start encryption
+                </Button.Content>
+            </Button>
+        </StackPanel>
+        <StackPanel>
+            <Label>画像ファイルを暗号化できます。暗号化するにはパスワードを入力してStart encryptionボタンを押下して下さい。</Label>
+        </StackPanel>
+    </DockPanel>
+</Window>

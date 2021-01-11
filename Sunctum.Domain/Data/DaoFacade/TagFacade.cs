@@ -37,7 +37,9 @@ namespace Sunctum.Domain.Data.DaoFacade
         public static TagViewModel FindByTagName(string tagName)
         {
             TagDao dao = new TagDao();
-            return dao.FindBy(new Dictionary<string, object>() { { "Name", tagName } }).SingleOrDefault().ToViewModel();
+            var entity = dao.FindBy(new Dictionary<string, object>() { { "Name", tagName } }).SingleOrDefault();
+            if (entity == null) return null;
+            return entity.ToViewModel();
         }
 
         internal static void DeleteByTagName(string tagName)

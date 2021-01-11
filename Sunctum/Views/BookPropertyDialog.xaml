@@ -6,10 +6,12 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Sunctum.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:prism="http://prismlibrary.com/"
     xmlns:properties="clr-namespace:Sunctum.Properties"
     xmlns:ui.ctrl="clr-namespace:Sunctum.UI.Controls;assembly=Sunctum.UI"
     Title="{Binding DialogTitle}"
     Width="600"
+    prism:ViewModelLocator.AutoWireViewModel="True"
     mc:Ignorable="d">
     <Window.Resources>
         <properties:Resources x:Key="resources" />
@@ -34,12 +36,14 @@
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                 <Button
                     x:Name="Button_OK"
-                    Click="Button_OK_Click"
+                    Command="{Binding OkCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
                     Content="{Binding Common_Ok, Source={StaticResource resources}}"
                     Style="{StaticResource OKButtonStyle}" />
                 <Button
                     x:Name="Button_Cancel"
-                    Click="Button_Cancel_Click"
+                    Command="{Binding CancelCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}}"
                     Content="{Binding Common_Cancel, Source={StaticResource resources}}"
                     Style="{StaticResource CancelCloseButtonStyle}" />
             </StackPanel>
@@ -87,7 +91,7 @@
                     <Button
                         x:Name="OpenAuthorManagementDialog"
                         Margin="5,0,0,0"
-                        Click="OpenAuthorManagementDialog_Click"
+                        Command="{Binding OpenAuthorManagementDialogCommand}"
                         Content="{Binding BookPropertyDialog_AuthorManagement, Source={StaticResource resources}}"
                         DockPanel.Dock="Right" />
                     <ComboBox
@@ -121,7 +125,7 @@
                 <Label
                     Grid.Row="4"
                     Grid.Column="1"
-                    Content="{Binding Book.NumberOfPages}" />
+                    Content="{Binding Book.NumberOfPages.Value}" />
                 <Label
                     Grid.Row="5"
                     Grid.Column="0"
@@ -133,12 +137,34 @@
                 <Label
                     Grid.Row="6"
                     Grid.Column="0"
-                    Content="{Binding BookProeprtyDialog_SavedDir, Source={StaticResource resources}}" />
+                    Content="{Binding BookProeprtyDialog_SavedDir, Source={StaticResource resources}}">
+                    <Label.Style>
+                        <Style TargetType="Label">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Setter Property="HorizontalAlignment" Value="Right" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Configuration.ApplicationConfiguration.LibraryIsEncrypted}" Value="True">
+                                    <Setter Property="Visibility" Value="Hidden" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Label.Style>
+                </Label>
                 <TextBlock
                     Grid.Row="6"
                     Grid.Column="1"
                     VerticalAlignment="Center">
-                    <Hyperlink Click="Hyperlink_Click" ToolTip="{Binding BookPropertyDialog_SavedDir_Tooltip, Source={StaticResource resources}}">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Configuration.ApplicationConfiguration.LibraryIsEncrypted}" Value="True">
+                                    <Setter Property="Visibility" Value="Hidden" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                    <Hyperlink Command="{Binding OpenSaveDirCommand}" ToolTip="{Binding BookPropertyDialog_SavedDir_Tooltip, Source={StaticResource resources}}">
                         <InlineUIContainer>
                             <TextBlock Text="{Binding SaveDir}" />
                         </InlineUIContainer>
@@ -180,7 +206,7 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <DockPanel>
-                            <Image Source="{Binding Image.AbsoluteMasterPath, Converter={StaticResource ImageConverter}}" />
+                            <Image Source="{Binding Image.OnStagePath, Converter={StaticResource ImageConverter}}" />
                             <ContentPresenter Content="{Binding Converter={StaticResource PageThumbnailLoader}}" Visibility="Collapsed" />
                         </DockPanel>
                     </DataTemplate>

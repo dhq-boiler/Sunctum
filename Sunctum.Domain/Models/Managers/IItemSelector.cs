@@ -8,6 +8,6 @@ namespace Sunctum.Domain.Models.Managers
     {
         List<T> SelectedItems { get; set; }
 
-        void ShowBySelectedItems(ILibraryManager library, IEnumerable<T> searchItems);
+        void ShowBySelectedItems(IEnumerable<T> searchItems);
     }
 }

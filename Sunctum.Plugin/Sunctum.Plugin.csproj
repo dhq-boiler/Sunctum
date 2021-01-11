@@ -47,7 +47,8 @@
     <Compile Include="Core\ExportAttribute.cs" />
     <Compile Include="Core\ExportScope.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="IPlugin.cs" />
+    <Compile Include="IAddMenuPlugin.cs" />
+    <Compile Include="IDropPlugin.cs" />
     <Compile Include="PluginMenuItem.cs" />
     <Compile Include="MenuType.cs" />
     <Compile Include="PluginMenuParameter.cs" />
@@ -62,6 +63,9 @@
       <Project>{2CF31D9A-E84A-415A-8063-47BD28BA52AC}</Project>
       <Name>Sunctum.Infrastructure</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

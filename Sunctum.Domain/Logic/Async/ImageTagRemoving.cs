@@ -52,6 +52,16 @@ namespace Sunctum.Domain.Logic.Async
                                 Remove.ImageTagRemoving.Remove(TagManager, p.Image, tagName);
                             }));
                         }
+
+                        sequence.Add(new Task(() =>
+                        {
+                            var tag = TagFacade.FindByTagName(tagName);
+                            var deleteEntity = new BookTagViewModel(book.ID, tag.ID);
+                            if (BookTagFacade.Exists(deleteEntity))
+                            {
+                                BookTagFacade.Delete(deleteEntity);
+                            }
+                        }));
                         continue;
                     }
 
@@ -66,6 +76,35 @@ namespace Sunctum.Domain.Logic.Async
                         {
                             Remove.ImageTagRemoving.Remove(TagManager, page.Image, tagName);
                         }));
+
+                        sequence.Add(new Task(() =>
+                        {
+                            var tag = TagFacade.FindByTagName(tagName);
+                            var deleteEntity = new BookTagViewModel(book.ID, tag.ID);
+
+                            var pages = PageFacade.FindByBookId(page.BookID);
+                            foreach (var p in pages)
+                            {
+                                if (p.ID.Equals(page.ID))
+                                {
+                                    continue;
+                                }
+
+                                var imageTags = ImageTagFacade.FindByImageId(p.ImageID);
+                                foreach (var imageTag in imageTags)
+                                {
+                                    if (imageTag.TagID.Equals(deleteEntity.TagID))
+                                    {
+                                        return;
+                                    }
+                                }
+                            }
+
+                            if (BookTagFacade.Exists(deleteEntity))
+                            {
+                                BookTagFacade.Delete(deleteEntity);
+                            }
+                        }));
                         continue;
                     }
 
@@ -75,6 +114,36 @@ namespace Sunctum.Domain.Logic.Async
                         sequence.Add(new Task(() =>
                         {
                             Remove.ImageTagRemoving.Remove(TagManager, page.Image, tagName);
+                        }));
+
+                        sequence.Add(new Task(() =>
+                        {
+                            var tag = TagFacade.FindByTagName(tagName);
+                            var deleteEntity = new BookTagViewModel(book.ID, tag.ID);
+
+                            var parentPage = PageFacade.FindByImageId(image.ID);
+                            var pages = PageFacade.FindByBookId(parentPage.BookID);
+                            foreach (var p in pages)
+                            {
+                                if (p.ID.Equals(parentPage.ID))
+                                {
+                                    continue;
+                                }
+
+                                var imageTags = ImageTagFacade.FindByImageId(p.ImageID);
+                                foreach (var imageTag in imageTags)
+                                {
+                                    if (imageTag.TagID.Equals(deleteEntity.TagID))
+                                    {
+                                        return;
+                                    }
+                                }
+                            }
+
+                            if (BookTagFacade.Exists(deleteEntity))
+                            {
+                                BookTagFacade.Delete(deleteEntity);
+                            }
                         }));
                         continue;
                     }

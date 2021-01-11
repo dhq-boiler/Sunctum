@@ -1,5 +1,5 @@
 ﻿
-using Sunctum.Infrastructure.Data.Rdbms;
+using Homura.ORM;
 using System;
 using System.Data;
 using System.Diagnostics;
@@ -70,6 +70,15 @@ namespace Sunctum.Domain.Util
             bool isNull = rdr.IsDBNull(index);
 
             return isNull ? int.MinValue : rdr.GetInt32(index);
+        }
+
+        public static int? SafeGetNullableInt(this IDataRecord rdr, string columnName)
+        {
+            int index = CheckColumnExists(rdr, columnName);
+
+            bool isNull = rdr.IsDBNull(index);
+
+            return isNull ? null : (int?)rdr.GetInt32(index);
         }
 
         public static long? SafeNullableGetLong(this IDataRecord rdr, string columnName)

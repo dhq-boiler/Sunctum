@@ -16,7 +16,7 @@ namespace Sunctum.Views
     {
         private ExportDialogViewModel _exportDialogVM;
 
-        public ExportDialog(ILibraryManager libMng, BookViewModel[] books)
+        public ExportDialog(ILibrary libMng, BookViewModel[] books)
         {
             InitializeComponent();
 

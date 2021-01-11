@@ -262,6 +262,18 @@ namespace simpleqb.Test.Iso.Dml
             }
 
             [Test]
+            public void Select_Column1_From_Table_Where_Column1_In_Array()
+            {
+                var array = new object[] { 1, "2" };
+                using (var query = new Select().Column("Column1").From.Table("Table").Where.Column("Column1").In.Array(array))
+                {
+                    Assert.That(query.ToSql(), Is.EqualTo("SELECT Column1 FROM Table WHERE Column1 IN (@val_0, @val_1)"));
+                    Assert.That(query, Has.Property("Parameters").One.EqualTo(new KeyValuePair<string, object>("@val_0", 1)));
+                    Assert.That(query, Has.Property("Parameters").One.EqualTo(new KeyValuePair<string, object>("@val_1", "2")));
+                }
+            }
+
+            [Test]
             public void Select_Column1_From_Table_Where_Column1_In_Value1_Value2_Value3_OrderBy_Column1_Desc()
             {
                 using (var query = new Select().Column("Column1").From.Table("Table").Where.Column("Column1").In.Value("Value1").Value("Value2").Value("Value3")

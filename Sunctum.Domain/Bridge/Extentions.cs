@@ -99,6 +99,15 @@ namespace Sunctum.Domain.Bridge
             };
         }
 
+        public static BookTag ToEntity(this BookTagViewModel obj)
+        {
+            return new BookTag()
+            {
+                BookID = obj.BookID,
+                TagID = obj.TagID,
+            };
+        }
+
         public static BookViewModel ToViewModel(this Book obj)
         {
             return new BookViewModel()
@@ -193,6 +202,15 @@ namespace Sunctum.Domain.Bridge
             };
         }
 
+        public static BookTagViewModel ToViewModel(this BookTag obj)
+        {
+            return new BookTagViewModel()
+            {
+                BookID = obj.BookID,
+                TagID = obj.TagID
+            };
+        }
+
         public static IEnumerable<Book> ToEntity(this IEnumerable<BookViewModel> obj)
         {
             return obj.Select(i => i.ToEntity());
@@ -238,6 +256,11 @@ namespace Sunctum.Domain.Bridge
             return obj.Select(i => i.ToEntity());
         }
 
+        public static IEnumerable<BookTag> ToEntity(this IEnumerable<BookTagViewModel> obj)
+        {
+            return obj.Select(i => i.ToEntity());
+        }
+
         public static IEnumerable<BookViewModel> ToViewModel(this IEnumerable<Book> obj)
         {
             return obj.Select(i => i.ToViewModel());
@@ -279,6 +302,11 @@ namespace Sunctum.Domain.Bridge
         }
 
         public static IEnumerable<ThumbnailViewModel> ToViewModel(this IEnumerable<Thumbnail> obj)
+        {
+            return obj.Select(i => i.ToViewModel());
+        }
+
+        public static IEnumerable<BookTagViewModel> ToViewModel(this IEnumerable<BookTag> obj)
         {
             return obj.Select(i => i.ToViewModel());
         }

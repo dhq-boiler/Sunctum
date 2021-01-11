@@ -1,10 +1,10 @@
 ﻿
 
+using Homura.ORM;
 using NLog;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.Util;
-using Sunctum.Infrastructure.Data.Rdbms;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -40,7 +40,7 @@ namespace Sunctum.Domain.Logic.Import
 
         public override void Estimate()
         {
-            var targets = _Paths.Where(a => !File.GetAttributes(a).HasFlag(FileAttributes.Hidden) && Specifications.SupportedImageType.Any(b => a.EndsWith(b)));
+            var targets = _Paths.Where(a => !File.GetAttributes(a).HasFlag(FileAttributes.Hidden) && Specifications.SupportedImageType.Any(b => a.ToLower().EndsWith(b)));
 
             _children = new List<Importer>();
             foreach (var target in targets)
@@ -50,7 +50,7 @@ namespace Sunctum.Domain.Logic.Import
             Count = _children.Count();
         }
 
-        public override IEnumerable<System.Threading.Tasks.Task> GenerateTasks(ILibraryManager library, string copyTo, string entryName, DataOperationUnit dataOpUnit)
+        public override IEnumerable<System.Threading.Tasks.Task> GenerateTasks(ILibrary library, string copyTo, string entryName, DataOperationUnit dataOpUnit)
         {
             List<System.Threading.Tasks.Task> ret = new List<System.Threading.Tasks.Task>();
 
@@ -78,7 +78,7 @@ namespace Sunctum.Domain.Logic.Import
             return ret;
         }
 
-        private void ProcessChild(ILibraryManager library, DataOperationUnit dataOpUnit, List<System.Threading.Tasks.Task> ret, string directoryPath, Importer child)
+        private void ProcessChild(ILibrary library, DataOperationUnit dataOpUnit, List<System.Threading.Tasks.Task> ret, string directoryPath, Importer child)
         {
             if (child is ImportPage)
             {
@@ -89,6 +89,11 @@ namespace Sunctum.Domain.Logic.Import
             }
             var tasks = child.GenerateTasks(library, directoryPath, System.IO.Path.GetFileNameWithoutExtension(child.Path), dataOpUnit);
             ret.AddRange(tasks);
+            if (child is ImportPage)
+            {
+                var ip = child as ImportPage;
+                ret.Add(new System.Threading.Tasks.Task(() => library.AccessDispatcherObject(() => _book.AddPage(ip.GeneratedPage))));
+            }
             ++Processed;
         }
 

@@ -1,5 +1,6 @@
 ﻿
 
+using Homura.ORM;
 using Ninject;
 using NLog;
 using Sunctum.Domain.Bridge;
@@ -10,7 +11,6 @@ using Sunctum.Domain.Logic.Generate;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
-using Sunctum.Infrastructure.Data.Rdbms;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -32,7 +32,7 @@ namespace Sunctum.Domain.Logic.Async
         private IEnumerable<ImageViewModel> _images;
 
         [Inject]
-        public ILibraryManager LibraryManager { get; set; }
+        public ILibrary LibraryManager { get; set; }
 
         public string ImportLibraryFilename { get; set; }
 
@@ -61,7 +61,7 @@ namespace Sunctum.Domain.Logic.Async
             _dataOpUnit.AttachDatabase(importLibraryFilename, s_ANOTHER_DATABASE_ALIAS_NAME);
         }
 
-        private IEnumerable<Task> GenerateTasksToImportBooks(ILibraryManager libManager)
+        private IEnumerable<Task> GenerateTasksToImportBooks(ILibrary libManager)
         {
             List<Task> ret = new List<Task>();
 
@@ -96,7 +96,7 @@ namespace Sunctum.Domain.Logic.Async
             return ret;
         }
 
-        private IEnumerable<Task> GenerateTasksToImportBook(ILibraryManager libManager, BookViewModel addBook)
+        private IEnumerable<Task> GenerateTasksToImportBook(ILibrary libManager, BookViewModel addBook)
         {
             List<Task> ret = new List<Task>();
 
@@ -112,7 +112,7 @@ namespace Sunctum.Domain.Logic.Async
             return ret;
         }
 
-        private IEnumerable<Task> GenerateTasksToImportPage(ILibraryManager libManager, BookViewModel addBook, PageViewModel addPage)
+        private IEnumerable<Task> GenerateTasksToImportPage(ILibrary libManager, BookViewModel addBook, PageViewModel addPage)
         {
             List<Task> ret = new List<Task>();
 
@@ -141,7 +141,7 @@ namespace Sunctum.Domain.Logic.Async
             _pages = pageDao.FindBy(new Dictionary<string, object>() { { "BookID", parent.ID } }, _dataOpUnit.CurrentConnection, s_ANOTHER_DATABASE_ALIAS_NAME).OrderBy(p => p.PageIndex).ToViewModel();
         }
 
-        private void CopyImageTag(ILibraryManager libManager, BookViewModel book)
+        private void CopyImageTag(ILibrary libManager, BookViewModel book)
         {
             IDConversionDao idcDao = new IDConversionDao();
             ImageTagDao itDao = new ImageTagDao();
@@ -195,7 +195,7 @@ namespace Sunctum.Domain.Logic.Async
             return newRelativeMasterPath;
         }
 
-        private void ImportImageWithContents(ILibraryManager libManager, PageViewModel parent)
+        private void ImportImageWithContents(ILibrary libManager, PageViewModel parent)
         {
             ImageDao imageDao = new ImageDao();
 
@@ -225,7 +225,7 @@ namespace Sunctum.Domain.Logic.Async
             parent.Image = image;
         }
 
-        private void CopyPages(ILibraryManager libManager, BookViewModel parent)
+        private void CopyPages(ILibrary libManager, BookViewModel parent)
         {
             IDConversionDao idcDao = new IDConversionDao();
             PageDao pageDao = new PageDao();
@@ -251,14 +251,14 @@ namespace Sunctum.Domain.Logic.Async
             }
         }
 
-        private void ImportPageWithContents(ILibraryManager libManager, BookViewModel parent, PageViewModel page)
+        private void ImportPageWithContents(ILibrary libManager, BookViewModel parent, PageViewModel page)
         {
             ImportImageWithContents(libManager, page);
             ImportPage(libManager, parent, page);
             PrepareThumbnailIfFirstPage(libManager, parent, page);
         }
 
-        private void PrepareThumbnailIfFirstPage(ILibraryManager libManager, BookViewModel parent, PageViewModel page)
+        private void PrepareThumbnailIfFirstPage(ILibrary libManager, BookViewModel parent, PageViewModel page)
         {
             if (page.PageIndex == Specifications.PAGEINDEX_FIRSTPAGE)
             {
@@ -268,7 +268,7 @@ namespace Sunctum.Domain.Logic.Async
             }
         }
 
-        private void ImportPage(ILibraryManager libManager, BookViewModel parent, PageViewModel page)
+        private void ImportPage(ILibrary libManager, BookViewModel parent, PageViewModel page)
         {
             PageDao pageDao = new PageDao();
             pageDao.Insert(page.ToEntity(), _dataOpUnit.CurrentConnection);
@@ -276,7 +276,7 @@ namespace Sunctum.Domain.Logic.Async
             libManager.AccessDispatcherObject(() => parent.AddPage(page));
         }
 
-        private void ImportBooks(ILibraryManager libManager)
+        private void ImportBooks(ILibrary libManager)
         {
             IDConversionDao idcDao = new IDConversionDao();
             BookDao bookDao = new BookDao();
@@ -307,7 +307,7 @@ namespace Sunctum.Domain.Logic.Async
             }
         }
 
-        private void ImportBookWithContents(ILibraryManager libManager, BookViewModel add)
+        private void ImportBookWithContents(ILibrary libManager, BookViewModel add)
         {
             ImportBook(libManager, add);
             CopyPages(libManager, add);
@@ -315,7 +315,7 @@ namespace Sunctum.Domain.Logic.Async
             libManager.AccessDispatcherObject(() => add.ContentsRegistered = true);
         }
 
-        private void ImportBook(ILibraryManager libManager, BookViewModel add)
+        private void ImportBook(ILibrary libManager, BookViewModel add)
         {
             BookDao bookDao = new BookDao();
 
@@ -343,7 +343,7 @@ namespace Sunctum.Domain.Logic.Async
             authorManager.ObserveAuthorCount();
         }
 
-        private void ImportTags(ILibraryManager libManager)
+        private void ImportTags(ILibrary libManager)
         {
             IDConversionDao idcDao = new IDConversionDao();
             TagDao tagDao = new TagDao();
@@ -392,14 +392,14 @@ namespace Sunctum.Domain.Logic.Async
             }
         }
 
-        private void ImportTag(ILibraryManager libManager, TagViewModel add)
+        private void ImportTag(ILibrary libManager, TagViewModel add)
         {
             TagDao tagDao = new TagDao();
             tagDao.Insert(add.ToEntity(), _dataOpUnit.CurrentConnection);
             libManager.TagMng.Tags.Add(add);
         }
 
-        private void ImportAuthors(ILibraryManager libManager)
+        private void ImportAuthors(ILibrary libManager)
         {
             IDConversionDao idcDao = new IDConversionDao();
             AuthorDao authorDao = new AuthorDao();
@@ -448,7 +448,7 @@ namespace Sunctum.Domain.Logic.Async
             }
         }
 
-        private void ImportAuthor(ILibraryManager libManager, AuthorViewModel add)
+        private void ImportAuthor(ILibrary libManager, AuthorViewModel add)
         {
             AuthorDao authorDao = new AuthorDao();
             authorDao.Insert(add.ToEntity(), _dataOpUnit.CurrentConnection);

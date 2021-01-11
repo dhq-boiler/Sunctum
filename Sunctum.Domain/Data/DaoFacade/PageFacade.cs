@@ -1,10 +1,10 @@
 ﻿
 
+using Homura.ORM;
 using NLog;
 using Sunctum.Domain.Bridge;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.ViewModels;
-using Sunctum.Infrastructure.Data.Rdbms;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -55,6 +55,12 @@ namespace Sunctum.Domain.Data.DaoFacade
         {
             PageDao dao = new PageDao();
             return dao.FindByBookIdTop1(bookId, dataOpUnit?.CurrentConnection).FirstOrDefault().ToViewModel();
+        }
+
+        public static PageViewModel FindByImageId(Guid imageId)
+        {
+            var dao = new PageDao();
+            return dao.FindBy(new Dictionary<string, object>() { { "ImageID", imageId } }).FirstOrDefault().ToViewModel(); ;
         }
 
         public static IEnumerable<PageViewModel> FindAll(DataOperationUnit dataOpUnit = null)

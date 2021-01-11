@@ -1,20 +1,26 @@
 ﻿
 
-using Prism.Commands;
+using Homura.Core;
+using Ninject;
 using Prism.Mvvm;
+using Reactive.Bindings;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Load;
+using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using Sunctum.Infrastructure.Core;
 using Sunctum.Properties;
 using Sunctum.UI.Controls;
+using Sunctum.UI.Dialogs;
+using Sunctum.UI.ViewModel;
 using Sunctum.Views;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Windows.Input;
+using System.Windows;
 using static Sunctum.UI.Core.Extensions;
 
 namespace Sunctum.ViewModels
@@ -22,36 +28,108 @@ namespace Sunctum.ViewModels
     public class BookPropertyDialogViewModel : BindableBase
     {
         private BookViewModel _book;
-        private ILibraryManager _libVM;
         private List<AuthorViewModel> _AllAuthors;
         private int _SelectedAuthorIndex;
 
-        public ICommand SelectNextBookCommand { get; set; }
+        [Inject]
+        public ILibrary LibraryManager { get; set; }
 
-        public ICommand SelectPreviousBookCommand { get; set; }
+        public ReactiveCommand SelectNextBookCommand { get; set; } = new ReactiveCommand();
+
+        public ReactiveCommand SelectPreviousBookCommand { get; set; } = new ReactiveCommand();
+
+        public ReactiveCommand<Window> OkCommand { get; set; } = new ReactiveCommand<Window>();
+
+        public ReactiveCommand<Window> CancelCommand { get; set; } = new ReactiveCommand<Window>();
+
+        public ReactiveCommand OpenSaveDirCommand { get; set; } = new ReactiveCommand();
+
+        public ReactiveCommand OpenAuthorManagementDialogCommand { get; set; } = new ReactiveCommand();
 
         private VirtualizingStackPanel VSP_Contents { get { return Parent.Contents_ListView.GetVisualChild<VirtualizingStackPanel>(); } }
 
-        public BookPropertyDialogViewModel(BookPropertyDialog dialog, BookViewModel book, ILibraryManager libVM)
+        public BookPropertyDialog Parent { get; set; }
+
+        public Configuration Configuration { get { return Configuration.ApplicationConfiguration; } }
+
+        public BookPropertyDialogViewModel()
         {
-            Parent = dialog;
-            Book = (BookViewModel)book.Clone();
-            _libVM = libVM;
             LoadAllAuthors();
-            RefleshBook();
             RegisterCommands();
         }
 
         private void RegisterCommands()
         {
-            SelectNextBookCommand = new DelegateCommand(() =>
-            {
-                SelectNextBook();
-            });
-            SelectPreviousBookCommand = new DelegateCommand(() =>
-            {
-                SelectPreviousBook();
-            });
+            OkCommand
+                .Subscribe(dialog =>
+                {
+                    UpdateBook();
+                    dialog.DialogResult = true;
+                });
+            CancelCommand
+                .Subscribe(dialog =>
+                {
+                    dialog.DialogResult = false;
+                });
+            SelectNextBookCommand
+                .Subscribe(() => SelectNextBook());
+            SelectPreviousBookCommand
+                .Subscribe(() => SelectPreviousBook());
+            OpenSaveDirCommand
+                .Subscribe(() => OpenDir());
+            OpenAuthorManagementDialogCommand
+                .Subscribe(() =>
+                {
+                    var dialog = new EntityManagementDialog<AuthorViewModel>();
+                    var dialogViewModel = new EntityManagementDialogViewModel<AuthorViewModel>(dialog, LibraryManager, "Authorの管理",
+                        new Func<string, AuthorViewModel>((name) =>
+                        {
+                            var author = new AuthorViewModel();
+                            author.ID = Guid.NewGuid();
+                            author.UnescapedName = name;
+                            AuthorFacade.Create(author);
+                            return author;
+                        }),
+                        new Func<IEnumerable<AuthorViewModel>>(() =>
+                        {
+                            return AuthorFacade.OrderByNaturalString();
+                        }),
+                        new Func<Guid, AuthorViewModel>((id) =>
+                        {
+                            return AuthorFacade.FindBy(id);
+                        }),
+                        new Action<AuthorViewModel>((target) =>
+                        {
+                            AuthorFacade.Update(target);
+                            var willUpdate = LibraryManager.BookSource.Where(b => b.AuthorID == target.ID);
+                            foreach (var x in willUpdate)
+                            {
+                                x.Author = target.Clone() as AuthorViewModel;
+                            }
+                        }),
+                        new Action<Guid>((id) =>
+                        {
+                            AuthorFacade.Delete(id);
+                            var willUpdate = LibraryManager.BookSource.Where(b => b.AuthorID == id);
+                            foreach (var x in willUpdate)
+                            {
+                                x.Author = null;
+                            }
+                        }),
+                        new Action<AuthorViewModel, AuthorViewModel>((willDiscard, into) =>
+                        {
+                            AuthorFacade.Delete(willDiscard.ID);
+                            var willUpdate = LibraryManager.BookSource.Where(b => b.AuthorID == willDiscard.ID);
+                            foreach (var x in willUpdate)
+                            {
+                                x.Author = into.Clone() as AuthorViewModel;
+                                BookFacade.Update(x);
+                            }
+                        }));
+                    dialog.EntityMngVM = dialogViewModel;
+                    dialogViewModel.Initialize();
+                    dialog.Show();
+                });
         }
 
         private void RefleshBook()
@@ -63,7 +141,7 @@ namespace Sunctum.ViewModels
         private void PrepareBookContents()
         {
             BookLoading.Load(Book);
-            ContentsLoadTask.FillContentsWithImage(_libVM, Book);
+            ContentsLoadTask.FillContentsWithImage(LibraryManager, Book);
         }
 
         public void LoadAllAuthors()
@@ -73,7 +151,14 @@ namespace Sunctum.ViewModels
 
         public string DialogTitle
         {
-            get { return string.Format(Resources.BookPropertyDialogTitle, Book.Author?.UnescapedName, Book.UnescapedTitle); }
+            get
+            {
+                if (Book == null)
+                {
+                    return "ロード中...";
+                }
+                return string.Format(Resources.BookPropertyDialogTitle, Book?.Author?.UnescapedName, Book?.UnescapedTitle);
+            }
         }
 
         public BookViewModel Book
@@ -118,11 +203,13 @@ namespace Sunctum.ViewModels
         {
             get
             {
+                if (Book == null)
+                {
+                    return "ロード中...";
+                }
                 return Path.GetDirectoryName(Book.FirstPage.Image.AbsoluteMasterPath);
             }
         }
-
-        public BookPropertyDialog Parent { get; private set; }
 
         internal void OpenDir()
         {
@@ -140,45 +227,50 @@ namespace Sunctum.ViewModels
                 Book.Author = null;
             }
 
-            if (_libVM.IsDirty(Book))
+            if (LibraryManager.IsDirty(Book))
             {
-                _libVM.UpdateInMemory(Book);
+                LibraryManager.UpdateInMemory(Book);
+            }
+        }
+
+        public void SelectBook(BookViewModel book, bool initialized = false)
+        {
+            Book = book;
+            RefleshBook();
+            if (initialized)
+            {
+                SelectAllIfFocusedTitleTextBox();
+                ShowFirstPage();
             }
         }
 
         public void SelectPreviousBook()
         {
             UpdateBook();
-            int index = _libVM.OnStage.IndexOf(Book);
+            int index = LibraryManager.OnStage.IndexOf(Book);
             if (index - 1 < 0)
             {
-                Book = (BookViewModel)_libVM.OnStage.Last().Clone();
+                SelectBook((BookViewModel)LibraryManager.OnStage.Last().Clone(), true);
             }
             else
             {
-                Book = (BookViewModel)_libVM.OnStage[index - 1].Clone();
+                SelectBook((BookViewModel)LibraryManager.OnStage[index - 1].Clone(), true);
             }
-            RefleshBook();
-            SelectAllIfFocusedTitleTextBox();
-            ShowFirstPage();
         }
 
         public void SelectNextBook()
         {
             UpdateBook();
-            int index = _libVM.OnStage.IndexOf(Book);
+            int index = LibraryManager.OnStage.IndexOf(Book);
             int newIndex = index + 1;
-            if (newIndex > _libVM.OnStage.Count() - 1)
+            if (newIndex > LibraryManager.OnStage.Count() - 1)
             {
-                Book = (BookViewModel)_libVM.OnStage.First().Clone();
+                SelectBook((BookViewModel)LibraryManager.OnStage.First().Clone(), true);
             }
             else
             {
-                Book = (BookViewModel)_libVM.OnStage[newIndex].Clone();
+                SelectBook((BookViewModel)LibraryManager.OnStage[newIndex].Clone(), true);
             }
-            RefleshBook();
-            SelectAllIfFocusedTitleTextBox();
-            ShowFirstPage();
         }
 
         private void ShowFirstPage()

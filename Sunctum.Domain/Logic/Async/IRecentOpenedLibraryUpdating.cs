@@ -6,7 +6,7 @@ namespace Sunctum.Domain.Logic.Async
 {
     public interface IRecentOpenedLibraryUpdating : IAsyncTaskMaker
     {
-        ILibraryManager LibraryManager { get; set; }
+        ILibrary LibraryManager { get; set; }
 
         IDataAccessManager DataAccessManager { get; set; }
     }

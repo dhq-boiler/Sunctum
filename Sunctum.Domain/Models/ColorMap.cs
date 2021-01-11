@@ -1,7 +1,7 @@
 ﻿
 
-using Sunctum.Infrastructure.Data.Rdbms;
-using Sunctum.Infrastructure.Data.Rdbms.Ddl.Mapping;
+using Homura.ORM;
+using Homura.ORM.Mapping;
 using System;
 
 namespace Sunctum.Domain.Models

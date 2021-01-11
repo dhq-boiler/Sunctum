@@ -8,7 +8,7 @@ namespace Sunctum.Domain.Logic.Async
 {
     public interface IBookRemoving : IAsyncTaskMaker
     {
-        ILibraryManager LibraryManager { get; set; }
+        ILibrary LibraryManager { get; set; }
 
         IEnumerable<BookViewModel> TargetBooks { get; set; }
     }

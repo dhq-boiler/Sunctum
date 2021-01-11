@@ -1,6 +1,6 @@
 ﻿
 
-using Sunctum.Infrastructure.Data.Rdbms.Ddl.Mapping;
+using Homura.ORM.Mapping;
 using System;
 
 namespace Sunctum.Domain.Models
@@ -20,7 +20,7 @@ namespace Sunctum.Domain.Models
             set { SetProperty(ref _ImageID, value); }
         }
 
-        [Column("Path", "TEXT", 2), NotNull]
+        [Column("Path", "TEXT", 2)]
         [Since(typeof(VersionOrigin))]
         public string RelativeMasterPath
         {

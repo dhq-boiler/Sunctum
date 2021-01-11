@@ -1,53 +1,91 @@
 ﻿
 
+using Homura.Core;
+using Ninject;
 using NLog;
+using Prism.Commands;
 using Prism.Mvvm;
-using Sunctum.Domain.Bridge;
+using Sunctum.Core.Notifications;
+using Sunctum.Domail.Util;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.AuthorSorting;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using Sunctum.Infrastructure.Core;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace Sunctum.Managers
 {
-    public class AuthorManager : BindableBase, IAuthorManager
+    public class AuthorManager : BindableBase, IAuthorManager, IObserver<ActiveTabChanged>
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
         private ObservableCollection<AuthorViewModel> _Authors;
         private List<AuthorViewModel> _SelectedItems;
-        private bool _EnableOrderByName;
-        private bool _OrderAscending;
         private ObservableCollection<AuthorCountViewModel> _AuthorCount;
         private ObservableCollection<AuthorCountViewModel> _SearchedAuthors;
         private IAuthorSorting _AuthorSorting;
+
+        [Inject]
+        public IMainWindowViewModel MainWindowViewModel { get; set; }
+
+        public IProgressManager ProgressManager { get; set; } = new ProgressManager();
+
+        #region コマンド
+
+        public ICommand SortByNameAscCommand { get; set; }
+
+        public ICommand SortByNameDescCommand { get; set; }
+
+        public ICommand SortByCountAscCommand { get; set; }
+
+        public ICommand SortByCountDescCommand { get; set; }
+
+        #endregion //コマンド
 
         public AuthorManager()
         {
             RegisterCommands();
             _AuthorCount = new ObservableCollection<AuthorCountViewModel>();
-            _AuthorSorting = AuthorSorting.ByNameAsc;
+            _AuthorSorting = AuthorSorting.ByCountDesc;
         }
 
         public void Load()
         {
             SelectedItems = new List<AuthorViewModel>();
             Authors = new ObservableCollection<AuthorViewModel>(AuthorFacade.FindAll());
-            Sorting = AuthorSorting.ByNameAsc;
+            Sorting = AuthorSorting.ByCountDesc;
             LoadAuthorCount();
         }
 
         public async Task LoadAsync()
         {
             await Task.Run(() => Load());
+        }
+
+        private void Filter(ObservableCollection<BookViewModel> bookSource)
+        {
+            var bookAuthorSet = new HashSet<Guid>(bookSource.Select(b => b.AuthorID));
+            var timeKeeper = new TimeKeeper();
+            ProgressManager.UpdateProgress(0, AuthorCount.Count, timeKeeper);
+
+            var i = 0;
+            foreach (var authorCount in AuthorCount)
+            {
+                authorCount.IsVisible = bookAuthorSet.Contains(authorCount.Author.ID);
+                ++i;
+                ProgressManager.UpdateProgress(i, AuthorCount.Count, timeKeeper);
+            }
+            ProgressManager.Complete();
         }
 
         public void LoadedBooks_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -102,6 +140,22 @@ namespace Sunctum.Managers
 
         private void RegisterCommands()
         {
+            SortByNameAscCommand = new DelegateCommand(() =>
+            {
+                Sorting = AuthorSorting.ByNameAsc;
+            });
+            SortByNameDescCommand = new DelegateCommand(() =>
+            {
+                Sorting = AuthorSorting.ByNameDesc;
+            });
+            SortByCountAscCommand = new DelegateCommand(() =>
+            {
+                Sorting = AuthorSorting.ByCountAsc;
+            });
+            SortByCountDescCommand = new DelegateCommand(() =>
+            {
+                Sorting = AuthorSorting.ByCountDesc;
+            });
         }
 
         public ObservableCollection<AuthorViewModel> Authors
@@ -169,29 +223,6 @@ namespace Sunctum.Managers
         {
             get
             {
-                if (EnableOrderByName)
-                {
-                    if (_OrderAscending)
-                    {
-                        Sorting = AuthorSorting.ByNameAsc;
-                    }
-                    else
-                    {
-                        Sorting = AuthorSorting.ByNameDesc;
-                    }
-                }
-                else
-                {
-                    if (_OrderAscending)
-                    {
-                        Sorting = AuthorSorting.ByCountAsc;
-                    }
-                    else
-                    {
-                        Sorting = AuthorSorting.ByCountDesc;
-                    }
-                }
-
                 var newCollection = Sorting.Sort(DisplayableAuthorCountSource).ToArray();
                 return new ObservableCollection<AuthorCountViewModel>(newCollection);
             }
@@ -204,27 +235,6 @@ namespace Sunctum.Managers
             { return SearchedAuthorCounts != null; }
         }
 
-        public bool EnableOrderByName
-        {
-            get { return _EnableOrderByName; }
-            set
-            {
-                SetProperty(ref _EnableOrderByName, value);
-                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
-            }
-        }
-
-        public string OrderText
-        {
-            get
-            {
-                if (_OrderAscending)
-                    return "↑";
-                else
-                    return "↓";
-            }
-        }
-
         public IAuthorSorting Sorting
         {
             [DebuggerStepThrough]
@@ -233,15 +243,8 @@ namespace Sunctum.Managers
             set
             {
                 SetProperty(ref _AuthorSorting, value);
+                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
             }
-        }
-
-        public void SwitchOrdering()
-        {
-            _OrderAscending = !_OrderAscending;
-
-            RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OrderText));
-            RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
         }
 
         private IEnumerable<AuthorCountViewModel> GenerateAuthorCount()
@@ -257,30 +260,7 @@ namespace Sunctum.Managers
 
             try
             {
-                var authors = Authors.ToList();
-
-                if (EnableOrderByName)
-                {
-                    if (_OrderAscending)
-                    {
-                        return AuthorFacade.FindAllAsCountOrderByNameAsc();
-                    }
-                    else
-                    {
-                        return AuthorFacade.FindAllAsCountOrderByNameDesc();
-                    }
-                }
-                else
-                {
-                    if (_OrderAscending)
-                    {
-                        return AuthorFacade.FindAllAsCountOrderByCountAsc();
-                    }
-                    else
-                    {
-                        return AuthorFacade.FindAllAsCountOrderByCountDesc();
-                    }
-                }
+                return AuthorFacade.FindAllAsCountOrderByCountDesc();
             }
             finally
             {
@@ -294,24 +274,37 @@ namespace Sunctum.Managers
             RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => AuthorCount));
         }
 
-        public void ShowBySelectedItems(ILibraryManager library)
+        public void ShowBySelectedItems()
         {
-            Contract.Requires(library != null);
-            Contract.Requires(library.AuthorManager != null);
-            Contract.Requires(library.AuthorManager.SelectedItems != null);
+            var activeViewModel = MainWindowViewModel.ActiveDocumentViewModel;
 
-            var books = from b in library.LoadedBooks
-                        join s in library.AuthorManager.SelectedItems on b.AuthorID equals s.ID
+            var books = from b in activeViewModel.BookCabinet.BookSource
+                        join s in SelectedItems on b.AuthorID equals s.ID
                         select b;
 
-            library.SearchedBooks = new ObservableCollection<BookViewModel>(books.ToList());
+            activeViewModel.SearchText = $"{ToSearchText(SelectedItems)}";
+            activeViewModel.BookCabinet.SearchedBooks = new ObservableCollection<BookViewModel>(books.ToList());
         }
 
-        public void ShowBySelectedItems(ILibraryManager library, IEnumerable<AuthorViewModel> searchItems)
+        private object ToSearchText(List<AuthorViewModel> selectedItems)
+        {
+            var sb = new StringBuilder();
+            foreach (var item in selectedItems)
+            {
+                sb.Append(item.Name);
+                if (selectedItems.Last() != item)
+                {
+                    sb.Append(" ");
+                }
+            }
+            return sb.ToString();
+        }
+
+        public void ShowBySelectedItems(IEnumerable<AuthorViewModel> searchItems)
         {
             SelectedItems = searchItems.ToList();
 
-            ShowBySelectedItems(library);
+            ShowBySelectedItems();
         }
 
         public void ClearSearchResult()
@@ -329,6 +322,39 @@ namespace Sunctum.Managers
             if (_AuthorCount == null) return false;
 
             return _AuthorCount.Any(a => a.IsSearchingKey);
+        }
+
+        private object _lock_object = new object();
+        private CancellationTokenSource _tokenSource;
+
+        public void OnNext(ActiveTabChanged value)
+        {
+            lock (_lock_object)
+            {
+                if (_tokenSource != null)
+                {
+                    _tokenSource.Cancel();
+                }
+            }
+            _tokenSource = new CancellationTokenSource();
+            Task.Run(() =>
+            {
+                Filter(value.BookStorage.BookSource);
+                lock (_lock_object)
+                {
+                    _tokenSource = null;
+                }
+            }, _tokenSource.Token);
+        }
+
+        public void OnError(Exception error)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void OnCompleted()
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,10 +1,10 @@
 ﻿
 
+using Homura.ORM;
 using NLog;
 using Sunctum.Domain.Bridge;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.ViewModels;
-using Sunctum.Infrastructure.Data.Rdbms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +32,12 @@ namespace Sunctum.Domain.Data.DaoFacade
         public static ThumbnailViewModel FindByImageID(Guid imageId, DataOperationUnit dataOpUnit = null)
         {
             ThumbnailDao dao = new ThumbnailDao();
-            return dao.FindBy(new Dictionary<string, object>() { { "ImageID", imageId } }, dataOpUnit?.CurrentConnection).SingleOrDefault().ToViewModel();
+            var items = dao.FindBy(new Dictionary<string, object>() { { "ImageID", imageId } }, dataOpUnit?.CurrentConnection).SingleOrDefault();
+            if (items == null)
+            {
+                return null;
+            }
+            return items.ToViewModel();
         }
 
         public static bool Exists(Guid imageId, DataOperationUnit dataOpUnit = null)

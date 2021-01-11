@@ -2,6 +2,8 @@
 
 using Ninject;
 using NLog;
+using Sunctum.Domain.Data.DaoFacade;
+using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 
 namespace Sunctum.Domain.Logic.Async
@@ -14,7 +16,7 @@ namespace Sunctum.Domain.Logic.Async
         public IAuthorManager AuthorManager { get; set; }
 
         [Inject]
-        public ILibraryManager LibraryManager { get; set; }
+        public ILibrary LibraryManager { get; set; }
 
         [Inject]
         public ITagManager TagManager { get; set; }
@@ -42,11 +44,13 @@ namespace Sunctum.Domain.Logic.Async
 
             sequence.Add(() => TaskManager.Enqueue(RecentOpenedLibraryUpdating.GetTaskSequence()));
 
-            sequence.Add(() => TagManager.LoadAsync());
+            sequence.Add(() => TagManager.Load());
 
             sequence.Add(() => AuthorManager.LoadAsync());
 
             sequence.Add(() => TaskManager.Enqueue(BookLoadingService.GetTaskSequence()));
+
+            sequence.Add(() => Configuration.ApplicationConfiguration.LibraryIsEncrypted = EncryptImageFacade.AnyEncrypted());
         }
 
         public override void ConfigurePostTaskAction(AsyncTaskSequence sequence)

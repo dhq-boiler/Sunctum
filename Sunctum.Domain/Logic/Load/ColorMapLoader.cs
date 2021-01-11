@@ -4,12 +4,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Threading;
+using Homura.ORM;
 using NLog;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Data.Entity;
 using Sunctum.Domain.Logic.BookSorting;
 using Sunctum.Domain.Models;
-using Sunctum.Infrastructure.Data.Rdbms;
 using static Sunctum.Domain.Logic.BookSorting.CoverComparator;
 
 namespace Sunctum.Domain.Logic.Load

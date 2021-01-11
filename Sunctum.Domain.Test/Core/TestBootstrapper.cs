@@ -1,15 +1,19 @@
 ﻿
 
+using Homura.ORM;
 using Ninject;
 using Prism.Ninject;
+using Sunctum.Converters;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Logic.Async;
 using Sunctum.Domain.Logic.Parse;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.Test.Logic.Async;
-using Sunctum.Infrastructure.Data.Rdbms;
+using Sunctum.Domain.ViewModels;
 using Sunctum.Managers;
+using Sunctum.ViewModels;
 using System.Data.SQLite;
+using System.Windows.Data;
 
 namespace Sunctum.Domain.Test.Core
 {
@@ -25,8 +29,14 @@ namespace Sunctum.Domain.Test.Core
         protected override void ConfigureKernel()
         {
             base.ConfigureKernel();
+            Kernel.Bind<IMainWindowViewModel>().To<MainWindowViewModel>().InSingletonScope();
 
-            Kernel.Bind<ILibraryManager>().To<LibraryManager>().InSingletonScope();
+            Kernel.Bind<IHomeDocumentViewModel>().To<HomeDocumentViewModel>().InSingletonScope();
+            Kernel.Bind<IAuthorPaneViewModel>().To<AuthorPaneViewModel>().InSingletonScope();
+            Kernel.Bind<ITagPaneViewModel>().To<TagPaneViewModel>().InSingletonScope();
+            Kernel.Bind<IInformationPaneViewModel>().To<InformationPaneViewModel>().InSingletonScope();
+
+            Kernel.Bind<ILibrary>().To<Library>().InSingletonScope();
             Kernel.Bind<IAuthorManager>().To<AuthorManager>().InSingletonScope();
             Kernel.Bind<ITagManager>().To<TagManager>().InSingletonScope();
             Kernel.Bind<IProgressManager>().To<ProgressManager>().InSingletonScope();
@@ -52,6 +62,11 @@ namespace Sunctum.Domain.Test.Core
             Kernel.Bind<IDirectoryNameParserManager>().To<DirectoryNameParserManager>().InSingletonScope();
             Kernel.Bind<ILibraryResetting>().To<LibraryResetting>().InSingletonScope();
             Kernel.Bind<IBookLoading>().To<BookLoading>().InSingletonScope();
+            Kernel.Bind<IBookTagInitializing>().To<BookTagInitializing>().InSingletonScope();
+
+            Kernel.Bind<IValueConverter>().To<BookSortingToBool>().InSingletonScope().Named("BookSortingToBool");
+            Kernel.Bind<IValueConverter>().To<TagSortingToBool>().InSingletonScope().Named("TagSortingToBool");
+            Kernel.Bind<IValueConverter>().To<AuthorSortingToBool>().InSingletonScope().Named("AuthorSortingToBool");
 
             var daoBuilder = Kernel.Get<IDataAccessManager>();
             daoBuilder.WorkingDao = new DaoBuilder(new Connection(_libraryConnectionString, typeof(SQLiteConnection)));

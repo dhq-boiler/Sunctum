@@ -1,7 +1,7 @@
 ﻿
 
+using Homura.ORM;
 using Sunctum.Domain.Models.Managers;
-using Sunctum.Infrastructure.Data.Rdbms;
 using System.Collections.Generic;
 using System.IO;
 
@@ -39,6 +39,6 @@ namespace Sunctum.Domain.Logic.Import
 
         public abstract void Estimate();
 
-        public abstract IEnumerable<System.Threading.Tasks.Task> GenerateTasks(ILibraryManager library, string copyTo, string entryName, DataOperationUnit dataOpUnit);
+        public abstract IEnumerable<System.Threading.Tasks.Task> GenerateTasks(ILibrary library, string copyTo, string entryName, DataOperationUnit dataOpUnit);
     }
 }
