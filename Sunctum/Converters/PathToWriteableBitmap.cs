@@ -116,10 +116,10 @@ namespace Sunctum.Converters
                     {
                         for (int x = 0; x < bitmap.PixelWidth; ++x)
                         {
-                            var vector = PickPixel(mat, y, x);
                             for (int c = 0; c < channels; ++c)
                             {
-                                *(p_dst + y * step_dst + x * channels + c) = vector[c];
+                                var bytes = PickPixel(mat, y, x, c);
+                                *(p_dst + y * step_dst + x * channels + c) = bytes;
                             }
                         }
                     }
@@ -135,16 +135,16 @@ namespace Sunctum.Converters
             return bitmap;
         }
 
-        private IVec<byte> PickPixel(Mat mat, int y, int x)
+        private byte PickPixel(Mat mat, int y, int x, int c)
         {
             switch (mat.Channels())
             {
                 case 1:
-                    return mat.At<Vec3b>(y, x);
+                    return mat.At<Vec3b>(y, x)[c];
                 case 3:
-                    return mat.At<Vec3b>(y, x);
+                    return mat.At<Vec3b>(y, x)[c];
                 case 4:
-                    return mat.At<Vec4b>(y, x);
+                    return mat.At<Vec4b>(y, x)[c];
                 default:
                     throw new NotSupportedException();
             }
