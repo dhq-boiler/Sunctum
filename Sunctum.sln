@@ -28,6 +28,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{FD8C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FolderFilesImporter", "FolderFilesImporter\FolderFilesImporter.csproj", "{99514C96-792F-4493-807D-E717283DA621}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PickoutCover", "PickoutCover\PickoutCover.csproj", "{7CDFB46C-5A39-4AFA-BDB9-CEA0FB05D713}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +76,10 @@ Global
 		{99514C96-792F-4493-807D-E717283DA621}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{99514C96-792F-4493-807D-E717283DA621}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{99514C96-792F-4493-807D-E717283DA621}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CDFB46C-5A39-4AFA-BDB9-CEA0FB05D713}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CDFB46C-5A39-4AFA-BDB9-CEA0FB05D713}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CDFB46C-5A39-4AFA-BDB9-CEA0FB05D713}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CDFB46C-5A39-4AFA-BDB9-CEA0FB05D713}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -81,6 +87,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{E14FCF54-0713-4A1B-B1D5-598618D4C0FD} = {FD8C26B5-FBDC-4457-BBAD-2A8F1FF0929D}
 		{99514C96-792F-4493-807D-E717283DA621} = {FD8C26B5-FBDC-4457-BBAD-2A8F1FF0929D}
+		{7CDFB46C-5A39-4AFA-BDB9-CEA0FB05D713} = {FD8C26B5-FBDC-4457-BBAD-2A8F1FF0929D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {755B54F3-66E3-429B-90B1-0AD77D1B43B8}
