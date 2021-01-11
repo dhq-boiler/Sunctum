@@ -2,6 +2,9 @@
 
 using NLog;
 using OpenCvSharp;
+using Sunctum.Domain.Data.DaoFacade;
+using Sunctum.Domain.Models;
+using Sunctum.Domain.Models.Managers;
 using System;
 using System.Globalization;
 using System.IO;
@@ -29,25 +32,39 @@ namespace Sunctum.Converters
         {
             try
             {
-                using (Mat mat = new Mat(path, ImreadModes.Unchanged))
+                Guid guid;
+                if (Guid.TryParse(path, out guid))
                 {
-                    if (mat.Rows == 0 || mat.Cols == 0)
+                    var image = ImageFacade.FindBy(guid);
+                    if (!image.IsDecrypted)
                     {
-                        var fileInfo = new FileInfo(path);
-                        if (fileInfo.Length == 0)
-                        {
-                            s_logger.Error($"File is broken:{path}");
-                            return null;
-                        }
-                        if (Path.GetExtension(path) == ".gif")
-                        {
-                            return null;
-                        }
-                        Thread.Sleep(100);
-                        s_logger.Error($"Retry to load bitmap:{path}");
-                        return LoadBitmap(path);
+                        image.DecryptImage();
                     }
-                    return ToWriteableBitmap(mat);
+                    var bitmap = OnmemoryImageManager.Instance.PullAsWriteableBitmap(guid);
+                    return bitmap;
+                }
+                else
+                {
+                    using (Mat mat = new Mat(path, ImreadModes.Unchanged))
+                    {
+                        if (mat.Rows == 0 || mat.Cols == 0)
+                        {
+                            var fileInfo = new FileInfo(path);
+                            if (fileInfo.Length == 0)
+                            {
+                                s_logger.Error($"File is broken:{path}");
+                                return null;
+                            }
+                            if (Path.GetExtension(path) == ".gif")
+                            {
+                                return null;
+                            }
+                            Thread.Sleep(100);
+                            s_logger.Error($"Retry to load bitmap:{path}");
+                            return LoadBitmap(path);
+                        }
+                        return ToWriteableBitmap(mat);
+                    }
                 }
             }
             catch (OutOfMemoryException e)
@@ -70,6 +87,13 @@ namespace Sunctum.Converters
                 GC.WaitForPendingFinalizers();
                 GC.Collect();
                 return null;
+            }
+            catch (FileNotFoundException e)
+            {
+                s_logger.Error(e);
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
+                return LoadBitmap($"{Configuration.ApplicationConfiguration.ExecutingDirectory}\\{Specifications.LOCK_ICON_FILE}");
             }
         }
 
@@ -115,6 +139,8 @@ namespace Sunctum.Converters
         {
             switch (mat.Channels())
             {
+                case 1:
+                    return mat.At<Vec3b>(y, x);
                 case 3:
                     return mat.At<Vec3b>(y, x);
                 case 4:
@@ -128,6 +154,8 @@ namespace Sunctum.Converters
         {
             switch (mat.Channels())
             {
+                case 1:
+                    return System.Windows.Media.PixelFormats.Gray8;
                 case 3:
                     return System.Windows.Media.PixelFormats.Bgr24;
                 case 4:

@@ -67,6 +67,8 @@ namespace Sunctum.ViewModels
 
         public ICommand ClearSearchResultCommand { get; set; }
 
+        public ICommand EncryptionStartingCommand { get; set; }
+
         public ICommand ExitApplicationCommand { get; set; }
 
         public ICommand GeneralCancelCommand { get; set; }
@@ -123,6 +125,8 @@ namespace Sunctum.ViewModels
 
         public ICommand ToggleDisplayTagPaneCommand { get; set; }
 
+        public ICommand UnencryptionStartingCommand { get; set; }
+
         public ICommand UpdateBookByteSizeAllCommand { get; set; }
 
         public ICommand UpdateBookByteSizeStillNullCommand { get; set; }
@@ -144,6 +148,10 @@ namespace Sunctum.ViewModels
             ClearSearchResultCommand = new DelegateCommand(() =>
             {
                 ActiveDocumentViewModel.BookCabinet.ClearSearchResult();
+            });
+            EncryptionStartingCommand = new DelegateCommand(async () =>
+            {
+                await OpenEncryptionStartingDialog();
             });
             ExitApplicationCommand = new DelegateCommand(() =>
             {
@@ -300,6 +308,10 @@ namespace Sunctum.ViewModels
                 {
                     DockingPaneViewModels.Remove((PaneViewModelBase)TagPaneViewModel);
                 }
+            });
+            UnencryptionStartingCommand = new DelegateCommand(async () =>
+            {
+                await OpenUnencryptingDialog();
             });
             UpdateBookByteSizeAllCommand = new DelegateCommand(async () =>
             {
@@ -476,6 +488,8 @@ namespace Sunctum.ViewModels
 
         public LayoutAnchorable InformationPane { get; set; }
 
+        public Configuration Configuration { get { return Configuration.ApplicationConfiguration; } }
+
         #endregion
 
         #region 一般
@@ -523,6 +537,7 @@ namespace Sunctum.ViewModels
             DataAccessManager.WorkingDao = new DaoBuilder(new Connection(Specifications.GenerateConnectionString(Configuration.ApplicationConfiguration.WorkingDirectory), typeof(SQLiteConnection)));
 
             await LibraryVM.Initialize();
+            LibraryVM.UnlockIfLocked();
             await LibraryVM.Load()
                 .ContinueWith(_ =>
                 {
@@ -973,6 +988,26 @@ namespace Sunctum.ViewModels
             if (dialog.ShowDialog() == true)
             {
                 await LibraryVM.ImportAsync(new string[] { dialog.FileName });
+            }
+        }
+
+        private async Task OpenEncryptionStartingDialog()
+        {
+            var dialog = new EncryptionStartingDialog();
+
+            if (dialog.ShowDialog() == true)
+            {
+                await LibraryVM.StartEncryption(dialog.Password);
+            }
+        }
+
+        private async Task OpenUnencryptingDialog()
+        {
+            var dialog = new InputPasswordDialog("暗号化を解除するにはパスワードを入力する必要があります。");
+
+            if (dialog.ShowDialog() == true)
+            {
+                await LibraryVM.StartUnencryption(dialog.Password);
             }
         }
 

@@ -50,9 +50,13 @@ namespace Sunctum.Domain.Logic.Load
                 if (book.FirstPage?.Image == null || book.FirstPage?.Image?.Thumbnail == null)
                 {
                     LoadFirstPageAndThumbnail(book, dataOpUnit);
-                    if (book.FirstPage?.Image != null && book.FirstPage.Image.ThumbnailLoaded)
+                    if (book.FirstPage?.Image != null && (Configuration.ApplicationConfiguration.LibraryIsEncrypted || book.FirstPage.Image.ThumbnailLoaded))
                     {
                         book.IsLoaded = true;
+                    }
+                    if (!Configuration.ApplicationConfiguration.LibraryIsEncrypted && !book.FirstPage.Image.ThumbnailGenerated)
+                    {
+                        GenerateThumbnailCondition(book, dataOpUnit);
                     }
                 }
                 else
@@ -60,8 +64,6 @@ namespace Sunctum.Domain.Logic.Load
                     book.IsLoaded = true;
                 }
             }
-
-            GenerateThumbnailCondition(book, dataOpUnit);
         }
 
         public static void GenerateThumbnailCondition(BookViewModel book, DataOperationUnit dataOpUnit = null)

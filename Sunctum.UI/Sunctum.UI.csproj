@@ -86,7 +86,13 @@
     <Compile Include="Dialogs\AbstractEntityManagementDialog.xaml.cs">
       <DependentUpon>AbstractEntityManagementDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Dialogs\EncryptionStartingDialog.xaml.cs">
+      <DependentUpon>EncryptionStartingDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\EntityManagementDialog.cs" />
+    <Compile Include="Dialogs\InputPasswordDialog.xaml.cs">
+      <DependentUpon>InputPasswordDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\TreeViewDialog.xaml.cs">
       <DependentUpon>TreeViewDialog.xaml</DependentUpon>
     </Compile>
@@ -115,6 +121,14 @@
     <Page Include="Dialogs\AbstractEntityManagementDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\EncryptionStartingDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\InputPasswordDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Dialogs\TreeViewDialog.xaml">
       <Generator>MSBuild:Compile</Generator>

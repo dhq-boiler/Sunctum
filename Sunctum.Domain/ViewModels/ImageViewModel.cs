@@ -2,8 +2,11 @@
 
 using Homura.Core;
 using Sunctum.Domain.Data.Dao;
+using Sunctum.Domain.Data.DaoFacade;
+using Sunctum.Domain.Logic.Encrypt;
 using Sunctum.Domain.Logic.Generate;
 using Sunctum.Domain.Models;
+using Sunctum.Domain.Models.Managers;
 using Sunctum.Infrastructure.Core;
 using System;
 using System.Collections.Generic;
@@ -60,12 +63,47 @@ namespace Sunctum.Domain.ViewModels
 
         #endregion //Configuration
 
+        public string OnStagePath
+        {
+            get
+            {
+                var encryptImage = EncryptImageFacade.FindBy(this.ID);
+                if (encryptImage != null)
+                {
+                    if (string.IsNullOrEmpty(Configuration.Password))
+                    {
+                        return $"{Configuration.ApplicationConfiguration.ExecutingDirectory}\\{Specifications.LOCK_ICON_FILE}";
+                    }
+                    return this.ID.ToString("D");
+                }
+
+                return AbsoluteMasterPath;
+            }
+        }
+
         public string AbsoluteMasterPath
         {
             get
             {
                 if (string.IsNullOrWhiteSpace(RelativeMasterPath)) return null;
                 return $"{Configuration.WorkingDirectory}\\{RelativeMasterPath}";
+            }
+        }
+
+        public bool IsDecrypted
+        {
+            get
+            {
+                return OnmemoryImageManager.Instance.Exists(this.ID);
+            }
+        }
+
+        public void DecryptImage()
+        {
+            if (!OnmemoryImageManager.Instance.Exists(this.ID))
+            {
+                var image = EncryptImageFacade.FindBy(this.ID);
+                Encryptor.Decrypt(image.EncryptFilePath, Configuration.Password);
             }
         }
 
@@ -92,7 +130,7 @@ namespace Sunctum.Domain.ViewModels
             { return _Thumbnail; }
             set
             {
-                if (value != null && !System.IO.Path.GetFileNameWithoutExtension(value.AbsoluteMasterPath).Equals(value.ImageID.ToString("N")))
+                if (value != null && !Configuration.ApplicationConfiguration.LibraryIsEncrypted && !System.IO.Path.GetFileNameWithoutExtension(value.AbsoluteMasterPath).Equals(value.ImageID.ToString("N")))
                 {
                     ThumbnailGenerating.GenerateThumbnail(this);
                 }
@@ -108,6 +146,15 @@ namespace Sunctum.Domain.ViewModels
         {
             get
             {
+                if (EncryptImageFacade.AnyEncrypted())
+                {
+                    if (string.IsNullOrEmpty(Configuration.Password))
+                    {
+                        return $"{Configuration.ApplicationConfiguration.ExecutingDirectory}\\{Specifications.LOCK_ICON_FILE}";
+                    }
+                    return this.ID.ToString("D");
+                }
+
                 if (ThumbnailLoaded && !ThumbnailGenerated && MasterFileSize > Configuration.LowerLimitFileSizeThatImageMustBeDisplayAsThumbnail)
                 {
                     ThumbnailGenerating.GenerateThumbnail(this);
@@ -125,7 +172,17 @@ namespace Sunctum.Domain.ViewModels
 
         public long MasterFileSize
         {
-            get { return new FileInfo(AbsoluteMasterPath).Length; }
+            get
+            {
+                if (EncryptImageFacade.AnyEncrypted())
+                {
+                    var image = EncryptImageFacade.FindBy(this.ID);
+                    Encryptor.Decrypt(image.EncryptFilePath, Configuration.Password);
+                    return OnmemoryImageManager.Instance.PullAsMemoryStream(this.ID).Length;
+                }
+
+                return new FileInfo(AbsoluteMasterPath).Length;
+            }
         }
 
         public bool ThumbnailRecorded

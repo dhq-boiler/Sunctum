@@ -1,5 +1,6 @@
 ﻿
 
+using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Models;
 using System;
 
@@ -26,6 +27,23 @@ namespace Sunctum.Domain.ViewModels
         {
             get { return _ImageID; }
             set { SetProperty(ref _ImageID, value); }
+        }
+
+        public string OnStagePath
+        {
+            get
+            {
+                var encryptImage = EncryptImageFacade.FindBy(this.ID);
+                if (encryptImage != null)
+                {
+                    if (string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                    {
+                        return $"{Configuration.ApplicationConfiguration.ExecutingDirectory}\\{Specifications.LOCK_ICON_FILE}";
+                    }
+                    return this.ID.ToString("D");
+                }
+                return AbsoluteMasterPath;
+            }
         }
 
         public string AbsoluteMasterPath

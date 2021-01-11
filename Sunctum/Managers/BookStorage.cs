@@ -8,7 +8,6 @@ using Sunctum.Domain.Logic.Load;
 using Sunctum.Domain.Logic.Query;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
-using Sunctum.Infrastructure.Core;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;

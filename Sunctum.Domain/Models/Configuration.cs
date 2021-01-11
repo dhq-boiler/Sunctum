@@ -6,6 +6,7 @@ using Sunctum.Infrastructure.Data.Yaml;
 using System;
 using System.IO;
 using System.Reflection;
+using YamlDotNet.Serialization;
 
 namespace Sunctum.Domain.Models
 {
@@ -259,6 +260,37 @@ namespace Sunctum.Domain.Models
         }
 
         #endregion //Configuration Data
+
+        #region Transient Data
+
+        private string _Password;
+        private bool _LibraryIsEncrypted;
+
+        [YamlIgnore]
+        public string Password
+        {
+            get { return _Password; }
+            set { SetProperty(ref _Password, value); }
+        }
+
+        [YamlIgnore]
+        public bool LibraryIsEncrypted
+        {
+            get
+            { return _LibraryIsEncrypted; }
+            set { SetProperty(ref _LibraryIsEncrypted, value); }
+        }
+
+        [YamlIgnore]
+        public string ExecutingDirectory
+        {
+            get
+            {
+                return Directory.GetParent(Assembly.GetExecutingAssembly().Location).FullName;
+            }
+        }
+
+        #endregion // Transient Data
 
         public Configuration()
         { }

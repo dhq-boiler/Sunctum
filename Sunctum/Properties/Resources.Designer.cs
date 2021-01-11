@@ -19,7 +19,7 @@ namespace Sunctum.Properties {
     // または Visual Studio のようなツールを使用して自動生成されました。
     // メンバーを追加または削除するには、.ResX ファイルを編集して、/str オプションと共に
     // ResGen を実行し直すか、または VS プロジェクトをビルドし直します。
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -448,6 +448,15 @@ namespace Sunctum.Properties {
         }
         
         /// <summary>
+        ///   Encryption start... に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MainWindow_Data_EncryptionStart {
+            get {
+                return ResourceManager.GetString("MainWindow_Data_EncryptionStart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Metadata Import setting... に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string MainWindow_Data_MetadataImportSetting {
@@ -462,6 +471,15 @@ namespace Sunctum.Properties {
         public static string MainWindow_Data_TagManagement {
             get {
                 return ResourceManager.GetString("MainWindow_Data_TagManagement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Unencryption start... に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MainWindow_Data_UnencryptionStart {
+            get {
+                return ResourceManager.GetString("MainWindow_Data_UnencryptionStart", resourceCulture);
             }
         }
         

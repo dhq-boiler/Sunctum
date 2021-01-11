@@ -6,6 +6,7 @@ using Prism.Mvvm;
 using Reactive.Bindings;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Load;
+using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using Sunctum.Infrastructure.Core;
@@ -48,6 +49,8 @@ namespace Sunctum.ViewModels
         private VirtualizingStackPanel VSP_Contents { get { return Parent.Contents_ListView.GetVisualChild<VirtualizingStackPanel>(); } }
 
         public BookPropertyDialog Parent { get; set; }
+
+        public Configuration Configuration { get { return Configuration.ApplicationConfiguration; } }
 
         public BookPropertyDialogViewModel()
         {

@@ -125,7 +125,7 @@
                 <Label
                     Grid.Row="4"
                     Grid.Column="1"
-                    Content="{Binding Book.NumberOfPages}" />
+                    Content="{Binding Book.NumberOfPages.Value}" />
                 <Label
                     Grid.Row="5"
                     Grid.Column="0"
@@ -137,11 +137,33 @@
                 <Label
                     Grid.Row="6"
                     Grid.Column="0"
-                    Content="{Binding BookProeprtyDialog_SavedDir, Source={StaticResource resources}}" />
+                    Content="{Binding BookProeprtyDialog_SavedDir, Source={StaticResource resources}}">
+                    <Label.Style>
+                        <Style TargetType="Label">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Setter Property="HorizontalAlignment" Value="Right" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Configuration.ApplicationConfiguration.LibraryIsEncrypted}" Value="True">
+                                    <Setter Property="Visibility" Value="Hidden" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Label.Style>
+                </Label>
                 <TextBlock
                     Grid.Row="6"
                     Grid.Column="1"
                     VerticalAlignment="Center">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Configuration.ApplicationConfiguration.LibraryIsEncrypted}" Value="True">
+                                    <Setter Property="Visibility" Value="Hidden" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
                     <Hyperlink Command="{Binding OpenSaveDirCommand}" ToolTip="{Binding BookPropertyDialog_SavedDir_Tooltip, Source={StaticResource resources}}">
                         <InlineUIContainer>
                             <TextBlock Text="{Binding SaveDir}" />
@@ -184,7 +206,7 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <DockPanel>
-                            <Image Source="{Binding Image.AbsoluteMasterPath, Converter={StaticResource ImageConverter}}" />
+                            <Image Source="{Binding Image.OnStagePath, Converter={StaticResource ImageConverter}}" />
                             <ContentPresenter Content="{Binding Converter={StaticResource PageThumbnailLoader}}" Visibility="Collapsed" />
                         </DockPanel>
                     </DataTemplate>
