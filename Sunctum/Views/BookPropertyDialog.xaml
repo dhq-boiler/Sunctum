@@ -79,10 +79,10 @@
                     Grid.Row="0"
                     Grid.Column="0"
                     Content="{Binding BookPropertyDialog_BookID, Source={StaticResource resources}}" />
-                <Label
-                    Grid.Row="0"
-                    Grid.Column="1"
-                    Content="{Binding Book.ID}" />
+                <ui.ctrl:SelectableLabel Grid.Row="0"
+                                         Grid.Column="1"
+                                         Text="{Binding Book.ID}"
+                                         HorizontalAlignment="Right" />
                 <Label
                     Grid.Row="1"
                     Grid.Column="0"
@@ -114,10 +114,9 @@
                     Grid.Row="3"
                     Grid.Column="0"
                     Content="{Binding BookPropertyDialog_PublishDate, Source={StaticResource resources}}" />
-                <Label
-                    Grid.Row="3"
-                    Grid.Column="1"
-                    Content="{Binding Book.PublishDate}" />
+                <DatePicker Grid.Row="3"
+                            Grid.Column="1"
+                            SelectedDate="{Binding Book.PublishDate}" />
                 <Label
                     Grid.Row="4"
                     Grid.Column="0"
