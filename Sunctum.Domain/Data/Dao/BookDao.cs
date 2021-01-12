@@ -80,6 +80,7 @@ namespace Sunctum.Domain.Data.Dao
                                                    .Column("b", "Title").As("bTitle")
                                                    .Column("b", "AuthorID").As("bAuthorId")
                                                    .Column("b", "ByteSize").As("bByteSize")
+                                                   .Column("b", "PublishDate").As("bPublishDate")
                                                    .Column("a", "ID").As("aId")
                                                    .Column("a", "Name").As("aName")
                                                    .Column("s", "Level").As("sLevel")
@@ -100,6 +101,7 @@ namespace Sunctum.Domain.Data.Dao
                                 book.ID = rdr.SafeGetGuid("bId");
                                 book.Title = rdr.SafeGetString("bTitle");
                                 book.ByteSize = rdr.SafeNullableGetLong("bByteSize");
+                                book.PublishDate = rdr.SafeGetNullableDateTime("bPublishDate");
                                 if (!rdr.IsDBNull("aId") && !rdr.IsDBNull("aName"))
                                 {
                                     var author = new AuthorViewModel();
