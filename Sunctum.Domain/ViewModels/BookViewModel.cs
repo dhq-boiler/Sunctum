@@ -69,7 +69,7 @@ namespace Sunctum.Domain.ViewModels
             set { SetProperty(ref _AuthorID, value); }
         }
 
-        public DateTime? PublishDate { get; internal set; }
+        public DateTime? PublishDate { get; set; }
 
         public long? ByteSize
         {
