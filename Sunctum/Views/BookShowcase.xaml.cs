@@ -247,10 +247,13 @@ namespace Sunctum.Views
         private void Search_TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             var viewModel = (DocumentViewModelBase)DataContext;
-            viewModel.StoreScrollOffset(DocumentViewModelBase.BeforeSearchPosition);
-            viewModel.Search();
-            viewModel.ResetScrollOffset();
-            e.Handled = true;
+            if (!(viewModel is null))
+            {
+                viewModel.StoreScrollOffset(DocumentViewModelBase.BeforeSearchPosition);
+                viewModel.Search();
+                viewModel.ResetScrollOffset();
+                e.Handled = true;
+            }
         }
 
         private void AutoScrollingHyperlink_HyperlinkClicked(object sender, RoutedEventArgs e)
