@@ -404,8 +404,6 @@ namespace Sunctum.ViewModels
         [Inject]
         public IDataAccessManager DataAccessManager { get; set; }
 
-        public InteractionRequest<Notification> CloseRequest { get; } = new InteractionRequest<Notification>();
-
         public double WindowLeft
         {
             get { return _WindowLeft; }
@@ -844,7 +842,7 @@ namespace Sunctum.ViewModels
 
         public void Close()
         {
-            CloseRequest.Raise(new Notification());
+            Application.Current.Shutdown();
         }
 
         #endregion //一般
