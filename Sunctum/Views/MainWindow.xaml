@@ -245,7 +245,7 @@
                     <Button.ToolTip>
                         最小化
                     </Button.ToolTip>
-                </Button><!--minimize button-->
+                </Button>
                 <Button Content="1"
                         Foreground="Gray"
                         Style="{DynamicResource CaptionButtonStyleKey}"
@@ -253,7 +253,7 @@
                     <Button.ToolTip>
                         最大化
                     </Button.ToolTip>
-                </Button><!--maximize button-->
+                </Button>
                 <Button Content="2"
                         Foreground="Gray"
                         Style="{DynamicResource CaptionButtonStyleKey}"
@@ -261,7 +261,7 @@
                     <Button.ToolTip>
                         元に戻す(縮小)
                     </Button.ToolTip>
-                </Button><!--元に戻す(縮小)-->
+                </Button>
                 <Button Content="r"
                         Foreground="Gray"
                         Style="{DynamicResource CaptionButtonStyleKey}"
@@ -269,7 +269,7 @@
                     <Button.ToolTip>
                         閉じる
                     </Button.ToolTip>
-                </Button><!--close button -->
+                </Button>
             </StackPanel>
             <TextBlock Text="{Binding MainWindowTitle}"
                        DockPanel.Dock="Right"
