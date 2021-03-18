@@ -87,6 +87,8 @@ namespace Sunctum.ViewModels
 
         public ICommand OpenSwitchLibraryCommand { get; set; }
 
+        public ICommand OpenSearchPaneCommand { get; set; }
+
         public ICommand OpenTagManagementDialogCommand { get; set; }
 
         public ICommand ReloadLibraryCommand { get; set; }
@@ -194,6 +196,10 @@ namespace Sunctum.ViewModels
                     await LibraryVM.Reset();
                     await Initialize(false);
                 }
+            });
+            OpenSearchPaneCommand = new DelegateCommand(() =>
+            {
+                this.ActiveDocumentViewModel.SearchPaneIsVisible = true;
             });
             OpenTagManagementDialogCommand = new DelegateCommand(() =>
             {
