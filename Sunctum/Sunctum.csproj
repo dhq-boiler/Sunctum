@@ -206,6 +206,7 @@
     </ApplicationDefinition>
     <Compile Include="Converters\ActiveDocumentConverter.cs" />
     <Compile Include="Converters\AuthorSortingToBool.cs" />
+    <Compile Include="Converters\DisplayTypeToViewConverter.cs" />
     <Compile Include="Converters\MarginConverter.cs" />
     <Compile Include="Converters\PathToMenuItem.cs" />
     <Compile Include="Converters\StarLevelToStringConverter.cs" />

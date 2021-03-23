@@ -229,6 +229,12 @@
                         Header="{Binding MainWindow_Display_Sorting_CoverRedDesc, Source={StaticResource resources}}"
                         IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByCoverRedDesc}" />
                     </MenuItem>
+                    <MenuItem Header="ショーケース">
+                        <MenuItem Command="{Binding DisplaySideBySideCommand}"
+                                  Header="並べて表示" />
+                        <MenuItem Command="{Binding DetailsCommand}"
+                                  Header="詳細" />
+                    </MenuItem>
                 </MenuItem>
                 <MenuItem Header="{Binding MainWindow_Help, Source={StaticResource resources}}">
                     <MenuItem Command="{Binding AboutSunctumCommand}" Header="{Binding MainWindow_Help_AboutSunctum, Source={StaticResource resources}}" />

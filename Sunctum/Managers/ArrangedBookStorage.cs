@@ -4,6 +4,7 @@ using Homura.Core;
 using NLog;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.BookSorting;
+using Sunctum.Domain.Logic.DisplayType;
 using Sunctum.Domain.Logic.Query;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
@@ -21,17 +22,20 @@ namespace Sunctum.Managers
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
         private ObservableCollection<BookViewModel> _SearchedBooks;
         private IBookSorting _BookSorting;
+        private IDisplayType _DisplayType;
 
         public ArrangedBookStorage()
             : base()
         {
             Sorting = BookSorting.ByLoadedAsc;
+            DisplayType = Sunctum.Domain.Logic.DisplayType.DisplayType.SideBySide;
         }
 
         public ArrangedBookStorage(ObservableCollection<BookViewModel> collection)
             : base(collection)
         {
             Sorting = BookSorting.ByLoadedAsc;
+            DisplayType = Sunctum.Domain.Logic.DisplayType.DisplayType.SideBySide;
         }
 
         public ObservableCollection<BookViewModel> SearchedBooks
@@ -83,6 +87,18 @@ namespace Sunctum.Managers
             set
             {
                 SetProperty(ref _BookSorting, value);
+                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
+            }
+        }
+
+        public IDisplayType DisplayType
+        {
+            [DebuggerStepThrough]
+            get
+            { return _DisplayType; }
+            set
+            {
+                SetProperty(ref _DisplayType, value);
                 RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
             }
         }

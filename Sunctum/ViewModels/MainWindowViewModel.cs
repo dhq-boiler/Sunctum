@@ -67,6 +67,10 @@ namespace Sunctum.ViewModels
 
         public ICommand ClearSearchResultCommand { get; set; }
 
+        public ICommand DisplaySideBySideCommand { get; set; }
+
+        public ICommand DetailsCommand { get; set; }
+
         public ICommand EncryptionStartingCommand { get; set; }
 
         public ICommand ExitApplicationCommand { get; set; }
@@ -150,6 +154,14 @@ namespace Sunctum.ViewModels
             ClearSearchResultCommand = new DelegateCommand(() =>
             {
                 ActiveDocumentViewModel.BookCabinet.ClearSearchResult();
+            });
+            DisplaySideBySideCommand = new DelegateCommand(() =>
+            {
+                ActiveDocumentViewModel.BookCabinet.DisplayType = Domain.Logic.DisplayType.DisplayType.SideBySide;
+            });
+            DetailsCommand = new DelegateCommand(() =>
+            {
+                ActiveDocumentViewModel.BookCabinet.DisplayType = Domain.Logic.DisplayType.DisplayType.Details;
             });
             EncryptionStartingCommand = new DelegateCommand(async () =>
             {
