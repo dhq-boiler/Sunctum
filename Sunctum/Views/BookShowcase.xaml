@@ -233,6 +233,8 @@
         </Style>
         <Style x:Key="ListViewItem_Style" TargetType="ListViewItem">
             <EventSetter Event="MouseDoubleClick" Handler="Book_ListViewItem_MouseDoubleClick" />
+            <EventSetter Event="PreviewDragOver" Handler="Book_ListViewItem_PreviewDragOver" />
+            <EventSetter Event="Drop" Handler="Book_ListViewItem_Drop" />
         </Style>
     </UserControl.Resources>
     <Grid>
