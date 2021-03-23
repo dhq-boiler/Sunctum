@@ -216,6 +216,7 @@
     <Compile Include="Core\Notifications\ActiveTabChanged.cs" />
     <Compile Include="Core\SunctumBootstrapper.cs" />
     <Compile Include="Core\Extensions\NinjectBindingExtensions.cs" />
+    <Compile Include="Core\Theme.cs" />
     <Compile Include="Managers\BookCabinet.cs" />
     <Compile Include="Managers\BookStorage.cs" />
     <Compile Include="Managers\DataAccessManager.cs" />

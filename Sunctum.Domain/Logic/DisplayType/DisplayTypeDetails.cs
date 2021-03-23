@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
@@ -22,10 +23,7 @@ namespace Sunctum.Domain.Logic.DisplayType
 
             var gridViewColumn1 = new GridViewColumn();
             gridViewColumn1.Header = "著者";
-            gridViewColumn1.DisplayMemberBinding = new Binding()
-            {
-                Path = new System.Windows.PropertyPath("Author.UnescapedName")
-            };
+            gridViewColumn1.CellTemplate = (DataTemplate)Application.Current.FindResource("Author_DataTemplate");
             gridView.Columns.Add(gridViewColumn1);
 
             var gridViewColumn2 = new GridViewColumn();
