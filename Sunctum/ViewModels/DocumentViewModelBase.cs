@@ -1001,6 +1001,11 @@ namespace Sunctum.ViewModels
             return Querying.SortingSelected(this.BookCabinet.Sorting, name);
         }
 
+        public bool DisplayTypeSelected(string name)
+        {
+            return Querying.DisplayTypeSelected(this.BookCabinet.DisplayType, name);
+        }
+
         #endregion //問い合わせ
     }
 }

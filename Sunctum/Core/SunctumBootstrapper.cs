@@ -68,6 +68,7 @@ namespace Sunctum.Core
             Kernel.Bind<IUnencryptionStarting>().To<UnencryptionStarting>().InSingletonScope();
 
             Kernel.Bind<IValueConverter>().To<BookSortingToBool>().InSingletonScope().Named("BookSortingToBool");
+            Kernel.Bind<IValueConverter>().To<DisplayTypeToBool>().InSingletonScope().Named("DisplayTypeToBool");
             Kernel.Bind<IValueConverter>().To<TagSortingToBool>().InSingletonScope().Named("TagSortingToBool");
             Kernel.Bind<IValueConverter>().To<AuthorSortingToBool>().InSingletonScope().Named("AuthorSortingToBool");
 
@@ -75,6 +76,8 @@ namespace Sunctum.Core
 
             BookSortingToBool.Resolve = (type) => Kernel.Get(type);
             BookSortingToBool.ResolveNamed = (type, name) => Kernel.Get(type, name);
+            DisplayTypeToBool.Resolve = (type) => Kernel.Get(type);
+            DisplayTypeToBool.ResolveNamed = (type, name) => Kernel.Get(type, name);
             AuthorSortingToBool.Resolve = (type) => Kernel.Get(type);
             AuthorSortingToBool.ResolveNamed = (type, name) => Kernel.Get(type, name);
             TagSortingToBool.Resolve = (type) => Kernel.Get(type);

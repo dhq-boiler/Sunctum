@@ -207,6 +207,7 @@
     <Compile Include="Converters\ActiveDocumentConverter.cs" />
     <Compile Include="Converters\AuthorSortingToBool.cs" />
     <Compile Include="Converters\BookLoader.cs" />
+    <Compile Include="Converters\DisplayTypeToBool.cs" />
     <Compile Include="Converters\DisplayTypeToViewConverter.cs" />
     <Compile Include="Converters\MarginConverter.cs" />
     <Compile Include="Converters\PathToMenuItem.cs" />

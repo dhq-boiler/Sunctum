@@ -238,9 +238,11 @@
                     </MenuItem>
                     <MenuItem Header="ショーケース">
                         <MenuItem Command="{Binding DisplaySideBySideCommand}"
-                                  Header="並べて表示" />
+                                  Header="並べて表示"
+                                  IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.DisplayType, Mode=OneWay, Converter={cvt:DisplayTypeToBool NamedInstance=DisplayTypeToBool}, ConverterParameter=SideBySide}" />
                         <MenuItem Command="{Binding DetailsCommand}"
-                                  Header="詳細" />
+                                  Header="詳細"
+                                  IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.DisplayType, Mode=OneWay, Converter={cvt:DisplayTypeToBool NamedInstance=DisplayTypeToBool}, ConverterParameter=Details}" />
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="{Binding MainWindow_Help, Source={StaticResource resources}}">
