@@ -236,12 +236,12 @@
                         Header="{Binding MainWindow_Display_Sorting_CoverRedDesc, Source={StaticResource resources}}"
                         IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByCoverRedDesc}" />
                     </MenuItem>
-                    <MenuItem Header="ショーケース">
+                    <MenuItem Header="{Binding MainWindow_Display_DisplayType, Source={StaticResource resources}}">
                         <MenuItem Command="{Binding DisplaySideBySideCommand}"
-                                  Header="並べて表示"
+                                  Header="{Binding MainWindow_Display_DisplayType_SideBySide, Source={StaticResource resources}}"
                                   IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.DisplayType, Mode=OneWay, Converter={cvt:DisplayTypeToBool NamedInstance=DisplayTypeToBool}, ConverterParameter=SideBySide}" />
                         <MenuItem Command="{Binding DetailsCommand}"
-                                  Header="詳細"
+                                  Header="{Binding MainWindow_Display_DisplayType_Details, Source={StaticResource resources}}"
                                   IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.DisplayType, Mode=OneWay, Converter={cvt:DisplayTypeToBool NamedInstance=DisplayTypeToBool}, ConverterParameter=Details}" />
                     </MenuItem>
                 </MenuItem>

@@ -261,6 +261,15 @@
   <data name="MainWindow_Display" xml:space="preserve">
     <value>表示(_I)</value>
   </data>
+  <data name="MainWindow_Display_DisplayType" xml:space="preserve">
+    <value>ショーケース</value>
+  </data>
+  <data name="MainWindow_Display_DisplayType_Details" xml:space="preserve">
+    <value>詳細</value>
+  </data>
+  <data name="MainWindow_Display_DisplayType_SideBySide" xml:space="preserve">
+    <value>並べて表示</value>
+  </data>
   <data name="MainWindow_Display_Sorting" xml:space="preserve">
     <value>ソート</value>
   </data>
