@@ -44,6 +44,7 @@ namespace Sunctum.Domain.Models
         private int? _ContentListViewItemMarginBottom = 0;
         private string _AuthorSorting;
         private string _TagSorting;
+        private string _DisplayType;
 
         public static Configuration ApplicationConfiguration { get; set; }
 
@@ -257,6 +258,13 @@ namespace Sunctum.Domain.Models
         {
             get { return _TagSorting; }
             set { SetProperty(ref _TagSorting, value); }
+        }
+
+        [ConfigurationData]
+        public string DisplayType
+        {
+            get { return _DisplayType; }
+            set { SetProperty(ref _DisplayType, value); }
         }
 
         #endregion //Configuration Data

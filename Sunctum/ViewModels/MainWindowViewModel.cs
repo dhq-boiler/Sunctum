@@ -15,6 +15,7 @@ using Sunctum.Domain.Data.Dao.Migration.Plan;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.AuthorSorting;
 using Sunctum.Domain.Logic.BookSorting;
+using Sunctum.Domain.Logic.DisplayType;
 using Sunctum.Domain.Logic.ImageTagCountSorting;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
@@ -573,6 +574,12 @@ namespace Sunctum.ViewModels
                         HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.GetReferenceByName(sorting);
                     }
 
+                    var displayType = Configuration.ApplicationConfiguration.DisplayType;
+                    if (displayType != null)
+                    {
+                        HomeDocumentViewModel.BookCabinet.DisplayType = DisplayType.GetReferenceByName(displayType);
+                    }
+
                     ((DocumentViewModelBase)HomeDocumentViewModel).IsVisible = true;
                     ((DocumentViewModelBase)HomeDocumentViewModel).IsSelected = true;
 
@@ -842,6 +849,7 @@ namespace Sunctum.ViewModels
             config.DisplayTagPane = DisplayTagPane;
             config.AuthorSorting = AuthorSorting.GetPropertyName(AuthorManager.Sorting);
             config.TagSorting = ImageTagCountSorting.GetPropertyName(TagManager.Sorting);
+            config.DisplayType = DisplayType.GetPropertyName(HomeDocumentViewModel.BookCabinet.DisplayType);
 
             if (config.StoreWindowPosition)
             {
