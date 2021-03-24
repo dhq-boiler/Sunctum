@@ -840,7 +840,6 @@ namespace Sunctum.ViewModels
             config.DisplayAuthorPane = DisplayAuthorPane;
             config.DisplayInformationPane = DisplayInformationPane;
             config.DisplayTagPane = DisplayTagPane;
-            config.BookSorting = BookSorting.GetPropertyName(HomeDocumentViewModel.BookCabinet.Sorting);
             config.AuthorSorting = AuthorSorting.GetPropertyName(AuthorManager.Sorting);
             config.TagSorting = ImageTagCountSorting.GetPropertyName(TagManager.Sorting);
 
