@@ -51,6 +51,15 @@ namespace Sunctum.Domain.Logic.DisplayType
             };
             gridView.Columns.Add(gridViewColumn4);
 
+            var gridViewColumn5 = new GridViewColumn();
+            gridViewColumn5.Header = "発行日";
+            gridViewColumn5.DisplayMemberBinding = new Binding()
+            {
+                Path = new PropertyPath("PublishDate"),
+                StringFormat = "yyyy/MM/dd"
+            };
+            gridView.Columns.Add(gridViewColumn5);
+
             return gridView;
         }
 
