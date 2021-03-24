@@ -76,16 +76,23 @@
         <cvt:ActiveDocumentConverter x:Key="ActiveDocumentConverter" />
     </Window.Resources>
     <DockPanel SizeChanged="DockPanel_SizeChanged">
-        <DockPanel DockPanel.Dock="Top">
+        <DockPanel DockPanel.Dock="Top"
+                   Background="White">
             <DockPanel.Resources>
                 <Style TargetType="MenuItem">
                     <Setter Property="Background" Value="White" />
                     <Setter Property="BorderThickness" Value="0" />
                     <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
                 </Style>
+                <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="Separator">
+                    <Setter Property="Background" Value="White" />
+                    <Setter Property="BorderBrush" Value="White" />
+                </Style>
             </DockPanel.Resources>
             <Menu DockPanel.Dock="Left"
-                  Margin="0,0,0,0">
+                  Margin="0,0,0,0"
+                  Background="White"
+                  BorderBrush="White">
                 <MenuItem Header="{Binding MainWindow_File, Source={StaticResource resources}}">
                     <MenuItem Command="{Binding ImportFilesCommand}" Header="{Binding MainWindow_File_ImportFiles, Source={StaticResource resources}}" />
                     <MenuItem Command="{Binding ImportFoldersCommand}" Header="{Binding MainWindow_File_ImportFolders, Source={StaticResource resources}}" />
