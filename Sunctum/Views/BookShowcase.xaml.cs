@@ -1,6 +1,7 @@
 ﻿
 
 using NLog;
+using Sunctum.Domain.Logic.DisplayType;
 using Sunctum.Domain.ViewModels;
 using Sunctum.UI.Controls;
 using Sunctum.ViewModels;
@@ -40,6 +41,13 @@ namespace Sunctum.Views
 
         private void Book_ListView_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            var bookCabinet = ((App.Current.MainWindow as MainWindow).DataContext as MainWindowViewModel).ActiveDocumentViewModel.BookCabinet;
+            if (bookCabinet != null && bookCabinet.DisplayType == DisplayType.Details)
+            {
+                return;
+            }
+
+            //display type SideBySide only 
             ScrollViewer itemsViewer = (ScrollViewer)FindControl(Book_ListView, typeof(ScrollViewer));
             VirtualizingWrapPanel itemsPanel = (VirtualizingWrapPanel)FindControl(Book_ListView, typeof(VirtualizingWrapPanel));
             itemsPanel.Width = itemsViewer.ActualWidth;

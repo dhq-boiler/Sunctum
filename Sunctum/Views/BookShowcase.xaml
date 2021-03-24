@@ -340,7 +340,6 @@
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                 SelectionChanged="Book_ListView_SelectionChanged"
                 SelectionMode="Extended"
-                SizeChanged="Book_ListView_SizeChanged"
                 VirtualizingPanel.IsVirtualizing="True"
                 VirtualizingPanel.VirtualizationMode="Recycling"
                 Visibility="{Binding BookListIsVisible, Converter={StaticResource BoolToVisibilityConverter}}"
@@ -361,6 +360,7 @@
                 </i:Interaction.Triggers>
                 <ListView.Style>
                     <Style TargetType="ListView">
+                        <EventSetter Event="SizeChanged" Handler="Book_ListView_SizeChanged" />
                         <Setter Property="ItemTemplate" Value="{StaticResource BookCabinet_Cell_DataTemplate}" />
                         <Setter Property="ItemContainerStyle">
                             <Setter.Value>
