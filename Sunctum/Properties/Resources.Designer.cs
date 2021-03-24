@@ -493,6 +493,33 @@ namespace Sunctum.Properties {
         }
         
         /// <summary>
+        ///   Showcase に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MainWindow_Display_DisplayType {
+            get {
+                return ResourceManager.GetString("MainWindow_Display_DisplayType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Details に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MainWindow_Display_DisplayType_Details {
+            get {
+                return ResourceManager.GetString("MainWindow_Display_DisplayType_Details", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   SideBySide に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MainWindow_Display_DisplayType_SideBySide {
+            get {
+                return ResourceManager.GetString("MainWindow_Display_DisplayType_SideBySide", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sorting に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string MainWindow_Display_Sorting {

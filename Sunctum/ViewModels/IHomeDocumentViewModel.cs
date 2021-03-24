@@ -38,6 +38,7 @@ namespace Sunctum.ViewModels
         void CloseBook();
         void CloseImage();
         void CloseSearchPane();
+        bool DisplayTypeSelected(string name);
         void GoNextImage();
         void GoPreviousImage();
         Task ImportAsync(string[] objectPaths);

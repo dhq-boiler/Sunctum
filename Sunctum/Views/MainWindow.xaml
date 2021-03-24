@@ -15,7 +15,6 @@
     xmlns:trigger="clr-namespace:Sunctum.Views.Triggers"
     xmlns:ui.ctrl="clr-namespace:Sunctum.UI.Controls;assembly=Sunctum.UI"
     xmlns:viewModel="clr-namespace:Sunctum.ViewModels"
-    Title="{Binding MainWindowTitle}"
     Width="{Binding WindowWidth, Mode=TwoWay}"
     Height="{Binding WindowHeight, Mode=TwoWay}"
     prism:ViewModelLocator.AutoWireViewModel="True"
@@ -24,6 +23,16 @@
     Loaded="Window_Loaded"
     Top="{Binding WindowTop, Mode=TwoWay}"
     mc:Ignorable="d">
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="{x:Static SystemParameters.CaptionHeight}"
+                      ResizeBorderThickness="{x:Static SystemParameters.WindowResizeBorderThickness}" />
+    </WindowChrome.WindowChrome>
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static SystemCommands.CloseWindowCommand}" CanExecute="CommandBinding_CanExecute_Close" Executed="CommandBinding_Executed_Close" />
+        <CommandBinding Command="{x:Static SystemCommands.MaximizeWindowCommand}" CanExecute="CommandBinding_CanExecute_Maximize" Executed="CommandBinding_Executed_Maximize" />
+        <CommandBinding Command="{x:Static SystemCommands.MinimizeWindowCommand}" CanExecute="CommandBinding_CanExecute_Minimize" Executed="CommandBinding_Executed_Minimize" />
+        <CommandBinding Command="{x:Static SystemCommands.RestoreWindowCommand}" CanExecute="CommandBinding_CanExecute_Restore" Executed="CommandBinding_Executed_Restore" />
+    </Window.CommandBindings>
     <i:Interaction.Triggers>
         <trigger:LeftKeyDownEventTrigger EventName="KeyDown">
             <i:InvokeCommandAction Command="{Binding ActiveDocumentViewModel.LeftKeyDownCommand}" />
@@ -67,153 +76,222 @@
         <cvt:ActiveDocumentConverter x:Key="ActiveDocumentConverter" />
     </Window.Resources>
     <DockPanel SizeChanged="DockPanel_SizeChanged">
-        <Menu DockPanel.Dock="Top">
-            <MenuItem Header="{Binding MainWindow_File, Source={StaticResource resources}}">
-                <MenuItem Command="{Binding ImportFilesCommand}" Header="{Binding MainWindow_File_ImportFiles, Source={StaticResource resources}}" />
-                <MenuItem Command="{Binding ImportFoldersCommand}" Header="{Binding MainWindow_File_ImportFolders, Source={StaticResource resources}}" />
-                <MenuItem Command="{Binding ImportLibraryCommand}" Header="{Binding MainWindow_File_ImportLibrary, Source={StaticResource resources}}" />
-                <Separator />
-                <MenuItem Command="{Binding ReloadLibraryCommand}" Header="{Binding MainWindow_File_ReloadLibrary, Source={StaticResource resources}}" />
-                <MenuItem Command="{Binding OpenSwitchLibraryCommand}" Header="{Binding MainWindow_File_SwitchLibrary, Source={StaticResource resources}}" />
-                <MenuItem
+        <DockPanel DockPanel.Dock="Top"
+                   Background="White">
+            <DockPanel.Resources>
+                <Style TargetType="MenuItem">
+                    <Setter Property="Background" Value="White" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
+                </Style>
+                <Style x:Key="{x:Static MenuItem.SeparatorStyleKey}" TargetType="Separator">
+                    <Setter Property="Background" Value="White" />
+                    <Setter Property="BorderBrush" Value="White" />
+                </Style>
+            </DockPanel.Resources>
+            <Menu DockPanel.Dock="Left"
+                  Margin="0,0,0,0"
+                  Background="White"
+                  BorderBrush="White">
+                <MenuItem Header="{Binding MainWindow_File, Source={StaticResource resources}}">
+                    <MenuItem Command="{Binding ImportFilesCommand}" Header="{Binding MainWindow_File_ImportFiles, Source={StaticResource resources}}" />
+                    <MenuItem Command="{Binding ImportFoldersCommand}" Header="{Binding MainWindow_File_ImportFolders, Source={StaticResource resources}}" />
+                    <MenuItem Command="{Binding ImportLibraryCommand}" Header="{Binding MainWindow_File_ImportLibrary, Source={StaticResource resources}}" />
+                    <Separator />
+                    <MenuItem Command="{Binding ReloadLibraryCommand}" Header="{Binding MainWindow_File_ReloadLibrary, Source={StaticResource resources}}" />
+                    <MenuItem Command="{Binding OpenSwitchLibraryCommand}" Header="{Binding MainWindow_File_SwitchLibrary, Source={StaticResource resources}}" />
+                    <MenuItem
                     DisplayMemberPath="Path"
                     Header="{Binding MainWindow_File_RecentLibraries, Source={StaticResource resources}}"
                     ItemsSource="{Binding LibraryVM.RecentOpenedLibraryList}">
-                    <MenuItem.ItemContainerStyle>
-                        <Style TargetType="MenuItem">
-                            <Setter Property="Command" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.SwitchLibraryCommand}" />
-                            <Setter Property="CommandParameter" Value="{Binding}" />
-                        </Style>
-                    </MenuItem.ItemContainerStyle>
+                        <MenuItem.ItemContainerStyle>
+                            <Style TargetType="MenuItem">
+                                <Setter Property="Command" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.SwitchLibraryCommand}" />
+                                <Setter Property="CommandParameter" Value="{Binding}" />
+                            </Style>
+                        </MenuItem.ItemContainerStyle>
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem Command="{Binding ShowPreferenceDialogCommand}" Header="{Binding MainWindow_File_Preferences, Source={StaticResource resources}}" />
+                    <Separator />
+                    <MenuItem Command="{Binding ExitApplicationCommand}" Header="{Binding MainWindow_File_ExitSunctum, Source={StaticResource resources}}" />
                 </MenuItem>
-                <Separator />
-                <MenuItem Command="{Binding ShowPreferenceDialogCommand}" Header="{Binding MainWindow_File_Preferences, Source={StaticResource resources}}" />
-                <Separator />
-                <MenuItem Command="{Binding ExitApplicationCommand}" Header="{Binding MainWindow_File_ExitSunctum, Source={StaticResource resources}}" />
-            </MenuItem>
-            <MenuItem Header="{Binding MainWindow_Data, Source={StaticResource resources}}">
-                <MenuItem Header="{Binding MainWindow_Data_BookSize, Source={StaticResource resources}}">
-                    <MenuItem Command="{Binding UpdateBookByteSizeAllCommand}" Header="{Binding MainWindow_Data_BookSize_UpdateSizeAllBooks, Source={StaticResource resources}}" />
-                    <MenuItem Command="{Binding UpdateBookByteSizeStillNullCommand}" Header="{Binding MainWindow_Data_BookSize_UpdateSizeQuickly, Source={StaticResource resources}}" />
+                <MenuItem Header="{Binding MainWindow_Data, Source={StaticResource resources}}">
+                    <MenuItem Header="{Binding MainWindow_Data_BookSize, Source={StaticResource resources}}">
+                        <MenuItem Command="{Binding UpdateBookByteSizeAllCommand}" Header="{Binding MainWindow_Data_BookSize_UpdateSizeAllBooks, Source={StaticResource resources}}" />
+                        <MenuItem Command="{Binding UpdateBookByteSizeStillNullCommand}" Header="{Binding MainWindow_Data_BookSize_UpdateSizeQuickly, Source={StaticResource resources}}" />
+                    </MenuItem>
+                    <MenuItem Header="{Binding MainWindow_Data_BookTag, Source={StaticResource resources}}">
+                        <MenuItem Command="{Binding UpdateBookTagCommand}" Header="{Binding MainWindow_Data_BookTag_UpdateBookTagAll, Source={StaticResource resources}}" />
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem Command="{Binding EncryptionStartingCommand}" Header="{Binding MainWindow_Data_EncryptionStart, Source={StaticResource resources}}">
+                        <MenuItem.Style>
+                            <Style TargetType="{x:Type MenuItem}">
+                                <Setter Property="Background" Value="White" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Configuration.LibraryIsEncrypted}" Value="True">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Configuration.LibraryIsEncrypted}" Value="False">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </MenuItem.Style>
+                    </MenuItem>
+                    <MenuItem Command="{Binding UnencryptionStartingCommand}" Header="{Binding MainWindow_Data_UnencryptionStart, Source={StaticResource resources}}">
+                        <MenuItem.Style>
+                            <Style TargetType="{x:Type MenuItem}">
+                                <Setter Property="Background" Value="White" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Configuration.LibraryIsEncrypted}" Value="False">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Configuration.LibraryIsEncrypted}" Value="True">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </MenuItem.Style>
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem Command="{Binding OpenAuthorManagementDialogCommand}" Header="{Binding MainWindow_Data_AuthorManagement, Source={StaticResource resources}}" />
+                    <MenuItem Command="{Binding OpenTagManagementDialogCommand}" Header="{Binding MainWindow_Data_TagManagement, Source={StaticResource resources}}" />
+                    <MenuItem Command="{Binding OpenMetadataImportSettingDialogCommand}" Header="{Binding MainWindow_Data_MetadataImportSetting, Source={StaticResource resources}}" />
                 </MenuItem>
-                <MenuItem Header="{Binding MainWindow_Data_BookTag, Source={StaticResource resources}}">
-                    <MenuItem Command="{Binding UpdateBookTagCommand}" Header="{Binding MainWindow_Data_BookTag_UpdateBookTagAll, Source={StaticResource resources}}" />
-                </MenuItem>
-                <Separator />
-                <MenuItem Command="{Binding EncryptionStartingCommand}" Header="{Binding MainWindow_Data_EncryptionStart, Source={StaticResource resources}}">
-                    <MenuItem.Style>
-                        <Style TargetType="{x:Type MenuItem}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Configuration.LibraryIsEncrypted}" Value="True">
-                                    <Setter Property="Visibility" Value="Collapsed" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding Configuration.LibraryIsEncrypted}" Value="False">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </MenuItem.Style>
-                </MenuItem>
-                <MenuItem Command="{Binding UnencryptionStartingCommand}" Header="{Binding MainWindow_Data_UnencryptionStart, Source={StaticResource resources}}">
-                    <MenuItem.Style>
-                        <Style TargetType="{x:Type MenuItem}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Configuration.LibraryIsEncrypted}" Value="False">
-                                    <Setter Property="Visibility" Value="Collapsed" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding Configuration.LibraryIsEncrypted}" Value="True">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </MenuItem.Style>
-                </MenuItem>
-                <Separator />
-                <MenuItem Command="{Binding OpenAuthorManagementDialogCommand}" Header="{Binding MainWindow_Data_AuthorManagement, Source={StaticResource resources}}" />
-                <MenuItem Command="{Binding OpenTagManagementDialogCommand}" Header="{Binding MainWindow_Data_TagManagement, Source={StaticResource resources}}" />
-                <MenuItem Command="{Binding OpenMetadataImportSettingDialogCommand}" Header="{Binding MainWindow_Data_MetadataImportSetting, Source={StaticResource resources}}" />
-            </MenuItem>
-            <MenuItem Header="{Binding MainWindow_Search, Source={StaticResource resources}}">
-                <MenuItem
+                <MenuItem Header="{Binding MainWindow_Search, Source={StaticResource resources}}">
+                    <MenuItem
                     Header="{Binding ActiveDocumentViewModel.SearchStatusText}"
                     IsEnabled="False"
                     Visibility="{Binding LibraryVM.IsSearching, Converter={StaticResource BoolToVisibilityConverter}}" />
-                <MenuItem Command="{Binding OpenSearchPaneCommand}" Header="{Binding MainWindow_Search_Search, Source={StaticResource resources}}" />
-                <MenuItem Command="{Binding OpenPowerSearchCommand}" Header="Power search" />
-                <Separator />
-                <MenuItem Command="{Binding ClearSearchResultCommand}" Header="{Binding MainWindow_Search_ClearSearchResult, Source={StaticResource resources}}" />
-            </MenuItem>
-            <MenuItem Header="{Binding MainWindow_Display, Source={StaticResource resources}}">
-                <MenuItem Header="{Binding MainWindow_Display_Window, Source={StaticResource resources}}">
-                    <MenuItem
+                    <MenuItem Command="{Binding OpenSearchPaneCommand}" Header="{Binding MainWindow_Search_Search, Source={StaticResource resources}}" />
+                    <MenuItem Command="{Binding OpenPowerSearchCommand}" Header="Power search" />
+                    <Separator />
+                    <MenuItem Command="{Binding ClearSearchResultCommand}" Header="{Binding MainWindow_Search_ClearSearchResult, Source={StaticResource resources}}" />
+                </MenuItem>
+                <MenuItem Header="{Binding MainWindow_Display, Source={StaticResource resources}}">
+                    <MenuItem Header="{Binding MainWindow_Display_Window, Source={StaticResource resources}}">
+                        <MenuItem
                         Command="{Binding ToggleDisplayInformationPaneCommand}"
                         Header="{Binding MainWindow_Display_Window_Information, Source={StaticResource resources}}"
                         IsChecked="{Binding DisplayInformationPane}" />
-                    <MenuItem
+                        <MenuItem
                         Command="{Binding ToggleDisplayTagPaneCommand}"
                         Header="{Binding MainWindow_Display_Window_Tag, Source={StaticResource resources}}"
                         IsChecked="{Binding DisplayTagPane}" />
-                    <MenuItem
+                        <MenuItem
                         Command="{Binding ToggleDisplayAuthorPaneCommand}"
                         Header="{Binding MainWindow_Display_Window_Author, Source={StaticResource resources}}"
                         IsChecked="{Binding DisplayAuthorPane}" />
-                </MenuItem>
-                <Separator />
-                <MenuItem Header="{Binding MainWindow_Display_Sorting, Source={StaticResource resources}}">
-                    <MenuItem
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem Header="{Binding MainWindow_Display_Sorting, Source={StaticResource resources}}">
+                        <MenuItem
                         Command="{Binding SortBookByLoadedAscCommand}"
                         Header="{Binding MainWindow_Display_Sorting_LoadedAsc, Source={StaticResource resources}}"
                         IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByLoadedAsc}" />
-                    <MenuItem
+                        <MenuItem
                         Command="{Binding SortBookByLoadedDescCommand}"
                         Header="{Binding MainWindow_Display_Sorting_LoadedDesc, Source={StaticResource resources}}"
                         IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByLoadedDesc}" />
-                    <MenuItem
+                        <MenuItem
                         Command="{Binding SortBookByTitleAscCommand}"
                         Header="{Binding MainWindow_Display_Sorting_TitleAsc, Source={StaticResource resources}}"
                         IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByTitleAsc}" />
-                    <MenuItem
+                        <MenuItem
                         Command="{Binding SortBookByTitleDescCommand}"
                         Header="{Binding MainWindow_Display_Sorting_TitleDesc, Source={StaticResource resources}}"
                         IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByTitleDesc}" />
-                    <MenuItem
+                        <MenuItem
                         Command="{Binding SortBookByAuthorAscCommand}"
                         Header="{Binding MainWindow_Display_Sorting_AuthorAsc, Source={StaticResource resources}}"
                         IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByAuthorAsc}" />
-                    <MenuItem
+                        <MenuItem
                         Command="{Binding SortBookByAuthorDescCommand}"
                         Header="{Binding MainWindow_Display_Sorting_AuthorDesc, Source={StaticResource resources}}"
                         IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByAuthorDesc}" />
-                    <MenuItem
+                        <MenuItem
                         Command="{Binding SortBookByCoverBlueAscCommand}"
                         Header="{Binding MainWindow_Display_Sorting_CoverBlueAsc, Source={StaticResource resources}}"
                         IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByCoverBlueAsc}" />
-                    <MenuItem
+                        <MenuItem
                         Command="{Binding SortBookByCoverBlueDescCommand}"
                         Header="{Binding MainWindow_Display_Sorting_CoverBlueDesc, Source={StaticResource resources}}"
                         IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByCoverBlueDesc}" />
-                    <MenuItem
+                        <MenuItem
                         Command="{Binding SortBookByCoverGreenAscCommand}"
                         Header="{Binding MainWindow_Display_Sorting_CoverGreenAsc, Source={StaticResource resources}}"
                         IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByCoverGreenAsc}" />
-                    <MenuItem
+                        <MenuItem
                         Command="{Binding SortBookByCoverGreenDescCommand}"
                         Header="{Binding MainWindow_Display_Sorting_CoverGreenDesc, Source={StaticResource resources}}"
                         IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByCoverGreenDesc}" />
-                    <MenuItem
+                        <MenuItem
                         Command="{Binding SortBookByCoverRedAscCommand}"
                         Header="{Binding MainWindow_Display_Sorting_CoverRedAsc, Source={StaticResource resources}}"
                         IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByCoverRedAsc}" />
-                    <MenuItem
+                        <MenuItem
                         Command="{Binding SortBookByCoverRedDescCommand}"
                         Header="{Binding MainWindow_Display_Sorting_CoverRedDesc, Source={StaticResource resources}}"
                         IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByCoverRedDesc}" />
+                    </MenuItem>
+                    <MenuItem Header="{Binding MainWindow_Display_DisplayType, Source={StaticResource resources}}">
+                        <MenuItem Command="{Binding DisplaySideBySideCommand}"
+                                  Header="{Binding MainWindow_Display_DisplayType_SideBySide, Source={StaticResource resources}}"
+                                  IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.DisplayType, Mode=OneWay, Converter={cvt:DisplayTypeToBool NamedInstance=DisplayTypeToBool}, ConverterParameter=SideBySide}" />
+                        <MenuItem Command="{Binding DetailsCommand}"
+                                  Header="{Binding MainWindow_Display_DisplayType_Details, Source={StaticResource resources}}"
+                                  IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.DisplayType, Mode=OneWay, Converter={cvt:DisplayTypeToBool NamedInstance=DisplayTypeToBool}, ConverterParameter=Details}" />
+                    </MenuItem>
                 </MenuItem>
-            </MenuItem>
-            <MenuItem Header="{Binding MainWindow_Help, Source={StaticResource resources}}">
-                <MenuItem Command="{Binding AboutSunctumCommand}" Header="{Binding MainWindow_Help_AboutSunctum, Source={StaticResource resources}}" />
-            </MenuItem>
-        </Menu>
+                <MenuItem Header="{Binding MainWindow_Help, Source={StaticResource resources}}">
+                    <MenuItem Command="{Binding AboutSunctumCommand}" Header="{Binding MainWindow_Help_AboutSunctum, Source={StaticResource resources}}" />
+                </MenuItem>
+            </Menu>
+            <StackPanel Orientation="Horizontal"
+                        DockPanel.Dock="Right"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top">
+                <Button Content="0"
+                        Foreground="Gray"
+                        Style="{DynamicResource CaptionButtonStyleKey}"
+                        Command="{x:Static SystemCommands.MinimizeWindowCommand}">
+                    <Button.ToolTip>
+                        最小化
+                    </Button.ToolTip>
+                </Button>
+                <Button Content="1"
+                        Foreground="Gray"
+                        Style="{DynamicResource CaptionButtonStyleKey}"
+                        Command="{x:Static SystemCommands.MaximizeWindowCommand}">
+                    <Button.ToolTip>
+                        最大化
+                    </Button.ToolTip>
+                </Button>
+                <Button Content="2"
+                        Foreground="Gray"
+                        Style="{DynamicResource CaptionButtonStyleKey}"
+                        Command="{x:Static SystemCommands.RestoreWindowCommand}">
+                    <Button.ToolTip>
+                        元に戻す(縮小)
+                    </Button.ToolTip>
+                </Button>
+                <Button Content="r"
+                        Foreground="Gray"
+                        Style="{DynamicResource CaptionButtonStyleKey}"
+                        Command="{x:Static SystemCommands.CloseWindowCommand}">
+                    <Button.ToolTip>
+                        閉じる
+                    </Button.ToolTip>
+                </Button>
+            </StackPanel>
+            <TextBlock Text="{Binding MainWindowTitle}"
+                       DockPanel.Dock="Right"
+                       HorizontalAlignment="Right"
+                       Margin="5,0,0,0" />
+            <Grid />
+        </DockPanel>
         <DockPanel DockPanel.Dock="Bottom">
             <local:ProgressBar
                 Height="5"

@@ -197,9 +197,20 @@ namespace Sunctum.Managers
         private void Internal_FillContents(BookViewModel book)
         {
             int currentCount = Querying.BookContentsCount(book.ID);
-            if (currentCount != book.Contents.Count() || !book.Contents.All(b => b.IsLoaded))
+            InsertContentsObjIf(book);
+            var countIsNotFull = currentCount != book.Contents.Count();
+            var allPagesIsLoaded = book.Contents.All(b => b.IsLoaded);
+            if (countIsNotFull || !allPagesIsLoaded)
             {
                 ContentsLoadTask.FillContents(this, book);
+            }
+        }
+
+        private void InsertContentsObjIf(BookViewModel book)
+        {
+            if (book.Contents == null)
+            {
+                book.Contents = new ObservableCollection<PageViewModel>();
             }
         }
 

@@ -5,6 +5,7 @@ using Sunctum.Domain.Bridge;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Logic.AuthorSorting;
 using Sunctum.Domain.Logic.BookSorting;
+using Sunctum.Domain.Logic.DisplayType;
 using Sunctum.Domain.Logic.ImageTagCountSorting;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
@@ -48,6 +49,13 @@ namespace Sunctum.Domain.Logic.Query
             var sorting = AuthorSorting.AuthorSorting.GetReferenceByName(name);
             var sortingType = sorting.GetType();
             return currentSorting.GetType().Equals(sortingType);
+        }
+
+        public static bool DisplayTypeSelected(IDisplayType currentDisplayType, string name)
+        {
+            var displaytype = DisplayType.DisplayType.GetReferenceByName(name);
+            var displaytypeType = displaytype.GetType();
+            return currentDisplayType.GetType().Equals(displaytypeType);
         }
     }
 }

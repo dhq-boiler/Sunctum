@@ -15,6 +15,7 @@ using Sunctum.Domain.Data.Dao.Migration.Plan;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.AuthorSorting;
 using Sunctum.Domain.Logic.BookSorting;
+using Sunctum.Domain.Logic.DisplayType;
 using Sunctum.Domain.Logic.ImageTagCountSorting;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
@@ -67,6 +68,10 @@ namespace Sunctum.ViewModels
 
         public ICommand ClearSearchResultCommand { get; set; }
 
+        public ICommand DisplaySideBySideCommand { get; set; }
+
+        public ICommand DetailsCommand { get; set; }
+
         public ICommand EncryptionStartingCommand { get; set; }
 
         public ICommand ExitApplicationCommand { get; set; }
@@ -86,6 +91,8 @@ namespace Sunctum.ViewModels
         public ICommand OpenPowerSearchCommand { get; set; }
 
         public ICommand OpenSwitchLibraryCommand { get; set; }
+
+        public ICommand OpenSearchPaneCommand { get; set; }
 
         public ICommand OpenTagManagementDialogCommand { get; set; }
 
@@ -149,6 +156,14 @@ namespace Sunctum.ViewModels
             {
                 ActiveDocumentViewModel.BookCabinet.ClearSearchResult();
             });
+            DisplaySideBySideCommand = new DelegateCommand(() =>
+            {
+                ActiveDocumentViewModel.BookCabinet.DisplayType = Domain.Logic.DisplayType.DisplayType.SideBySide;
+            });
+            DetailsCommand = new DelegateCommand(() =>
+            {
+                ActiveDocumentViewModel.BookCabinet.DisplayType = Domain.Logic.DisplayType.DisplayType.Details;
+            });
             EncryptionStartingCommand = new DelegateCommand(async () =>
             {
                 await OpenEncryptionStartingDialog();
@@ -194,6 +209,10 @@ namespace Sunctum.ViewModels
                     await LibraryVM.Reset();
                     await Initialize(false);
                 }
+            });
+            OpenSearchPaneCommand = new DelegateCommand(() =>
+            {
+                this.ActiveDocumentViewModel.SearchPaneIsVisible = true;
             });
             OpenTagManagementDialogCommand = new DelegateCommand(() =>
             {
@@ -404,8 +423,6 @@ namespace Sunctum.ViewModels
         [Inject]
         public IDataAccessManager DataAccessManager { get; set; }
 
-        public InteractionRequest<Notification> CloseRequest { get; } = new InteractionRequest<Notification>();
-
         public double WindowLeft
         {
             get { return _WindowLeft; }
@@ -555,6 +572,12 @@ namespace Sunctum.ViewModels
                     if (sorting != null)
                     {
                         HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.GetReferenceByName(sorting);
+                    }
+
+                    var displayType = Configuration.ApplicationConfiguration.DisplayType;
+                    if (displayType != null)
+                    {
+                        HomeDocumentViewModel.BookCabinet.DisplayType = DisplayType.GetReferenceByName(displayType);
                     }
 
                     ((DocumentViewModelBase)HomeDocumentViewModel).IsVisible = true;
@@ -824,9 +847,9 @@ namespace Sunctum.ViewModels
             config.DisplayAuthorPane = DisplayAuthorPane;
             config.DisplayInformationPane = DisplayInformationPane;
             config.DisplayTagPane = DisplayTagPane;
-            config.BookSorting = BookSorting.GetPropertyName(HomeDocumentViewModel.BookCabinet.Sorting);
             config.AuthorSorting = AuthorSorting.GetPropertyName(AuthorManager.Sorting);
             config.TagSorting = ImageTagCountSorting.GetPropertyName(TagManager.Sorting);
+            config.DisplayType = DisplayType.GetPropertyName(HomeDocumentViewModel.BookCabinet.DisplayType);
 
             if (config.StoreWindowPosition)
             {
@@ -844,7 +867,7 @@ namespace Sunctum.ViewModels
 
         public void Close()
         {
-            CloseRequest.Raise(new Notification());
+            Application.Current.Shutdown();
         }
 
         #endregion //一般

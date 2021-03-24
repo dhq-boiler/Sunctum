@@ -12,6 +12,7 @@
     xmlns:prism="http://prismlibrary.com/"
     xmlns:trigger="clr-namespace:Sunctum.Views.Triggers"
     xmlns:ui.ctrl="clr-namespace:Sunctum.UI.Controls;assembly=Sunctum.UI"
+    xmlns:displaytype="clr-namespace:Sunctum.Domain.Logic.DisplayType;assembly=Sunctum.Domain"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -29,6 +30,7 @@
         <cvt:BookCoverThumbnailLoader x:Key="BookCoverThumbnailLoader" />
         <cvt:PathToWriteableBitmap x:Key="ImageConverter" />
         <cvt:PageThumbnailLoader x:Key="PageThumbnailLoader" />
+        <cvt:DisplayTypeToViewConverter x:Key="DisplayType2ViewConverter" />
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <ItemsPanelTemplate x:Key="Contents_ItemPanelTemplate">
             <WrapPanel />
@@ -168,6 +170,56 @@
                     Content="→" />
             </Grid>
         </DataTemplate>
+        <DataTemplate x:Key="BookCabinet_Cell_DataTemplate">
+            <Grid>
+                <Grid.Margin>
+                    <MultiBinding Converter="{StaticResource MarginConverter}">
+                        <Binding Path="Configuration.BookListViewItemMarginLeft" />
+                        <Binding Path="Configuration.BookListViewItemMarginTop" />
+                        <Binding Path="Configuration.BookListViewItemMarginRight" />
+                        <Binding Path="Configuration.BookListViewItemMarginBottom" />
+                    </MultiBinding>
+                </Grid.Margin>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="{Binding Configuration.BookListViewItemAuthorHeight}" />
+                    <RowDefinition Height="{Binding Configuration.BookListViewItemTitleHeight}" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="{Binding Configuration.BookListViewItemWidth}" />
+                </Grid.ColumnDefinitions>
+                <ContentPresenter Content="{Binding Converter={StaticResource BookCoverThumbnailLoader}}" Visibility="Collapsed" />
+                <Image
+                                Grid.Row="0"
+                                Height="{Binding Configuration.BookListViewItemImageHeight}"
+                                MaxWidth="{Binding Configuration.BookListViewItemWidth}"
+                                MaxHeight="{Binding Configuration.BookListViewItemImageHeight}"
+                                Opacity="0.0"
+                                Source="{Binding FirstPage.Image.Path, Converter={StaticResource ImageConverter}}">
+                    <Image.Style>
+                        <Style TargetType="{x:Type Image}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsLoaded}" Value="True">
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard Storyboard="{StaticResource appearItem}" />
+                                    </DataTrigger.EnterActions>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Image.Style>
+                </Image>
+                <ui.ctrl:AutoScrollingHyperlink
+                                Grid.Row="1"
+                                Width="{Binding Configuration.BookListViewItemWidth}"
+                                HyperlinkClicked="AutoScrollingHyperlink_HyperlinkClicked"
+                                Text="{Binding Author.UnescapedName}" />
+                <ui.ctrl:AutoScrollingLabel
+                                x:Name="Book_Title_AutoScrollingLabel"
+                                Grid.Row="2"
+                                Width="{Binding Configuration.BookListViewItemWidth}"
+                                Text="{Binding UnescapedTitle}" />
+            </Grid>
+        </DataTemplate>
         <Style x:Key="Contents_ListView_Style" TargetType="{x:Type ListView}">
             <Setter Property="ItemsPanel" Value="{StaticResource Contents_ItemPanelTemplate}" />
             <Setter Property="ItemContainerStyle" Value="{StaticResource Contents_ListViewItem_Style}" />
@@ -178,6 +230,11 @@
                     <ContextMenu ItemsSource="{Binding ContentsContextMenuItems}" />
                 </Setter.Value>
             </Setter>
+        </Style>
+        <Style x:Key="ListViewItem_Style" TargetType="ListViewItem">
+            <EventSetter Event="MouseDoubleClick" Handler="Book_ListViewItem_MouseDoubleClick" />
+            <EventSetter Event="PreviewDragOver" Handler="Book_ListViewItem_PreviewDragOver" />
+            <EventSetter Event="Drop" Handler="Book_ListViewItem_Drop" />
         </Style>
     </UserControl.Resources>
     <Grid>
@@ -283,10 +340,10 @@
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                 SelectionChanged="Book_ListView_SelectionChanged"
                 SelectionMode="Extended"
-                SizeChanged="Book_ListView_SizeChanged"
                 VirtualizingPanel.IsVirtualizing="True"
                 VirtualizingPanel.VirtualizationMode="Recycling"
-                Visibility="{Binding BookListIsVisible, Converter={StaticResource BoolToVisibilityConverter}}">
+                Visibility="{Binding BookListIsVisible, Converter={StaticResource BoolToVisibilityConverter}}"
+                View="{Binding BookCabinet.DisplayType, Converter={StaticResource DisplayType2ViewConverter}}">
                 <i:Interaction.Triggers>
                     <trigger:HomeKeyDownEventTrigger>
                         <trigger:ScrollTopAction TargetObject="{Binding ElementName=Book_ListView}" />
@@ -301,110 +358,85 @@
                         <prism:InvokeCommandAction Command="{Binding DropCommand}" TriggerParameterPath="Data" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <ui.ctrl:VirtualizingWrapPanel>
-                            <i:Interaction.Triggers>
-                                <prism:InteractionRequestTrigger SourceObject="{Binding ResetScrollOffsetRequest}">
-                                    <trigger:ResetScrollOffsetAction />
-                                </prism:InteractionRequestTrigger>
-                                <prism:InteractionRequestTrigger SourceObject="{Binding StoreBookScrollOffsetRequest}">
-                                    <trigger:StoreScrollOffsetAction />
-                                </prism:InteractionRequestTrigger>
-                                <prism:InteractionRequestTrigger SourceObject="{Binding RestoreBookScrollOffsetRequest}">
-                                    <trigger:RestoreScrollOffsetAction />
-                                </prism:InteractionRequestTrigger>
-                            </i:Interaction.Triggers>
-                        </ui.ctrl:VirtualizingWrapPanel>
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.Margin>
-                                <MultiBinding Converter="{StaticResource MarginConverter}">
-                                    <Binding Path="Configuration.BookListViewItemMarginLeft" />
-                                    <Binding Path="Configuration.BookListViewItemMarginTop" />
-                                    <Binding Path="Configuration.BookListViewItemMarginRight" />
-                                    <Binding Path="Configuration.BookListViewItemMarginBottom" />
-                                </MultiBinding>
-                            </Grid.Margin>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition Height="{Binding Configuration.BookListViewItemAuthorHeight}" />
-                                <RowDefinition Height="{Binding Configuration.BookListViewItemTitleHeight}" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="{Binding Configuration.BookListViewItemWidth}" />
-                            </Grid.ColumnDefinitions>
-                            <ContentPresenter Content="{Binding Converter={StaticResource BookCoverThumbnailLoader}}" Visibility="Collapsed" />
-                            <Image
-                                Grid.Row="0"
-                                Height="{Binding Configuration.BookListViewItemImageHeight}"
-                                MaxWidth="{Binding Configuration.BookListViewItemWidth}"
-                                MaxHeight="{Binding Configuration.BookListViewItemImageHeight}"
-                                Opacity="0.0"
-                                Source="{Binding FirstPage.Image.Path, Converter={StaticResource ImageConverter}}">
-                                <Image.Style>
-                                    <Style TargetType="{x:Type Image}">
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding IsLoaded}" Value="True">
-                                                <DataTrigger.EnterActions>
-                                                    <BeginStoryboard Storyboard="{StaticResource appearItem}" />
-                                                </DataTrigger.EnterActions>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Image.Style>
-                            </Image>
-                            <ui.ctrl:AutoScrollingHyperlink
-                                Grid.Row="1"
-                                Width="{Binding Configuration.BookListViewItemWidth}"
-                                HyperlinkClicked="AutoScrollingHyperlink_HyperlinkClicked"
-                                Text="{Binding Author.UnescapedName}" />
-                            <ui.ctrl:AutoScrollingLabel
-                                x:Name="Book_Title_AutoScrollingLabel"
-                                Grid.Row="2"
-                                Width="{Binding Configuration.BookListViewItemWidth}"
-                                Text="{Binding UnescapedTitle}" />
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListViewItem}">
-                        <Setter Property="OverridesDefaultStyle" Value="True" />
-                        <Setter Property="Template">
+                <ListView.Style>
+                    <Style TargetType="ListView">
+                        <EventSetter Event="SizeChanged" Handler="Book_ListView_SizeChanged" />
+                        <Setter Property="ItemTemplate" Value="{StaticResource BookCabinet_Cell_DataTemplate}" />
+                        <Setter Property="ItemContainerStyle">
                             <Setter.Value>
-                                <ControlTemplate TargetType="{x:Type ContentControl}">
-                                    <Border Background="{TemplateBinding Background}">
-                                        <ContentPresenter />
-                                    </Border>
-                                </ControlTemplate>
+                                <Style TargetType="{x:Type ListViewItem}">
+                                    <Setter Property="OverridesDefaultStyle" Value="True" />
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="{x:Type ContentControl}">
+                                                <Border Background="{TemplateBinding Background}">
+                                                    <ContentPresenter />
+                                                </Border>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Opacity" Value="0.5" />
+                                    <EventSetter Event="Control.MouseDoubleClick" Handler="Book_ListViewItem_MouseDoubleClick" />
+                                    <EventSetter Event="PreviewDragOver" Handler="Book_ListViewItem_PreviewDragOver" />
+                                    <EventSetter Event="Drop" Handler="Book_ListViewItem_Drop" />
+                                    <EventSetter Event="MouseEnter" Handler="Book_ListViewItem_MouseEnter" />
+                                    <EventSetter Event="MouseLeave" Handler="Book_ListViewItem_MouseLeave" />
+                                    <Style.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter Property="Background" Value="PowderBlue" />
+                                        </Trigger>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter Property="Background" Value="SkyBlue" />
+                                        </Trigger>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding ContentsRegistered}" Value="True" />
+                                                <Condition Binding="{Binding IsLoaded}" Value="True" />
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Opacity" Value="1.0" />
+                                        </MultiDataTrigger>
+                                    </Style.Triggers>
+                                </Style>
                             </Setter.Value>
                         </Setter>
-                        <Setter Property="Opacity" Value="0.5" />
-                        <EventSetter Event="Control.MouseDoubleClick" Handler="Book_ListViewItem_MouseDoubleClick" />
-                        <EventSetter Event="PreviewDragOver" Handler="Book_ListViewItem_PreviewDragOver" />
-                        <EventSetter Event="Drop" Handler="Book_ListViewItem_Drop" />
-                        <EventSetter Event="MouseEnter" Handler="Book_ListViewItem_MouseEnter" />
-                        <EventSetter Event="MouseLeave" Handler="Book_ListViewItem_MouseLeave" />
+                        <Setter Property="ItemsPanel">
+                            <Setter.Value>
+                                <ItemsPanelTemplate>
+                                    <ui.ctrl:VirtualizingWrapPanel>
+                                        <i:Interaction.Triggers>
+                                            <prism:InteractionRequestTrigger SourceObject="{Binding ResetScrollOffsetRequest}">
+                                                <trigger:ResetScrollOffsetAction />
+                                            </prism:InteractionRequestTrigger>
+                                            <prism:InteractionRequestTrigger SourceObject="{Binding StoreBookScrollOffsetRequest}">
+                                                <trigger:StoreScrollOffsetAction />
+                                            </prism:InteractionRequestTrigger>
+                                            <prism:InteractionRequestTrigger SourceObject="{Binding RestoreBookScrollOffsetRequest}">
+                                                <trigger:RestoreScrollOffsetAction />
+                                            </prism:InteractionRequestTrigger>
+                                        </i:Interaction.Triggers>
+                                    </ui.ctrl:VirtualizingWrapPanel>
+                                </ItemsPanelTemplate>
+                            </Setter.Value>
+                        </Setter>
                         <Style.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="PowderBlue" />
-                            </Trigger>
-                            <Trigger Property="IsSelected" Value="True">
-                                <Setter Property="Background" Value="SkyBlue" />
-                            </Trigger>
-                            <MultiDataTrigger>
-                                <MultiDataTrigger.Conditions>
-                                    <Condition Binding="{Binding ContentsRegistered}" Value="True" />
-                                    <Condition Binding="{Binding IsLoaded}" Value="True" />
-                                </MultiDataTrigger.Conditions>
-                                <Setter Property="Opacity" Value="1.0" />
-                            </MultiDataTrigger>
+                            <DataTrigger Binding="{Binding BookCabinet.DisplayType}" Value="{x:Static displaytype:DisplayType.Details}">
+                                <Setter Property="ItemTemplate">
+                                    <Setter.Value>
+                                        <DataTemplate />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="ItemContainerStyle" Value="{StaticResource ListViewItem_Style}" />
+                                <Setter Property="ItemsPanel">
+                                    <Setter.Value>
+                                        <ItemsPanelTemplate>
+                                            <VirtualizingStackPanel />
+                                        </ItemsPanelTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
                         </Style.Triggers>
                     </Style>
-                </ListView.ItemContainerStyle>
+                </ListView.Style>
                 <ListView.ContextMenu>
                     <ContextMenu ItemsSource="{Binding BooksContextMenuItems}" />
                 </ListView.ContextMenu>

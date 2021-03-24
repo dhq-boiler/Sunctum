@@ -261,6 +261,15 @@
   <data name="MainWindow_Display" xml:space="preserve">
     <value>_DISPLAY</value>
   </data>
+  <data name="MainWindow_Display_DisplayType" xml:space="preserve">
+    <value>Showcase</value>
+  </data>
+  <data name="MainWindow_Display_DisplayType_Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="MainWindow_Display_DisplayType_SideBySide" xml:space="preserve">
+    <value>SideBySide</value>
+  </data>
   <data name="MainWindow_Display_Sorting" xml:space="preserve">
     <value>Sorting</value>
   </data>
