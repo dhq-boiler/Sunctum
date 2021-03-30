@@ -298,7 +298,7 @@
         </DockPanel>
         <DockPanel DockPanel.Dock="Bottom">
             <local:ProgressBar
-                Height="5"
+                Height="7"
                 IsAborted="{Binding LibraryVM.ProgressManager.IsAbort}"
                 ProgressionRate="{Binding LibraryVM.ProgressManager.Progress}"
                 ToolTip="{Binding TooltipOnProgressBar, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
