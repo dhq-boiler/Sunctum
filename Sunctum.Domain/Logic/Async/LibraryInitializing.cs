@@ -52,6 +52,9 @@ namespace Sunctum.Domain.Logic.Async
                 {
                     Stopwatch.Start();
 
+                    System.Environment.SetEnvironmentVariable("TMP", "C:\\Temp");
+                    System.Environment.SetEnvironmentVariable("TEMP", "C:\\Temp");
+
                     DataVersionManager dvManager = new DataVersionManager();
                     dvManager.CurrentConnection = ConnectionManager.DefaultConnection;
                     dvManager.Mode = VersioningStrategy.ByTick;
