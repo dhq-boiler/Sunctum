@@ -16,7 +16,8 @@ namespace Sunctum.Domain.Bridge
                 ByteSize = obj.ByteSize,
                 ID = obj.ID,
                 PublishDate = obj.PublishDate,
-                Title = obj.Title
+                Title = obj.Title,
+                FingerPrint = obj.FingerPrint,
             };
         }
 

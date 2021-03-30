@@ -84,6 +84,7 @@ namespace Sunctum.Domain.Data.Dao
                                                    .Column("a", "ID").As("aId")
                                                    .Column("a", "Name").As("aName")
                                                    .Column("s", "Level").As("sLevel")
+                                                   .Column("b", "FingerPrint").As("bFingerPrint")
                                                    .From.Table(new Table<Book>().Name, "b")
                                                    .Left.Join(new Table<Author>().Name, "a").On.Column("a", "ID").EqualTo.Column("bAuthorId")
                                                    .Left.Join(new Table<Star>().Name, "s").On.Column("s", "TypeId").EqualTo.Value(0).And().Column("s", "ID").EqualTo.Column("bId"))
@@ -110,6 +111,7 @@ namespace Sunctum.Domain.Data.Dao
                                     book.Author = author;
                                 }
                                 book.StarLevel = rdr.SafeGetNullableInt("sLevel");
+                                book.FingerPrint = rdr.SafeGetString("bFingerPrint");
                                 book.ContentsRegistered = true;
 
                                 yield return book;
@@ -136,6 +138,7 @@ namespace Sunctum.Domain.Data.Dao
                 AuthorID = reader.SafeGetGuid("AuthorID"),
                 PublishDate = reader.SafeGetNullableDateTime("PublishDate"),
                 ByteSize = reader.SafeNullableGetLong("ByteSize"),
+                FingerPrint = reader.SafeGetString("FingerPrint"),
             };
         }
 

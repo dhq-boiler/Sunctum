@@ -66,6 +66,7 @@ namespace Sunctum.Core
             Kernel.Bind<IBookTagInitializing>().To<BookTagInitializing>().InSingletonScope();
             Kernel.Bind<IEncryptionStarting>().To<EncryptionStarting>().InSingletonScope();
             Kernel.Bind<IUnencryptionStarting>().To<UnencryptionStarting>().InSingletonScope();
+            Kernel.Bind<IBookHashing>().To<BookHashing>().InSingletonScope();
 
             Kernel.Bind<IValueConverter>().To<BookSortingToBool>().InSingletonScope().Named("BookSortingToBool");
             Kernel.Bind<IValueConverter>().To<DisplayTypeToBool>().InSingletonScope().Named("DisplayTypeToBool");

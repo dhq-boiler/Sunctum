@@ -7,11 +7,12 @@ using System.Diagnostics;
 
 namespace Sunctum.Domain.Models
 {
-    [DefaultVersion(typeof(Version_1))]
+    [DefaultVersion(typeof(Version_2))]
     public class Book : Entry
     {
         private Guid _AuthorID;
         private long? _ByteSize;
+        private string _FingerPrint;
 
         [Column("AuthorID", "NUMERIC", 2)]
         [Since(typeof(VersionOrigin))]
@@ -35,6 +36,16 @@ namespace Sunctum.Domain.Models
             get
             { return _ByteSize; }
             set { SetProperty(ref _ByteSize, value); }
+        }
+
+        [Column("FingerPrint", "TEXT", 5)]
+        [Since(typeof(Version_2))]
+        public string FingerPrint
+        {
+            [DebuggerStepThrough]
+            get
+            { return _FingerPrint; }
+            set { SetProperty(ref _FingerPrint, value); }
         }
     }
 }

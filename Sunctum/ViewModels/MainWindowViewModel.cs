@@ -140,6 +140,10 @@ namespace Sunctum.ViewModels
 
         public ICommand UpdateBookTagCommand { get; set; }
 
+        public ICommand UpdateBookFingerPrintAllCommand { get; set; }
+
+        public ICommand UpdateBookFingerPrintStillNullCommand { get; set; }
+
         #endregion //コマンド
 
         public InteractionRequest<Notification> OpenPowerSearchRequest { get; } = new InteractionRequest<Notification>();
@@ -343,6 +347,14 @@ namespace Sunctum.ViewModels
             UpdateBookTagCommand = new DelegateCommand(async () =>
             {
                 await LibraryVM.UpdateBookTag();
+            });
+            UpdateBookFingerPrintAllCommand = new DelegateCommand(async () =>
+            {
+                await LibraryVM.UpdateBookFingerPrintAll();
+            });
+            UpdateBookFingerPrintStillNullCommand = new DelegateCommand(async () =>
+            {
+                await LibraryVM.UpdateBookFingerPrintStillNull();
             });
         }
 

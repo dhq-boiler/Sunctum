@@ -177,6 +177,7 @@
     <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Author_VersionOrigin.cs" />
     <Compile Include="Data\Dao\Migration\Plan\ChangePlan_BookTag_VersionOrigin.cs" />
     <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Book_VersionOrigin.cs" />
+    <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Book_Version_2.cs" />
     <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Book_Version_1.cs" />
     <Compile Include="Data\Dao\Migration\Plan\ChangePlan_ColorMap_VersionOrigin.cs" />
     <Compile Include="Data\Dao\Migration\Plan\ChangePlan_DirectoryNameParser_VersionOrigin.cs" />
@@ -192,14 +193,17 @@
     <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Version_1.cs" />
     <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Version_2.cs" />
     <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Version_3.cs" />
+    <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Version_5.cs" />
     <Compile Include="Data\Dao\Migration\Plan\ChangePlan_Version_4.cs" />
     <Compile Include="Data\Dao\RecentOpenedLibraryDao.cs" />
     <Compile Include="Data\Dao\StarDao.cs" />
     <Compile Include="Extensions\Extensions.cs" />
     <Compile Include="Extensions\UILogicExtensions.cs" />
+    <Compile Include="Logic\Async\BookHashing.cs" />
     <Compile Include="Logic\Async\BookLoading.cs" />
     <Compile Include="Logic\Async\BookTagInitializing.cs" />
     <Compile Include="Logic\Async\EncryptionStarting.cs" />
+    <Compile Include="Logic\Async\IBookHashing.cs" />
     <Compile Include="Logic\Async\IBookLoading.cs" />
     <Compile Include="Logic\Async\IBookTagInitializing.cs" />
     <Compile Include="Logic\Async\IEncryptionStarting.cs" />
@@ -223,6 +227,7 @@
     <Compile Include="Models\Conversion\Version_1.cs" />
     <Compile Include="Models\Conversion\Version_2.cs" />
     <Compile Include="Models\Conversion\Version_3.cs" />
+    <Compile Include="Models\Conversion\Version_5.cs" />
     <Compile Include="Models\Conversion\Version_4.cs" />
     <Compile Include="Models\DirectoryNameParser.cs" />
     <Compile Include="Models\EncryptImage.cs" />
@@ -352,6 +357,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Util\Extensions.cs" />
     <Compile Include="Util\FileSize.cs" />
+    <Compile Include="Util\Hash.cs" />
     <Compile Include="Util\SafeNativeMethods.cs" />
     <Compile Include="Util\ThumbnailGenerator.cs" />
     <Compile Include="Util\TimeKeeper.cs" />

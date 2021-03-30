@@ -90,6 +90,9 @@ namespace Sunctum.Managers
         public IByteSizeCalculating ByteSizeCalculatingService { get; set; }
 
         [Inject]
+        public IBookHashing BookHashingService { get; set; }
+
+        [Inject]
         public IBookTagInitializing BookTagInitializingService { get; set; }
 
         [Inject]
@@ -277,6 +280,24 @@ namespace Sunctum.Managers
         }
 
         #endregion //サイズ更新
+
+        #region 指紋更新
+
+        public async Task UpdateBookFingerPrintAll()
+        {
+            BookHashingService.LibraryManager = this;
+            BookHashingService.Range = BookHashing.UpdateRange.IsAll;
+            await TaskManager.Enqueue(BookHashingService.GetTaskSequence());
+        }
+
+        public async Task UpdateBookFingerPrintStillNull()
+        {
+            BookHashingService.LibraryManager = this;
+            BookHashingService.Range = BookHashing.UpdateRange.IsStillNull;
+            await TaskManager.Enqueue(BookHashingService.GetTaskSequence());
+        }
+
+        #endregion //指紋更新
 
         public async Task UpdateBookTag()
         {
