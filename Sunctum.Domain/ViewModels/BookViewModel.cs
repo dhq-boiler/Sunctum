@@ -22,6 +22,7 @@ namespace Sunctum.Domain.ViewModels
         private Guid _AuthorID;
         private AuthorViewModel _Author;
         private long? _ByteSize;
+        private string _FingerPrint;
 
         public BookViewModel()
         {
@@ -77,6 +78,14 @@ namespace Sunctum.Domain.ViewModels
             get
             { return _ByteSize; }
             set { SetProperty(ref _ByteSize, value); }
+        }
+
+        public string FingerPrint
+        {
+            [DebuggerStepThrough]
+            get
+            { return _FingerPrint; }
+            set { SetProperty(ref _FingerPrint, value); }
         }
 
         public PageViewModel FirstPage

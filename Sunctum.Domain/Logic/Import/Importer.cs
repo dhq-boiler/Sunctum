@@ -22,12 +22,12 @@ namespace Sunctum.Domain.Logic.Import
             Path = path;
         }
 
-        public static Importer CreateInstance(string objectPath)
+        public static Importer CreateInstance(string objectPath, ILibrary library)
         {
             if (File.Exists(objectPath))
                 return new ImportPage(objectPath);
             else if (Directory.Exists(objectPath))
-                return new ImportBook(objectPath);
+                return new ImportBook(objectPath, library);
             else
                 throw new IOException($"{objectPath} doesn't exist.");
         }

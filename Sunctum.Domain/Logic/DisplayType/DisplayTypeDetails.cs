@@ -60,6 +60,22 @@ namespace Sunctum.Domain.Logic.DisplayType
             };
             gridView.Columns.Add(gridViewColumn5);
 
+            var gridViewColumn6 = new GridViewColumn();
+            gridViewColumn6.Header = "評価";
+            gridViewColumn6.DisplayMemberBinding = new Binding()
+            {
+                Path = new PropertyPath("StarLevel")
+            };
+            gridView.Columns.Add(gridViewColumn6);
+
+            var gridViewColumn7 = new GridViewColumn();
+            gridViewColumn7.Header = "指紋";
+            gridViewColumn7.DisplayMemberBinding = new Binding()
+            {
+                Path = new PropertyPath("FingerPrint")
+            };
+            gridView.Columns.Add(gridViewColumn7);
+
             return gridView;
         }
 

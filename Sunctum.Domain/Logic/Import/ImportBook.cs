@@ -4,6 +4,7 @@ using Homura.ORM;
 using NLog;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Generate;
+using Sunctum.Domain.Logic.Load;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.Util;
@@ -33,12 +34,16 @@ namespace Sunctum.Domain.Logic.Import
 
         public string Title { get; set; }
 
+        public ILibrary LibraryManager { get; set; }
+
         internal ImportBook()
         { }
 
-        internal ImportBook(string path)
+        internal ImportBook(string path, ILibrary library)
             : base(path)
-        { }
+        {
+            LibraryManager = library;
+        }
 
         public override string ToString()
         {
@@ -88,6 +93,8 @@ namespace Sunctum.Domain.Logic.Import
 
             ret.Add(new Task(() => WriteFilesSize()));
 
+            ret.Add(new Task(() => WriteFingerPrint()));
+
             ret.Add(new Task(() => TagImage(library.TagMng)));
 
             ret.Add(new Task(() => TagBook(library.TagMng)));
@@ -97,6 +104,13 @@ namespace Sunctum.Domain.Logic.Import
             ret.Add(new Task(() => Log()));
 
             return ret;
+        }
+
+        private void WriteFingerPrint()
+        {
+            ContentsLoadTask.FillContentsWithImage(LibraryManager, _book);
+            _book.FingerPrint = Hash.Generate(_book);
+            BookFacade.Update(_book);
         }
 
         private void TagBook(ITagManager tagMng)

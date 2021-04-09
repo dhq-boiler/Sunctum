@@ -42,7 +42,7 @@ namespace Sunctum.Domain.Logic.Async
         {
             List<Importer> importers = new List<Importer>();
 
-            DiscriminateDroppedEntries(ObjectPaths, importers);
+            DiscriminateDroppedEntries(ObjectPaths, importers, LibraryManager);
 
             var workingDirectory = Configuration.ApplicationConfiguration.WorkingDirectory;
             var now = DateTime.Now;
@@ -128,13 +128,13 @@ namespace Sunctum.Domain.Logic.Async
             sequence.Add(() => s_logger.Info($"Finish BookImporting"));
         }
 
-        private static void DiscriminateDroppedEntries(IEnumerable<string> objectPaths, List<Importer> importers)
+        private static void DiscriminateDroppedEntries(IEnumerable<string> objectPaths, List<Importer> importers, ILibrary library)
         {
             s_logger.Info($"Start Dropped entries discrimination");
 
             foreach (var objectPath in objectPaths.Where(p => Directory.Exists(p)))
             {
-                importers.Add(Importer.CreateInstance(objectPath));
+                importers.Add(Importer.CreateInstance(objectPath, library));
             }
 
             var files = objectPaths.Where(p => File.Exists(p));

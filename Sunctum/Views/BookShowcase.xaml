@@ -337,7 +337,6 @@
                 AllowDrop="True"
                 ItemsSource="{Binding BookCabinet.OnStage}"
                 PreviewDragOver="Book_ListView_PreviewDragOver"
-                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                 SelectionChanged="Book_ListView_SelectionChanged"
                 SelectionMode="Extended"
                 VirtualizingPanel.IsVirtualizing="True"

@@ -32,6 +32,9 @@ namespace Sunctum.Domain.Logic.Async
         [Inject]
         public IBookTagInitializing BookTagInitializingService { get; set; }
 
+        [Inject]
+        public IBookHashing BookHashingService { get; set; }
+
         public Stopwatch Stopwatch { get; private set; } = new Stopwatch();
 
         public override void ConfigurePreTaskAction(AsyncTaskSequence sequence)
@@ -49,6 +52,9 @@ namespace Sunctum.Domain.Logic.Async
                 {
                     Stopwatch.Start();
 
+                    System.Environment.SetEnvironmentVariable("TMP", "C:\\Temp");
+                    System.Environment.SetEnvironmentVariable("TEMP", "C:\\Temp");
+
                     DataVersionManager dvManager = new DataVersionManager();
                     dvManager.CurrentConnection = ConnectionManager.DefaultConnection;
                     dvManager.Mode = VersioningStrategy.ByTick;
@@ -59,6 +65,8 @@ namespace Sunctum.Domain.Logic.Async
                     dvManager.RegisterChangePlan(new ChangePlan_Version_3());
                     dvManager.GetPlan(new Version_3()).FinishedToUpgradeTo += LibraryInitializing_FinishToUpgradeTo_Version_3;
                     dvManager.RegisterChangePlan(new ChangePlan_Version_4());
+                    dvManager.RegisterChangePlan(new ChangePlan_Version_5());
+                    dvManager.GetPlan(new Version_5()).FinishedToUpgradeTo += LibraryInitializing_FinishedToUpgradeTo_Version_5;
                     dvManager.FinishedToUpgradeTo += DvManager_FinishedToUpgradeTo;
 
                     dvManager.UpgradeToTargetVersion();
@@ -117,6 +125,13 @@ namespace Sunctum.Domain.Logic.Async
         private async void LibraryInitializing_FinishToUpgradeTo_Version_3(object sender, VersionChangeEventArgs e)
         {
             await LibraryManager.TaskManager.Enqueue(BookTagInitializingService.GetTaskSequence());
+        }
+
+        private async void LibraryInitializing_FinishedToUpgradeTo_Version_5(object sender, VersionChangeEventArgs e)
+        {
+            if (LibraryManager == null) return;
+            BookHashingService.Range = BookHashing.UpdateRange.IsAll;
+            await LibraryManager.TaskManager.Enqueue(BookHashingService.GetTaskSequence());
         }
     }
 }

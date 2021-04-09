@@ -7,6 +7,7 @@ using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
+using static Homura.ORM.DaoConst;
 
 namespace Sunctum.Domain.Data.DaoFacade
 {
@@ -32,6 +33,12 @@ namespace Sunctum.Domain.Data.DaoFacade
         {
             BookDao dao = new BookDao();
             return dao.FindBy(new Dictionary<string, object>() { { "ByteSize", DaoConst.Is.Null } }).ToViewModel();
+        }
+
+        public static IEnumerable<BookViewModel> FindHashIsNull()
+        {
+            var dao = new BookDao();
+            return dao.FindBy(new Dictionary<string, object>() { { "FingerPrint", Is.Null } }).ToViewModel();
         }
 
         public static IEnumerable<BookViewModel> FindAll(DataOperationUnit dataOpUnit = null)
