@@ -27,24 +27,24 @@ namespace Sunctum.Domain.Logic.Async
             public static readonly UpdateRange IsAll = new All();
             public static readonly UpdateRange IsStillNull = new StillNull();
 
-            public abstract IEnumerable<BookViewModel> FindBook();
+            public abstract IEnumerable<BookViewModel> FindBook(ILibrary library);
         }
 
         #region private class
 
         private class All : UpdateRange
         {
-            public override IEnumerable<BookViewModel> FindBook()
+            public override IEnumerable<BookViewModel> FindBook(ILibrary library)
             {
-                return BookFacade.FindAll();
+                return library.BookSource;
             }
         }
 
         private class StillNull : UpdateRange
         {
-            public override IEnumerable<BookViewModel> FindBook()
+            public override IEnumerable<BookViewModel> FindBook(ILibrary library)
             {
-                return BookFacade.FindByteSizeIsNull();
+                return library.BookSource.Where(b => b.ByteSize == null);
             }
         }
 
@@ -60,7 +60,7 @@ namespace Sunctum.Domain.Logic.Async
         {
             sequence.Add(new Task(() => s_logger.Info($"Begin to Calculate Book ByteSize.")));
 
-            var books = Range.FindBook();
+            var books = Range.FindBook(LibraryManager);
 
             sequence.Add(new Task(() => s_logger.Info($"Found : {books.Count()}")));
 
