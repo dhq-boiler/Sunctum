@@ -42,49 +42,49 @@ namespace Sunctum.Managers
         }
 
         [Inject]
-        public ITagManager TagMng {[DebuggerStepThrough] get; set; }
+        public ITagManager TagMng { [DebuggerStepThrough] get; set; }
 
         [Inject]
-        public IProgressManager ProgressManager {[DebuggerStepThrough] get; set; }
+        public IProgressManager ProgressManager { [DebuggerStepThrough] get; set; }
 
         [Inject]
-        public IAuthorManager AuthorManager {[DebuggerStepThrough] get; set; }
+        public IAuthorManager AuthorManager { [DebuggerStepThrough] get; set; }
 
         [Inject]
-        public ITaskManager TaskManager {[DebuggerStepThrough] get; set; }
+        public ITaskManager TaskManager { [DebuggerStepThrough] get; set; }
 
         [Inject]
-        public IBookExporting BookExportingService {[DebuggerStepThrough] get; set; }
+        public IBookExporting BookExportingService { [DebuggerStepThrough] get; set; }
 
         [Inject]
-        public IBookImporting BookImportingService {[DebuggerStepThrough] get; set; }
+        public IBookImporting BookImportingService { [DebuggerStepThrough] get; set; }
 
         [Inject]
-        public IBookRemoving BookRemovingService {[DebuggerStepThrough] get; set; }
+        public IBookRemoving BookRemovingService { [DebuggerStepThrough] get; set; }
 
         [Inject]
-        public ILibraryImporting LibraryImportingService {[DebuggerStepThrough] get; set; }
+        public ILibraryImporting LibraryImportingService { [DebuggerStepThrough] get; set; }
 
         [Inject]
-        public ILibraryLoading LibraryLoadingService {[DebuggerStepThrough] get; set; }
+        public ILibraryLoading LibraryLoadingService { [DebuggerStepThrough] get; set; }
 
         [Inject]
-        public IPageRemoving PageRemovingService {[DebuggerStepThrough] get; set; }
+        public IPageRemoving PageRemovingService { [DebuggerStepThrough] get; set; }
 
         [Inject]
-        public IPageScrapping PageScrappingService {[DebuggerStepThrough] get; set; }
+        public IPageScrapping PageScrappingService { [DebuggerStepThrough] get; set; }
 
         [Inject]
-        public IBookThumbnailRemaking BookThumbnailRemakingService {[DebuggerStepThrough] get; set; }
+        public IBookThumbnailRemaking BookThumbnailRemakingService { [DebuggerStepThrough] get; set; }
 
         [Inject]
-        public IPageThumbnailRemaking PageThumbnailRemakingService {[DebuggerStepThrough] get; set; }
+        public IPageThumbnailRemaking PageThumbnailRemakingService { [DebuggerStepThrough] get; set; }
 
         [Inject]
-        public ILibraryInitializing LibraryInitializingService {[DebuggerStepThrough] get; set; }
+        public ILibraryInitializing LibraryInitializingService { [DebuggerStepThrough] get; set; }
 
         [Inject]
-        public ILibraryResetting LibraryResettingService {[DebuggerStepThrough] get; set; }
+        public ILibraryResetting LibraryResettingService { [DebuggerStepThrough] get; set; }
 
         [Inject]
         public IByteSizeCalculating ByteSizeCalculatingService { get; set; }
@@ -102,7 +102,7 @@ namespace Sunctum.Managers
         public IUnencryptionStarting UnencryptionStartingService { get; set; }
 
         [Inject]
-        public IDataAccessManager DataAccessManager {[DebuggerStepThrough] get; set; }
+        public IDataAccessManager DataAccessManager { [DebuggerStepThrough] get; set; }
 
         #endregion //プロパティ
 
