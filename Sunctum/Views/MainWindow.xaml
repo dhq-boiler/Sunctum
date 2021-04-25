@@ -56,6 +56,13 @@
                 </prism:PopupWindowAction.WindowContent>
             </prism:PopupWindowAction>
         </prism:InteractionRequestTrigger>
+        <prism:InteractionRequestTrigger SourceObject="{Binding OpenStatisticsDialogRequest}">
+            <prism:PopupWindowAction IsModal="False">
+                <prism:PopupWindowAction.WindowContent>
+                    <local:StatisticsDialog />
+                </prism:PopupWindowAction.WindowContent>
+            </prism:PopupWindowAction>
+        </prism:InteractionRequestTrigger>
     </i:Interaction.Triggers>
     <Window.InputBindings>
         <KeyBinding
@@ -163,6 +170,7 @@
                     <MenuItem Command="{Binding OpenAuthorManagementDialogCommand}" Header="{Binding MainWindow_Data_AuthorManagement, Source={StaticResource resources}}" />
                     <MenuItem Command="{Binding OpenTagManagementDialogCommand}" Header="{Binding MainWindow_Data_TagManagement, Source={StaticResource resources}}" />
                     <MenuItem Command="{Binding OpenMetadataImportSettingDialogCommand}" Header="{Binding MainWindow_Data_MetadataImportSetting, Source={StaticResource resources}}" />
+                    <MenuItem Command="{Binding OpenStatisticsDialogCommand}" Header="統計..." />
                 </MenuItem>
                 <MenuItem Header="{Binding MainWindow_Search, Source={StaticResource resources}}">
                     <MenuItem

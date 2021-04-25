@@ -212,10 +212,10 @@ namespace Sunctum.Domain.Data.Dao
                         {
                             if (rdr.Read())
                             {
-                                page.ImageID = rdr.SafeGetGuid("pImageId");
-                                page.Image = new ImageViewModel(rdr.SafeGetGuid("iId"),
-                                                                rdr.SafeGetString("iTitle"),
-                                                                rdr.SafeGetString("iMasterpath"),
+                                page.ImageID = rdr.SafeGetGuid("pImageId", null);
+                                page.Image = new ImageViewModel(rdr.SafeGetGuid("iId", null),
+                                                                rdr.SafeGetString("iTitle", null),
+                                                                rdr.SafeGetString("iMasterpath", null),
                                                                 Configuration.ApplicationConfiguration);
 
                                 if (string.IsNullOrWhiteSpace(page.Image.RelativeMasterPath))
@@ -225,9 +225,9 @@ namespace Sunctum.Domain.Data.Dao
 
                                 if (!rdr.IsDBNull("tId") && !rdr.IsDBNull("tImageId") && !rdr.IsDBNull("tPath"))
                                 {
-                                    page.Image.Thumbnail = new ThumbnailViewModel(rdr.SafeGetGuid("tId"),
-                                                                                  rdr.SafeGetGuid("tImageId"),
-                                                                                  rdr.SafeGetString("tPath"));
+                                    page.Image.Thumbnail = new ThumbnailViewModel(rdr.SafeGetGuid("tId", null),
+                                                                                  rdr.SafeGetGuid("tImageId", null),
+                                                                                  rdr.SafeGetString("tPath", null));
                                 }
                             }
                         }
@@ -279,11 +279,11 @@ namespace Sunctum.Domain.Data.Dao
 
         protected override Page ToEntity(IDataRecord reader)
         {
-            Guid id = reader.SafeGetGuid("ID");
-            string title = reader.SafeGetString("Title");
-            Guid bookid = reader.SafeGetGuid("BookID");
-            Guid imageid = reader.SafeGetGuid("ImageID");
-            int pageindex = reader.SafeGetInt("PageIndex");
+            Guid id = reader.SafeGetGuid("ID", Table);
+            string title = reader.SafeGetString("Title", Table);
+            Guid bookid = reader.SafeGetGuid("BookID", Table);
+            Guid imageid = reader.SafeGetGuid("ImageID", Table);
+            int pageindex = reader.SafeGetInt("PageIndex", Table);
 
             return new Page()
             {

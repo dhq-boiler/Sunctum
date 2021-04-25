@@ -342,9 +342,9 @@ namespace Sunctum.Domain.Data.Dao
                         {
                             while (reader.Read())
                             {
-                                Guid tagId = reader.SafeGetGuid("TagID");
-                                string name = reader.SafeGetString("Name");
-                                int count = reader.SafeGetInt("Count");
+                                Guid tagId = reader.SafeGetGuid("TagID", Table);
+                                string name = reader.SafeGetString("Name", Table);
+                                int count = reader.SafeGetInt("Count", null);
 
                                 var tag = new Tag();
                                 tag.ID = tagId;
@@ -441,9 +441,9 @@ namespace Sunctum.Domain.Data.Dao
 
         protected override ImageTag ToEntity(IDataRecord reader)
         {
-            Guid imageId = reader.SafeGetGuid("ImageID");
-            Guid tagId = reader.SafeGetGuid("TagID");
-            string name = reader.SafeGetString("Name");
+            Guid imageId = reader.SafeGetGuid("ImageID", Table);
+            Guid tagId = reader.SafeGetGuid("TagID", Table);
+            string name = reader.SafeGetString("Name", Table);
 
             var tag = new Tag();
             tag.ID = tagId;

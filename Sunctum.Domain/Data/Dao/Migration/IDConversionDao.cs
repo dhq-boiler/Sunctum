@@ -15,8 +15,8 @@ namespace Sunctum.Domain.Data.Dao.Migration
         {
             return new IDConversion()
             {
-                DomesticID = reader.SafeGetGuid("DomesticID"),
-                ForeignID = reader.SafeGetGuid("ForeignID"),
+                DomesticID = reader.SafeGetGuid("DomesticID", Table),
+                ForeignID = reader.SafeGetGuid("ForeignID", Table),
             };
         }
     }

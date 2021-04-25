@@ -4,6 +4,7 @@ using NLog;
 using Sunctum.Domain.Bridge;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.ViewModels;
+using System;
 using System.Collections.Generic;
 
 namespace Sunctum.Domain.Data.DaoFacade
@@ -35,6 +36,12 @@ namespace Sunctum.Domain.Data.DaoFacade
         {
             var dao = new BookTagDao();
             return dao.FindAll().ToViewModel();
+        }
+
+        public static long CountAll()
+        {
+            var dao = new BookTagDao();
+            return dao.CountAll();
         }
     }
 }

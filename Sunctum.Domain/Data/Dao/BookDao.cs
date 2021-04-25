@@ -99,19 +99,19 @@ namespace Sunctum.Domain.Data.Dao
                             {
                                 var book = new BookViewModel();
                                 book.Configuration = Configuration.ApplicationConfiguration;
-                                book.ID = rdr.SafeGetGuid("bId");
-                                book.Title = rdr.SafeGetString("bTitle");
-                                book.ByteSize = rdr.SafeNullableGetLong("bByteSize");
-                                book.PublishDate = rdr.SafeGetNullableDateTime("bPublishDate");
+                                book.ID = rdr.SafeGetGuid("bId", null);
+                                book.Title = rdr.SafeGetString("bTitle", null);
+                                book.ByteSize = rdr.SafeNullableGetLong("bByteSize", null);
+                                book.PublishDate = rdr.SafeGetNullableDateTime("bPublishDate", null);
                                 if (!rdr.IsDBNull("aId") && !rdr.IsDBNull("aName"))
                                 {
                                     var author = new AuthorViewModel();
-                                    author.ID = rdr.SafeGetGuid("aId");
-                                    author.Name = rdr.SafeGetString("aName");
+                                    author.ID = rdr.SafeGetGuid("aId", null);
+                                    author.Name = rdr.SafeGetString("aName", null);
                                     book.Author = author;
                                 }
-                                book.StarLevel = rdr.SafeGetNullableInt("sLevel");
-                                book.FingerPrint = rdr.SafeGetString("bFingerPrint");
+                                book.StarLevel = rdr.SafeGetNullableInt("sLevel", null);
+                                book.FingerPrint = rdr.SafeGetString("bFingerPrint", null);
                                 book.ContentsRegistered = true;
 
                                 yield return book;
@@ -133,12 +133,12 @@ namespace Sunctum.Domain.Data.Dao
         {
             return new Book()
             {
-                ID = reader.SafeGetGuid("ID"),
-                Title = reader.SafeGetString("Title"),
-                AuthorID = reader.SafeGetGuid("AuthorID"),
-                PublishDate = reader.SafeGetNullableDateTime("PublishDate"),
-                ByteSize = reader.SafeNullableGetLong("ByteSize"),
-                FingerPrint = reader.SafeGetString("FingerPrint"),
+                ID = reader.SafeGetGuid("ID", Table),
+                Title = reader.SafeGetString("Title", Table),
+                AuthorID = reader.SafeGetGuid("AuthorID", Table),
+                PublishDate = reader.SafeGetNullableDateTime("PublishDate", Table),
+                ByteSize = reader.SafeNullableGetLong("ByteSize", Table),
+                FingerPrint = reader.SafeGetString("FingerPrint", Table),
             };
         }
 
@@ -189,33 +189,33 @@ namespace Sunctum.Domain.Data.Dao
                                 if (!rdr.IsDBNull("aId") && !rdr.IsDBNull("aName"))
                                 {
                                     var author = new AuthorViewModel();
-                                    author.ID = rdr.SafeGetGuid("aId");
-                                    author.Name = rdr.SafeGetString("aName");
+                                    author.ID = rdr.SafeGetGuid("aId", null);
+                                    author.Name = rdr.SafeGetString("aName", null);
                                     book.Author = author;
                                 }
 
                                 var page = new PageViewModel();
                                 page.Configuration = Configuration.ApplicationConfiguration;
-                                page.ID = rdr.SafeGetGuid("pId");
-                                page.Title = rdr.SafeGetString("pTitle");
-                                page.BookID = rdr.SafeGetGuid("bId");
-                                page.ImageID = rdr.SafeGetGuid("pImageId");
-                                page.PageIndex = rdr.SafeGetInt("pIndex");
+                                page.ID = rdr.SafeGetGuid("pId", null);
+                                page.Title = rdr.SafeGetString("pTitle", null);
+                                page.BookID = rdr.SafeGetGuid("bId", null);
+                                page.ImageID = rdr.SafeGetGuid("pImageId", null);
+                                page.PageIndex = rdr.SafeGetInt("pIndex", null);
                                 book.FirstPage = page;
 
                                 var image = new ImageViewModel();
                                 image.Configuration = Configuration.ApplicationConfiguration;
-                                image.ID = rdr.SafeGetGuid("iId");
-                                image.Title = rdr.SafeGetString("iTitle");
-                                image.RelativeMasterPath = rdr.SafeGetString("iMasterPath");
+                                image.ID = rdr.SafeGetGuid("iId", null);
+                                image.Title = rdr.SafeGetString("iTitle", null);
+                                image.RelativeMasterPath = rdr.SafeGetString("iMasterPath", null);
                                 page.Image = image;
 
                                 if (!rdr.IsDBNull("tId") && !rdr.IsDBNull("tImageId") && !rdr.IsDBNull("tPath"))
                                 {
                                     var thumbnail = new ThumbnailViewModel();
-                                    thumbnail.ID = rdr.SafeGetGuid("tId");
-                                    thumbnail.ImageID = rdr.SafeGetGuid("tImageId");
-                                    thumbnail.RelativeMasterPath = rdr.SafeGetString("tPath");
+                                    thumbnail.ID = rdr.SafeGetGuid("tId", null);
+                                    thumbnail.ImageID = rdr.SafeGetGuid("tImageId", null);
+                                    thumbnail.RelativeMasterPath = rdr.SafeGetString("tPath", null);
                                     image.Thumbnail = thumbnail;
                                 }
                             }

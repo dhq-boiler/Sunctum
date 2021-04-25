@@ -21,8 +21,8 @@ namespace Sunctum.Domain.Data.Dao
         {
             return new DirectoryNameParser()
             {
-                Priority = reader.SafeGetInt("Priority"),
-                Pattern = reader.SafeGetString("Pattern")
+                Priority = reader.SafeGetInt("Priority", Table),
+                Pattern = reader.SafeGetString("Pattern", Table)
             };
         }
     }

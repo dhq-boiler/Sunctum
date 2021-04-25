@@ -65,6 +65,12 @@ namespace Sunctum.Domain.Data.DaoFacade
             return dao.FindAllAsCountOrderByNameDesc().ToViewModel();
         }
 
+        public static long CountAll()
+        {
+            var dao = new AuthorDao();
+            return dao.CountAll();
+        }
+
         public static IEnumerable<AuthorCountViewModel> FindAllAsCountOrderByCountAsc()
         {
             AuthorDao dao = new AuthorDao();

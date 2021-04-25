@@ -23,9 +23,9 @@ namespace Sunctum.Domain.Data.Dao
         {
             return new EncryptImage()
             {
-                ID = reader.SafeGetGuid("ID"),
-                TargetImageID = reader.SafeGetGuid("TargetImageID"),
-                EncryptFilePath = reader.SafeGetString("EncryptFilePath"),
+                ID = reader.SafeGetGuid("ID", Table),
+                TargetImageID = reader.SafeGetGuid("TargetImageID", Table),
+                EncryptFilePath = reader.SafeGetString("EncryptFilePath", Table),
             };
         }
     }

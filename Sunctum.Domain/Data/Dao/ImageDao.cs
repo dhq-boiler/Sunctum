@@ -28,9 +28,9 @@ namespace Sunctum.Domain.Data.Dao
         {
             return new Image()
             {
-                ID = reader.SafeGetGuid("ID"),
-                Title = reader.SafeGetString("Title"),
-                RelativeMasterPath = reader.SafeGetString("MasterPath"),
+                ID = reader.SafeGetGuid("ID", Table),
+                Title = reader.SafeGetString("Title", Table),
+                RelativeMasterPath = reader.SafeGetString("MasterPath", Table),
             };
         }
 
@@ -98,6 +98,18 @@ namespace Sunctum.Domain.Data.Dao
                 {
                     conn.Dispose();
                 }
+            }
+        }
+
+        internal long SumTotalFileSize()
+        {
+            var conn = GetConnection();
+            using (var command = conn.CreateCommand())
+            {
+                string sql = "select sum(ByteSize) from " + Table.Name;
+                command.CommandText = sql;
+
+                return (long)command.ExecuteScalar();
             }
         }
     }

@@ -19,9 +19,9 @@ namespace Sunctum.Domain.Data.Dao
         {
             return new Thumbnail()
             {
-                ID = reader.SafeGetGuid("ID"),
-                ImageID = reader.SafeGetGuid("ImageID"),
-                RelativeMasterPath = reader.SafeGetString("Path"),
+                ID = reader.SafeGetGuid("ID", Table),
+                ImageID = reader.SafeGetGuid("ImageID", Table),
+                RelativeMasterPath = reader.SafeGetString("Path", Table),
             };
         }
     }

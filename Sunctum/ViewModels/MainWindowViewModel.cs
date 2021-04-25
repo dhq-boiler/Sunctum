@@ -90,6 +90,8 @@ namespace Sunctum.ViewModels
 
         public ICommand OpenPowerSearchCommand { get; set; }
 
+        public ICommand OpenStatisticsDialogCommand { get; set; }
+
         public ICommand OpenSwitchLibraryCommand { get; set; }
 
         public ICommand OpenSearchPaneCommand { get; set; }
@@ -148,6 +150,8 @@ namespace Sunctum.ViewModels
 
         public InteractionRequest<Notification> OpenPowerSearchRequest { get; } = new InteractionRequest<Notification>();
 
+        public InteractionRequest<Notification> OpenStatisticsDialogRequest { get; } = new InteractionRequest<Notification>();
+
         #region コマンド登録
 
         private void RegisterCommands()
@@ -203,6 +207,10 @@ namespace Sunctum.ViewModels
             OpenPowerSearchCommand = new DelegateCommand(() =>
             {
                 OpenPowerSearchRequest.Raise(new Notification() { Title = "Power search", Content = ActiveDocumentViewModel.BookCabinet });
+            });
+            OpenStatisticsDialogCommand = new DelegateCommand(() =>
+            {
+                OpenStatisticsDialogRequest.Raise(new Notification() { Title = "統計" });
             });
             OpenSwitchLibraryCommand = new DelegateCommand(async () =>
             {
@@ -560,6 +568,7 @@ namespace Sunctum.ViewModels
             HomeDocumentViewModel.ClearSearchResult();
             InitializeWindowComponent();
             ManageAppDB();
+            IncrementNumberOfBoots();
 
             Configuration.ApplicationConfiguration.ConnectionString = Specifications.GenerateConnectionString(Configuration.ApplicationConfiguration.WorkingDirectory);
             ConnectionManager.SetDefaultConnection(Configuration.ApplicationConfiguration.ConnectionString, typeof(SQLiteConnection));
@@ -599,6 +608,26 @@ namespace Sunctum.ViewModels
 
                     NotifyActiveTabChanged();
                 });
+        }
+
+        private void IncrementNumberOfBoots()
+        {
+            var id = Guid.Parse("00000000-0000-0000-0000-000000000000");
+            var dao = DataAccessManager.AppDao.Build<StatisticsDao>();
+            var statistics = dao.FindBy(new Dictionary<string, object>() { { "ID", id } });
+            if (statistics.Count() == 0)
+            {
+                var newStatistics = new Statistics();
+                newStatistics.ID = id;
+                newStatistics.NumberOfBoots = 1;
+                dao.Insert(newStatistics);
+            }
+            else
+            {
+                var existStatistics = statistics.First();
+                existStatistics.NumberOfBoots += 1;
+                dao.Update(existStatistics);
+            }
         }
 
         public void NewSearchTab(ObservableCollection<BookViewModel> onStage)
@@ -687,6 +716,7 @@ namespace Sunctum.ViewModels
             dvManager.CurrentConnection = DataAccessManager.AppDao.CurrentConnection;
             dvManager.Mode = VersioningStrategy.ByTick;
             dvManager.RegisterChangePlan(new ChangePlan_AppDb_VersionOrigin());
+            dvManager.RegisterChangePlan(new ChangePlan_AppDb_Version_1());
             dvManager.FinishedToUpgradeTo += DvManager_FinishedToUpgradeTo;
 
             dvManager.UpgradeToTargetVersion();

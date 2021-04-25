@@ -1,5 +1,6 @@
 ﻿
 
+using Homura.ORM;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Util;
 using System;
@@ -19,12 +20,12 @@ namespace Sunctum.Domain.Data.Dao
         {
             return new ColorMap()
             {
-                BookID = reader.SafeGetGuid("BookID"),
-                Channel = reader.SafeGetInt("Channel"),
-                ValueOrder = reader.SafeGetInt("ValueOrder"),
-                Value = reader.SafeGetInt("Value"),
-                MaxX = reader.SafeGetInt("MaxX"),
-                MaxY = reader.SafeGetInt("MaxY")
+                BookID = reader.SafeGetGuid("BookID", Table),
+                Channel = reader.SafeGetInt("Channel", Table),
+                ValueOrder = reader.SafeGetInt("ValueOrder", Table),
+                Value = reader.SafeGetInt("Value", Table),
+                MaxX = reader.SafeGetInt("MaxX", Table),
+                MaxY = reader.SafeGetInt("MaxY", Table)
             };
         }
     }

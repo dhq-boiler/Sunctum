@@ -251,6 +251,7 @@
     <Compile Include="Converters\FileSizeFormatter.cs" />
     <Compile Include="Converters\PageThumbnailLoader.cs" />
     <Compile Include="ViewModels\SearchDocumentViewModel.cs" />
+    <Compile Include="ViewModels\StatisticsDialogViewModel.cs" />
     <Compile Include="ViewModels\TagPaneViewModel.cs" />
     <Compile Include="Views\AboutSunctumDialog.xaml.cs">
       <DependentUpon>AboutSunctumDialog.xaml</DependentUpon>
@@ -307,6 +308,9 @@
     </Compile>
     <Compile Include="Views\ProgressBar.xaml.cs">
       <DependentUpon>ProgressBar.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\StatisticsDialog.xaml.cs">
+      <DependentUpon>StatisticsDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TabItemContainerStyleSelector.cs" />
     <Compile Include="Views\TabItemTemplateSelector.cs" />
@@ -401,6 +405,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ProgressBar.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\StatisticsDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

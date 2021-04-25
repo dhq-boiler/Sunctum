@@ -75,6 +75,12 @@ namespace Sunctum.Domain.Data.DaoFacade
             return processPool;
         }
 
+        public static long CountAll()
+        {
+            var dao = new ImageTagDao();
+            return dao.CountAll();
+        }
+
         public static void DeleteWhereIDIs(Guid imageId, Guid tagId)
         {
             ImageTagDao dao = new ImageTagDao();
