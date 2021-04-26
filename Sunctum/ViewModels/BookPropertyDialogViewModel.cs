@@ -207,6 +207,10 @@ namespace Sunctum.ViewModels
                 {
                     return "ロード中...";
                 }
+                if (Book.FirstPage == null)
+                {
+                    BookLoading.Load(Book);
+                }
                 return Path.GetDirectoryName(Book.FirstPage.Image.AbsoluteMasterPath);
             }
         }
