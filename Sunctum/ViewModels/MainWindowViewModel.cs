@@ -128,6 +128,10 @@ namespace Sunctum.ViewModels
 
         public ICommand SortBookByTitleDescCommand { get; set; }
 
+        public ICommand SortBookByFingerPrintAscCommand { get; set; }
+
+        public ICommand SortBookByFingerPrintDescCommand { get; set; }
+
         public ICommand SwitchLibraryCommand { get; set; }
 
         public ICommand ToggleDisplayAuthorPaneCommand { get; set; }
@@ -293,6 +297,14 @@ namespace Sunctum.ViewModels
             SortBookByTitleDescCommand = new DelegateCommand(() =>
             {
                 ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByTitleDesc;
+            });
+            SortBookByFingerPrintAscCommand = new DelegateCommand(() =>
+            {
+                ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByFingerPrintAsc;
+            });
+            SortBookByFingerPrintDescCommand = new DelegateCommand(() =>
+            {
+                ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByFingerPrintDesc;
             });
             SwitchLibraryCommand = new DelegateCommand<RecentOpenedLibrary>(async (p) =>
             {

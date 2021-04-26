@@ -214,6 +214,8 @@
     <Compile Include="Logic\Async\IUnencryptionStarting.cs" />
     <Compile Include="Logic\Async\LibraryResetting.cs" />
     <Compile Include="Logic\Async\UnencryptionStarting.cs" />
+    <Compile Include="Logic\BookSorting\BookSortingByFingerPrintAsc.cs" />
+    <Compile Include="Logic\BookSorting\BookSortingByFingerPrintDesc.cs" />
     <Compile Include="Logic\DisplayType\DisplayType.cs" />
     <Compile Include="Logic\DisplayType\DisplayTypeDetails.cs" />
     <Compile Include="Logic\DisplayType\DisplayTypeSideBySide.cs" />

@@ -248,6 +248,14 @@
                         Command="{Binding SortBookByCoverRedDescCommand}"
                         Header="{Binding MainWindow_Display_Sorting_CoverRedDesc, Source={StaticResource resources}}"
                         IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByCoverRedDesc}" />
+                        <MenuItem
+                        Command="{Binding SortBookByFingerPrintAscCommand}"
+                        Header="{Binding MainWindow_Display_Sorting_FingerPrintAsc, Source={StaticResource resources}}"
+                        IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByFingerPrintAsc}" />
+                        <MenuItem
+                        Command="{Binding SortBookByFingerPrintDescCommand}"
+                        Header="{Binding MainWindow_Display_Sorting_FingerPrintDesc, Source={StaticResource resources}}"
+                        IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByFingerPrintDesc}" />
                     </MenuItem>
                     <MenuItem Header="{Binding MainWindow_Display_DisplayType, Source={StaticResource resources}}">
                         <MenuItem Command="{Binding DisplaySideBySideCommand}"

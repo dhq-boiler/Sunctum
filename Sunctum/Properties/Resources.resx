@@ -297,6 +297,12 @@
   <data name="MainWindow_Display_Sorting_CoverRedDesc" xml:space="preserve">
     <value>By Cover Red Desc</value>
   </data>
+  <data name="MainWindow_Display_Sorting_FingerPrintAsc" xml:space="preserve">
+    <value>By FingerPrint Asc</value>
+  </data>
+  <data name="MainWindow_Display_Sorting_FingerPrintDesc" xml:space="preserve">
+    <value>By FingerPrint Desc</value>
+  </data>
   <data name="MainWindow_Display_Sorting_LoadedAsc" xml:space="preserve">
     <value>By loaded ASC</value>
   </data>
