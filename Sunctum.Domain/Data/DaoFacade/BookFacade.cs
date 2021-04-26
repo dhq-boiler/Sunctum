@@ -70,5 +70,11 @@ namespace Sunctum.Domain.Data.DaoFacade
             BookDao dao = new BookDao();
             dao.GetProperty(ref book, dataOpUnit?.CurrentConnection);
         }
+
+        public static IEnumerable<BookViewModel> FindDuplicateFingerPrint()
+        {
+            var dao = new BookDao();
+            return dao.FindDuplicateFingerPrint();
+        }
     }
 }

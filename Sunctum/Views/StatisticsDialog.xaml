@@ -89,7 +89,18 @@
         <Label Grid.Row="13" Grid.Column="0">未評価のブック数</Label>
         <Label Grid.Row="13" Grid.Column="1" Content="{Binding NumberOfBooksN.Value}" />
         <Label Grid.Row="14" Grid.Column="0">重複したブック数</Label>
+        <Label Grid.Row="14" Grid.Column="1" Content="{Binding NumberOfDuplicateBooks.Value}" />
         <Label Grid.Row="15" Grid.Column="0">重複した総ファイルサイズ</Label>
+        <Label Grid.Row="15" Grid.Column="1">
+            <Label.Content>
+                <TextBlock>
+                    <Run Text="{Binding TotalDuplicateBooksSize.Value, Converter={StaticResource FileSizeFormatter}}" />
+                    <Run Text="(" />
+                    <Run Text="{Binding TotalDuplicateBooksSize.Value}" />
+                    <Run Text=")" />
+                </TextBlock>
+            </Label.Content>
+        </Label>
 
     </Grid>
 </UserControl>

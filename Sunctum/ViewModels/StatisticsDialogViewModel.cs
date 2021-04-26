@@ -54,6 +54,9 @@ namespace Sunctum.ViewModels
 
         public ReactivePropertySlim<int> NumberOfBooksN { get; } = new ReactivePropertySlim<int>();
 
+        public ReactivePropertySlim<int> NumberOfDuplicateBooks { get; } = new ReactivePropertySlim<int>();
+
+        public ReactivePropertySlim<long> TotalDuplicateBooksSize { get; } = new ReactivePropertySlim<long>();
 
 
         public StatisticsDialogViewModel()
@@ -93,6 +96,10 @@ namespace Sunctum.ViewModels
             NumberOfBooks1.Value = StarFacade.FindBookByStar(1).Count();
 
             NumberOfBooksN.Value = StarFacade.FindBookByStar(null).Count();
+
+            NumberOfDuplicateBooks.Value = BookFacade.FindDuplicateFingerPrint().Count();
+
+            TotalDuplicateBooksSize.Value = BookFacade.FindDuplicateFingerPrint().Where(x => x.ByteSize != null).Select(x => x.ByteSize.Value).Sum();
         }
     }
 }
