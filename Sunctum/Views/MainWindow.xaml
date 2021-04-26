@@ -179,6 +179,7 @@
                     Visibility="{Binding LibraryVM.IsSearching, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <MenuItem Command="{Binding OpenSearchPaneCommand}" Header="{Binding MainWindow_Search_Search, Source={StaticResource resources}}" />
                     <MenuItem Command="{Binding OpenPowerSearchCommand}" Header="Power search" />
+                    <MenuItem Command="{Binding ShowDuplicateBooksCommand}" Header="重複したブックを絞り込む" />
                     <Separator />
                     <MenuItem Command="{Binding ClearSearchResultCommand}" Header="{Binding MainWindow_Search_ClearSearchResult, Source={StaticResource resources}}" />
                 </MenuItem>

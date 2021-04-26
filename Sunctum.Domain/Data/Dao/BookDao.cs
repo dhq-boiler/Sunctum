@@ -154,8 +154,11 @@ namespace Sunctum.Domain.Data.Dao
                                                    .From.Table(new Table<Book>().Name, "b")
                                                    .Left.Join(new Table<Author>().Name, "a").On.Column("a", "ID").EqualTo.Column("bAuthorId")
                                                    .Left.Join(new Table<Star>().Name, "s").On.Column("s", "TypeId").EqualTo.Value(0).And().Column("s", "ID").EqualTo.Column("bId")
-                                                   .GroupBy.Column("bFingerPrint")
-                                                   .Having.Count("bFingerPrint").GreaterThan.Value(1))
+                                                   .Where.Column("bFingerPrint").In.SubQuery(
+                                                        new Select().Column("FingerPrint")
+                                                                    .From.Table(new Table<Book>().Name, "b2")
+                                                                    .GroupBy.Column("FingerPrint")
+                                                                    .Having.Count("FingerPrint").GreaterThan.Value(1)))
                     {
                         string sql = query.ToSql();
                         command.CommandText = sql;

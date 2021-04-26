@@ -102,6 +102,8 @@ namespace Sunctum.ViewModels
 
         public ICommand ShowPreferenceDialogCommand { get; set; }
 
+        public ICommand ShowDuplicateBooksCommand { get; set; }
+
         public ICommand SortBookByAuthorAscCommand { get; set; }
 
         public ICommand SortBookByAuthorDescCommand { get; set; }
@@ -239,6 +241,10 @@ namespace Sunctum.ViewModels
             ShowPreferenceDialogCommand = new DelegateCommand(() =>
             {
                 ShowPreferenceDialog();
+            });
+            ShowDuplicateBooksCommand = new DelegateCommand(() =>
+            {
+                this.NewSearchTab(new ObservableCollection<BookViewModel>(BookFacade.FindDuplicateFingerPrint()));
             });
             SortBookByAuthorAscCommand = new DelegateCommand(() =>
             {
