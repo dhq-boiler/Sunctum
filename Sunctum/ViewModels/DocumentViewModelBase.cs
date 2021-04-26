@@ -789,7 +789,7 @@ namespace Sunctum.ViewModels
                 else
                 {
                     s_logger.Debug($"Search Word:{searchingText}");
-                    BookCabinet.SearchedBooks = new ObservableCollection<BookViewModel>(BookCabinet.BookSource.Where(b => AuthorNameContainsSearchText(b, searchingText) || TitleContainsSearchText(b, searchingText)));
+                    BookCabinet.SearchedBooks = new ObservableCollection<BookViewModel>(BookCabinet.BookSource.Where(b => AuthorNameContainsSearchText(b, searchingText) || TitleContainsSearchText(b, searchingText) || FingerPrintContainsSearchText(b, searchingText)));
 
                     OnSearched(new SearchedEventArgs(searchingText, _previousSearchingText));
                 }
@@ -814,6 +814,15 @@ namespace Sunctum.ViewModels
                 return false;
             }
             return target.Title.IndexOf(searchingText) != -1;
+        }
+
+        private bool FingerPrintContainsSearchText(BookViewModel target, string searchingText)
+        {
+            if (target == null)
+            {
+                return false;
+            }
+            return target.FingerPrint.IndexOf(searchingText) != -1;
         }
 
         public void Search()
