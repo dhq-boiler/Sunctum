@@ -251,29 +251,33 @@ namespace Sunctum.ViewModels
         public void SelectPreviousBook()
         {
             UpdateBook();
-            int index = LibraryManager.OnStage.IndexOf(Book);
+            var mainwindowVm = App.Current.MainWindow.DataContext as MainWindowViewModel;
+            var bookCabinet = mainwindowVm.ActiveDocumentViewModel.BookCabinet;
+            int index = bookCabinet.OnStage.IndexOf(Book);
             if (index - 1 < 0)
             {
-                SelectBook((BookViewModel)LibraryManager.OnStage.Last().Clone(), true);
+                SelectBook((BookViewModel)bookCabinet.OnStage.Last().Clone(), true);
             }
             else
             {
-                SelectBook((BookViewModel)LibraryManager.OnStage[index - 1].Clone(), true);
+                SelectBook((BookViewModel)bookCabinet.OnStage[index - 1].Clone(), true);
             }
         }
 
         public void SelectNextBook()
         {
             UpdateBook();
-            int index = LibraryManager.OnStage.IndexOf(Book);
+            var mainwindowVm = App.Current.MainWindow.DataContext as MainWindowViewModel;
+            var bookCabinet = mainwindowVm.ActiveDocumentViewModel.BookCabinet;
+            int index = bookCabinet.OnStage.IndexOf(Book);
             int newIndex = index + 1;
             if (newIndex > LibraryManager.OnStage.Count() - 1)
             {
-                SelectBook((BookViewModel)LibraryManager.OnStage.First().Clone(), true);
+                SelectBook((BookViewModel)bookCabinet.OnStage.First().Clone(), true);
             }
             else
             {
-                SelectBook((BookViewModel)LibraryManager.OnStage[newIndex].Clone(), true);
+                SelectBook((BookViewModel)bookCabinet.OnStage[newIndex].Clone(), true);
             }
         }
 
