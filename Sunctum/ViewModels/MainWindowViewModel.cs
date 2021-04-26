@@ -654,6 +654,8 @@ namespace Sunctum.ViewModels
             newTabViewModel.LibraryManager = LibraryVM;
             newTabViewModel.BookCabinet = LibraryVM.CreateBookStorage();
             newTabViewModel.BookCabinet.BookSource = new ObservableCollection<BookViewModel>(onStage);
+            newTabViewModel.BookCabinet.Sorting = (App.Current.MainWindow.DataContext as MainWindowViewModel).ActiveDocumentViewModel.BookCabinet.Sorting;
+            newTabViewModel.BookCabinet.DisplayType = (App.Current.MainWindow.DataContext as MainWindowViewModel).ActiveDocumentViewModel.BookCabinet.DisplayType;
             newTabViewModel.MainWindowViewModel = this;
             DockingDocumentViewModels.Add(newTabViewModel);
 
@@ -673,6 +675,8 @@ namespace Sunctum.ViewModels
             newTabViewModel.BookCabinet = LibraryVM.CreateBookStorage();
             newTabViewModel.BookCabinet.BookSource = new ObservableCollection<BookViewModel>();
             newTabViewModel.BookCabinet.BookSource.Add(bookViewModel);
+            newTabViewModel.BookCabinet.Sorting = (App.Current.MainWindow.DataContext as MainWindowViewModel).ActiveDocumentViewModel.BookCabinet.Sorting;
+            newTabViewModel.BookCabinet.DisplayType = (App.Current.MainWindow.DataContext as MainWindowViewModel).ActiveDocumentViewModel.BookCabinet.DisplayType;
             newTabViewModel.MainWindowViewModel = this;
             DockingDocumentViewModels.Add(newTabViewModel);
 
@@ -692,6 +696,8 @@ namespace Sunctum.ViewModels
             newTabViewModel.BookCabinet = LibraryVM.CreateBookStorage();
             newTabViewModel.BookCabinet.BookSource = new ObservableCollection<BookViewModel>();
             newTabViewModel.BookCabinet.BookSource.AddRange(list);
+            newTabViewModel.BookCabinet.Sorting = (App.Current.MainWindow.DataContext as MainWindowViewModel).ActiveDocumentViewModel.BookCabinet.Sorting;
+            newTabViewModel.BookCabinet.DisplayType = (App.Current.MainWindow.DataContext as MainWindowViewModel).ActiveDocumentViewModel.BookCabinet.DisplayType;
             newTabViewModel.MainWindowViewModel = this;
             DockingDocumentViewModels.Add(newTabViewModel);
 
