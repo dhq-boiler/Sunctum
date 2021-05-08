@@ -297,6 +297,12 @@
   <data name="MainWindow_Display_Sorting_CoverRedDesc" xml:space="preserve">
     <value>表紙 赤 降順</value>
   </data>
+  <data name="MainWindow_Display_Sorting_FingerPrintAsc" xml:space="preserve">
+    <value>指紋 昇順</value>
+  </data>
+  <data name="MainWindow_Display_Sorting_FingerPrintDesc" xml:space="preserve">
+    <value>指紋 降順</value>
+  </data>
   <data name="MainWindow_Display_Sorting_LoadedAsc" xml:space="preserve">
     <value>ロード 昇順</value>
   </data>

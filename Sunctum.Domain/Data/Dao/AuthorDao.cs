@@ -89,9 +89,9 @@ namespace Sunctum.Domain.Data.Dao
                         {
                             while (reader.Read())
                             {
-                                Guid authorId = reader.SafeGetGuid("ID");
-                                string name = reader.SafeGetString("Name");
-                                int count = reader.SafeGetInt("Count");
+                                Guid authorId = reader.SafeGetGuid("ID", Table);
+                                string name = reader.SafeGetString("Name", Table);
+                                int count = reader.SafeGetInt("Count", null);
 
                                 yield return new AuthorCount(new Author(authorId, name), count);
                             }
@@ -136,9 +136,9 @@ namespace Sunctum.Domain.Data.Dao
                         {
                             while (reader.Read())
                             {
-                                Guid authorId = reader.SafeGetGuid("ID");
-                                string name = reader.SafeGetString("Name");
-                                int count = reader.SafeGetInt("Count");
+                                Guid authorId = reader.SafeGetGuid("ID", Table);
+                                string name = reader.SafeGetString("Name", Table);
+                                int count = reader.SafeGetInt("Count", null);
 
                                 yield return new AuthorCount(new Author(authorId, name), count);
                             }
@@ -183,9 +183,9 @@ namespace Sunctum.Domain.Data.Dao
                         {
                             while (reader.Read())
                             {
-                                Guid authorId = reader.SafeGetGuid("ID");
-                                string name = reader.SafeGetString("Name");
-                                int count = reader.SafeGetInt("Count");
+                                Guid authorId = reader.SafeGetGuid("ID", Table);
+                                string name = reader.SafeGetString("Name", Table);
+                                int count = reader.SafeGetInt("Count", null);
 
                                 yield return new AuthorCount(new Author(authorId, name), count);
                             }
@@ -230,9 +230,9 @@ namespace Sunctum.Domain.Data.Dao
                         {
                             while (reader.Read())
                             {
-                                Guid authorId = reader.SafeGetGuid("ID");
-                                string name = reader.SafeGetString("Name");
-                                int count = reader.SafeGetInt("Count");
+                                Guid authorId = reader.SafeGetGuid("ID", Table);
+                                string name = reader.SafeGetString("Name", Table);
+                                int count = reader.SafeGetInt("Count", null);
 
                                 yield return new AuthorCount(new Author(authorId, name), count);
                             }
@@ -253,8 +253,8 @@ namespace Sunctum.Domain.Data.Dao
         {
             return new Author()
             {
-                ID = reader.SafeGetGuid("ID"),
-                Name = reader.SafeGetString("Name"),
+                ID = reader.SafeGetGuid("ID", Table),
+                Name = reader.SafeGetString("Name", Table),
             };
         }
     }

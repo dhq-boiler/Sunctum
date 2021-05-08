@@ -23,6 +23,8 @@ namespace Sunctum.Domain.Logic.BookSorting
         public static readonly IBookSorting ByCoverGreenDesc = new BookSortingByCoverGreenDesc();
         public static readonly IBookSorting ByCoverRedAsc = new BookSortingByCoverRedAsc();
         public static readonly IBookSorting ByCoverRedDesc = new BookSortingByCoverRedDesc();
+        public static readonly IBookSorting ByFingerPrintAsc = new BookSortingByFingerPrintAsc();
+        public static readonly IBookSorting ByFingerPrintDesc = new BookSortingByFingerPrintDesc();
 
         public static IBookSorting GetReferenceByName(string propertyName)
         {

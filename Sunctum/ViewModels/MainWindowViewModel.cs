@@ -61,6 +61,7 @@ namespace Sunctum.ViewModels
         private ObservableCollection<IDocumentViewModelBase> _DockingDocumentViewModels;
         private ObservableCollection<PaneViewModelBase> _DockingPaneViewModels;
         private IDocumentViewModelBase _ActiveDocumentViewModel;
+        private IDocumentViewModelBase _OldActiveDocumentViewModel;
 
         #region コマンド
 
@@ -90,6 +91,8 @@ namespace Sunctum.ViewModels
 
         public ICommand OpenPowerSearchCommand { get; set; }
 
+        public ICommand OpenStatisticsDialogCommand { get; set; }
+
         public ICommand OpenSwitchLibraryCommand { get; set; }
 
         public ICommand OpenSearchPaneCommand { get; set; }
@@ -99,6 +102,8 @@ namespace Sunctum.ViewModels
         public ICommand ReloadLibraryCommand { get; set; }
 
         public ICommand ShowPreferenceDialogCommand { get; set; }
+
+        public ICommand ShowDuplicateBooksCommand { get; set; }
 
         public ICommand SortBookByAuthorAscCommand { get; set; }
 
@@ -124,6 +129,10 @@ namespace Sunctum.ViewModels
 
         public ICommand SortBookByTitleDescCommand { get; set; }
 
+        public ICommand SortBookByFingerPrintAscCommand { get; set; }
+
+        public ICommand SortBookByFingerPrintDescCommand { get; set; }
+
         public ICommand SwitchLibraryCommand { get; set; }
 
         public ICommand ToggleDisplayAuthorPaneCommand { get; set; }
@@ -147,6 +156,8 @@ namespace Sunctum.ViewModels
         #endregion //コマンド
 
         public InteractionRequest<Notification> OpenPowerSearchRequest { get; } = new InteractionRequest<Notification>();
+
+        public InteractionRequest<Notification> OpenStatisticsDialogRequest { get; } = new InteractionRequest<Notification>();
 
         #region コマンド登録
 
@@ -204,6 +215,10 @@ namespace Sunctum.ViewModels
             {
                 OpenPowerSearchRequest.Raise(new Notification() { Title = "Power search", Content = ActiveDocumentViewModel.BookCabinet });
             });
+            OpenStatisticsDialogCommand = new DelegateCommand(() =>
+            {
+                OpenStatisticsDialogRequest.Raise(new Notification() { Title = "統計" });
+            });
             OpenSwitchLibraryCommand = new DelegateCommand(async () =>
             {
                 bool changed = OpenSwitchLibraryDialogAndChangeWorkingDirectory();
@@ -231,6 +246,10 @@ namespace Sunctum.ViewModels
             ShowPreferenceDialogCommand = new DelegateCommand(() =>
             {
                 ShowPreferenceDialog();
+            });
+            ShowDuplicateBooksCommand = new DelegateCommand(() =>
+            {
+                this.NewSearchTab(new ObservableCollection<BookViewModel>(BookFacade.FindDuplicateFingerPrint()));
             });
             SortBookByAuthorAscCommand = new DelegateCommand(() =>
             {
@@ -279,6 +298,14 @@ namespace Sunctum.ViewModels
             SortBookByTitleDescCommand = new DelegateCommand(() =>
             {
                 ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByTitleDesc;
+            });
+            SortBookByFingerPrintAscCommand = new DelegateCommand(() =>
+            {
+                ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByFingerPrintAsc;
+            });
+            SortBookByFingerPrintDescCommand = new DelegateCommand(() =>
+            {
+                ActiveDocumentViewModel.BookCabinet.Sorting = BookSorting.ByFingerPrintDesc;
             });
             SwitchLibraryCommand = new DelegateCommand<RecentOpenedLibrary>(async (p) =>
             {
@@ -497,11 +524,21 @@ namespace Sunctum.ViewModels
             set { SetProperty(ref _DockingPaneViewModels, value); }
         }
 
+        public IDocumentViewModelBase OldActiveDocumentViewModel
+        {
+            get { return _OldActiveDocumentViewModel; }
+            set
+            {
+                SetProperty(ref _OldActiveDocumentViewModel, value);
+            }
+        }
+
         public IDocumentViewModelBase ActiveDocumentViewModel
         {
             get { return _ActiveDocumentViewModel; }
             set
             {
+                OldActiveDocumentViewModel = _ActiveDocumentViewModel;
                 SetProperty(ref _ActiveDocumentViewModel, value);
                 NotifyActiveTabChanged();
             }
@@ -560,6 +597,7 @@ namespace Sunctum.ViewModels
             HomeDocumentViewModel.ClearSearchResult();
             InitializeWindowComponent();
             ManageAppDB();
+            IncrementNumberOfBoots();
 
             Configuration.ApplicationConfiguration.ConnectionString = Specifications.GenerateConnectionString(Configuration.ApplicationConfiguration.WorkingDirectory);
             ConnectionManager.SetDefaultConnection(Configuration.ApplicationConfiguration.ConnectionString, typeof(SQLiteConnection));
@@ -601,12 +639,34 @@ namespace Sunctum.ViewModels
                 });
         }
 
+        private void IncrementNumberOfBoots()
+        {
+            var id = Guid.Parse("00000000-0000-0000-0000-000000000000");
+            var dao = DataAccessManager.AppDao.Build<StatisticsDao>();
+            var statistics = dao.FindBy(new Dictionary<string, object>() { { "ID", id } });
+            if (statistics.Count() == 0)
+            {
+                var newStatistics = new Statistics();
+                newStatistics.ID = id;
+                newStatistics.NumberOfBoots = 1;
+                dao.Insert(newStatistics);
+            }
+            else
+            {
+                var existStatistics = statistics.First();
+                existStatistics.NumberOfBoots += 1;
+                dao.Update(existStatistics);
+            }
+        }
+
         public void NewSearchTab(ObservableCollection<BookViewModel> onStage)
         {
             var newTabViewModel = new SearchDocumentViewModel("Search results");
             newTabViewModel.LibraryManager = LibraryVM;
             newTabViewModel.BookCabinet = LibraryVM.CreateBookStorage();
             newTabViewModel.BookCabinet.BookSource = new ObservableCollection<BookViewModel>(onStage);
+            newTabViewModel.BookCabinet.Sorting = (App.Current.MainWindow.DataContext as MainWindowViewModel).ActiveDocumentViewModel.BookCabinet.Sorting;
+            newTabViewModel.BookCabinet.DisplayType = (App.Current.MainWindow.DataContext as MainWindowViewModel).ActiveDocumentViewModel.BookCabinet.DisplayType;
             newTabViewModel.MainWindowViewModel = this;
             DockingDocumentViewModels.Add(newTabViewModel);
 
@@ -626,6 +686,8 @@ namespace Sunctum.ViewModels
             newTabViewModel.BookCabinet = LibraryVM.CreateBookStorage();
             newTabViewModel.BookCabinet.BookSource = new ObservableCollection<BookViewModel>();
             newTabViewModel.BookCabinet.BookSource.Add(bookViewModel);
+            newTabViewModel.BookCabinet.Sorting = (App.Current.MainWindow.DataContext as MainWindowViewModel).ActiveDocumentViewModel.BookCabinet.Sorting;
+            newTabViewModel.BookCabinet.DisplayType = (App.Current.MainWindow.DataContext as MainWindowViewModel).ActiveDocumentViewModel.BookCabinet.DisplayType;
             newTabViewModel.MainWindowViewModel = this;
             DockingDocumentViewModels.Add(newTabViewModel);
 
@@ -645,6 +707,8 @@ namespace Sunctum.ViewModels
             newTabViewModel.BookCabinet = LibraryVM.CreateBookStorage();
             newTabViewModel.BookCabinet.BookSource = new ObservableCollection<BookViewModel>();
             newTabViewModel.BookCabinet.BookSource.AddRange(list);
+            newTabViewModel.BookCabinet.Sorting = (App.Current.MainWindow.DataContext as MainWindowViewModel).ActiveDocumentViewModel.BookCabinet.Sorting;
+            newTabViewModel.BookCabinet.DisplayType = (App.Current.MainWindow.DataContext as MainWindowViewModel).ActiveDocumentViewModel.BookCabinet.DisplayType;
             newTabViewModel.MainWindowViewModel = this;
             DockingDocumentViewModels.Add(newTabViewModel);
 
@@ -687,6 +751,7 @@ namespace Sunctum.ViewModels
             dvManager.CurrentConnection = DataAccessManager.AppDao.CurrentConnection;
             dvManager.Mode = VersioningStrategy.ByTick;
             dvManager.RegisterChangePlan(new ChangePlan_AppDb_VersionOrigin());
+            dvManager.RegisterChangePlan(new ChangePlan_AppDb_Version_1());
             dvManager.FinishedToUpgradeTo += DvManager_FinishedToUpgradeTo;
 
             dvManager.UpgradeToTargetVersion();
@@ -880,6 +945,15 @@ namespace Sunctum.ViewModels
         public void Close()
         {
             Application.Current.Shutdown();
+        }
+
+        public void ChangeActiveContent()
+        {
+            if (OldActiveDocumentViewModel == null || OldActiveDocumentViewModel.BookCabinet == null) return;
+            var oldDisplayType = OldActiveDocumentViewModel.BookCabinet.DisplayType;
+            var oldSort = OldActiveDocumentViewModel.BookCabinet.Sorting;
+            ActiveDocumentViewModel.BookCabinet.DisplayType = oldDisplayType;
+            ActiveDocumentViewModel.BookCabinet.Sorting = oldSort;
         }
 
         #endregion //一般

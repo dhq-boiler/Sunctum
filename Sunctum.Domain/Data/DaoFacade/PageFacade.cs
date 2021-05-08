@@ -51,6 +51,12 @@ namespace Sunctum.Domain.Data.DaoFacade
             throw new QueryFailedException($"設定回数({challengeMaxCount})の問い合わせに失敗しました．", trying);
         }
 
+        public static long CountAll()
+        {
+            var dao = new PageDao();
+            return dao.CountAll();
+        }
+
         public static PageViewModel FindByBookIdTop1(Guid bookId, DataOperationUnit dataOpUnit = null)
         {
             PageDao dao = new PageDao();

@@ -56,6 +56,13 @@
                 </prism:PopupWindowAction.WindowContent>
             </prism:PopupWindowAction>
         </prism:InteractionRequestTrigger>
+        <prism:InteractionRequestTrigger SourceObject="{Binding OpenStatisticsDialogRequest}">
+            <prism:PopupWindowAction IsModal="False">
+                <prism:PopupWindowAction.WindowContent>
+                    <local:StatisticsDialog />
+                </prism:PopupWindowAction.WindowContent>
+            </prism:PopupWindowAction>
+        </prism:InteractionRequestTrigger>
     </i:Interaction.Triggers>
     <Window.InputBindings>
         <KeyBinding
@@ -163,6 +170,7 @@
                     <MenuItem Command="{Binding OpenAuthorManagementDialogCommand}" Header="{Binding MainWindow_Data_AuthorManagement, Source={StaticResource resources}}" />
                     <MenuItem Command="{Binding OpenTagManagementDialogCommand}" Header="{Binding MainWindow_Data_TagManagement, Source={StaticResource resources}}" />
                     <MenuItem Command="{Binding OpenMetadataImportSettingDialogCommand}" Header="{Binding MainWindow_Data_MetadataImportSetting, Source={StaticResource resources}}" />
+                    <MenuItem Command="{Binding OpenStatisticsDialogCommand}" Header="統計..." />
                 </MenuItem>
                 <MenuItem Header="{Binding MainWindow_Search, Source={StaticResource resources}}">
                     <MenuItem
@@ -171,6 +179,7 @@
                     Visibility="{Binding LibraryVM.IsSearching, Converter={StaticResource BoolToVisibilityConverter}}" />
                     <MenuItem Command="{Binding OpenSearchPaneCommand}" Header="{Binding MainWindow_Search_Search, Source={StaticResource resources}}" />
                     <MenuItem Command="{Binding OpenPowerSearchCommand}" Header="Power search" />
+                    <MenuItem Command="{Binding ShowDuplicateBooksCommand}" Header="重複したブックを絞り込む" />
                     <Separator />
                     <MenuItem Command="{Binding ClearSearchResultCommand}" Header="{Binding MainWindow_Search_ClearSearchResult, Source={StaticResource resources}}" />
                 </MenuItem>
@@ -239,6 +248,14 @@
                         Command="{Binding SortBookByCoverRedDescCommand}"
                         Header="{Binding MainWindow_Display_Sorting_CoverRedDesc, Source={StaticResource resources}}"
                         IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByCoverRedDesc}" />
+                        <MenuItem
+                        Command="{Binding SortBookByFingerPrintAscCommand}"
+                        Header="{Binding MainWindow_Display_Sorting_FingerPrintAsc, Source={StaticResource resources}}"
+                        IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByFingerPrintAsc}" />
+                        <MenuItem
+                        Command="{Binding SortBookByFingerPrintDescCommand}"
+                        Header="{Binding MainWindow_Display_Sorting_FingerPrintDesc, Source={StaticResource resources}}"
+                        IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByFingerPrintDesc}" />
                     </MenuItem>
                     <MenuItem Header="{Binding MainWindow_Display_DisplayType, Source={StaticResource resources}}">
                         <MenuItem Command="{Binding DisplaySideBySideCommand}"
@@ -314,6 +331,9 @@
                 <prism:InteractionRequestTrigger SourceObject="{Binding SaveLayoutRequest}">
                     <trigger:SaveLayoutAction />
                 </prism:InteractionRequestTrigger>
+                <i:EventTrigger EventName="ActiveContentChanged">
+                    <ei:CallMethodAction TargetObject="{Binding}" MethodName="ChangeActiveContent" />
+                </i:EventTrigger>
             </i:Interaction.Triggers>
             <avalonDock:DockingManager.LayoutItemContainerStyleSelector>
                 <local:LayoutItemContainerStyleSelector>

@@ -66,8 +66,8 @@ namespace Sunctum.Domain.Data.Dao
         {
             return new Tag()
             {
-                ID = reader.SafeGetGuid("ID"),
-                Name = reader.SafeGetString("Name"),
+                ID = reader.SafeGetGuid("ID", Table),
+                Name = reader.SafeGetString("Name", Table),
             };
         }
     }

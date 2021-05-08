@@ -601,6 +601,24 @@ namespace Sunctum.Properties {
         }
         
         /// <summary>
+        ///   By FingerPrint Asc に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MainWindow_Display_Sorting_FingerPrintAsc {
+            get {
+                return ResourceManager.GetString("MainWindow_Display_Sorting_FingerPrintAsc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   By FingerPrint Desc に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MainWindow_Display_Sorting_FingerPrintDesc {
+            get {
+                return ResourceManager.GetString("MainWindow_Display_Sorting_FingerPrintDesc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   By loaded ASC に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string MainWindow_Display_Sorting_LoadedAsc {

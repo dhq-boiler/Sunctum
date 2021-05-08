@@ -44,8 +44,8 @@ namespace Sunctum.Domain.Data.Dao
                             {
                                 yield return new BookTag()
                                 {
-                                    BookID = reader.SafeGetGuid("bId"),
-                                    TagID = reader.SafeGetGuid("itTagId")
+                                    BookID = reader.SafeGetGuid("bId", null),
+                                    TagID = reader.SafeGetGuid("itTagId", null)
                                 };
                             }
                         }

@@ -12,7 +12,8 @@ namespace Sunctum.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value == null) return null;
-            return FileSize.ConvertFileSizeUnit((long)value);
+            var lv = System.Convert.ToInt64(value);
+            return FileSize.ConvertFileSizeUnit(lv);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

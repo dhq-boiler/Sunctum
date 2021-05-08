@@ -52,6 +52,12 @@ namespace Sunctum.Domain.Data.DaoFacade
             throw new QueryFailedException($"設定回数({challengeMaxCount})の問い合わせに失敗しました．", trying);
         }
 
+        public static long SumTotalFileSize()
+        {
+            var imageDao = new ImageDao();
+            return imageDao.SumTotalFileSize();
+        }
+
         public static IEnumerable<ImageViewModel> FindAll(DataOperationUnit dataOpUnit = null)
         {
             ImageDao dao = new ImageDao();

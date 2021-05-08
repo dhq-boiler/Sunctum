@@ -66,6 +66,12 @@ namespace Sunctum.Domain.Data.DaoFacade
             dao.Update(target.ToEntity());
         }
 
+        public static long CountAll()
+        {
+            var dao = new TagDao();
+            return dao.CountAll();
+        }
+
         public static void Delete(Guid id)
         {
             TagDao dao = new TagDao();

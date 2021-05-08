@@ -21,8 +21,8 @@ namespace Sunctum.Domain.Data.Dao
         {
             return new RecentOpenedLibrary()
             {
-                Path = reader.SafeGetString("Path"),
-                AccessOrder = reader.SafeGetInt("AccessOrder")
+                Path = reader.SafeGetString("Path", Table),
+                AccessOrder = reader.SafeGetInt("AccessOrder", Table)
             };
         }
     }

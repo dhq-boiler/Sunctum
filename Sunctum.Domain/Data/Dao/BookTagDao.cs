@@ -1,5 +1,6 @@
 ﻿
 
+using Homura.ORM;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Util;
 using System.Data;
@@ -12,8 +13,8 @@ namespace Sunctum.Domain.Data.Dao
         {
             return new BookTag()
             {
-                BookID = reader.SafeGetGuid("BookID"),
-                TagID = reader.SafeGetGuid("TagID")
+                BookID = reader.SafeGetGuid("BookID", Table),
+                TagID = reader.SafeGetGuid("TagID", Table)
             };
         }
     }
