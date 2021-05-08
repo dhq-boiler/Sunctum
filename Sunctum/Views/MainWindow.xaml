@@ -331,6 +331,9 @@
                 <prism:InteractionRequestTrigger SourceObject="{Binding SaveLayoutRequest}">
                     <trigger:SaveLayoutAction />
                 </prism:InteractionRequestTrigger>
+                <i:EventTrigger EventName="ActiveContentChanged">
+                    <ei:CallMethodAction TargetObject="{Binding}" MethodName="ChangeActiveContent" />
+                </i:EventTrigger>
             </i:Interaction.Triggers>
             <avalonDock:DockingManager.LayoutItemContainerStyleSelector>
                 <local:LayoutItemContainerStyleSelector>

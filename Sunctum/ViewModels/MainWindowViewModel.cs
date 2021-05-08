@@ -61,6 +61,7 @@ namespace Sunctum.ViewModels
         private ObservableCollection<IDocumentViewModelBase> _DockingDocumentViewModels;
         private ObservableCollection<PaneViewModelBase> _DockingPaneViewModels;
         private IDocumentViewModelBase _ActiveDocumentViewModel;
+        private IDocumentViewModelBase _OldActiveDocumentViewModel;
 
         #region コマンド
 
@@ -523,11 +524,21 @@ namespace Sunctum.ViewModels
             set { SetProperty(ref _DockingPaneViewModels, value); }
         }
 
+        public IDocumentViewModelBase OldActiveDocumentViewModel
+        {
+            get { return _OldActiveDocumentViewModel; }
+            set
+            {
+                SetProperty(ref _OldActiveDocumentViewModel, value);
+            }
+        }
+
         public IDocumentViewModelBase ActiveDocumentViewModel
         {
             get { return _ActiveDocumentViewModel; }
             set
             {
+                OldActiveDocumentViewModel = _ActiveDocumentViewModel;
                 SetProperty(ref _ActiveDocumentViewModel, value);
                 NotifyActiveTabChanged();
             }
@@ -934,6 +945,15 @@ namespace Sunctum.ViewModels
         public void Close()
         {
             Application.Current.Shutdown();
+        }
+
+        public void ChangeActiveContent()
+        {
+            if (OldActiveDocumentViewModel == null || OldActiveDocumentViewModel.BookCabinet == null) return;
+            var oldDisplayType = OldActiveDocumentViewModel.BookCabinet.DisplayType;
+            var oldSort = OldActiveDocumentViewModel.BookCabinet.Sorting;
+            ActiveDocumentViewModel.BookCabinet.DisplayType = oldDisplayType;
+            ActiveDocumentViewModel.BookCabinet.Sorting = oldSort;
         }
 
         #endregion //一般
