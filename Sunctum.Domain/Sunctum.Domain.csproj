@@ -238,6 +238,7 @@
     <Compile Include="Models\EncryptImage.cs" />
     <Compile Include="Models\IName.cs" />
     <Compile Include="Models\Managers\BookCollectionChanged.cs" />
+    <Compile Include="Models\Managers\ExceptionOccurredEventArgs.cs" />
     <Compile Include="Models\Managers\IArrangedBookStorage.cs" />
     <Compile Include="Models\Managers\IBookStorage.cs" />
     <Compile Include="Models\Managers\OnmemoryImageManager.cs" />

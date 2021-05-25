@@ -9,6 +9,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
+using static Sunctum.Domain.Models.Managers.ITaskManager;
 
 namespace Sunctum.Managers
 {
@@ -25,6 +26,8 @@ namespace Sunctum.Managers
 
         [Inject]
         public IProgressManager ProgressManager { get; set; }
+
+        public event ExceptionOccurredEventHandler<Exception> ExceptionOccurred;
 
         public TaskManager()
         {
@@ -62,6 +65,13 @@ namespace Sunctum.Managers
                     InnerProcessTask(CurrentSequence);
                     CurrentSequence.Dispose();
                     CurrentSequence = null;
+                }
+            }
+            catch (Exception e)
+            {
+                if (ExceptionOccurred != null)
+                {
+                    ExceptionOccurred(this, new Sunctum.Domain.Models.Managers.ExceptionOccurredEventArgs(e));
                 }
             }
             finally

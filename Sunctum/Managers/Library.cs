@@ -14,6 +14,7 @@ using Sunctum.UI.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.SQLite;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Hosting;
@@ -115,7 +116,16 @@ namespace Sunctum.Managers
 
         public async Task Initialize()
         {
+            TaskManager.ExceptionOccurred += TaskManager_ExceptionOccurred;
             await TaskManager.Enqueue(LibraryInitializingService.GetTaskSequence());
+            TaskManager.ExceptionOccurred -= TaskManager_ExceptionOccurred;
+        }
+
+        private void TaskManager_ExceptionOccurred(object sender, Domain.Models.Managers.ExceptionOccurredEventArgs args)
+        {
+            s_logger.Fatal(args.Exception, "Failed to initialize database.");
+            MessageBox.Show("データベースの初期化に失敗しました．\nSunctumを終了します．", "データベース初期化エラー", MessageBoxButton.OK, MessageBoxImage.Error);
+            throw args.Exception;
         }
 
         public async Task Load()
@@ -126,7 +136,7 @@ namespace Sunctum.Managers
             }
             catch (FailedOpeningDatabaseException e)
             {
-                s_logger.Fatal("Fail to connect database．Sunctum will be terminated．", e);
+                s_logger.Fatal("Failed to open database．Sunctum will be terminated．", e);
                 MessageBox.Show("データベースの接続に失敗しました．\nSunctumを終了します．", "データベース接続エラー", MessageBoxButton.OK, MessageBoxImage.Error);
                 throw;
             }
