@@ -5,7 +5,7 @@ using Sunctum.UI.Controls;
 using System;
 using System.Collections.Generic;
 using System.Windows;
-using System.Windows.Interactivity;
+using Microsoft.Xaml.Behaviors;
 
 namespace Sunctum.Views.Triggers
 {

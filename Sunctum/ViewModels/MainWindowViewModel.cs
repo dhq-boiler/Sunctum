@@ -603,40 +603,47 @@ namespace Sunctum.ViewModels
             ConnectionManager.SetDefaultConnection(Configuration.ApplicationConfiguration.ConnectionString, typeof(SQLiteConnection));
             DataAccessManager.WorkingDao = new DaoBuilder(new Connection(Specifications.GenerateConnectionString(Configuration.ApplicationConfiguration.WorkingDirectory), typeof(SQLiteConnection)));
 
-            await LibraryVM.Initialize();
-            LibraryVM.UnlockIfLocked();
-            await LibraryVM.Load()
-                .ContinueWith(_ =>
-                {
-                    HomeDocumentViewModel.BookCabinet = LibraryVM.CreateBookStorage();
-
-                    (LibraryVM as IObservable<BookCollectionChanged>)
-                        .Subscribe(HomeDocumentViewModel.BookCabinet as IObserver<BookCollectionChanged>)
-                        .AddTo(_disposable);
-                    this.Subscribe((IObserver<ActiveTabChanged>)TagManager)
-                        .AddTo(_disposable);
-                    this.Subscribe((IObserver<ActiveTabChanged>)AuthorManager)
-                        .AddTo(_disposable);
-
-                    var sorting = Configuration.ApplicationConfiguration.BookSorting;
-                    if (sorting != null)
+            try
+            {
+                await LibraryVM.Initialize();
+                LibraryVM.UnlockIfLocked();
+                await LibraryVM.Load()
+                    .ContinueWith(_ =>
                     {
-                        HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.GetReferenceByName(sorting);
-                    }
+                        HomeDocumentViewModel.BookCabinet = LibraryVM.CreateBookStorage();
 
-                    var displayType = Configuration.ApplicationConfiguration.DisplayType;
-                    if (displayType != null)
-                    {
-                        HomeDocumentViewModel.BookCabinet.DisplayType = DisplayType.GetReferenceByName(displayType);
-                    }
+                        (LibraryVM as IObservable<BookCollectionChanged>)
+                            .Subscribe(HomeDocumentViewModel.BookCabinet as IObserver<BookCollectionChanged>)
+                            .AddTo(_disposable);
+                        this.Subscribe((IObserver<ActiveTabChanged>)TagManager)
+                            .AddTo(_disposable);
+                        this.Subscribe((IObserver<ActiveTabChanged>)AuthorManager)
+                            .AddTo(_disposable);
 
-                    ((DocumentViewModelBase)HomeDocumentViewModel).IsVisible = true;
-                    ((DocumentViewModelBase)HomeDocumentViewModel).IsSelected = true;
+                        var sorting = Configuration.ApplicationConfiguration.BookSorting;
+                        if (sorting != null)
+                        {
+                            HomeDocumentViewModel.BookCabinet.Sorting = BookSorting.GetReferenceByName(sorting);
+                        }
 
-                    SetEvent();
+                        var displayType = Configuration.ApplicationConfiguration.DisplayType;
+                        if (displayType != null)
+                        {
+                            HomeDocumentViewModel.BookCabinet.DisplayType = DisplayType.GetReferenceByName(displayType);
+                        }
 
-                    NotifyActiveTabChanged();
-                });
+                        ((DocumentViewModelBase)HomeDocumentViewModel).IsVisible = true;
+                        ((DocumentViewModelBase)HomeDocumentViewModel).IsSelected = true;
+
+                        SetEvent();
+
+                        NotifyActiveTabChanged();
+                    });
+            }
+            catch (Exception e)
+            {
+                Close();
+            }
         }
 
         private void IncrementNumberOfBoots()
@@ -920,13 +927,15 @@ namespace Sunctum.ViewModels
         public void Terminate()
         {
             var config = Configuration.ApplicationConfiguration;
-            config.BookSorting = BookSorting.GetPropertyName(HomeDocumentViewModel.BookCabinet.Sorting);
+            if (HomeDocumentViewModel.BookCabinet != null)
+                config.BookSorting = BookSorting.GetPropertyName(HomeDocumentViewModel.BookCabinet.Sorting);
             config.DisplayAuthorPane = DisplayAuthorPane;
             config.DisplayInformationPane = DisplayInformationPane;
             config.DisplayTagPane = DisplayTagPane;
             config.AuthorSorting = AuthorSorting.GetPropertyName(AuthorManager.Sorting);
             config.TagSorting = ImageTagCountSorting.GetPropertyName(TagManager.Sorting);
-            config.DisplayType = DisplayType.GetPropertyName(HomeDocumentViewModel.BookCabinet.DisplayType);
+            if (HomeDocumentViewModel.BookCabinet != null)
+                config.DisplayType = DisplayType.GetPropertyName(HomeDocumentViewModel.BookCabinet.DisplayType);
 
             if (config.StoreWindowPosition)
             {

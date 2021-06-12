@@ -4,7 +4,7 @@ using Prism.Interactivity.InteractionRequest;
 using Sunctum.Domain.Models;
 using Sunctum.ViewModels;
 using System.IO;
-using System.Windows.Interactivity;
+using Microsoft.Xaml.Behaviors;
 using Xceed.Wpf.AvalonDock;
 using Xceed.Wpf.AvalonDock.Layout;
 using Xceed.Wpf.AvalonDock.Layout.Serialization;

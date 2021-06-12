@@ -69,9 +69,10 @@ namespace Sunctum.ViewModels
                     MainWindowViewModel.LibraryVM.TagMng.RemoveImageTag(item.Name);
                 }
             });
-            DropTagCommand = new DelegateCommand<IDataObject>(data =>
+            DropTagCommand = new DelegateCommand<DragEventArgs>(data =>
             {
-                var imageTagCount = (TagCountViewModel)data.GetData(typeof(TagCountViewModel));
+                var d = data.Data;
+                var imageTagCount = (TagCountViewModel)d.GetData(typeof(TagCountViewModel));
                 try
                 {
                     MainWindowViewModel.LibraryVM.TagMng.AddImageTagToSelectedObject(imageTagCount.Tag.Name);
