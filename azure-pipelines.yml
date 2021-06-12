@@ -31,5 +31,5 @@ steps:
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
-    testAssemblyVer2: 
-      **Test\*Test.dll
+    testAssemblyVer2: |
+      **\*Test.dll
