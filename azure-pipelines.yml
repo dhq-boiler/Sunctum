@@ -49,7 +49,7 @@ steps:
     #releaseNotesSource: 'file' # Optional. Options: file, input
     #releaseNotesFile: # Optional
     #releaseNotes: # Optional
-    assets: '$(System.DefaultWorkingDirectory)\*' # Optional
+    assets: '$(System.DefaultWorkingDirectory)\Sunctum\bin\Release\*' # Optional
     assetUploadMode: 'delete' # Optional. Options: delete, replace
     isDraft: false # Optional
     isPreRelease: false # Optional
