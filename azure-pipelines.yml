@@ -45,7 +45,7 @@ steps:
     tagSource: 'auto' # Required when action == Create# Options: auto, manual
     #tagPattern: # Optional
     #tag: # Required when action == Edit || Action == Delete || TagSource == Manual
-    title: 'Sunctun v$(Build.SourceVersion)' # Optional
+    title: 'Sunctun v$(tagName)' # Optional
     #releaseNotesSource: 'file' # Optional. Options: file, input
     #releaseNotesFile: # Optional
     #releaseNotes: # Optional
