@@ -5,8 +5,9 @@
     xmlns:behavior="clr-namespace:Sunctum.Views.Behaviors"
     xmlns:cvt="clr-namespace:Sunctum.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:ei="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:helper="clr-namespace:Sunctum.Helpers"
     xmlns:local="clr-namespace:Sunctum.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
@@ -17,13 +18,13 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
     <i:Interaction.Triggers>
-        <prism:InteractionRequestTrigger SourceObject="{Binding ChangeStarRequest}">
-            <prism:PopupWindowAction IsModal="True">
-                <prism:PopupWindowAction.WindowContent>
+        <trigger:InteractionRequestTrigger SourceObject="{Binding ChangeStarRequest}">
+            <trigger:PopupWindowAction IsModal="True">
+                <trigger:PopupWindowAction.WindowContent>
                     <local:ChangeStar />
-                </prism:PopupWindowAction.WindowContent>
-            </prism:PopupWindowAction>
-        </prism:InteractionRequestTrigger>
+                </trigger:PopupWindowAction.WindowContent>
+            </trigger:PopupWindowAction>
+        </trigger:InteractionRequestTrigger>
     </i:Interaction.Triggers>
     <UserControl.Resources>
         <cvt:MarginConverter x:Key="MarginConverter" />
@@ -351,10 +352,10 @@
                         <trigger:ScrollEndAction TargetObject="{Binding ElementName=Book_ListView}" />
                     </trigger:EndKeyDownEventTrigger>
                     <trigger:ContextMenuOpeningEventTrigger EventName="ContextMenuOpening">
-                        <prism:InvokeCommandAction Command="{Binding BuildBookContextMenuCommand}" TriggerParameterPath="Source" />
+                        <helper:EventToCommand Command="{Binding BuildBookContextMenuCommand}" PassEventArgsToCommand="True" />
                     </trigger:ContextMenuOpeningEventTrigger>
                     <i:EventTrigger EventName="Drop">
-                        <prism:InvokeCommandAction Command="{Binding DropCommand}" TriggerParameterPath="Data" />
+                        <i:InvokeCommandAction Command="{Binding DropCommand}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
                 <ListView.Style>
@@ -403,15 +404,15 @@
                                 <ItemsPanelTemplate>
                                     <ui.ctrl:VirtualizingWrapPanel>
                                         <i:Interaction.Triggers>
-                                            <prism:InteractionRequestTrigger SourceObject="{Binding ResetScrollOffsetRequest}">
+                                            <trigger:InteractionRequestTrigger SourceObject="{Binding ResetScrollOffsetRequest}">
                                                 <trigger:ResetScrollOffsetAction />
-                                            </prism:InteractionRequestTrigger>
-                                            <prism:InteractionRequestTrigger SourceObject="{Binding StoreBookScrollOffsetRequest}">
+                                            </trigger:InteractionRequestTrigger>
+                                            <trigger:InteractionRequestTrigger SourceObject="{Binding StoreBookScrollOffsetRequest}">
                                                 <trigger:StoreScrollOffsetAction />
-                                            </prism:InteractionRequestTrigger>
-                                            <prism:InteractionRequestTrigger SourceObject="{Binding RestoreBookScrollOffsetRequest}">
+                                            </trigger:InteractionRequestTrigger>
+                                            <trigger:InteractionRequestTrigger SourceObject="{Binding RestoreBookScrollOffsetRequest}">
                                                 <trigger:RestoreScrollOffsetAction />
-                                            </prism:InteractionRequestTrigger>
+                                            </trigger:InteractionRequestTrigger>
                                         </i:Interaction.Triggers>
                                     </ui.ctrl:VirtualizingWrapPanel>
                                 </ItemsPanelTemplate>
@@ -487,22 +488,22 @@
                     VirtualizingPanel.VirtualizationMode="Recycling">
                     <i:Interaction.Triggers>
                         <trigger:ContextMenuOpeningEventTrigger EventName="ContextMenuOpening">
-                            <prism:InvokeCommandAction Command="{Binding BuildContentsContextMenuCommand}" TriggerParameterPath="Source" />
+                            <helper:EventToCommand Command="{Binding BuildContentsContextMenuCommand}" PassEventArgsToCommand="True" />
                         </trigger:ContextMenuOpeningEventTrigger>
                     </i:Interaction.Triggers>
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ui.ctrl:VirtualizingWrapPanel>
                                 <i:Interaction.Triggers>
-                                    <prism:InteractionRequestTrigger SourceObject="{Binding ResetScrollOffsetRequest}">
+                                    <trigger:InteractionRequestTrigger SourceObject="{Binding ResetScrollOffsetRequest}">
                                         <trigger:ResetScrollOffsetAction />
-                                    </prism:InteractionRequestTrigger>
-                                    <prism:InteractionRequestTrigger SourceObject="{Binding StoreContentScrollOffsetRequest}">
+                                    </trigger:InteractionRequestTrigger>
+                                    <trigger:InteractionRequestTrigger SourceObject="{Binding StoreContentScrollOffsetRequest}">
                                         <trigger:StoreScrollOffsetAction />
-                                    </prism:InteractionRequestTrigger>
-                                    <prism:InteractionRequestTrigger SourceObject="{Binding RestoreContentScrollOffsetRequest}">
+                                    </trigger:InteractionRequestTrigger>
+                                    <trigger:InteractionRequestTrigger SourceObject="{Binding RestoreContentScrollOffsetRequest}">
                                         <trigger:RestoreScrollOffsetAction />
-                                    </prism:InteractionRequestTrigger>
+                                    </trigger:InteractionRequestTrigger>
                                 </i:Interaction.Triggers>
                             </ui.ctrl:VirtualizingWrapPanel>
                         </ItemsPanelTemplate>
@@ -563,9 +564,9 @@
                                     Click="GoBack_Button_Click"
                                     FocusArea="{Binding ElementName=Grid_ImageViewer_Panel_BlackWhite_Button_MouseOverArea}">
                                     <i:Interaction.Triggers>
-                                        <prism:InteractionRequestTrigger SourceObject="{Binding BlinkGoBackButtonRequest}">
+                                        <trigger:InteractionRequestTrigger SourceObject="{Binding BlinkGoBackButtonRequest}">
                                             <ei:CallMethodAction MethodName="Blink" TargetObject="{Binding ElementName=GoBack_Button}" />
-                                        </prism:InteractionRequestTrigger>
+                                        </trigger:InteractionRequestTrigger>
                                     </i:Interaction.Triggers>
                                 </local:BlinkBlackWhiteButton>
                             </Grid>
@@ -578,9 +579,9 @@
                                     Click="GoNext_Button_Click"
                                     FocusArea="{Binding ElementName=Grid_ImageViewer_Panel_BlackWhite_Button_MouseOverArea}">
                                     <i:Interaction.Triggers>
-                                        <prism:InteractionRequestTrigger SourceObject="{Binding BlinkGoNextButtonRequest}">
+                                        <trigger:InteractionRequestTrigger SourceObject="{Binding BlinkGoNextButtonRequest}">
                                             <ei:CallMethodAction MethodName="Blink" TargetObject="{Binding ElementName=GoNext_Button}" />
-                                        </prism:InteractionRequestTrigger>
+                                        </trigger:InteractionRequestTrigger>
                                     </i:Interaction.Triggers>
                                 </local:BlinkBlackWhiteButton>
                             </Grid>

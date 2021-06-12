@@ -47,22 +47,22 @@
             <i:InvokeCommandAction Command="{Binding ActiveDocumentViewModel.XButton2MouseButtonDownCommand}" />
         </trigger:XButton2MouseDownEventTrigger>
         <trigger:MouseWheelEventTrigger EventName="MouseWheel">
-            <prism:InvokeCommandAction Command="{Binding ActiveDocumentViewModel.MouseWheelCommand}" TriggerParameterPath="Delta" />
+            <i:InvokeCommandAction Command="{Binding ActiveDocumentViewModel.MouseWheelCommand}" />
         </trigger:MouseWheelEventTrigger>
-        <prism:InteractionRequestTrigger SourceObject="{Binding OpenPowerSearchRequest}">
-            <prism:PopupWindowAction IsModal="False">
-                <prism:PopupWindowAction.WindowContent>
+        <trigger:InteractionRequestTrigger SourceObject="{Binding OpenPowerSearchRequest}">
+            <trigger:PopupWindowAction IsModal="False">
+                <trigger:PopupWindowAction.WindowContent>
                     <local:PowerSearch />
-                </prism:PopupWindowAction.WindowContent>
-            </prism:PopupWindowAction>
-        </prism:InteractionRequestTrigger>
-        <prism:InteractionRequestTrigger SourceObject="{Binding OpenStatisticsDialogRequest}">
-            <prism:PopupWindowAction IsModal="False">
-                <prism:PopupWindowAction.WindowContent>
+                </trigger:PopupWindowAction.WindowContent>
+            </trigger:PopupWindowAction>
+        </trigger:InteractionRequestTrigger>
+        <trigger:InteractionRequestTrigger SourceObject="{Binding OpenStatisticsDialogRequest}">
+            <trigger:PopupWindowAction IsModal="False">
+                <trigger:PopupWindowAction.WindowContent>
                     <local:StatisticsDialog />
-                </prism:PopupWindowAction.WindowContent>
-            </prism:PopupWindowAction>
-        </prism:InteractionRequestTrigger>
+                </trigger:PopupWindowAction.WindowContent>
+            </trigger:PopupWindowAction>
+        </trigger:InteractionRequestTrigger>
     </i:Interaction.Triggers>
     <Window.InputBindings>
         <KeyBinding
@@ -325,14 +325,14 @@
             AnchorablesSource="{Binding DockingPaneViewModels}"
             DocumentsSource="{Binding DockingDocumentViewModels}">
             <i:Interaction.Triggers>
-                <prism:InteractionRequestTrigger SourceObject="{Binding LoadLayoutRequest}">
+                <trigger:InteractionRequestTrigger SourceObject="{Binding LoadLayoutRequest}">
                     <trigger:LoadLayoutAction />
-                </prism:InteractionRequestTrigger>
-                <prism:InteractionRequestTrigger SourceObject="{Binding SaveLayoutRequest}">
+                </trigger:InteractionRequestTrigger>
+                <trigger:InteractionRequestTrigger SourceObject="{Binding SaveLayoutRequest}">
                     <trigger:SaveLayoutAction />
-                </prism:InteractionRequestTrigger>
+                </trigger:InteractionRequestTrigger>
                 <i:EventTrigger EventName="ActiveContentChanged">
-                    <ei:CallMethodAction TargetObject="{Binding}" MethodName="ChangeActiveContent" />
+                    <i:CallMethodAction TargetObject="{Binding}" MethodName="ChangeActiveContent" />
                 </i:EventTrigger>
             </i:Interaction.Triggers>
             <avalonDock:DockingManager.LayoutItemContainerStyleSelector>

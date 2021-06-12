@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+    xmlns:trigger="clr-namespace:Sunctum.Views.Triggers"
     xmlns:local="clr-namespace:Sunctum.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
@@ -19,20 +20,20 @@
         <Binding Path="MetadataImportSettingDialogTitle" Source="{StaticResource resources}" />
     </Window.Title>
     <i:Interaction.Triggers>
-        <prism:InteractionRequestTrigger SourceObject="{Binding AddRequest}">
-            <prism:PopupWindowAction CenterOverAssociatedObject="True" IsModal="True">
-                <prism:PopupWindowAction.WindowContent>
+        <trigger:InteractionRequestTrigger SourceObject="{Binding AddRequest}">
+            <trigger:PopupWindowAction CenterOverAssociatedObject="True" IsModal="True">
+                <trigger:PopupWindowAction.WindowContent>
                     <local:EditMetadataImportSetting />
-                </prism:PopupWindowAction.WindowContent>
-            </prism:PopupWindowAction>
-        </prism:InteractionRequestTrigger>
-        <prism:InteractionRequestTrigger SourceObject="{Binding EditRequest}">
-            <prism:PopupWindowAction CenterOverAssociatedObject="True" IsModal="True">
-                <prism:PopupWindowAction.WindowContent>
+                </trigger:PopupWindowAction.WindowContent>
+            </trigger:PopupWindowAction>
+        </trigger:InteractionRequestTrigger>
+        <trigger:InteractionRequestTrigger SourceObject="{Binding EditRequest}">
+            <trigger:PopupWindowAction CenterOverAssociatedObject="True" IsModal="True">
+                <trigger:PopupWindowAction.WindowContent>
                     <local:EditMetadataImportSetting />
-                </prism:PopupWindowAction.WindowContent>
-            </prism:PopupWindowAction>
-        </prism:InteractionRequestTrigger>
+                </trigger:PopupWindowAction.WindowContent>
+            </trigger:PopupWindowAction>
+        </trigger:InteractionRequestTrigger>
     </i:Interaction.Triggers>
     <DockPanel>
         <DockPanel DockPanel.Dock="Bottom">

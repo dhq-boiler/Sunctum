@@ -3,7 +3,7 @@
 using System.Windows.Automation.Peers;
 using System.Windows.Automation.Provider;
 using System.Windows.Controls;
-using System.Windows.Interactivity;
+using Microsoft.Xaml.Behaviors;
 
 namespace Sunctum.Views.Triggers
 {

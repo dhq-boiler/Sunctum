@@ -1,7 +1,7 @@
 ﻿
 
 using Sunctum.Domain.Models;
-using System.Windows.Interactivity;
+using Microsoft.Xaml.Behaviors;
 using Xceed.Wpf.AvalonDock;
 using Xceed.Wpf.AvalonDock.Layout.Serialization;
 

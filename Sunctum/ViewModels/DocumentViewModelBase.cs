@@ -285,15 +285,15 @@ namespace Sunctum.ViewModels
 
         private void RegisterCommands()
         {
-            BuildBookContextMenuCommand = new DelegateCommand<FrameworkElement>(fe =>
+            BuildBookContextMenuCommand = new DelegateCommand<ContextMenuEventArgs>(args =>
             {
                 BuildContextMenus_Books();
-                fe.ContextMenu.IsOpen = true;
+                (args.Source as FrameworkElement).ContextMenu.IsOpen = true;
             });
-            BuildContentsContextMenuCommand = new DelegateCommand<FrameworkElement>(fe =>
+            BuildContentsContextMenuCommand = new DelegateCommand<ContextMenuEventArgs>(args =>
             {
                 BuildContextMenus_Contents();
-                fe.ContextMenu.IsOpen = true;
+                (args.Source as FrameworkElement).ContextMenu.IsOpen = true;
             });
             ChangeStarCommand = new DelegateCommand(() =>
             {
@@ -340,15 +340,17 @@ namespace Sunctum.ViewModels
                     //Do nothing
                 }
             });
-            MouseWheelCommand = new DelegateCommand<int?>(delta =>
+            MouseWheelCommand = new DelegateCommand<MouseWheelEventArgs>(args =>
             {
+                var delta = args.Delta;
+
                 if (OpenedPage != null)
                 {
-                    if (delta.Value > 0) //奥方向に回転
+                    if (delta > 0) //奥方向に回転
                     {
                         GoPreviousImage();
                     }
-                    else if (delta.Value < 0) //手前方向に回転
+                    else if (delta < 0) //手前方向に回転
                     {
                         GoNextImage();
                     }

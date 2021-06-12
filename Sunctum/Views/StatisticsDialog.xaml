@@ -13,7 +13,7 @@
              Background="White">
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
-            <prism:InvokeCommandAction Command="{Binding LoadedCommand}" />
+            <i:InvokeCommandAction Command="{Binding LoadedCommand}" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
     <UserControl.Resources>

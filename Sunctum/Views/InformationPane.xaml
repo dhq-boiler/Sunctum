@@ -69,7 +69,7 @@
                     <i:InvokeCommandAction Command="{Binding DeleteTagEntryCommand}" />
                 </trigger:DeleteKeyDownEventTrigger>
                 <trigger:DropEventTrigger>
-                    <prism:InvokeCommandAction Command="{Binding DropTagCommand}" TriggerParameterPath="Data" />
+                    <i:InvokeCommandAction Command="{Binding DropTagCommand}" />
                 </trigger:DropEventTrigger>
             </i:Interaction.Triggers>
             <ListView.ItemTemplate>
