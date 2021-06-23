@@ -355,7 +355,7 @@
                         <helper:EventToCommand Command="{Binding BuildBookContextMenuCommand}" PassEventArgsToCommand="True" />
                     </trigger:ContextMenuOpeningEventTrigger>
                     <i:EventTrigger EventName="Drop">
-                        <i:InvokeCommandAction Command="{Binding DropCommand}" />
+                        <helper:EventToCommand Command="{Binding DropCommand}" PassEventArgsToCommand="True" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
                 <ListView.Style>
