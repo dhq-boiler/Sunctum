@@ -308,11 +308,11 @@ namespace Sunctum.ViewModels
             {
                 CloseSearchPane();
             });
-            DropCommand = new DelegateCommand<IDataObject>(dataObject =>
+            DropCommand = new DelegateCommand<DragEventArgs>(args =>
             {
                 foreach (var dropPlugin in DropPlugins)
                 {
-                    dropPlugin.Execute(dataObject);
+                    dropPlugin.Execute(args.Data);
                 }
             });
             ExportBooksCommand = new DelegateCommand(() =>
