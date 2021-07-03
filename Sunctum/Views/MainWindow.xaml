@@ -15,6 +15,7 @@
     xmlns:trigger="clr-namespace:Sunctum.Views.Triggers"
     xmlns:ui.ctrl="clr-namespace:Sunctum.UI.Controls;assembly=Sunctum.UI"
     xmlns:viewModel="clr-namespace:Sunctum.ViewModels"
+    xmlns:helper="clr-namespace:Sunctum.Helpers"
     Width="{Binding WindowWidth, Mode=TwoWay}"
     Height="{Binding WindowHeight, Mode=TwoWay}"
     prism:ViewModelLocator.AutoWireViewModel="True"
@@ -47,7 +48,7 @@
             <i:InvokeCommandAction Command="{Binding ActiveDocumentViewModel.XButton2MouseButtonDownCommand}" />
         </trigger:XButton2MouseDownEventTrigger>
         <trigger:MouseWheelEventTrigger EventName="MouseWheel">
-            <i:InvokeCommandAction Command="{Binding ActiveDocumentViewModel.MouseWheelCommand}" />
+            <helper:EventToCommand Command="{Binding ActiveDocumentViewModel.MouseWheelCommand}" PassEventArgsToCommand="True" />
         </trigger:MouseWheelEventTrigger>
         <trigger:InteractionRequestTrigger SourceObject="{Binding OpenPowerSearchRequest}">
             <trigger:PopupWindowAction IsModal="False">
