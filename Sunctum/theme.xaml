@@ -145,6 +145,8 @@
         <Setter Property="VerticalContentAlignment" Value="Center" />
         <Setter Property="Margin" Value="2" />
         <Setter Property="Padding" Value="1" />
+        <Setter Property="Width" Value="{x:Static SystemParameters.WindowCaptionButtonWidth}" />
+        <Setter Property="Height" Value="{x:Static SystemParameters.WindowCaptionButtonHeight}" />
         <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True" />
         <Setter Property="Template">
             <Setter.Value>

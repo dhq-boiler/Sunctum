@@ -213,6 +213,7 @@
     <Compile Include="Converters\StarLevelToStringConverter.cs" />
     <Compile Include="Converters\StringToGuidConverter.cs" />
     <Compile Include="Converters\TagSortingToBool.cs" />
+    <Compile Include="Converters\WindowStateToVisibilityConverter.cs" />
     <Compile Include="Core\ExportAttributeBindingGenerator.cs" />
     <Compile Include="Core\Notifications\ActiveTabChanged.cs" />
     <Compile Include="Core\SunctumBootstrapper.cs" />
