@@ -191,12 +191,12 @@
                 </Grid.ColumnDefinitions>
                 <ContentPresenter Content="{Binding Converter={StaticResource BookCoverThumbnailLoader}}" Visibility="Collapsed" />
                 <Image
-                                Grid.Row="0"
-                                Height="{Binding Configuration.BookListViewItemImageHeight}"
-                                MaxWidth="{Binding Configuration.BookListViewItemWidth}"
-                                MaxHeight="{Binding Configuration.BookListViewItemImageHeight}"
-                                Opacity="0.0"
-                                Source="{Binding FirstPage.Image.Path, Converter={StaticResource ImageConverter}}">
+                    Grid.Row="0"
+                    Height="{Binding Configuration.BookListViewItemImageHeight}"
+                    MaxWidth="{Binding Configuration.BookListViewItemWidth}"
+                    MaxHeight="{Binding Configuration.BookListViewItemImageHeight}"
+                    Opacity="0.0"
+                    Source="{Binding FirstPage.Image.Path, Converter={StaticResource ImageConverter}}">
                     <Image.Style>
                         <Style TargetType="{x:Type Image}">
                             <Style.Triggers>
@@ -210,15 +210,15 @@
                     </Image.Style>
                 </Image>
                 <ui.ctrl:AutoScrollingHyperlink
-                                Grid.Row="1"
-                                Width="{Binding Configuration.BookListViewItemWidth}"
-                                HyperlinkClicked="AutoScrollingHyperlink_HyperlinkClicked"
-                                Text="{Binding Author.UnescapedName}" />
+                    Grid.Row="1"
+                    Width="{Binding Configuration.BookListViewItemWidth}"
+                    HyperlinkClicked="AutoScrollingHyperlink_HyperlinkClicked"
+                    Text="{Binding Author.UnescapedName}" />
                 <ui.ctrl:AutoScrollingLabel
-                                x:Name="Book_Title_AutoScrollingLabel"
-                                Grid.Row="2"
-                                Width="{Binding Configuration.BookListViewItemWidth}"
-                                Text="{Binding UnescapedTitle}" />
+                    x:Name="Book_Title_AutoScrollingLabel"
+                    Grid.Row="2"
+                    Width="{Binding Configuration.BookListViewItemWidth}"
+                    Text="{Binding UnescapedTitle}" />
             </Grid>
         </DataTemplate>
         <Style x:Key="Contents_ListView_Style" TargetType="{x:Type ListView}">
