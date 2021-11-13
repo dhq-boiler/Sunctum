@@ -1,10 +1,11 @@
 ﻿
 
+using Prism.Mvvm;
 using System;
 
 namespace Sunctum.Domain.Logic.Async
 {
-    public abstract class AsyncTaskMakerBase : IAsyncTaskMaker
+    public abstract class AsyncTaskMakerBase : BindableBase, IAsyncTaskMaker
     {
         private AsyncTaskSequence Sequence { get; set; }
 

@@ -23,6 +23,8 @@ namespace Sunctum.Domain.Logic.Async
 
         public IEnumerable<BookViewModel> TargetBooks { get; set; }
 
+        public int ProcessedCount { get; set; }
+
         public override void ConfigurePreTaskAction(AsyncTaskSequence sequence)
         {
             sequence.Add(() => s_logger.Info($"Start BookRemoving"));
@@ -35,11 +37,15 @@ namespace Sunctum.Domain.Logic.Async
             {
                 LibraryManager.RunFillContentsWithImage(book);
 
+                book.CurrentProcessProgress.Value.TotalCount.Value = book.Contents.Count;
+
                 foreach (var page in book.Contents)
                 {
                     sequence.Add(new Task(() => RemoveImageTagByImage(LibraryManager, page)));
                     sequence.Add(new Task(() => PageRemoving.DeleteRecordFromStorage(page)));
                     sequence.Add(new Task(() => PageRemoving.DeleteFileFromStorage(page)));
+                    sequence.Add(new Task(() => ProcessedCount++));
+                    sequence.Add(new Task(() => book.CurrentProcessProgress.Value.Count.Value = ProcessedCount));
                 }
 
                 sequence.Add(new Task(() => DeleteRecordFromStorage(book)));

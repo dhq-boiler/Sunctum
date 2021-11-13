@@ -11,9 +11,11 @@
     xmlns:local="clr-namespace:Sunctum.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
+    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
     xmlns:trigger="clr-namespace:Sunctum.Views.Triggers"
     xmlns:ui.ctrl="clr-namespace:Sunctum.UI.Controls;assembly=Sunctum.UI"
     xmlns:displaytype="clr-namespace:Sunctum.Domain.Logic.DisplayType;assembly=Sunctum.Domain"
+    x:Name="BookShowcaseInternal"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -191,12 +193,12 @@
                 </Grid.ColumnDefinitions>
                 <ContentPresenter Content="{Binding Converter={StaticResource BookCoverThumbnailLoader}}" Visibility="Collapsed" />
                 <Image
-                                Grid.Row="0"
-                                Height="{Binding Configuration.BookListViewItemImageHeight}"
-                                MaxWidth="{Binding Configuration.BookListViewItemWidth}"
-                                MaxHeight="{Binding Configuration.BookListViewItemImageHeight}"
-                                Opacity="0.0"
-                                Source="{Binding FirstPage.Image.Path, Converter={StaticResource ImageConverter}}">
+                    Grid.Row="0"
+                    Height="{Binding Configuration.BookListViewItemImageHeight}"
+                    MaxWidth="{Binding Configuration.BookListViewItemWidth}"
+                    MaxHeight="{Binding Configuration.BookListViewItemImageHeight}"
+                    Opacity="0.0"
+                    Source="{Binding FirstPage.Image.Path, Converter={StaticResource ImageConverter}}">
                     <Image.Style>
                         <Style TargetType="{x:Type Image}">
                             <Style.Triggers>
@@ -209,16 +211,36 @@
                         </Style>
                     </Image.Style>
                 </Image>
+                <Label x:Name="ProgressCount"
+                       Visibility="Visible"
+                       Content="{Binding ElementName=MainWindowInstance, Path=DataContext.LibraryVM.BookImportingService.CurrentProcessProgress.Value.Count.Value}" />
+                <Label x:Name="ProgressTotalCount"
+                       Visibility="Visible"
+                       Content="{Binding ElementName=MainWindowInstance, Path=DataContext.LibraryVM.BookImportingService.CurrentProcessProgress.Value.TotalCount.Value}" />
+                <local:ProgressBar VerticalAlignment="Center" Height="10" ProgressionRate="{Binding Path=CurrentProcessProgress.Value.Rate.Value}">
+                    <local:ProgressBar.Style>
+                        <Style TargetType="{x:Type local:ProgressBar}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=CurrentProcessProgress.Value.Rate.Value}" Value="{x:Static sys:Double.NaN}">
+                                    <Setter Property="Opacity" Value="0" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=CurrentProcessProgress.Value.Rate.Value}" Value="1">
+                                    <Setter Property="Opacity" Value="0" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </local:ProgressBar.Style>
+                </local:ProgressBar>
                 <ui.ctrl:AutoScrollingHyperlink
-                                Grid.Row="1"
-                                Width="{Binding Configuration.BookListViewItemWidth}"
-                                HyperlinkClicked="AutoScrollingHyperlink_HyperlinkClicked"
-                                Text="{Binding Author.UnescapedName}" />
+                    Grid.Row="1"
+                    Width="{Binding Configuration.BookListViewItemWidth}"
+                    HyperlinkClicked="AutoScrollingHyperlink_HyperlinkClicked"
+                    Text="{Binding Author.UnescapedName}" />
                 <ui.ctrl:AutoScrollingLabel
-                                x:Name="Book_Title_AutoScrollingLabel"
-                                Grid.Row="2"
-                                Width="{Binding Configuration.BookListViewItemWidth}"
-                                Text="{Binding UnescapedTitle}" />
+                    x:Name="Book_Title_AutoScrollingLabel"
+                    Grid.Row="2"
+                    Width="{Binding Configuration.BookListViewItemWidth}"
+                    Text="{Binding UnescapedTitle}" />
             </Grid>
         </DataTemplate>
         <Style x:Key="Contents_ListView_Style" TargetType="{x:Type ListView}">
