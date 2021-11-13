@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Sunctum.Domain.Logic.Import
 {
@@ -50,7 +51,7 @@ namespace Sunctum.Domain.Logic.Import
             Count = _children.Count();
         }
 
-        public override IEnumerable<System.Threading.Tasks.Task> GenerateTasks(ILibrary library, string copyTo, string entryName, DataOperationUnit dataOpUnit)
+        public override IEnumerable<System.Threading.Tasks.Task> GenerateTasks(ILibrary library, string copyTo, string entryName, DataOperationUnit dataOpUnit, Action<Importer> progressUpdatingAction)
         {
             List<System.Threading.Tasks.Task> ret = new List<System.Threading.Tasks.Task>();
 
@@ -62,14 +63,14 @@ namespace Sunctum.Domain.Logic.Import
             Processed = 0;
 
             var firstChild = _children.First();
-            ProcessChild(library, dataOpUnit, ret, directoryPath, firstChild);
+            ProcessChild(library, dataOpUnit, ret, directoryPath, firstChild, progressUpdatingAction);
             ret.Add(new System.Threading.Tasks.Task(() => GenerateDeliverables(dataOpUnit)));
             ret.Add(new System.Threading.Tasks.Task(() => SetDeliverables(library)));
 
             for (int i = 1; i < _children.Count(); ++i)
             {
                 var child = _children[i];
-                ProcessChild(library, dataOpUnit, ret, directoryPath, child);
+                ProcessChild(library, dataOpUnit, ret, directoryPath, child, progressUpdatingAction);
             }
             ret.Add(new System.Threading.Tasks.Task(() => WriteFilesSize()));
             ret.Add(new System.Threading.Tasks.Task(() => SwitchContentsRegisteredToTrue()));
@@ -78,7 +79,7 @@ namespace Sunctum.Domain.Logic.Import
             return ret;
         }
 
-        private void ProcessChild(ILibrary library, DataOperationUnit dataOpUnit, List<System.Threading.Tasks.Task> ret, string directoryPath, Importer child)
+        private void ProcessChild(ILibrary library, DataOperationUnit dataOpUnit, List<System.Threading.Tasks.Task> ret, string directoryPath, Importer child, Action<Importer> progressUpdatingAction)
         {
             if (child is ImportPage)
             {
@@ -87,14 +88,18 @@ namespace Sunctum.Domain.Logic.Import
                 x.TotalPageCount = _children.Count();
                 x.PageTitle = child.Name;
             }
-            var tasks = child.GenerateTasks(library, directoryPath, System.IO.Path.GetFileNameWithoutExtension(child.Path), dataOpUnit);
+            var tasks = child.GenerateTasks(library, directoryPath, System.IO.Path.GetFileNameWithoutExtension(child.Path), dataOpUnit, progressUpdatingAction);
             ret.AddRange(tasks);
             if (child is ImportPage)
             {
                 var ip = child as ImportPage;
                 ret.Add(new System.Threading.Tasks.Task(() => library.AccessDispatcherObject(() => _book.AddPage(ip.GeneratedPage))));
             }
-            ++Processed;
+            ret.Add(new Task(() =>
+            {
+                ++Processed;
+                progressUpdatingAction.Invoke(this);
+            }));
         }
 
         private void Log()

@@ -45,7 +45,7 @@ namespace Sunctum.Core
             Kernel.Bind<IDataAccessManager>().To<DataAccessManager>().InSingletonScope();
 
             Kernel.Bind<IBookExporting>().To<BookExporting>().InTransientScope();
-            Kernel.Bind<IBookImporting>().To<BookImporting>().InTransientScope();
+            Kernel.Bind<IBookImporting>().To<BookImporting>().InSingletonScope();
             Kernel.Bind<IBookRemoving>().To<BookRemoving>().InTransientScope();
             Kernel.Bind<IByteSizeCalculating>().To<ByteSizeCalculating>().InTransientScope();
             Kernel.Bind<ILibraryInitializing>().To<LibraryInitializing>().InTransientScope();

@@ -63,7 +63,7 @@ namespace Sunctum.Domain.Logic.Import
             Count = _children.Count();
         }
 
-        public override IEnumerable<Task> GenerateTasks(ILibrary library, string copyTo, string entryName, DataOperationUnit dataOpUnit)
+        public override IEnumerable<Task> GenerateTasks(ILibrary library, string copyTo, string entryName, DataOperationUnit dataOpUnit, Action<Importer> progressUpdatingAction)
         {
             List<Task> ret = new List<Task>();
 
@@ -81,14 +81,14 @@ namespace Sunctum.Domain.Logic.Import
             Processed = 0;
 
             var firstChild = _children.First();
-            ProcessChildren(library, ret, directoryPath, firstChild, dataOpUnit);
+            ProcessChildren(library, ret, directoryPath, firstChild, dataOpUnit, progressUpdatingAction);
             ret.Add(new Task(() => GenerateDeliverables(dataOpUnit)));
             ret.Add(new Task(() => SetDeliverables(library)));
 
             for (int i = 1; i < _children.Count(); ++i)
             {
                 var child = _children[i];
-                ProcessChildren(library, ret, directoryPath, child, dataOpUnit);
+                ProcessChildren(library, ret, directoryPath, child, dataOpUnit, progressUpdatingAction);
             }
 
             ret.Add(new Task(() => WriteFilesSize()));
@@ -170,7 +170,7 @@ namespace Sunctum.Domain.Logic.Import
             _book.ContentsRegistered = true;
         }
 
-        private void ProcessChildren(ILibrary library, List<Task> ret, string directoryPath, Importer child, DataOperationUnit dataOpUnit)
+        private void ProcessChildren(ILibrary library, List<Task> ret, string directoryPath, Importer child, DataOperationUnit dataOpUnit, Action<Importer> progressUpdatingAction)
         {
             if (child is ImportPage)
             {
@@ -179,14 +179,18 @@ namespace Sunctum.Domain.Logic.Import
                 ip.TotalPageCount = _children.Count();
                 ip.PageTitle = child.Name;
             }
-            var tasks = child.GenerateTasks(library, directoryPath, System.IO.Path.GetFileNameWithoutExtension(child.Path), dataOpUnit);
+            var tasks = child.GenerateTasks(library, directoryPath, System.IO.Path.GetFileNameWithoutExtension(child.Path), dataOpUnit, progressUpdatingAction);
             ret.AddRange(tasks);
             if (child is ImportPage)
             {
                 var ip = child as ImportPage;
                 ret.Add(new Task(() => library.AccessDispatcherObject(() => _book.AddPage(ip.GeneratedPage))));
             }
-            ++Processed;
+            ret.Add(new Task(() =>
+            {
+                ++Processed;
+                progressUpdatingAction.Invoke(this);
+            }));
         }
 
         protected void SetDeliverables(ILibrary library)

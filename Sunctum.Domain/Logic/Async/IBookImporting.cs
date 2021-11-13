@@ -1,5 +1,6 @@
 ﻿
 
+using Reactive.Bindings;
 using Sunctum.Domain.Models.Managers;
 using System.Collections.Generic;
 
@@ -12,5 +13,7 @@ namespace Sunctum.Domain.Logic.Async
         IEnumerable<string> ObjectPaths { get; set; }
 
         string MasterDirectory { get; set; }
+
+        ReactivePropertySlim<CurrentProcessProgress> CurrentProcessProgress { get; }
     }
 }

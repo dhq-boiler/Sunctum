@@ -208,6 +208,7 @@
     <Compile Include="Logic\Async\BookHashing.cs" />
     <Compile Include="Logic\Async\BookLoading.cs" />
     <Compile Include="Logic\Async\BookTagInitializing.cs" />
+    <Compile Include="Logic\Async\CurrentProcessProgress.cs" />
     <Compile Include="Logic\Async\EncryptionStarting.cs" />
     <Compile Include="Logic\Async\IBookHashing.cs" />
     <Compile Include="Logic\Async\IBookLoading.cs" />
