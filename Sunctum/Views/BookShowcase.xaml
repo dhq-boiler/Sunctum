@@ -11,6 +11,7 @@
     xmlns:local="clr-namespace:Sunctum.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
+    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
     xmlns:trigger="clr-namespace:Sunctum.Views.Triggers"
     xmlns:ui.ctrl="clr-namespace:Sunctum.UI.Controls;assembly=Sunctum.UI"
     xmlns:displaytype="clr-namespace:Sunctum.Domain.Logic.DisplayType;assembly=Sunctum.Domain"
@@ -216,7 +217,20 @@
                 <Label x:Name="ProgressTotalCount"
                        Visibility="Visible"
                        Content="{Binding ElementName=MainWindowInstance, Path=DataContext.LibraryVM.BookImportingService.CurrentProcessProgress.Value.TotalCount.Value}" />
-                <local:ProgressBar VerticalAlignment="Center" Height="10" ProgressionRate="{Binding ElementName=BookShowcaseInternal, Path=DataContext.LibraryManager.BookImportingService.CurrentProcessProgress.Value.Rate.Value}" />
+                <local:ProgressBar VerticalAlignment="Center" Height="10" ProgressionRate="{Binding Path=CurrentProcessProgress.Value.Rate.Value}">
+                    <local:ProgressBar.Style>
+                        <Style TargetType="{x:Type local:ProgressBar}">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=CurrentProcessProgress.Value.Rate.Value}" Value="{x:Static sys:Double.NaN}">
+                                    <Setter Property="Opacity" Value="0" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=CurrentProcessProgress.Value.Rate.Value}" Value="1">
+                                    <Setter Property="Opacity" Value="0" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </local:ProgressBar.Style>
+                </local:ProgressBar>
                 <ui.ctrl:AutoScrollingHyperlink
                     Grid.Row="1"
                     Width="{Binding Configuration.BookListViewItemWidth}"

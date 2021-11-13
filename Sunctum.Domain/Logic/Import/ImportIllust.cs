@@ -5,6 +5,7 @@ using NLog;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.Util;
+using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -51,7 +52,7 @@ namespace Sunctum.Domain.Logic.Import
             Count = _children.Count();
         }
 
-        public override IEnumerable<System.Threading.Tasks.Task> GenerateTasks(ILibrary library, string copyTo, string entryName, DataOperationUnit dataOpUnit, Action<Importer> progressUpdatingAction)
+        public override IEnumerable<System.Threading.Tasks.Task> GenerateTasks(ILibrary library, string copyTo, string entryName, DataOperationUnit dataOpUnit, Action<Importer, BookViewModel> progressUpdatingAction)
         {
             List<System.Threading.Tasks.Task> ret = new List<System.Threading.Tasks.Task>();
 
@@ -79,7 +80,7 @@ namespace Sunctum.Domain.Logic.Import
             return ret;
         }
 
-        private void ProcessChild(ILibrary library, DataOperationUnit dataOpUnit, List<System.Threading.Tasks.Task> ret, string directoryPath, Importer child, Action<Importer> progressUpdatingAction)
+        private void ProcessChild(ILibrary library, DataOperationUnit dataOpUnit, List<System.Threading.Tasks.Task> ret, string directoryPath, Importer child, Action<Importer, BookViewModel> progressUpdatingAction)
         {
             if (child is ImportPage)
             {
@@ -98,7 +99,7 @@ namespace Sunctum.Domain.Logic.Import
             ret.Add(new Task(() =>
             {
                 ++Processed;
-                progressUpdatingAction.Invoke(this);
+                progressUpdatingAction.Invoke(this, _book);
             }));
         }
 

@@ -13,7 +13,5 @@ namespace Sunctum.Domain.Logic.Async
         IEnumerable<string> ObjectPaths { get; set; }
 
         string MasterDirectory { get; set; }
-
-        ReactivePropertySlim<CurrentProcessProgress> CurrentProcessProgress { get; }
     }
 }

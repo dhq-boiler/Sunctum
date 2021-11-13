@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using static Sunctum.Domain.Logic.Async.CurrentProcessProgress;
 
 namespace Sunctum.Domain.Logic.Async

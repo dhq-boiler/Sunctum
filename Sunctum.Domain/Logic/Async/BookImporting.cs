@@ -32,8 +32,6 @@ namespace Sunctum.Domain.Logic.Async
 
         public IEnumerable<string> ObjectPaths { get; set; }
 
-        public ReactivePropertySlim<CurrentProcessProgress> CurrentProcessProgress { get; } = new ReactivePropertySlim<CurrentProcessProgress>(new Async.CurrentProcessProgress());
-
         public override void ConfigurePreTaskAction(AsyncTaskSequence sequence)
         {
             sequence.Add(() => s_logger.Info($"Start BookImporting"));
@@ -120,11 +118,10 @@ namespace Sunctum.Domain.Logic.Async
                 var task = importers.ElementAt(i);
                 Guid entryNameSeedGuid = Guid.NewGuid();
                 var entryName = entryNameSeedGuid.ToString("N");
-                var t = task.GenerateTasks(LibraryManager, copyTo, entryName, null, importer =>
+                var t = task.GenerateTasks(LibraryManager, copyTo, entryName, null, (importer, bookvm) =>
                 {
-                    var cpp = CurrentProcessProgress.Value;
-                    cpp.Count.Value = importer.Processed;
-                    cpp.TotalCount.Value = importer.Count;
+                    bookvm.CurrentProcessProgress.Value.Count.Value = importer.Processed;
+                    bookvm.CurrentProcessProgress.Value.TotalCount.Value = importer.Count;
                 });
                 sequence.AddRange(t);
             }

@@ -2,6 +2,7 @@
 
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
+using Sunctum.Domain.Logic.Async;
 using Sunctum.Domain.Models;
 using System;
 using System.Collections.Generic;
@@ -122,6 +123,8 @@ namespace Sunctum.Domain.ViewModels
             { return _ContentsRegistered; }
             set { SetProperty(ref _ContentsRegistered, value); }
         }
+
+        public ReactivePropertySlim<CurrentProcessProgress> CurrentProcessProgress { get; } = new ReactivePropertySlim<CurrentProcessProgress>(new CurrentProcessProgress());
 
         public PageViewModel this[int index]
         {
