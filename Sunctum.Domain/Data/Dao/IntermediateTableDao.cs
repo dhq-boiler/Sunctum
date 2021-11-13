@@ -1,6 +1,7 @@
 ﻿
 
 using Homura.ORM;
+using Homura.ORM.Mapping;
 using Homura.QueryBuilder.Iso.Dml;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Util;
@@ -29,7 +30,7 @@ namespace Sunctum.Domain.Data.Dao
                     using (var query = new Select().Distinct
                                                    .Column("b", "ID").As("bId")
                                                    .Column("it", "TagID").As("itTagId")
-                                                   .From.Table(new Table<Book>().Name, "b")
+                                                   .From.Table(new Table<Book>(typeof(VersionOrigin)).Name, "b")
                                                    .Inner.Join(new Table<Page>().Name, "p").On.Column("p", "BookID").EqualTo.Column("b", "ID")
                                                    .Inner.Join(new Table<Image>().Name, "i").On.Column("i", "ID").EqualTo.Column("p", "ImageID")
                                                    .Inner.Join(new Table<ImageTag>().Name, "it").On.Column("it", "ImageID").EqualTo.Column("i", "ID"))
