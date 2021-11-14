@@ -215,6 +215,7 @@
     <Compile Include="Converters\DisplayTypeToBool.cs" />
     <Compile Include="Converters\DisplayTypeToViewConverter.cs" />
     <Compile Include="Converters\MarginConverter.cs" />
+    <Compile Include="Converters\PathGeometryConverter.cs" />
     <Compile Include="Converters\PathToMenuItem.cs" />
     <Compile Include="Converters\StarLevelToStringConverter.cs" />
     <Compile Include="Converters\StringToGuidConverter.cs" />

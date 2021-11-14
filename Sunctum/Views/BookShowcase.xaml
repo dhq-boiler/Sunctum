@@ -29,6 +29,7 @@
         </trigger:InteractionRequestTrigger>
     </i:Interaction.Triggers>
     <UserControl.Resources>
+        <cvt:PathGeometryConverter x:Key="PathGeometryConverter" />
         <cvt:MarginConverter x:Key="MarginConverter" />
         <cvt:BookCoverThumbnailLoader x:Key="BookCoverThumbnailLoader" />
         <cvt:PathToWriteableBitmap x:Key="ImageConverter" />
@@ -211,25 +212,14 @@
                         </Style>
                     </Image.Style>
                 </Image>
-                <local:Pie Grid.Row="0"
-                           VerticalAlignment="Center"
-                           HorizontalAlignment="Center"
-                           Width="{Binding Configuration.BookListViewItemWidth}"
-                           Height="{Binding Configuration.BookListViewItemImageHeight}"
-                           Rate="{Binding CurrentProcessProgress.Value.Rate.Value}">
-                    <local:Pie.Style>
-                        <Style TargetType="{x:Type local:Pie}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Path=CurrentProcessProgress.Value.Rate.Value}" Value="{x:Static sys:Double.NaN}">
-                                    <Setter Property="Opacity" Value="0" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding Path=CurrentProcessProgress.Value.Rate.Value}" Value="1">
-                                    <Setter Property="Opacity" Value="0" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </local:Pie.Style>
-                </local:Pie>
+                <Image
+                    Grid.Row="0"
+                    Height="{Binding Configuration.BookListViewItemImageHeight}"
+                    MaxWidth="{Binding Configuration.BookListViewItemWidth}"
+                    MaxHeight="{Binding Configuration.BookListViewItemImageHeight}"
+                    Source="{Binding FirstPage.Image.Path, Converter={StaticResource ImageConverter}}"
+                    Clip="{Binding CurrentProcessProgress.Value, Converter={StaticResource PathGeometryConverter}, UpdateSourceTrigger=PropertyChanged}" />
+
                 <ui.ctrl:AutoScrollingHyperlink
                     Grid.Row="1"
                     Width="{Binding Configuration.BookListViewItemWidth}"
