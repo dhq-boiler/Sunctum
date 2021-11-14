@@ -211,12 +211,6 @@
                         </Style>
                     </Image.Style>
                 </Image>
-                <Label x:Name="ProgressCount"
-                       Visibility="Visible"
-                       Content="{Binding ElementName=MainWindowInstance, Path=DataContext.LibraryVM.BookImportingService.CurrentProcessProgress.Value.Count.Value}" />
-                <Label x:Name="ProgressTotalCount"
-                       Visibility="Visible"
-                       Content="{Binding ElementName=MainWindowInstance, Path=DataContext.LibraryVM.BookImportingService.CurrentProcessProgress.Value.TotalCount.Value}" />
                 <local:ProgressBar VerticalAlignment="Center" Height="10" ProgressionRate="{Binding Path=CurrentProcessProgress.Value.Rate.Value}">
                     <local:ProgressBar.Style>
                         <Style TargetType="{x:Type local:ProgressBar}">
