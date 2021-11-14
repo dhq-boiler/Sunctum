@@ -208,6 +208,9 @@
                                 <DataTrigger Binding="{Binding IsLoaded}" Value="False">
                                     <Setter Property="Opacity" Value="0.5" />
                                 </DataTrigger>
+                                <DataTrigger Binding="{Binding IsDeleting}" Value="True">
+                                    <Setter Property="Opacity" Value="0.5" />
+                                </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </Image.Style>

@@ -38,6 +38,7 @@ namespace Sunctum.Domain.Logic.Async
                 LibraryManager.RunFillContentsWithImage(book);
 
                 book.CurrentProcessProgress.Value.TotalCount.Value = book.Contents.Count;
+                book.IsDeleting = true;
 
                 foreach (var page in book.Contents)
                 {

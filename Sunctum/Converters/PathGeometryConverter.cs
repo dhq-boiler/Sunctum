@@ -20,7 +20,7 @@ namespace Sunctum.Converters
             var degree = 270 + 360 * Math.Min(1.0, rate);
             if (degree >= 360)
                 degree -= 360;
-            return PieGeometry(new Point(62.5, 75), 50, 270, degree, SweepDirection.Clockwise);
+            return PieGeometry(new Point(52.5, 75), 50, 270, degree, SweepDirection.Clockwise);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
