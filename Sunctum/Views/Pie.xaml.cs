@@ -1,17 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Sunctum.Views
 {
@@ -26,14 +16,6 @@ namespace Sunctum.Views
         {
             get { return (PathGeometry)GetValue(PathGeometryProperty); }
             set { SetValue(PathGeometryProperty, value); }
-        }
-
-        public static DependencyProperty FillProperty = DependencyProperty.Register("Fill", typeof(Brush), typeof(Pie));
-
-        public Brush Fill
-        {
-            get { return (Brush)GetValue(FillProperty); }
-            set { SetValue(FillProperty, value); }
         }
 
         public static DependencyProperty RateProperty = DependencyProperty.Register("Rate", typeof(double), typeof(Pie), new PropertyMetadata(new PropertyChangedCallback((dependencyObject, eventArgs) => ChangeRate(dependencyObject, eventArgs))));
