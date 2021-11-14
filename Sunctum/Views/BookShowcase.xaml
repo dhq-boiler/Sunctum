@@ -218,7 +218,8 @@
                     MaxWidth="{Binding Configuration.BookListViewItemWidth}"
                     MaxHeight="{Binding Configuration.BookListViewItemImageHeight}"
                     Source="{Binding FirstPage.Image.Path, Converter={StaticResource ImageConverter}}"
-                    Clip="{Binding CurrentProcessProgress.Value, Converter={StaticResource PathGeometryConverter}, UpdateSourceTrigger=PropertyChanged}" />
+                    Clip="{Binding Path=CurrentProcessProgress.Value.Rate.Value, Converter={StaticResource PathGeometryConverter}, UpdateSourceTrigger=PropertyChanged}">
+                </Image>
 
                 <ui.ctrl:AutoScrollingHyperlink
                     Grid.Row="1"

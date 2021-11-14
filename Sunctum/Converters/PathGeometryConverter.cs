@@ -16,11 +16,11 @@ namespace Sunctum.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            var cpp = (CurrentProcessProgress)value;
-            var Rate = 270 + 360 * Math.Min(1.0, cpp.Rate.Value);
-            if (Rate > 360)
-                Rate -= 360;
-            return PieGeometry(new Point(62.5, 75), 50, 270, Rate, SweepDirection.Clockwise);
+            var rate = (double)value;
+            var degree = 270 + 360 * Math.Min(1.0, rate);
+            if (degree >= 360)
+                degree -= 360;
+            return PieGeometry(new Point(62.5, 75), 50, 270, degree, SweepDirection.Clockwise);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
