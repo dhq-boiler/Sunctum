@@ -211,12 +211,6 @@
                         </Style>
                     </Image.Style>
                 </Image>
-                <Slider x:Name="slider"
-                        Grid.Row="1"
-                        Minimum="0"
-                        Maximum="1">
-                    
-                </Slider>
                 <local:Pie Grid.Row="0"
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center"
