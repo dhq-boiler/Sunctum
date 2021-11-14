@@ -308,6 +308,9 @@
     <Compile Include="Views\MetadataImportSettingDialog.xaml.cs">
       <DependentUpon>MetadataImportSettingDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Pie.xaml.cs">
+      <DependentUpon>Pie.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PowerSearch.xaml.cs">
       <DependentUpon>PowerSearch.xaml</DependentUpon>
     </Compile>
@@ -403,6 +406,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MetadataImportSettingDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pie.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

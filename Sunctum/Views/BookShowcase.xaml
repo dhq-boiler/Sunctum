@@ -197,23 +197,34 @@
                     Height="{Binding Configuration.BookListViewItemImageHeight}"
                     MaxWidth="{Binding Configuration.BookListViewItemWidth}"
                     MaxHeight="{Binding Configuration.BookListViewItemImageHeight}"
-                    Opacity="0.0"
                     Source="{Binding FirstPage.Image.Path, Converter={StaticResource ImageConverter}}">
                     <Image.Style>
                         <Style TargetType="{x:Type Image}">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsLoaded}" Value="True">
-                                    <DataTrigger.EnterActions>
-                                        <BeginStoryboard Storyboard="{StaticResource appearItem}" />
-                                    </DataTrigger.EnterActions>
+                                <DataTrigger Binding="{Binding ContentsRegistered}" Value="False">
+                                    <Setter Property="Opacity" Value="0.5" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsLoaded}" Value="False">
+                                    <Setter Property="Opacity" Value="0.5" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </Image.Style>
                 </Image>
-                <local:ProgressBar VerticalAlignment="Center" Height="10" ProgressionRate="{Binding Path=CurrentProcessProgress.Value.Rate.Value}">
-                    <local:ProgressBar.Style>
-                        <Style TargetType="{x:Type local:ProgressBar}">
+                <Slider x:Name="slider"
+                        Grid.Row="1"
+                        Minimum="0"
+                        Maximum="1">
+                    
+                </Slider>
+                <local:Pie Grid.Row="0"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           Width="{Binding Configuration.BookListViewItemWidth}"
+                           Height="{Binding Configuration.BookListViewItemImageHeight}"
+                           Rate="{Binding CurrentProcessProgress.Value.Rate.Value}">
+                    <local:Pie.Style>
+                        <Style TargetType="{x:Type local:Pie}">
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding Path=CurrentProcessProgress.Value.Rate.Value}" Value="{x:Static sys:Double.NaN}">
                                     <Setter Property="Opacity" Value="0" />
@@ -223,8 +234,8 @@
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
-                    </local:ProgressBar.Style>
-                </local:ProgressBar>
+                    </local:Pie.Style>
+                </local:Pie>
                 <ui.ctrl:AutoScrollingHyperlink
                     Grid.Row="1"
                     Width="{Binding Configuration.BookListViewItemWidth}"
@@ -391,7 +402,6 @@
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>
-                                    <Setter Property="Opacity" Value="0.5" />
                                     <EventSetter Event="Control.MouseDoubleClick" Handler="Book_ListViewItem_MouseDoubleClick" />
                                     <EventSetter Event="PreviewDragOver" Handler="Book_ListViewItem_PreviewDragOver" />
                                     <EventSetter Event="Drop" Handler="Book_ListViewItem_Drop" />
@@ -404,13 +414,6 @@
                                         <Trigger Property="IsSelected" Value="True">
                                             <Setter Property="Background" Value="SkyBlue" />
                                         </Trigger>
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding ContentsRegistered}" Value="True" />
-                                                <Condition Binding="{Binding IsLoaded}" Value="True" />
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Opacity" Value="1.0" />
-                                        </MultiDataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </Setter.Value>
