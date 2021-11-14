@@ -24,6 +24,7 @@ namespace Sunctum.Domain.ViewModels
         private AuthorViewModel _Author;
         private long? _ByteSize;
         private string _FingerPrint;
+        private bool _IsDeleting;
 
         public BookViewModel()
         {
@@ -122,6 +123,13 @@ namespace Sunctum.Domain.ViewModels
             get
             { return _ContentsRegistered; }
             set { SetProperty(ref _ContentsRegistered, value); }
+        }
+
+        public bool IsDeleting
+        {
+            [DebuggerStepThrough]
+            get { return _IsDeleting; }
+            set { SetProperty(ref _IsDeleting, value); }
         }
 
         public ReactivePropertySlim<CurrentProcessProgress> CurrentProcessProgress { get; } = new ReactivePropertySlim<CurrentProcessProgress>(new CurrentProcessProgress());

@@ -29,6 +29,7 @@
         </trigger:InteractionRequestTrigger>
     </i:Interaction.Triggers>
     <UserControl.Resources>
+        <cvt:PathGeometryConverter x:Key="PathGeometryConverter" />
         <cvt:MarginConverter x:Key="MarginConverter" />
         <cvt:BookCoverThumbnailLoader x:Key="BookCoverThumbnailLoader" />
         <cvt:PathToWriteableBitmap x:Key="ImageConverter" />
@@ -197,40 +198,32 @@
                     Height="{Binding Configuration.BookListViewItemImageHeight}"
                     MaxWidth="{Binding Configuration.BookListViewItemWidth}"
                     MaxHeight="{Binding Configuration.BookListViewItemImageHeight}"
-                    Opacity="0.0"
                     Source="{Binding FirstPage.Image.Path, Converter={StaticResource ImageConverter}}">
                     <Image.Style>
                         <Style TargetType="{x:Type Image}">
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsLoaded}" Value="True">
-                                    <DataTrigger.EnterActions>
-                                        <BeginStoryboard Storyboard="{StaticResource appearItem}" />
-                                    </DataTrigger.EnterActions>
+                                <DataTrigger Binding="{Binding ContentsRegistered}" Value="False">
+                                    <Setter Property="Opacity" Value="0.5" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsLoaded}" Value="False">
+                                    <Setter Property="Opacity" Value="0.5" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsDeleting}" Value="True">
+                                    <Setter Property="Opacity" Value="0.5" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </Image.Style>
                 </Image>
-                <Label x:Name="ProgressCount"
-                       Visibility="Visible"
-                       Content="{Binding ElementName=MainWindowInstance, Path=DataContext.LibraryVM.BookImportingService.CurrentProcessProgress.Value.Count.Value}" />
-                <Label x:Name="ProgressTotalCount"
-                       Visibility="Visible"
-                       Content="{Binding ElementName=MainWindowInstance, Path=DataContext.LibraryVM.BookImportingService.CurrentProcessProgress.Value.TotalCount.Value}" />
-                <local:ProgressBar VerticalAlignment="Center" Height="10" ProgressionRate="{Binding Path=CurrentProcessProgress.Value.Rate.Value}">
-                    <local:ProgressBar.Style>
-                        <Style TargetType="{x:Type local:ProgressBar}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Path=CurrentProcessProgress.Value.Rate.Value}" Value="{x:Static sys:Double.NaN}">
-                                    <Setter Property="Opacity" Value="0" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding Path=CurrentProcessProgress.Value.Rate.Value}" Value="1">
-                                    <Setter Property="Opacity" Value="0" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </local:ProgressBar.Style>
-                </local:ProgressBar>
+                <Image
+                    Grid.Row="0"
+                    Height="{Binding Configuration.BookListViewItemImageHeight}"
+                    MaxWidth="{Binding Configuration.BookListViewItemWidth}"
+                    MaxHeight="{Binding Configuration.BookListViewItemImageHeight}"
+                    Source="{Binding FirstPage.Image.Path, Converter={StaticResource ImageConverter}}"
+                    Clip="{Binding Path=CurrentProcessProgress.Value.Rate.Value, Converter={StaticResource PathGeometryConverter}, UpdateSourceTrigger=PropertyChanged}">
+                </Image>
+
                 <ui.ctrl:AutoScrollingHyperlink
                     Grid.Row="1"
                     Width="{Binding Configuration.BookListViewItemWidth}"
@@ -397,7 +390,6 @@
                                             </ControlTemplate>
                                         </Setter.Value>
                                     </Setter>
-                                    <Setter Property="Opacity" Value="0.5" />
                                     <EventSetter Event="Control.MouseDoubleClick" Handler="Book_ListViewItem_MouseDoubleClick" />
                                     <EventSetter Event="PreviewDragOver" Handler="Book_ListViewItem_PreviewDragOver" />
                                     <EventSetter Event="Drop" Handler="Book_ListViewItem_Drop" />
@@ -410,13 +402,6 @@
                                         <Trigger Property="IsSelected" Value="True">
                                             <Setter Property="Background" Value="SkyBlue" />
                                         </Trigger>
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding ContentsRegistered}" Value="True" />
-                                                <Condition Binding="{Binding IsLoaded}" Value="True" />
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Opacity" Value="1.0" />
-                                        </MultiDataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </Setter.Value>

@@ -215,6 +215,7 @@
     <Compile Include="Converters\DisplayTypeToBool.cs" />
     <Compile Include="Converters\DisplayTypeToViewConverter.cs" />
     <Compile Include="Converters\MarginConverter.cs" />
+    <Compile Include="Converters\PathGeometryConverter.cs" />
     <Compile Include="Converters\PathToMenuItem.cs" />
     <Compile Include="Converters\StarLevelToStringConverter.cs" />
     <Compile Include="Converters\StringToGuidConverter.cs" />
@@ -307,6 +308,9 @@
     <Compile Include="Views\LayoutItemTemplateSelector.cs" />
     <Compile Include="Views\MetadataImportSettingDialog.xaml.cs">
       <DependentUpon>MetadataImportSettingDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Pie.xaml.cs">
+      <DependentUpon>Pie.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PowerSearch.xaml.cs">
       <DependentUpon>PowerSearch.xaml</DependentUpon>
@@ -403,6 +407,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MetadataImportSettingDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Pie.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
