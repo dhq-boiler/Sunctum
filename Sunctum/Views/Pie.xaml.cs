@@ -41,7 +41,7 @@ namespace Sunctum.Views
         private static void ChangeRate(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs eventArgs)
         {
             var pie = dependencyObject as Pie;
-            var Rate = 270 + 360 * pie.Rate;
+            var Rate = 270 + 360 * Math.Min(1.0, pie.Rate);
             if (Rate > 360)
                 Rate -= 360;
             pie.PathGeometry = pie.PieGeometry(new Point(62.5, 75), 50, 270, Rate, SweepDirection.Clockwise);
