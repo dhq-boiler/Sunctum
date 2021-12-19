@@ -6,8 +6,9 @@ using Homura.ORM.Setup;
 using Ninject;
 using NLog;
 using Prism.Commands;
-using Prism.Interactivity.InteractionRequest;
+using Prism.Ioc;
 using Prism.Mvvm;
+using Prism.Services.Dialogs;
 using Reactive.Bindings.Extensions;
 using Sunctum.Core.Notifications;
 using Sunctum.Domain.Data.Dao;
@@ -44,7 +45,7 @@ namespace Sunctum.ViewModels
     public class MainWindowViewModel : BindableBase, IMainWindowViewModel, IDisposable, IObservable<ActiveTabChanged>
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
-
+        private readonly IDialogService dialogService;
         private ILibrary _LibraryVM;
         private string _MainWindowTitle;
         private bool _DisplayTagPane;
@@ -155,9 +156,9 @@ namespace Sunctum.ViewModels
 
         #endregion //コマンド
 
-        public InteractionRequest<Notification> OpenPowerSearchRequest { get; } = new InteractionRequest<Notification>();
+        //public InteractionRequest<Notification> OpenPowerSearchRequest { get; } = new InteractionRequest<Notification>();
 
-        public InteractionRequest<Notification> OpenStatisticsDialogRequest { get; } = new InteractionRequest<Notification>();
+        //public InteractionRequest<Notification> OpenStatisticsDialogRequest { get; } = new InteractionRequest<Notification>();
 
         #region コマンド登録
 
@@ -213,11 +214,13 @@ namespace Sunctum.ViewModels
             });
             OpenPowerSearchCommand = new DelegateCommand(() =>
             {
-                OpenPowerSearchRequest.Raise(new Notification() { Title = "Power search", Content = ActiveDocumentViewModel.BookCabinet });
+                throw new NotImplementedException();
+                //OpenPowerSearchRequest.Raise(new Notification() { Title = "Power search", Content = ActiveDocumentViewModel.BookCabinet });
             });
             OpenStatisticsDialogCommand = new DelegateCommand(() =>
             {
-                OpenStatisticsDialogRequest.Raise(new Notification() { Title = "統計" });
+                throw new NotImplementedException();
+                //OpenStatisticsDialogRequest.Raise(new Notification() { Title = "統計" });
             });
             OpenSwitchLibraryCommand = new DelegateCommand(async () =>
             {
@@ -389,9 +392,10 @@ namespace Sunctum.ViewModels
 
         #region コンストラクタ
 
-        public MainWindowViewModel()
+        public MainWindowViewModel(IContainerProvider containerProvider)
         {
             RegisterCommands();
+            this.dialogService = containerProvider.Resolve<IDialogService>();
         }
 
         #endregion
@@ -544,9 +548,9 @@ namespace Sunctum.ViewModels
             }
         }
 
-        public InteractionRequest<Notification> LoadLayoutRequest { get; } = new InteractionRequest<Notification>();
+        //public InteractionRequest<Notification> LoadLayoutRequest { get; } = new InteractionRequest<Notification>();
 
-        public InteractionRequest<Notification> SaveLayoutRequest { get; } = new InteractionRequest<Notification>();
+        //public InteractionRequest<Notification> SaveLayoutRequest { get; } = new InteractionRequest<Notification>();
 
         public LayoutAnchorable AuthorPane { get; set; }
 
@@ -668,7 +672,7 @@ namespace Sunctum.ViewModels
 
         public void NewSearchTab(ObservableCollection<BookViewModel> onStage)
         {
-            var newTabViewModel = new SearchDocumentViewModel("Search results");
+            var newTabViewModel = new SearchDocumentViewModel(dialogService, "Search results");
             newTabViewModel.LibraryManager = LibraryVM;
             newTabViewModel.BookCabinet = LibraryVM.CreateBookStorage();
             newTabViewModel.BookCabinet.BookSource = new ObservableCollection<BookViewModel>(onStage);
@@ -688,7 +692,7 @@ namespace Sunctum.ViewModels
 
         public void NewContentTab(BookViewModel bookViewModel)
         {
-            var newTabViewModel = new ContentDocumentViewModel(bookViewModel.Title);
+            var newTabViewModel = new ContentDocumentViewModel(dialogService, bookViewModel.Title);
             newTabViewModel.LibraryManager = LibraryVM;
             newTabViewModel.BookCabinet = LibraryVM.CreateBookStorage();
             newTabViewModel.BookCabinet.BookSource = new ObservableCollection<BookViewModel>();
@@ -709,7 +713,7 @@ namespace Sunctum.ViewModels
 
         public void NewContentTab(IEnumerable<BookViewModel> list)
         {
-            var newTabViewModel = new ContentDocumentViewModel("Filtered");
+            var newTabViewModel = new ContentDocumentViewModel(dialogService, "Filtered");
             newTabViewModel.LibraryManager = LibraryVM;
             newTabViewModel.BookCabinet = LibraryVM.CreateBookStorage();
             newTabViewModel.BookCabinet.BookSource = new ObservableCollection<BookViewModel>();
@@ -839,7 +843,8 @@ namespace Sunctum.ViewModels
                 DockingPaneViewModels.Add((InformationPaneViewModel)InformationPaneViewModel);
             }
 
-            LoadLayoutRequest.Raise(new Notification() { Content = this });
+            throw new NotImplementedException();
+            //LoadLayoutRequest.Raise(new Notification() { Content = this });
 
             HomeDocumentViewModel.CloseSearchPane();
             HomeDocumentViewModel.CloseImage();
@@ -946,7 +951,9 @@ namespace Sunctum.ViewModels
                 config.WindowRect = null;
             }
             Configuration.Save(config);
-            SaveLayoutRequest.Raise(new Notification());
+
+            throw new NotImplementedException();
+            //SaveLayoutRequest.Raise(new Notification());
 
             Dispose();
         }

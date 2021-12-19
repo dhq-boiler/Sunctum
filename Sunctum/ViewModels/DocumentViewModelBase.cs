@@ -4,7 +4,7 @@ using Homura.Core;
 using Ninject;
 using NLog;
 using Prism.Commands;
-using Prism.Interactivity.InteractionRequest;
+using Prism.Services.Dialogs;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using Sunctum.Converters;
@@ -14,7 +14,6 @@ using Sunctum.Domain.Logic.Query;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
-using Sunctum.Infrastructure.Core;
 using Sunctum.Plugin;
 using Sunctum.Views;
 using System;
@@ -52,6 +51,7 @@ namespace Sunctum.ViewModels
         private bool _ImageIsVisible;
 
         public static readonly Guid BeforeSearchPosition = Guid.Parse("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF");
+        private readonly IDialogService dialogService;
 
         public ILibrary LibraryManager { get; set; }
 
@@ -115,21 +115,21 @@ namespace Sunctum.ViewModels
 
         #region プロパティ
 
-        public InteractionRequest<Notification> ChangeStarRequest { get; } = new InteractionRequest<Notification>();
+        //public InteractionRequest<Notification> ChangeStarRequest { get; } = new InteractionRequest<Notification>();
 
-        public InteractionRequest<Notification> ResetScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
+        //public InteractionRequest<Notification> ResetScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
 
-        public InteractionRequest<Notification> StoreBookScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
+        //public InteractionRequest<Notification> StoreBookScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
 
-        public InteractionRequest<Notification> StoreContentScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
+        //public InteractionRequest<Notification> StoreContentScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
 
-        public InteractionRequest<Notification> RestoreBookScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
+        //public InteractionRequest<Notification> RestoreBookScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
 
-        public InteractionRequest<Notification> RestoreContentScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
+        //public InteractionRequest<Notification> RestoreContentScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
 
-        public InteractionRequest<Notification> BlinkGoNextButtonRequest { get; } = new InteractionRequest<Notification>();
+        //public InteractionRequest<Notification> BlinkGoNextButtonRequest { get; } = new InteractionRequest<Notification>();
 
-        public InteractionRequest<Notification> BlinkGoBackButtonRequest { get; } = new InteractionRequest<Notification>();
+        //public InteractionRequest<Notification> BlinkGoBackButtonRequest { get; } = new InteractionRequest<Notification>();
 
         public IArrangedBookStorage BookCabinet
         {
@@ -263,7 +263,7 @@ namespace Sunctum.ViewModels
 
         #endregion //プロパティ
 
-        public DocumentViewModelBase()
+        public DocumentViewModelBase(IDialogService dialogService)
         {
             RegisterCommands();
             SelectedEntries = new List<EntryViewModel>();
@@ -276,6 +276,7 @@ namespace Sunctum.ViewModels
                 {
                     UpdateStarLevel();
                 });
+            this.dialogService = dialogService;
         }
 
         private void UpdateStarLevel()
@@ -297,7 +298,8 @@ namespace Sunctum.ViewModels
             });
             ChangeStarCommand = new DelegateCommand(() =>
             {
-                ChangeStarRequest.Raise(new Notification() { Title = "Change Star", Content = BookListViewSelectedItems.First() });
+                IDialogResult result = new DialogResult();
+                dialogService.ShowDialog(nameof(ChangeStar), ret => result = ret);
                 UpdateStarLevel();
             });
             CloseTabCommand = new DelegateCommand(() =>
@@ -492,18 +494,20 @@ namespace Sunctum.ViewModels
 
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    StoreBookScrollOffsetRequest.Raise(new Notification()
-                    {
-                        Content = new Tuple<Dictionary<Guid, Point>, Guid>(_scrollOffset, bookId)
-                    });
+                    throw new NotImplementedException();
+                    //StoreBookScrollOffsetRequest.Raise(new Notification()
+                    //{
+                    //    Content = new Tuple<Dictionary<Guid, Point>, Guid>(_scrollOffset, bookId)
+                    //});
                 });
             }
             else
             {
-                StoreContentScrollOffsetRequest.Raise(new Notification()
-                {
-                    Content = new Tuple<Dictionary<Guid, Point>, Guid>(_scrollOffset, bookId)
-                });
+                throw new NotImplementedException();
+                //StoreContentScrollOffsetRequest.Raise(new Notification()
+                //{
+                //    Content = new Tuple<Dictionary<Guid, Point>, Guid>(_scrollOffset, bookId)
+                //});
             }
         }
 
@@ -515,18 +519,20 @@ namespace Sunctum.ViewModels
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    RestoreBookScrollOffsetRequest.Raise(new Notification()
-                    {
-                        Content = new Tuple<Dictionary<Guid, Point>, Guid>(_scrollOffset, bookId)
-                    });
+                    throw new NotImplementedException();
+                    //RestoreBookScrollOffsetRequest.Raise(new Notification()
+                    //{
+                    //    Content = new Tuple<Dictionary<Guid, Point>, Guid>(_scrollOffset, bookId)
+                    //});
                 });
             }
             else
             {
-                RestoreContentScrollOffsetRequest.Raise(new Notification()
-                {
-                    Content = new Tuple<Dictionary<Guid, Point>, Guid>(_scrollOffset, bookId)
-                });
+                throw new NotImplementedException();
+                //RestoreContentScrollOffsetRequest.Raise(new Notification()
+                //{
+                //    Content = new Tuple<Dictionary<Guid, Point>, Guid>(_scrollOffset, bookId)
+                //});
             }
 
             _scrollOffset.Remove(bookId);
@@ -536,7 +542,8 @@ namespace Sunctum.ViewModels
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                ResetScrollOffsetRequest.Raise(new Notification());
+                throw new NotImplementedException();
+                //ResetScrollOffsetRequest.Raise(new Notification());
             });
         }
 
@@ -986,12 +993,14 @@ namespace Sunctum.ViewModels
 
         private void BeginAnimation_Tick_PreviousImageButton()
         {
-            BlinkGoBackButtonRequest.Raise(new Notification());
+            throw new NotImplementedException();
+            //BlinkGoBackButtonRequest.Raise(new Notification());
         }
 
         private void BeginAnimation_Tick_NextImageButton()
         {
-            BlinkGoNextButtonRequest.Raise(new Notification());
+            throw new NotImplementedException();
+            //BlinkGoNextButtonRequest.Raise(new Notification());
         }
 
         #endregion //キーボード操作

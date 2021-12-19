@@ -5,7 +5,6 @@ using NUnit.Framework;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
-using Sunctum.Domain.Test.Core;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -18,7 +17,7 @@ namespace Sunctum.Domain.Test.UnitTest
     [TestFixture]
     public class PageDaoTest
     {
-        private static TestBootstrapper s_bootstrapper;
+        //private static TestBootstrapper s_bootstrapper;
         private ILibrary _libManager;
         private string _filePath;
         private string _dirPath;
@@ -30,8 +29,8 @@ namespace Sunctum.Domain.Test.UnitTest
             _filePath = Path.Combine(_dirPath, "library.db");
             ConnectionManager.SetDefaultConnection($"Data Source={_filePath}", typeof(SQLiteConnection));
 
-            s_bootstrapper = new TestBootstrapper($"Data Source={_filePath}");
-            s_bootstrapper.Run();
+            //s_bootstrapper = new TestBootstrapper($"Data Source={_filePath}");
+            //s_bootstrapper.Run();
 
             if (Directory.Exists(_dirPath))
             {
@@ -48,7 +47,7 @@ namespace Sunctum.Domain.Test.UnitTest
             config.WorkingDirectory = _dirPath;
             Configuration.ApplicationConfiguration = config;
 
-            _libManager = s_bootstrapper.Get<ILibrary>();
+            //_libManager = s_bootstrapper.Get<ILibrary>();
             _libManager.Initialize().Wait();
             _libManager.Load().Wait();
         }

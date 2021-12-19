@@ -1,7 +1,7 @@
 ﻿
 
 using Ninject;
-using Prism.Interactivity.InteractionRequest;
+using Prism.Services.Dialogs;
 using Reactive.Bindings;
 using Sunctum.Domain.Logic.Parse;
 using Sunctum.Properties;
@@ -11,25 +11,9 @@ using System.Reactive.Linq;
 
 namespace Sunctum.ViewModels
 {
-    internal class EditMetadataImportSettingViewModel : IInteractionRequestAware
+    internal class EditMetadataImportSettingViewModel : IDialogAware
     {
         public Action FinishInteraction { get; set; }
-
-        private INotification _notification;
-        public INotification Notification
-        {
-            get
-            {
-                return _notification;
-            }
-
-            set
-            {
-                _notification = value;
-                this.EditTarget.Value?.Dispose();
-                this.EditTarget.Value = new DirectoryNameParserViewModel(DirectoryNameParserManager, value.Content as DirectoryNameParser);
-            }
-        }
 
         public ReactiveProperty<DirectoryNameParserViewModel> EditTarget { get; } = new ReactiveProperty<DirectoryNameParserViewModel>();
 
@@ -41,6 +25,8 @@ namespace Sunctum.ViewModels
         public ReactiveCommand OkCommand { get; set; }
 
         public ReactiveCommand CancelCommand { get; set; } = new ReactiveCommand();
+
+        public string Title => "Edit metadata import setting";
 
         public EditMetadataImportSettingViewModel()
         {
@@ -61,6 +47,21 @@ namespace Sunctum.ViewModels
                 {
                     FinishInteraction();
                 });
+        }
+
+        public event Action<IDialogResult> RequestClose;
+
+        public bool CanCloseDialog()
+        {
+            return true;
+        }
+
+        public void OnDialogClosed()
+        {
+        }
+
+        public void OnDialogOpened(IDialogParameters parameters)
+        {
         }
     }
 }

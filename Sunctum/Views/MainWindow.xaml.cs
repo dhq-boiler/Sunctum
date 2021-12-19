@@ -1,12 +1,14 @@
 ﻿
 
-using Ninject;
 using NLog;
 using Sunctum.Domain.ViewModels;
 using Sunctum.ViewModels;
 using System;
 using System.Windows;
 using System.Windows.Input;
+using System.ComponentModel.Composition;
+using Prism.Ioc;
+using Ninject;
 
 namespace Sunctum.Views
 {
@@ -17,15 +19,15 @@ namespace Sunctum.Views
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
-        public MainWindow()
+        public MainWindow(IContainerProvider containerProvider)
         {
             InitializeComponent();
+            MainWindowVM = containerProvider.Resolve<IMainWindowViewModel>();
+            HomeDocumentViewModel = containerProvider.Resolve<IHomeDocumentViewModel>();
         }
 
-        [Inject]
         public IMainWindowViewModel MainWindowVM { get; set; }
 
-        [Inject]
         public IHomeDocumentViewModel HomeDocumentViewModel { get; set; }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
