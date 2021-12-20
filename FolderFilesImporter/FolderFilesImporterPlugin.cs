@@ -1,12 +1,12 @@
-﻿using Ninject;
-using NLog;
+﻿using NLog;
 using Sunctum.Domain.Logic.Async;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Plugin;
-using Sunctum.Plugin.Core;
 using System;
+using System.ComponentModel.Composition;
 using System.Windows;
+using Unity;
 
 namespace FolderFilesImporter
 {
@@ -17,10 +17,10 @@ namespace FolderFilesImporter
 
         public string AcceptableDataFormat => DataFormats.FileDrop;
 
-        [Inject]
+        [Dependency]
         public IBookImporting BookImportingService { get; set; }
 
-        [Inject]
+        [Dependency]
         public ITaskManager TaskManager { get; set; }
 
         public async void Execute(IDataObject dataObject)

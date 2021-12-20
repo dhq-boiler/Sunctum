@@ -409,7 +409,7 @@
                         <Setter Property="ItemsPanel">
                             <Setter.Value>
                                 <ItemsPanelTemplate>
-                                    <ui.ctrl:VirtualizingWrapPanel>
+                                    <ui.ctrl:VirtualizingWrapPanel x:Name="BookListViewVirtualinzingWrapPanel">
                                         <i:Interaction.Triggers>
                                             <trigger:InteractionRequestTrigger SourceObject="{Binding ResetScrollOffsetRequest}">
                                                 <trigger:ResetScrollOffsetAction />
@@ -500,7 +500,7 @@
                     </i:Interaction.Triggers>
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <ui.ctrl:VirtualizingWrapPanel>
+                            <ui.ctrl:VirtualizingWrapPanel x:Name="ContentsListViewVirtualizingWrapPanel">
                                 <i:Interaction.Triggers>
                                     <trigger:InteractionRequestTrigger SourceObject="{Binding ResetScrollOffsetRequest}">
                                         <trigger:ResetScrollOffsetAction />

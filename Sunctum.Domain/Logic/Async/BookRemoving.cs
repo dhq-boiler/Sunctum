@@ -1,7 +1,6 @@
 ﻿
 
 using Homura.ORM;
-using Ninject;
 using NLog;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Extensions;
@@ -11,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Unity;
 
 namespace Sunctum.Domain.Logic.Async
 {
@@ -18,8 +18,8 @@ namespace Sunctum.Domain.Logic.Async
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
-        [Inject]
-        public ILibrary LibraryManager { get; set; }
+        [Dependency]
+        public Lazy<ILibrary> LibraryManager { get; set; }
 
         public IEnumerable<BookViewModel> TargetBooks { get; set; }
 
@@ -35,14 +35,14 @@ namespace Sunctum.Domain.Logic.Async
         {
             foreach (var book in TargetBooks)
             {
-                LibraryManager.RunFillContentsWithImage(book);
+                LibraryManager.Value.RunFillContentsWithImage(book);
 
                 book.CurrentProcessProgress.Value.TotalCount.Value = book.Contents.Count;
                 book.IsDeleting = true;
 
                 foreach (var page in book.Contents)
                 {
-                    sequence.Add(new Task(() => RemoveImageTagByImage(LibraryManager, page)));
+                    sequence.Add(new Task(() => RemoveImageTagByImage(LibraryManager.Value, page)));
                     sequence.Add(new Task(() => PageRemoving.DeleteRecordFromStorage(page)));
                     sequence.Add(new Task(() => PageRemoving.DeleteFileFromStorage(page)));
                     sequence.Add(new Task(() => ProcessedCount++));
@@ -50,7 +50,7 @@ namespace Sunctum.Domain.Logic.Async
                 }
 
                 sequence.Add(new Task(() => DeleteRecordFromStorage(book)));
-                sequence.Add(new Task(() => LibraryManager.RemoveFromMemory(book)));
+                sequence.Add(new Task(() => LibraryManager.Value.RemoveFromMemory(book)));
                 sequence.Add(new Task(() => s_logger.Info($"Removed Book:{book}")));
             }
         }
@@ -64,7 +64,7 @@ namespace Sunctum.Domain.Logic.Async
         {
             try
             {
-                libraryManager.TagMng.RemoveByImage(page.Image);
+                libraryManager.TagManager.RemoveByImage(page.Image);
             }
             catch (ArgumentNullException)
             {

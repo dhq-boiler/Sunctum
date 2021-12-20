@@ -1,7 +1,4 @@
-﻿
-
-using Ninject;
-using NLog;
+﻿using NLog;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Extensions;
 using Sunctum.Domain.Models.Managers;
@@ -9,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Unity;
 
 namespace Sunctum.Domain.Logic.Async
 {
@@ -16,8 +14,8 @@ namespace Sunctum.Domain.Logic.Async
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
-        [Inject]
-        public ITagManager TagManager { get; set; }
+        [Dependency]
+        public Lazy<ITagManager> TagManager { get; set; }
 
         public IEnumerable<string> TagNames { get; set; }
 
@@ -31,7 +29,7 @@ namespace Sunctum.Domain.Logic.Async
         {
             foreach (var tagName in TagNames)
             {
-                var itTargets = (from it in TagManager.Chains
+                var itTargets = (from it in TagManager.Value.Chains
                                  join t in TagNames on it.Tag.Name equals t
                                  select it).ToList();
 
@@ -39,11 +37,11 @@ namespace Sunctum.Domain.Logic.Async
                 {
                     sequence.Add(new Task(() =>
                     {
-                        TagManager.Chains.Remove(target);
+                        TagManager.Value.Chains.Remove(target);
                     }));
                 }
 
-                var tTargets = (from t in TagManager.Tags
+                var tTargets = (from t in TagManager.Value.Tags
                                 join i in TagNames on t.Name equals i
                                 select t).ToList();
 
@@ -51,7 +49,7 @@ namespace Sunctum.Domain.Logic.Async
                 {
                     sequence.Add(new Task(() =>
                     {
-                        TagManager.Tags.Remove(target);
+                        TagManager.Value.Tags.Remove(target);
                     }));
                 }
 

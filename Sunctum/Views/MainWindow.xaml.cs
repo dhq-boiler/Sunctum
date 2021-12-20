@@ -6,9 +6,7 @@ using Sunctum.ViewModels;
 using System;
 using System.Windows;
 using System.Windows.Input;
-using System.ComponentModel.Composition;
-using Prism.Ioc;
-using Ninject;
+using Unity;
 
 namespace Sunctum.Views
 {
@@ -19,15 +17,15 @@ namespace Sunctum.Views
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
-        public MainWindow(IContainerProvider containerProvider)
+        public MainWindow()
         {
             InitializeComponent();
-            MainWindowVM = containerProvider.Resolve<IMainWindowViewModel>();
-            HomeDocumentViewModel = containerProvider.Resolve<IHomeDocumentViewModel>();
         }
 
+        [Dependency]
         public IMainWindowViewModel MainWindowVM { get; set; }
 
+        [Dependency]
         public IHomeDocumentViewModel HomeDocumentViewModel { get; set; }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)

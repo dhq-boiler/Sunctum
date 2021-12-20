@@ -1,7 +1,6 @@
 ﻿
 
 using Homura.Core;
-using Ninject;
 using NLog;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -12,7 +11,6 @@ using Sunctum.Domain.Logic.Async;
 using Sunctum.Domain.Logic.ImageTagCountSorting;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
-using Sunctum.Infrastructure.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -24,6 +22,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Unity;
 
 namespace Sunctum.Managers
 {
@@ -40,9 +39,6 @@ namespace Sunctum.Managers
         private bool _OrderAscending;
         private ObservableCollection<TagCountViewModel> _SearchedImageTags;
         private IImageTagCountSorting _ImageTagCountSorting;
-
-        [Inject]
-        public IMainWindowViewModel MainWindowViewModel { get; set; }
 
         public IProgressManager ProgressManager { get; set; } = new ProgressManager();
 
@@ -167,8 +163,17 @@ namespace Sunctum.Managers
 
         #region プロパティ
 
-        [Inject]
+        [Dependency]
         public ITaskManager TaskManager { get; set; }
+
+        [Dependency]
+        public IImageTagAdding ImageTagAddingService { get; set; }
+
+        [Dependency]
+        public IImageTagRemoving ImageTagRemovingService { get; set; }
+
+        [Dependency]
+        public ITagRemoving TagRemovingService { get; set; }
 
         public ObservableCollection<TagViewModel> Tags
         {
@@ -290,15 +295,6 @@ namespace Sunctum.Managers
                 return new ObservableCollection<TagCountViewModel>(newCollection);
             }
         }
-
-        [Inject]
-        public IImageTagAdding ImageTagAddingService { get; set; }
-
-        [Inject]
-        public IImageTagRemoving ImageTagRemovingService { get; set; }
-
-        [Inject]
-        public ITagRemoving TagRemovingService { get; set; }
 
         #endregion //プロパティ
 
@@ -577,9 +573,9 @@ namespace Sunctum.Managers
             }
         }
 
-        public void ShowBySelectedItems()
+        public void ShowBySelectedItems(IMainWindowViewModel mainWindowViewModel)
         {
-            var activeViewModel = MainWindowViewModel.ActiveDocumentViewModel;
+            var activeViewModel = mainWindowViewModel.ActiveDocumentViewModel;
 
             var images = ImageFacade.FindAll();
             var pages = PageFacade.FindAll();
@@ -610,11 +606,11 @@ namespace Sunctum.Managers
             return sb.ToString();
         }
 
-        public void ShowBySelectedItems(IEnumerable<TagViewModel> searchItems)
+        public void ShowBySelectedItems(IMainWindowViewModel mainWindowViewModel, IEnumerable<TagViewModel> searchItems)
         {
             SelectedItems = searchItems.ToList();
 
-            ShowBySelectedItems();
+            ShowBySelectedItems(mainWindowViewModel);
         }
 
         public bool IsSearching()

@@ -1,24 +1,18 @@
-﻿
-
-using Ninject;
-using Sunctum.ViewModels;
+﻿using Sunctum.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
+using Unity;
 
 namespace Sunctum.Converters
 {
     public class DisplayTypeToBool : MarkupExtension, IValueConverter
     {
-        [Inject]
+        [Dependency]
         public IHomeDocumentViewModel viewModel { get; set; }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

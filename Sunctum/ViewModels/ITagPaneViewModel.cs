@@ -1,6 +1,7 @@
 ﻿
 
 using Sunctum.Domain.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
@@ -11,7 +12,7 @@ namespace Sunctum.ViewModels
     public interface ITagPaneViewModel
     {
         ICommand ClearResultSearchingByTagCommand { get; set; }
-        IMainWindowViewModel MainWindowViewModel { get; set; }
+        Lazy<IMainWindowViewModel> MainWindowViewModel { get; set; }
         ObservableCollection<Control> TagContextMenuItems { get; set; }
         List<TagCountViewModel> TagListBoxSelectedItems { get; set; }
 

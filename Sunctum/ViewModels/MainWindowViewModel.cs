@@ -3,13 +3,12 @@
 using Homura.Core;
 using Homura.ORM;
 using Homura.ORM.Setup;
-using Ninject;
 using NLog;
 using Prism.Commands;
-using Prism.Ioc;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using Reactive.Bindings.Extensions;
+using Sunctum.Core.Extensions;
 using Sunctum.Core.Notifications;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Data.Dao.Migration.Plan;
@@ -29,8 +28,11 @@ using Sunctum.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using System.Data.SQLite;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reflection;
@@ -38,14 +40,16 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Unity;
+using Xceed.Wpf.AvalonDock;
 using Xceed.Wpf.AvalonDock.Layout;
+using Xceed.Wpf.AvalonDock.Layout.Serialization;
 
 namespace Sunctum.ViewModels
 {
     public class MainWindowViewModel : BindableBase, IMainWindowViewModel, IDisposable, IObservable<ActiveTabChanged>
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
-        private readonly IDialogService dialogService;
         private ILibrary _LibraryVM;
         private string _MainWindowTitle;
         private bool _DisplayTagPane;
@@ -63,6 +67,16 @@ namespace Sunctum.ViewModels
         private ObservableCollection<PaneViewModelBase> _DockingPaneViewModels;
         private IDocumentViewModelBase _ActiveDocumentViewModel;
         private IDocumentViewModelBase _OldActiveDocumentViewModel;
+
+        #region コンストラクタ
+
+        public MainWindowViewModel(IDialogService DialogService)
+        {
+            RegisterCommands();
+            this.DialogService = DialogService;
+        }
+
+        #endregion
 
         #region コマンド
 
@@ -390,16 +404,6 @@ namespace Sunctum.ViewModels
 
         #endregion //コマンド登録
 
-        #region コンストラクタ
-
-        public MainWindowViewModel(IContainerProvider containerProvider)
-        {
-            RegisterCommands();
-            this.dialogService = containerProvider.Resolve<IDialogService>();
-        }
-
-        #endregion
-
         #region プロパティ
 
         public System.Version SunctumVersion
@@ -409,7 +413,9 @@ namespace Sunctum.ViewModels
             { return Assembly.GetExecutingAssembly().GetName().Version; }
         }
 
-        [Inject]
+        public IDialogService DialogService { get; }
+
+        [Dependency]
         public ILibrary LibraryVM
         {
             [DebuggerStepThrough]
@@ -417,6 +423,34 @@ namespace Sunctum.ViewModels
             { return _LibraryVM; }
             set { SetProperty(ref _LibraryVM, value); }
         }
+
+        [ImportMany]
+        public IEnumerable<IAddMenuPlugin> Plugins
+        {
+            get { return _Plugins; }
+            set { SetProperty(ref _Plugins, value); }
+        }
+
+        [Dependency]
+        public IDataAccessManager DataAccessManager { get; set; }
+
+        [Dependency]
+        public IAuthorPaneViewModel AuthorPaneViewModel { get; set; }
+
+        [Dependency]
+        public ITagPaneViewModel TagPaneViewModel { get; set; }
+
+        [Dependency]
+        public IInformationPaneViewModel InformationPaneViewModel { get; set; }
+
+        [Dependency]
+        public IHomeDocumentViewModel HomeDocumentViewModel { get; set; }
+
+        [Dependency]
+        public ITagManager TagManager { get; set; }
+
+        [Dependency]
+        public IAuthorManager AuthorManager { get; set; }
 
         public string MainWindowTitle
         {
@@ -456,16 +490,6 @@ namespace Sunctum.ViewModels
             set { SetProperty(ref _TooltipOnProgressBar, value); }
         }
 
-        [Inject]
-        public IEnumerable<IAddMenuPlugin> Plugins
-        {
-            get { return _Plugins; }
-            set { SetProperty(ref _Plugins, value); }
-        }
-
-        [Inject]
-        public IDataAccessManager DataAccessManager { get; set; }
-
         public double WindowLeft
         {
             get { return _WindowLeft; }
@@ -489,24 +513,6 @@ namespace Sunctum.ViewModels
             get { return _WindowHeight; }
             set { SetProperty(ref _WindowHeight, value); }
         }
-
-        [Inject]
-        public IAuthorPaneViewModel AuthorPaneViewModel { get; set; }
-
-        [Inject]
-        public ITagPaneViewModel TagPaneViewModel { get; set; }
-
-        [Inject]
-        public IInformationPaneViewModel InformationPaneViewModel { get; set; }
-
-        [Inject]
-        public IHomeDocumentViewModel HomeDocumentViewModel { get; set; }
-
-        [Inject]
-        public ITagManager TagManager { get; set; }
-
-        [Inject]
-        public IAuthorManager AuthorManager { get; set; }
 
         public List<MenuItem> ExtraBookContextMenu { get; set; } = new List<MenuItem>();
 
@@ -573,6 +579,12 @@ namespace Sunctum.ViewModels
                 AuthorPaneViewModel.BuildContextMenus_Authors();
                 LoadPlugins();
             }
+
+            Configuration.ApplicationConfiguration = Configuration.Load();
+            WindowLeft = Configuration.ApplicationConfiguration.WindowRect.X;
+            WindowTop = Configuration.ApplicationConfiguration.WindowRect.Y;
+            WindowWidth = Configuration.ApplicationConfiguration.WindowRect.Width;
+            WindowHeight = Configuration.ApplicationConfiguration.WindowRect.Height;
 
             if (shiftPressed || Configuration.ApplicationConfiguration.WorkingDirectory == null)
             {
@@ -672,7 +684,7 @@ namespace Sunctum.ViewModels
 
         public void NewSearchTab(ObservableCollection<BookViewModel> onStage)
         {
-            var newTabViewModel = new SearchDocumentViewModel(dialogService, "Search results");
+            var newTabViewModel = new SearchDocumentViewModel(DialogService, "Search results");
             newTabViewModel.LibraryManager = LibraryVM;
             newTabViewModel.BookCabinet = LibraryVM.CreateBookStorage();
             newTabViewModel.BookCabinet.BookSource = new ObservableCollection<BookViewModel>(onStage);
@@ -692,7 +704,7 @@ namespace Sunctum.ViewModels
 
         public void NewContentTab(BookViewModel bookViewModel)
         {
-            var newTabViewModel = new ContentDocumentViewModel(dialogService, bookViewModel.Title);
+            var newTabViewModel = new ContentDocumentViewModel(DialogService, bookViewModel.Title);
             newTabViewModel.LibraryManager = LibraryVM;
             newTabViewModel.BookCabinet = LibraryVM.CreateBookStorage();
             newTabViewModel.BookCabinet.BookSource = new ObservableCollection<BookViewModel>();
@@ -713,7 +725,7 @@ namespace Sunctum.ViewModels
 
         public void NewContentTab(IEnumerable<BookViewModel> list)
         {
-            var newTabViewModel = new ContentDocumentViewModel(dialogService, "Filtered");
+            var newTabViewModel = new ContentDocumentViewModel(DialogService, "Filtered");
             newTabViewModel.LibraryManager = LibraryVM;
             newTabViewModel.BookCabinet = LibraryVM.CreateBookStorage();
             newTabViewModel.BookCabinet.BookSource = new ObservableCollection<BookViewModel>();
@@ -780,6 +792,16 @@ namespace Sunctum.ViewModels
 
         private void LoadPlugins()
         {
+            string pluginsPath = Directory.GetCurrentDirectory() + @"\plugins";
+            if (!Directory.Exists(pluginsPath)) Directory.CreateDirectory(pluginsPath);
+
+            //プラグイン読み込み
+            using (var catalog = new DirectoryCatalog(pluginsPath))
+            using (var container = new CompositionContainer(catalog))
+            {
+                if (catalog.LoadedFiles.Count > 0) container.SatisfyImportsOnce(this);
+            }
+
             foreach (var plugin in Plugins)
             {
                 var flags = plugin.Where().GetFlags();
@@ -843,19 +865,50 @@ namespace Sunctum.ViewModels
                 DockingPaneViewModels.Add((InformationPaneViewModel)InformationPaneViewModel);
             }
 
-            throw new NotImplementedException();
-            //LoadLayoutRequest.Raise(new Notification() { Content = this });
+            LoadLayout();
 
             HomeDocumentViewModel.CloseSearchPane();
             HomeDocumentViewModel.CloseImage();
             HomeDocumentViewModel.CloseBook();
             HomeDocumentViewModel.ResetScrollOffsetPool();
-            HomeDocumentViewModel.ResetScrollOffset();
+            //HomeDocumentViewModel.ResetScrollOffset();
             LibraryVM.ProgressManager.Complete();
             TooltipOnProgressBar = "Ready";
             HomeDocumentViewModel.ClearSelectedItems();
             AuthorPaneViewModel.ClearSelectedItems();
             TagPaneViewModel.ClearSelectedItems();
+        }
+
+        private void LoadLayout()
+        {
+            var dockingManager = App.Current.MainWindow.GetChildOfType<DockingManager>();
+            if (!File.Exists(Specifications.APP_LAYOUT_CONFIG_FILENAME))
+            {
+                var serializer = new XmlLayoutSerializer(dockingManager);
+                serializer.Serialize(Specifications.APP_LAYOUT_CONFIG_FILENAME);
+            }
+
+            var deserializer = new XmlLayoutSerializer(dockingManager);
+            deserializer.LayoutSerializationCallback += Deserializer_LayoutSerializationCallback;
+            deserializer.Deserialize(Specifications.APP_LAYOUT_CONFIG_FILENAME);
+        }
+
+        private void Deserializer_LayoutSerializationCallback(object sender, LayoutSerializationCallbackEventArgs e)
+        {
+            switch (e.Model.ContentId)
+            {
+                case "home":
+                    break;
+                case "author":
+                    AuthorPane = (LayoutAnchorable)e.Model;
+                    break;
+                case "tag":
+                    TagPane = (LayoutAnchorable)e.Model;
+                    break;
+                case "information":
+                    InformationPane = (LayoutAnchorable)e.Model;
+                    break;
+            }
         }
 
         private void SetMainWindowTitle()

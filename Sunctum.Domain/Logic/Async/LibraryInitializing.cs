@@ -4,15 +4,16 @@ using Homura.Core;
 using Homura.ORM;
 using Homura.ORM.Migration;
 using Homura.ORM.Setup;
-using Ninject;
 using NLog;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Data.Dao.Migration.Plan;
 using Sunctum.Domain.Logic.Parse;
 using Sunctum.Domain.Models.Conversion;
 using Sunctum.Domain.Models.Managers;
+using System;
 using System.Data.SQLite;
 using System.Diagnostics;
+using Unity;
 
 namespace Sunctum.Domain.Logic.Async
 {
@@ -20,19 +21,19 @@ namespace Sunctum.Domain.Logic.Async
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
-        [Inject]
-        public ILibrary LibraryManager { get; set; }
+        [Dependency]
+        public ITaskManager TaskManager { get; set; }
 
-        [Inject]
+        [Dependency]
         public IByteSizeCalculating ByteSizeCalculatingService { get; set; }
 
-        [Inject]
+        [Dependency]
         public IDirectoryNameParserManager DirectoryNameParserManager { get; set; }
 
-        [Inject]
+        [Dependency]
         public IBookTagInitializing BookTagInitializingService { get; set; }
 
-        [Inject]
+        [Dependency]
         public IBookHashing BookHashingService { get; set; }
 
         public Stopwatch Stopwatch { get; private set; } = new Stopwatch();
@@ -117,21 +118,19 @@ namespace Sunctum.Domain.Logic.Async
 
         private async void LibraryInitializing_FinishToUpgradeTo_Version_1(object sender, VersionChangeEventArgs e)
         {
-            if (LibraryManager == null) return;
             ByteSizeCalculatingService.Range = ByteSizeCalculating.UpdateRange.IsAll;
-            await LibraryManager.TaskManager.Enqueue(ByteSizeCalculatingService.GetTaskSequence());
+            await TaskManager.Enqueue(ByteSizeCalculatingService.GetTaskSequence());
         }
 
         private async void LibraryInitializing_FinishToUpgradeTo_Version_3(object sender, VersionChangeEventArgs e)
         {
-            await LibraryManager.TaskManager.Enqueue(BookTagInitializingService.GetTaskSequence());
+            await TaskManager.Enqueue(BookTagInitializingService.GetTaskSequence());
         }
 
         private async void LibraryInitializing_FinishedToUpgradeTo_Version_5(object sender, VersionChangeEventArgs e)
         {
-            if (LibraryManager == null) return;
             BookHashingService.Range = BookHashing.UpdateRange.IsAll;
-            await LibraryManager.TaskManager.Enqueue(BookHashingService.GetTaskSequence());
+            await TaskManager.Enqueue(BookHashingService.GetTaskSequence());
         }
     }
 }

@@ -5,8 +5,10 @@ using NLog;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
+using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using Unity;
 
 namespace Sunctum.Domain.Logic.Async
 {
@@ -16,10 +18,10 @@ namespace Sunctum.Domain.Logic.Async
 
         private Stopwatch _stopwatch = new Stopwatch();
 
-        [Inject]
-        public ILibrary LibraryManager { get; set; }
+        [Dependency]
+        public Lazy<ILibrary> LibraryManager { get; set; }
 
-        [Inject]
+        [Dependency]
         public IAuthorManager AuthorManager { get; set; }
 
         public override void ConfigurePreTaskAction(AsyncTaskSequence sequence)
@@ -35,11 +37,11 @@ namespace Sunctum.Domain.Logic.Async
 
             sequence.Add(() => _stopwatch.Start());
 
-            sequence.Add(() => LibraryManager.BookSource.CollectionChanged -= AuthorManager.LoadedBooks_CollectionChanged);
+            sequence.Add(() => LibraryManager.Value.BookSource.CollectionChanged -= AuthorManager.LoadedBooks_CollectionChanged);
 
-            sequence.Add(() => LibraryManager.BookSource = new ObservableCollection<BookViewModel>(BookFacade.FindAllWithAuthor(null)));
+            sequence.Add(() => LibraryManager.Value.BookSource = new ObservableCollection<BookViewModel>(BookFacade.FindAllWithAuthor(null)));
 
-            sequence.Add(() => LibraryManager.BookSource.CollectionChanged += AuthorManager.LoadedBooks_CollectionChanged);
+            sequence.Add(() => LibraryManager.Value.BookSource.CollectionChanged += AuthorManager.LoadedBooks_CollectionChanged);
 
             sequence.Add(() => _stopwatch.Stop());
 

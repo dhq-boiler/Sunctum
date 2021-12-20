@@ -1,7 +1,6 @@
 ﻿
 
 using Homura.Core;
-using Ninject;
 using NLog;
 using Prism.Commands;
 using Prism.Mvvm;
@@ -11,7 +10,6 @@ using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.AuthorSorting;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
-using Sunctum.Infrastructure.Core;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -22,6 +20,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Unity;
 
 namespace Sunctum.Managers
 {
@@ -34,9 +33,6 @@ namespace Sunctum.Managers
         private ObservableCollection<AuthorCountViewModel> _AuthorCount;
         private ObservableCollection<AuthorCountViewModel> _SearchedAuthors;
         private IAuthorSorting _AuthorSorting;
-
-        [Inject]
-        public IMainWindowViewModel MainWindowViewModel { get; set; }
 
         public IProgressManager ProgressManager { get; set; } = new ProgressManager();
 
@@ -274,9 +270,9 @@ namespace Sunctum.Managers
             RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => AuthorCount));
         }
 
-        public void ShowBySelectedItems()
+        public void ShowBySelectedItems(IMainWindowViewModel mainWindowViewModel)
         {
-            var activeViewModel = MainWindowViewModel.ActiveDocumentViewModel;
+            var activeViewModel = mainWindowViewModel.ActiveDocumentViewModel;
 
             var books = from b in activeViewModel.BookCabinet.BookSource
                         join s in SelectedItems on b.AuthorID equals s.ID
@@ -300,11 +296,11 @@ namespace Sunctum.Managers
             return sb.ToString();
         }
 
-        public void ShowBySelectedItems(IEnumerable<AuthorViewModel> searchItems)
+        public void ShowBySelectedItems(IMainWindowViewModel mainWindowViewModel, IEnumerable<AuthorViewModel> searchItems)
         {
             SelectedItems = searchItems.ToList();
 
-            ShowBySelectedItems();
+            ShowBySelectedItems(mainWindowViewModel);
         }
 
         public void ClearSearchResult()

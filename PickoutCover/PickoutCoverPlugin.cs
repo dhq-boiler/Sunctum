@@ -4,13 +4,12 @@ using Prism.Commands;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using Sunctum.Plugin;
-using Sunctum.Plugin.Core;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
+using Unity;
 
 namespace PickoutCover
 {
@@ -18,17 +17,17 @@ namespace PickoutCover
     public class PickoutCoverPlugin : IAddMenuPlugin
     {
         private ICommand _command;
-        private ILibrary _libraryManager;
 
-        [Inject]
-        public PickoutCoverPlugin(ILibrary libraryManager)
+        [Dependency]
+        public ILibrary Library { get; set; }
+
+        public PickoutCoverPlugin()
         {
-            _libraryManager = libraryManager;
             _command = new DelegateCommand<PluginMenuParameter>((p) =>
             {
                 var parameter = (p.CommandParameter as IEnumerable<EntryViewModel>).Filter(p.CallFrom);
                 var first = parameter.Cast<PageViewModel>().First();
-                OpenPickOutCoverDialog(_libraryManager, first);
+                OpenPickOutCoverDialog(Library, first);
             },
             (p) =>
             {

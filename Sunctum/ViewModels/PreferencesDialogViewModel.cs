@@ -1,7 +1,4 @@
-﻿
-
-using Ninject;
-using Prism.Mvvm;
+﻿using Prism.Mvvm;
 using Reactive.Bindings;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.ViewModels;
@@ -10,6 +7,7 @@ using System;
 using System.Diagnostics;
 using System.Web.UI.WebControls;
 using System.Windows;
+using Unity;
 
 namespace Sunctum.ViewModels
 {
@@ -27,7 +25,7 @@ namespace Sunctum.ViewModels
 
         public bool RestartRequired { get; private set; }
 
-        [Inject]
+        [Dependency]
         public IMainWindowViewModel MainWindowViewModel { get; set; }
 
         public ReactiveCommand<Window> OkCommand { get; set; } = new ReactiveCommand<Window>();

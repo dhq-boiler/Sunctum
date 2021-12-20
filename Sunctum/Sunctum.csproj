@@ -230,9 +230,9 @@
     <Compile Include="Converters\StringToGuidConverter.cs" />
     <Compile Include="Converters\TagSortingToBool.cs" />
     <Compile Include="Converters\WindowStateToVisibilityConverter.cs" />
-    <Compile Include="Core\ExportAttributeBindingGenerator.cs" />
+    <Compile Include="Core\Extensions\Extensions.cs" />
+    <Compile Include="Core\Extensions\LogResolvesUnityContainerExtension.cs" />
     <Compile Include="Core\Notifications\ActiveTabChanged.cs" />
-    <Compile Include="Core\Extensions\NinjectBindingExtensions.cs" />
     <Compile Include="Core\Theme.cs" />
     <Compile Include="Helpers\EventToCommand.cs" />
     <Compile Include="Helpers\IEventArgsConverter.cs" />
@@ -346,7 +346,6 @@
     <Compile Include="Views\Triggers\HomeKeyDownEventTrigger.cs" />
     <Compile Include="Views\Triggers\InteractionRequestTrigger.cs" />
     <Compile Include="Views\Triggers\LeftKeyDownEventTrigger.cs" />
-    <Compile Include="Views\Triggers\LoadLayoutAction.cs" />
     <Compile Include="Views\Triggers\MouseWheelEventTrigger.cs" />
     <Compile Include="Views\Triggers\PopupWindowAction.cs" />
     <Compile Include="Views\Triggers\ResetScrollOffsetAction.cs" />

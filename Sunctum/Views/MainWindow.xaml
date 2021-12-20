@@ -350,12 +350,6 @@
                                    AnchorablesSource="{Binding DockingPaneViewModels}"
                                    DocumentsSource="{Binding DockingDocumentViewModels}">
             <i:Interaction.Triggers>
-                <trigger:InteractionRequestTrigger SourceObject="{Binding LoadLayoutRequest}">
-                    <trigger:LoadLayoutAction />
-                </trigger:InteractionRequestTrigger>
-                <trigger:InteractionRequestTrigger SourceObject="{Binding SaveLayoutRequest}">
-                    <trigger:SaveLayoutAction />
-                </trigger:InteractionRequestTrigger>
                 <i:EventTrigger EventName="ActiveContentChanged">
                     <i:CallMethodAction MethodName="ChangeActiveContent" TargetObject="{Binding}" />
                 </i:EventTrigger>

@@ -95,9 +95,9 @@ namespace Sunctum.Domain.Logic.Import
 
             ret.Add(new Task(() => WriteFingerPrint()));
 
-            ret.Add(new Task(() => TagImage(library.TagMng)));
+            ret.Add(new Task(() => TagImage(library.TagManager)));
 
-            ret.Add(new Task(() => TagBook(library.TagMng)));
+            ret.Add(new Task(() => TagBook(library.TagManager)));
 
             ret.Add(new Task(() => SwitchContentsRegisteredToTrue()));
 

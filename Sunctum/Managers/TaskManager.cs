@@ -1,7 +1,4 @@
-﻿
-
-using Ninject;
-using NLog;
+﻿using NLog;
 using Sunctum.Domail.Util;
 using Sunctum.Domain.Logic.Async;
 using Sunctum.Domain.Models.Managers;
@@ -9,7 +6,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
-using static Sunctum.Domain.Models.Managers.ITaskManager;
+using Unity;
 
 namespace Sunctum.Managers
 {
@@ -24,7 +21,7 @@ namespace Sunctum.Managers
 
         public bool IsRunning { get; private set; }
 
-        [Inject]
+        [Dependency]
         public IProgressManager ProgressManager { get; set; }
 
         public event ExceptionOccurredEventHandler<Exception> ExceptionOccurred;

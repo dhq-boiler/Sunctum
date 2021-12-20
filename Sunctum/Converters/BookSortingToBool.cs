@@ -1,8 +1,4 @@
-﻿
-
-using Ninject;
-using Sunctum.Domain.Models.Managers;
-using Sunctum.ViewModels;
+﻿using Sunctum.ViewModels;
 using System;
 using System.Diagnostics;
 using System.Globalization;
@@ -10,12 +6,13 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
+using Unity;
 
 namespace Sunctum.Converters
 {
     public class BookSortingToBool : MarkupExtension, IValueConverter
     {
-        [Inject]
+        [Dependency]
         public IHomeDocumentViewModel viewModel { get; set; }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

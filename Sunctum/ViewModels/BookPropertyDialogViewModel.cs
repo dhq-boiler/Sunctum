@@ -21,6 +21,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
+using Unity;
 using static Sunctum.UI.Core.Extensions;
 
 namespace Sunctum.ViewModels
@@ -31,7 +32,7 @@ namespace Sunctum.ViewModels
         private List<AuthorViewModel> _AllAuthors;
         private int _SelectedAuthorIndex;
 
-        [Inject]
+        [Dependency]
         public ILibrary LibraryManager { get; set; }
 
         public ReactiveCommand SelectNextBookCommand { get; set; } = new ReactiveCommand();

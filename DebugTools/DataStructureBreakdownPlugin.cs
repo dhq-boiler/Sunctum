@@ -5,10 +5,10 @@ using Prism.Commands;
 using Sunctum.Domain.ViewModels;
 using Sunctum.Infrastructure.Data.Yaml;
 using Sunctum.Plugin;
-using Sunctum.Plugin.Core;
 using Sunctum.UI.Dialogs;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Windows;
 using System.Windows.Input;
 

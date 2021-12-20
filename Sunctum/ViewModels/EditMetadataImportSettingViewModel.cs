@@ -1,13 +1,11 @@
-﻿
-
-using Ninject;
-using Prism.Services.Dialogs;
+﻿using Prism.Services.Dialogs;
 using Reactive.Bindings;
 using Sunctum.Domain.Logic.Parse;
 using Sunctum.Properties;
 using System;
 using System.Diagnostics;
 using System.Reactive.Linq;
+using Unity;
 
 namespace Sunctum.ViewModels
 {
@@ -17,7 +15,7 @@ namespace Sunctum.ViewModels
 
         public ReactiveProperty<DirectoryNameParserViewModel> EditTarget { get; } = new ReactiveProperty<DirectoryNameParserViewModel>();
 
-        [Inject]
+        [Dependency]
         public IDirectoryNameParserManager DirectoryNameParserManager { get; set; }
 
         public ReactiveCommand OpenBrowserCommand { get; } = new ReactiveCommand();

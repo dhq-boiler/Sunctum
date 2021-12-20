@@ -5,6 +5,7 @@ using NLog;
 using Prism.Ioc;
 using Prism.Unity;
 using Sunctum.Converters;
+using Sunctum.Core.Extensions;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Logic.Async;
 using Sunctum.Domain.Logic.Parse;
@@ -14,7 +15,9 @@ using Sunctum.Domain.ViewModels;
 using Sunctum.Managers;
 using Sunctum.ViewModels;
 using Sunctum.Views;
+using System;
 using System.Data.SQLite;
+using System.IO;
 using System.Windows;
 using System.Windows.Data;
 using Unity;
@@ -38,8 +41,8 @@ namespace Sunctum
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-
-            new UnityContainer().AddExtension(new Diagnostic());
+            //new UnityContainer().AddExtension(new Diagnostic()).AddExtension(new LogResolvesUnityContainerExtension());
+            containerRegistry.GetContainer().AddExtension(new Diagnostic()).AddExtension(new LogResolvesUnityContainerExtension());
             //containerRegistry.Register<MainWindow>();
             containerRegistry.RegisterSingleton<IMainWindowViewModel, MainWindowViewModel>();
             containerRegistry.RegisterSingleton<IHomeDocumentViewModel, HomeDocumentViewModel>();
@@ -91,6 +94,13 @@ namespace Sunctum
             AuthorSortingToBool.ResolveNamed = (type, name) => containerRegistry.GetContainer().Resolve(type, name);
             TagSortingToBool.Resolve = (type) => containerRegistry.GetContainer().Resolve(type);
             TagSortingToBool.ResolveNamed = (type, name) => containerRegistry.GetContainer().Resolve(type, name);
+
+            //var pluginsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "plugins");
+            //foreach (var dllFile in Directory.GetFiles(pluginsPath, "*.dll"))
+            //{
+            //    var assembly = Assembly.LoadFrom(dllFile);
+            //    Kernel.BindExportsInAssembly(assembly);
+            //}
         }
 
 

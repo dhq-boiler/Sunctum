@@ -1,7 +1,4 @@
-﻿
-
-using Ninject;
-using Sunctum.ViewModels;
+﻿using Sunctum.ViewModels;
 using System;
 using System.Diagnostics;
 using System.Globalization;
@@ -9,17 +6,18 @@ using System.Reflection;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Markup;
+using Unity;
 
 namespace Sunctum.Converters
 {
     public class AuthorSortingToBool : MarkupExtension, IValueConverter
     {
-        [Inject]
-        public IAuthorPaneViewModel AuthorPaneViewModel { get; set; }
+        [Dependency]
+        public Lazy<IAuthorPaneViewModel> AuthorPaneViewModel { get; set; }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return AuthorPaneViewModel.SortingSelected(parameter as string);
+            return AuthorPaneViewModel.Value.SortingSelected(parameter as string);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

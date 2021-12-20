@@ -1,13 +1,13 @@
 ﻿
 
 using Homura.Core;
-using Ninject;
 using NLog;
 using Prism.Commands;
 using Prism.Services.Dialogs;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using Sunctum.Converters;
+using Sunctum.Core.Extensions;
 using Sunctum.Domain.Extensions;
 using Sunctum.Domain.Logic.Load;
 using Sunctum.Domain.Logic.Query;
@@ -15,6 +15,7 @@ using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using Sunctum.Plugin;
+using Sunctum.UI.Controls;
 using Sunctum.Views;
 using System;
 using System.Collections.Generic;
@@ -28,6 +29,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using Unity;
 
 namespace Sunctum.ViewModels
 {
@@ -258,7 +260,7 @@ namespace Sunctum.ViewModels
 
         public ReactiveProperty<int?> StarLevel { get; } = new ReactiveProperty<int?>();
 
-        [Inject]
+        [Dependency]
         public IEnumerable<IDropPlugin> DropPlugins { get; set; }
 
         #endregion //プロパティ
@@ -542,8 +544,9 @@ namespace Sunctum.ViewModels
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                throw new NotImplementedException();
-                //ResetScrollOffsetRequest.Raise(new Notification());
+                var listViews = App.Current.MainWindow.EnumerateChildOfType<ListView>();
+                var virtualizingWrapPanel = listViews.First(x => x.Name == "Book_ListView").FindName("BookListViewVirtualinzingWrapPanel") as VirtualizingWrapPanel;
+                virtualizingWrapPanel.ResetOffset();
             });
         }
 
@@ -884,7 +887,7 @@ namespace Sunctum.ViewModels
             StoreScrollOffset(Guid.Empty);
             OpenedBook = book;
             RestoreScrollOffset(OpenedBook.ID);
-            this.MainWindowViewModel.LibraryVM.TagMng.ClearSelectedEntries();
+            this.MainWindowViewModel.LibraryVM.TagManager.ClearSelectedEntries();
             Task.Factory.StartNew(() => this.MainWindowViewModel.LibraryVM.FireFillContents(book));
             BookListIsVisible = false;
             ContentListIsVisible = true;
@@ -898,7 +901,7 @@ namespace Sunctum.ViewModels
             {
                 StoreScrollOffset(OpenedBook.ID);
                 RestoreScrollOffset(Guid.Empty);
-                this.MainWindowViewModel.LibraryVM.TagMng.ClearSelectedEntries();
+                this.MainWindowViewModel.LibraryVM.TagManager.ClearSelectedEntries();
             }
             OpenedBook = null;
         }
