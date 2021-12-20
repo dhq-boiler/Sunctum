@@ -17,33 +17,38 @@ using Sunctum.ViewModels;
 using Sunctum.Views;
 using System;
 using System.Data.SQLite;
-using System.IO;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Data;
 using Unity;
 
 namespace Sunctum
 {
-    /// <summary>
-    /// Interaction logic for App.xaml
-    /// 参考：http://d.hatena.ne.jp/hilapon/20131203/1386046128
-    /// </summary>
     public partial class App : PrismApplication
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            this.DispatcherUnhandledException += App_DispatcherUnhandledException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
+            var version = Assembly.GetExecutingAssembly().GetName().Version;
+            s_logger.Info($"Sunctum Personal Photo Library {version}");
+            s_logger.Info("Copyright (C) dhq_boiler 2015-2021. All rights reserved.");
+            s_logger.Info("SUNCTUM IS LAUNCHING");
+        }
+
         protected override Window CreateShell()
         {
-            //var w = new MainWindow();
-            //return w;
             return Container.Resolve<MainWindow>();
         }
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
-            //new UnityContainer().AddExtension(new Diagnostic()).AddExtension(new LogResolvesUnityContainerExtension());
             containerRegistry.GetContainer().AddExtension(new Diagnostic()).AddExtension(new LogResolvesUnityContainerExtension());
-            //containerRegistry.Register<MainWindow>();
             containerRegistry.RegisterSingleton<IMainWindowViewModel, MainWindowViewModel>();
             containerRegistry.RegisterSingleton<IHomeDocumentViewModel, HomeDocumentViewModel>();
             containerRegistry.RegisterSingleton<IAuthorPaneViewModel, AuthorPaneViewModel>();
@@ -97,73 +102,43 @@ namespace Sunctum
             AuthorSortingToBool.ResolveNamed = (type, name) => containerRegistry.GetContainer().Resolve(type, name);
             TagSortingToBool.Resolve = (type) => containerRegistry.GetContainer().Resolve(type);
             TagSortingToBool.ResolveNamed = (type, name) => containerRegistry.GetContainer().Resolve(type, name);
-
-            //var pluginsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "plugins");
-            //foreach (var dllFile in Directory.GetFiles(pluginsPath, "*.dll"))
-            //{
-            //    var assembly = Assembly.LoadFrom(dllFile);
-            //    Kernel.BindExportsInAssembly(assembly);
-            //}
         }
 
+        /// <summary>
+        /// WPF UIスレッドでの未処理例外スロー時のイベントハンドラ
+        /// </summary>
+        private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
+        {
+            e.Handled = true;
+            this.ReportUnhandledException(e.Exception);
+        }
 
+        /// <summary>
+        /// UIスレッド以外の未処理例外スロー時のイベントハンドラ
+        /// </summary>
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            this.ReportUnhandledException(e.ExceptionObject as Exception);
+        }
 
-        //internal static SunctumBootstrapper Bootstrapper { get; private set; }
+        private void ReportUnhandledException(Exception exception)
+        {
+            s_logger.Error(exception);
+            var dialog = new ErrorReportDialog(exception);
+            dialog.ShowDialog();
+        }
 
-        ///// <summary>
-        ///// アプリケーション開始時のイベントハンドラ
-        ///// </summary>
-        //protected override void OnStartup(StartupEventArgs e)
-        //{
-        //    base.OnStartup(e);
+        /// <summary>
+        /// アプリケーション終了時のイベントハンドラ
+        /// </summary>
+        protected override void OnExit(ExitEventArgs e)
+        {
+            s_logger.Info("SUNCTUM IS SHUTTING DOWN");
 
-        //    this.DispatcherUnhandledException += App_DispatcherUnhandledException;
-        //    AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            this.DispatcherUnhandledException -= App_DispatcherUnhandledException;
+            AppDomain.CurrentDomain.UnhandledException -= CurrentDomain_UnhandledException;
 
-        //    var version = Assembly.GetExecutingAssembly().GetName().Version;
-        //    s_logger.Info($"Sunctum Personal Photo Library {version}");
-        //    s_logger.Info("Copyright (C) dhq_boiler 2015-2021. All rights reserved.");
-        //    s_logger.Info("SUNCTUM IS LAUNCHING");
-
-        //    Bootstrapper = new SunctumBootstrapper();
-        //    Bootstrapper.Run();
-        //}
-
-        ///// <summary>
-        ///// WPF UIスレッドでの未処理例外スロー時のイベントハンドラ
-        ///// </summary>
-        //private void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
-        //{
-        //    e.Handled = true;
-        //    this.ReportUnhandledException(e.Exception);
-        //}
-
-        ///// <summary>
-        ///// UIスレッド以外の未処理例外スロー時のイベントハンドラ
-        ///// </summary>
-        //private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        //{
-        //    this.ReportUnhandledException(e.ExceptionObject as Exception);
-        //}
-
-        //private void ReportUnhandledException(Exception exception)
-        //{
-        //    s_logger.Error(exception);
-        //    var dialog = new ErrorReportDialog(exception);
-        //    dialog.ShowDialog();
-        //}
-
-        ///// <summary>
-        ///// アプリケーション終了時のイベントハンドラ
-        ///// </summary>
-        //protected override void OnExit(ExitEventArgs e)
-        //{
-        //    s_logger.Info("SUNCTUM IS SHUTTING DOWN");
-
-        //    this.DispatcherUnhandledException -= App_DispatcherUnhandledException;
-        //    AppDomain.CurrentDomain.UnhandledException -= CurrentDomain_UnhandledException;
-
-        //    base.OnExit(e);
-        //}
+            base.OnExit(e);
+        }
     }
 }
