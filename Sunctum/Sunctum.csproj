@@ -329,8 +329,8 @@
     <Compile Include="Views\ProgressBar.xaml.cs">
       <DependentUpon>ProgressBar.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\StatisticsDialog.xaml.cs">
-      <DependentUpon>StatisticsDialog.xaml</DependentUpon>
+    <Compile Include="Views\Statistics.xaml.cs">
+      <DependentUpon>Statistics.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TabItemContainerStyleSelector.cs" />
     <Compile Include="Views\TabItemTemplateSelector.cs" />
@@ -433,7 +433,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\StatisticsDialog.xaml">
+    <Page Include="Views\Statistics.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -233,8 +233,7 @@ namespace Sunctum.ViewModels
             });
             OpenStatisticsDialogCommand = new DelegateCommand(() =>
             {
-                throw new NotImplementedException();
-                //OpenStatisticsDialogRequest.Raise(new Notification() { Title = "統計" });
+                DialogService.ShowDialog(nameof(Views.Statistics));
             });
             OpenSwitchLibraryCommand = new DelegateCommand(async () =>
             {
@@ -669,7 +668,7 @@ namespace Sunctum.ViewModels
             var statistics = dao.FindBy(new Dictionary<string, object>() { { "ID", id } });
             if (statistics.Count() == 0)
             {
-                var newStatistics = new Statistics();
+                var newStatistics = new Domain.Models.Statistics();
                 newStatistics.ID = id;
                 newStatistics.NumberOfBoots = 1;
                 dao.Insert(newStatistics);

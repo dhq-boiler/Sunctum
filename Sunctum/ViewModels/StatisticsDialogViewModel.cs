@@ -1,5 +1,6 @@
 ﻿using Prism.Commands;
 using Prism.Mvvm;
+using Prism.Services.Dialogs;
 using Reactive.Bindings;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Data.DaoFacade;
@@ -11,7 +12,7 @@ using Unity;
 
 namespace Sunctum.ViewModels
 {
-    internal class StatisticsDialogViewModel : BindableBase
+    internal class StatisticsDialogViewModel : BindableBase, IDialogAware
     {
         [Dependency]
         public ILibrary LibraryManager { get; set; }
@@ -53,11 +54,14 @@ namespace Sunctum.ViewModels
 
         public ReactivePropertySlim<long> TotalDuplicateBooksSize { get; } = new ReactivePropertySlim<long>();
 
+        public string Title => "統計";
 
         public StatisticsDialogViewModel()
         {
             LoadedCommand = new DelegateCommand(() => Load());
         }
+
+        public event Action<IDialogResult> RequestClose;
 
         public void Load()
         {
@@ -95,6 +99,19 @@ namespace Sunctum.ViewModels
             NumberOfDuplicateBooks.Value = BookFacade.FindDuplicateFingerPrint().Count();
 
             TotalDuplicateBooksSize.Value = BookFacade.FindDuplicateFingerPrint().Where(x => x.ByteSize != null).Select(x => x.ByteSize.Value).Sum();
+        }
+
+        public bool CanCloseDialog()
+        {
+            return true;
+        }
+
+        public void OnDialogClosed()
+        {
+        }
+
+        public void OnDialogOpened(IDialogParameters parameters)
+        {
         }
     }
 }

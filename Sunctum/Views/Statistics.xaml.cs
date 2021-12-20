@@ -18,9 +18,9 @@ namespace Sunctum.Views
     /// <summary>
     /// Statistics.xaml の相互作用ロジック
     /// </summary>
-    public partial class StatisticsDialog : UserControl
+    public partial class Statistics : UserControl
     {
-        public StatisticsDialog()
+        public Statistics()
         {
             InitializeComponent();
         }

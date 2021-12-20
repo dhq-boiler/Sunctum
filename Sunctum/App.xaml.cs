@@ -87,6 +87,7 @@ namespace Sunctum
             containerRegistry.RegisterDialog<ChangeStar, ChangeStarViewModel>();
             containerRegistry.RegisterDialog<BookProperty, BookPropertyDialogViewModel>();
             containerRegistry.RegisterDialog<PowerSearch, PowerSearchViewModel>();
+            containerRegistry.RegisterDialog<Views.Statistics, StatisticsDialogViewModel>();
 
             BookSortingToBool.Resolve = (type) => containerRegistry.GetContainer().Resolve(type);
             BookSortingToBool.ResolveNamed = (type, name) => containerRegistry.GetContainer().Resolve(type, name);
