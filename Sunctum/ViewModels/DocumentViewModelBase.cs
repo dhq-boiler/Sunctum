@@ -567,8 +567,18 @@ namespace Sunctum.ViewModels
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                var virtualizingWrapPanel = Application.Current.MainWindow.FindChild<VirtualizingWrapPanel>("BookListViewVirtualinzingWrapPanel");
-                virtualizingWrapPanel.ResetOffset();
+                var displayType = BookCabinet.DisplayType;
+                if (displayType == DisplayType.SideBySide)
+                {
+                    var virtualizingWrapPanel = Application.Current.MainWindow.FindChild<VirtualizingWrapPanel>("BookListViewVirtualinzingWrapPanel");
+                    virtualizingWrapPanel.ResetOffset();
+                }
+                else if (displayType == DisplayType.Details)
+                {
+                    var virtualizingStackPanel = Application.Current.MainWindow.FindChild<System.Windows.Controls.VirtualizingStackPanel>("BookListViewDetailsVirtualizingStackPanel");
+                    virtualizingStackPanel.SetHorizontalOffset(0);
+                    virtualizingStackPanel.SetVerticalOffset(0);
+                }
             });
         }
 
