@@ -85,6 +85,7 @@ namespace Sunctum
             containerRegistry.GetContainer().Resolve<IDataAccessManager>().AppDao = new DaoBuilder(new Connection(ConnectionStringBuilder.Build(Specifications.APP_DB_FILENAME), typeof(SQLiteConnection)));
 
             containerRegistry.RegisterDialog<ChangeStar, ChangeStarViewModel>();
+            containerRegistry.RegisterDialog<BookProperty, BookPropertyDialogViewModel>();
 
             BookSortingToBool.Resolve = (type) => containerRegistry.GetContainer().Resolve(type);
             BookSortingToBool.ResolveNamed = (type, name) => containerRegistry.GetContainer().Resolve(type, name);

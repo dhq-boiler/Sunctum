@@ -1,15 +1,15 @@
 ﻿
 
 using Homura.Core;
-using Ninject;
 using Prism.Mvvm;
+using Prism.Services.Dialogs;
 using Reactive.Bindings;
+using Reactive.Bindings.Extensions;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Load;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
-using Sunctum.Infrastructure.Core;
 using Sunctum.Properties;
 using Sunctum.UI.Controls;
 using Sunctum.UI.Dialogs;
@@ -20,17 +20,25 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Windows;
+using System.Windows.Input;
 using Unity;
 using static Sunctum.UI.Core.Extensions;
 
 namespace Sunctum.ViewModels
 {
-    public class BookPropertyDialogViewModel : BindableBase
+    public class BookPropertyDialogViewModel : BindableBase, IDialogAware, IDisposable
     {
         private BookViewModel _book;
         private List<AuthorViewModel> _AllAuthors;
         private int _SelectedAuthorIndex;
+        private bool disposedValue;
+        private CompositeDisposable disposables = new CompositeDisposable();
+
+        public event Action<IDialogResult> RequestClose;
+
+        public ReactiveCommand<KeyEventArgs> TitleTextBoxKeyDownCommand { get; set; }
 
         [Dependency]
         public ILibrary LibraryManager { get; set; }
@@ -49,7 +57,7 @@ namespace Sunctum.ViewModels
 
         private VirtualizingStackPanel VSP_Contents { get { return Parent.Contents_ListView.GetVisualChild<VirtualizingStackPanel>(); } }
 
-        public BookPropertyDialog Parent { get; set; }
+        public BookProperty Parent { get; set; }
 
         public Configuration Configuration { get { return Configuration.ApplicationConfiguration; } }
 
@@ -65,19 +73,24 @@ namespace Sunctum.ViewModels
                 .Subscribe(dialog =>
                 {
                     UpdateBook();
-                    dialog.DialogResult = true;
-                });
+                    RequestClose.Invoke(new DialogResult(ButtonResult.OK));
+                })
+                .AddTo(disposables);
             CancelCommand
                 .Subscribe(dialog =>
                 {
-                    dialog.DialogResult = false;
-                });
+                    RequestClose.Invoke(new DialogResult(ButtonResult.Cancel));
+                })
+                .AddTo(disposables);
             SelectNextBookCommand
-                .Subscribe(() => SelectNextBook());
+                .Subscribe(() => SelectNextBook())
+                .AddTo(disposables);
             SelectPreviousBookCommand
-                .Subscribe(() => SelectPreviousBook());
+                .Subscribe(() => SelectPreviousBook())
+                .AddTo(disposables);
             OpenSaveDirCommand
-                .Subscribe(() => OpenDir());
+                .Subscribe(() => OpenDir())
+                .AddTo(disposables);
             OpenAuthorManagementDialogCommand
                 .Subscribe(() =>
                 {
@@ -130,7 +143,25 @@ namespace Sunctum.ViewModels
                     dialog.EntityMngVM = dialogViewModel;
                     dialogViewModel.Initialize();
                     dialog.Show();
-                });
+                })
+                .AddTo(disposables);
+            TitleTextBoxKeyDownCommand = new ReactiveCommand<KeyEventArgs>();
+            TitleTextBoxKeyDownCommand.Subscribe(e =>
+            {
+                switch (e.Key)
+                {
+                    case Key.Enter:
+                        UpdateBook();
+                        RequestClose.Invoke(new DialogResult(ButtonResult.OK));
+                        break;
+                    case Key.Escape:
+                        RequestClose.Invoke(new DialogResult(ButtonResult.Cancel));
+                        break;
+                    default:
+                        break;
+                }
+            })
+            .AddTo(disposables);
         }
 
         private void RefleshBook()
@@ -216,6 +247,8 @@ namespace Sunctum.ViewModels
             }
         }
 
+        public string Title => $"{Book.Title}のプロパティ";
+
         internal void OpenDir()
         {
             Process.Start(SaveDir);
@@ -294,6 +327,42 @@ namespace Sunctum.ViewModels
             {
                 titleTextBox.SelectAll();
             }
+        }
+
+        public bool CanCloseDialog()
+        {
+            return true;
+        }
+
+        public void OnDialogClosed()
+        {
+        }
+
+        public void OnDialogOpened(IDialogParameters parameters)
+        {
+            var book = parameters.GetValue<BookViewModel>("Book");
+            SelectBook(book);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    disposables.Dispose();
+                }
+
+                disposables = null;
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }

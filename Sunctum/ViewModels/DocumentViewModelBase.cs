@@ -9,6 +9,7 @@ using Reactive.Bindings.Extensions;
 using Sunctum.Converters;
 using Sunctum.Core.Extensions;
 using Sunctum.Domain.Extensions;
+using Sunctum.Domain.Logic.DisplayType;
 using Sunctum.Domain.Logic.Load;
 using Sunctum.Domain.Logic.Query;
 using Sunctum.Domain.Models;
@@ -492,8 +493,17 @@ namespace Sunctum.ViewModels
 
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    var virtualizingWrapPanel = Application.Current.MainWindow.FindChild<VirtualizingWrapPanel>("BookListViewVirtualinzingWrapPanel");
-                    _scrollOffset[bookId] = virtualizingWrapPanel.GetOffset();
+                    var displayType = BookCabinet.DisplayType;
+                    if (displayType == DisplayType.SideBySide)
+                    {
+                        var virtualizingWrapPanel = Application.Current.MainWindow.FindChild<VirtualizingWrapPanel>("BookListViewVirtualinzingWrapPanel");
+                        _scrollOffset[bookId] = virtualizingWrapPanel.GetOffset();
+                    }
+                    else if (displayType == DisplayType.Details)
+                    {
+                        var virtualizingStackPanel = Application.Current.MainWindow.FindChild<System.Windows.Controls.VirtualizingStackPanel>("BookListViewDetailsVirtualizingStackPanel");
+                        _scrollOffset[bookId] = new Point(virtualizingStackPanel.HorizontalOffset, virtualizingStackPanel.VerticalOffset);
+                    }
                 });
             }
             else
@@ -511,20 +521,23 @@ namespace Sunctum.ViewModels
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    var virtualizingWrapPanel = Application.Current.MainWindow.FindChild<VirtualizingWrapPanel>("BookListViewVirtualinzingWrapPanel");
-                    if (_scrollOffset.ContainsKey(bookId))
-                    {
-                        virtualizingWrapPanel.SetOffset(_scrollOffset[bookId]);
-                    }
-                    else
-                    {
-                        virtualizingWrapPanel.ResetOffset();
-                    }
+                    RestoreScrollOffsetInternal(bookId);
                 });
             }
             else
             {
-                var virtualizingWrapPanel = Application.Current.MainWindow.FindChild<VirtualizingWrapPanel>("ContentsListViewVirtualizingWrapPanel");
+                RestoreScrollOffsetInternal(bookId);
+            }
+
+            _scrollOffset.Remove(bookId);
+        }
+
+        private void RestoreScrollOffsetInternal(Guid bookId)
+        {
+            var displayType = BookCabinet.DisplayType;
+            if (displayType == DisplayType.SideBySide)
+            {
+                var virtualizingWrapPanel = Application.Current.MainWindow.FindChild<VirtualizingWrapPanel>("BookListViewVirtualinzingWrapPanel");
                 if (_scrollOffset.ContainsKey(bookId))
                 {
                     virtualizingWrapPanel.SetOffset(_scrollOffset[bookId]);
@@ -534,8 +547,20 @@ namespace Sunctum.ViewModels
                     virtualizingWrapPanel.ResetOffset();
                 }
             }
-
-            _scrollOffset.Remove(bookId);
+            else if (displayType == DisplayType.Details)
+            {
+                var virtualizingStackPanel = Application.Current.MainWindow.FindChild<System.Windows.Controls.VirtualizingStackPanel>("BookListViewDetailsVirtualizingStackPanel");
+                if (_scrollOffset.ContainsKey(bookId))
+                {
+                    virtualizingStackPanel.SetHorizontalOffset(_scrollOffset[bookId].X);
+                    virtualizingStackPanel.SetVerticalOffset(_scrollOffset[bookId].Y);
+                }
+                else
+                {
+                    virtualizingStackPanel.SetHorizontalOffset(0);
+                    virtualizingStackPanel.SetVerticalOffset(0);
+                }
+            }
         }
 
         public void ResetScrollOffset()
@@ -738,8 +763,16 @@ namespace Sunctum.ViewModels
 
         private void OpenBookPropertyDialog(BookViewModel book)
         {
-            var dialog = new BookPropertyDialog(book);
-            dialog.ShowDialog();
+            IDialogParameters parameter = new DialogParameters();
+            parameter.Add("Book", book);
+            IDialogResult result = new DialogResult();
+            dialogService.ShowDialog(nameof(BookProperty), parameter, ret => result = ret);
+            if (result != null && result.Result == ButtonResult.OK)
+            {
+
+            }
+            //var dialog = new BookPropertyDialog(book);
+            //dialog.ShowDialog();
         }
 
         private void OpenExportDialog(BookViewModel[] books)

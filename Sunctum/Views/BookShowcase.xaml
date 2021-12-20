@@ -425,7 +425,7 @@
                                 <Setter Property="ItemsPanel">
                                     <Setter.Value>
                                         <ItemsPanelTemplate>
-                                            <VirtualizingStackPanel />
+                                            <VirtualizingStackPanel x:Name="BookListViewDetailsVirtualizingStackPanel" />
                                         </ItemsPanelTemplate>
                                     </Setter.Value>
                                 </Setter>

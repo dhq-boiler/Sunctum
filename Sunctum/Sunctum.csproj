@@ -282,6 +282,9 @@
     <Compile Include="Views\BlinkBlackWhiteButton.xaml.cs">
       <DependentUpon>BlinkBlackWhiteButton.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\BookProperty.xaml.cs">
+      <DependentUpon>BookProperty.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ChangeStar.xaml.cs">
       <DependentUpon>ChangeStar.xaml</DependentUpon>
     </Compile>
@@ -304,9 +307,6 @@
     <Compile Include="Converters\BookSortingToBool.cs" />
     <Compile Include="Converters\BoolToVisibilityConverter.cs" />
     <Compile Include="Converters\PathToWriteableBitmap.cs" />
-    <Compile Include="Views\BookPropertyDialog.xaml.cs">
-      <DependentUpon>BookPropertyDialog.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\InformationPane.xaml.cs">
       <DependentUpon>InformationPane.xaml</DependentUpon>
     </Compile>
@@ -369,6 +369,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\BookProperty.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\ChangeStar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -398,10 +402,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="theme.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\BookPropertyDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
