@@ -40,6 +40,11 @@ namespace Sunctum.Views
             HomeDocumentViewModel.ResetScrollOffsetPool();
         }
 
+        private void MainWindowInstance_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            MainWindowVM.SaveLayout();
+        }
+
         private void Window_Closed(object sender, EventArgs e)
         {
             MainWindowVM.Terminate();

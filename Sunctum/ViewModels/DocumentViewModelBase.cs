@@ -117,22 +117,6 @@ namespace Sunctum.ViewModels
 
         #region プロパティ
 
-        //public InteractionRequest<Notification> ChangeStarRequest { get; } = new InteractionRequest<Notification>();
-
-        //public InteractionRequest<Notification> ResetScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
-
-        //public InteractionRequest<Notification> StoreBookScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
-
-        //public InteractionRequest<Notification> StoreContentScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
-
-        //public InteractionRequest<Notification> RestoreBookScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
-
-        //public InteractionRequest<Notification> RestoreContentScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
-
-        //public InteractionRequest<Notification> BlinkGoNextButtonRequest { get; } = new InteractionRequest<Notification>();
-
-        //public InteractionRequest<Notification> BlinkGoBackButtonRequest { get; } = new InteractionRequest<Notification>();
-
         public IArrangedBookStorage BookCabinet
         {
             get { return _Cabinet; }
@@ -496,20 +480,14 @@ namespace Sunctum.ViewModels
 
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    throw new NotImplementedException();
-                    //StoreBookScrollOffsetRequest.Raise(new Notification()
-                    //{
-                    //    Content = new Tuple<Dictionary<Guid, Point>, Guid>(_scrollOffset, bookId)
-                    //});
+                    var virtualizingWrapPanel = Application.Current.MainWindow.FindChild<VirtualizingWrapPanel>("BookListViewVirtualinzingWrapPanel");
+                    _scrollOffset[bookId] = virtualizingWrapPanel.GetOffset();
                 });
             }
             else
             {
-                throw new NotImplementedException();
-                //StoreContentScrollOffsetRequest.Raise(new Notification()
-                //{
-                //    Content = new Tuple<Dictionary<Guid, Point>, Guid>(_scrollOffset, bookId)
-                //});
+                var virtualizingWrapPanel = Application.Current.MainWindow.FindChild<VirtualizingWrapPanel>("ContentsListViewVirtualizingWrapPanel");
+                _scrollOffset[bookId] = virtualizingWrapPanel.GetOffset();
             }
         }
 
@@ -521,20 +499,28 @@ namespace Sunctum.ViewModels
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    throw new NotImplementedException();
-                    //RestoreBookScrollOffsetRequest.Raise(new Notification()
-                    //{
-                    //    Content = new Tuple<Dictionary<Guid, Point>, Guid>(_scrollOffset, bookId)
-                    //});
+                    var virtualizingWrapPanel = Application.Current.MainWindow.FindChild<VirtualizingWrapPanel>("BookListViewVirtualinzingWrapPanel");
+                    if (_scrollOffset.ContainsKey(bookId))
+                    {
+                        virtualizingWrapPanel.SetOffset(_scrollOffset[bookId]);
+                    }
+                    else
+                    {
+                        virtualizingWrapPanel.ResetOffset();
+                    }
                 });
             }
             else
             {
-                throw new NotImplementedException();
-                //RestoreContentScrollOffsetRequest.Raise(new Notification()
-                //{
-                //    Content = new Tuple<Dictionary<Guid, Point>, Guid>(_scrollOffset, bookId)
-                //});
+                var virtualizingWrapPanel = Application.Current.MainWindow.FindChild<VirtualizingWrapPanel>("ContentsListViewVirtualizingWrapPanel");
+                if (_scrollOffset.ContainsKey(bookId))
+                {
+                    virtualizingWrapPanel.SetOffset(_scrollOffset[bookId]);
+                }
+                else
+                {
+                    virtualizingWrapPanel.ResetOffset();
+                }
             }
 
             _scrollOffset.Remove(bookId);
@@ -544,8 +530,7 @@ namespace Sunctum.ViewModels
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                var listViews = App.Current.MainWindow.EnumerateChildOfType<ListView>();
-                var virtualizingWrapPanel = listViews.First(x => x.Name == "Book_ListView").FindName("BookListViewVirtualinzingWrapPanel") as VirtualizingWrapPanel;
+                var virtualizingWrapPanel = Application.Current.MainWindow.FindChild<VirtualizingWrapPanel>("BookListViewVirtualinzingWrapPanel");
                 virtualizingWrapPanel.ResetOffset();
             });
         }

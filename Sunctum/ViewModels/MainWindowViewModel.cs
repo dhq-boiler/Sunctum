@@ -982,6 +982,14 @@ namespace Sunctum.ViewModels
             }
         }
 
+        public void SaveLayout()
+        {
+            Debug.Assert(App.Current.MainWindow != null);
+            var dockingManager = App.Current.MainWindow.GetChildOfType<DockingManager>();
+            var serializer = new XmlLayoutSerializer(dockingManager);
+            serializer.Serialize(Specifications.APP_LAYOUT_CONFIG_FILENAME);
+        }
+
         public void Terminate()
         {
             var config = Configuration.ApplicationConfiguration;
@@ -1004,9 +1012,6 @@ namespace Sunctum.ViewModels
                 config.WindowRect = null;
             }
             Configuration.Save(config);
-
-            throw new NotImplementedException();
-            //SaveLayoutRequest.Raise(new Notification());
 
             Dispose();
         }

@@ -20,6 +20,7 @@
         Height="{Binding WindowHeight, Mode=TwoWay}"
         prism:ViewModelLocator.AutoWireViewModel="True"
         Closed="Window_Closed"
+        Closing="MainWindowInstance_Closing"
         Left="{Binding WindowLeft, Mode=TwoWay}"
         Loaded="Window_Loaded"
         Top="{Binding WindowTop, Mode=TwoWay}"

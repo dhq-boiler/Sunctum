@@ -409,19 +409,7 @@
                         <Setter Property="ItemsPanel">
                             <Setter.Value>
                                 <ItemsPanelTemplate>
-                                    <ui.ctrl:VirtualizingWrapPanel x:Name="BookListViewVirtualinzingWrapPanel">
-                                        <i:Interaction.Triggers>
-                                            <trigger:InteractionRequestTrigger SourceObject="{Binding ResetScrollOffsetRequest}">
-                                                <trigger:ResetScrollOffsetAction />
-                                            </trigger:InteractionRequestTrigger>
-                                            <trigger:InteractionRequestTrigger SourceObject="{Binding StoreBookScrollOffsetRequest}">
-                                                <trigger:StoreScrollOffsetAction />
-                                            </trigger:InteractionRequestTrigger>
-                                            <trigger:InteractionRequestTrigger SourceObject="{Binding RestoreBookScrollOffsetRequest}">
-                                                <trigger:RestoreScrollOffsetAction />
-                                            </trigger:InteractionRequestTrigger>
-                                        </i:Interaction.Triggers>
-                                    </ui.ctrl:VirtualizingWrapPanel>
+                                    <ui.ctrl:VirtualizingWrapPanel x:Name="BookListViewVirtualinzingWrapPanel" />
                                 </ItemsPanelTemplate>
                             </Setter.Value>
                         </Setter>
@@ -500,19 +488,7 @@
                     </i:Interaction.Triggers>
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <ui.ctrl:VirtualizingWrapPanel x:Name="ContentsListViewVirtualizingWrapPanel">
-                                <i:Interaction.Triggers>
-                                    <trigger:InteractionRequestTrigger SourceObject="{Binding ResetScrollOffsetRequest}">
-                                        <trigger:ResetScrollOffsetAction />
-                                    </trigger:InteractionRequestTrigger>
-                                    <trigger:InteractionRequestTrigger SourceObject="{Binding StoreContentScrollOffsetRequest}">
-                                        <trigger:StoreScrollOffsetAction />
-                                    </trigger:InteractionRequestTrigger>
-                                    <trigger:InteractionRequestTrigger SourceObject="{Binding RestoreContentScrollOffsetRequest}">
-                                        <trigger:RestoreScrollOffsetAction />
-                                    </trigger:InteractionRequestTrigger>
-                                </i:Interaction.Triggers>
-                            </ui.ctrl:VirtualizingWrapPanel>
+                            <ui.ctrl:VirtualizingWrapPanel x:Name="ContentsListViewVirtualizingWrapPanel" />
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
                 </ListView>
