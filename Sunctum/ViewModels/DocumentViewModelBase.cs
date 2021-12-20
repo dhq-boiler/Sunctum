@@ -61,6 +61,10 @@ namespace Sunctum.ViewModels
 
         #region コマンド
 
+        public ICommand BlinkGoBackButtonCommand { get; set; }
+
+        public ICommand BlinkGoNextButtonCommand { get; set; }
+
         public ICommand BuildBookContextMenuCommand { get; set; }
 
         public ICommand BuildContentsContextMenuCommand { get; set; }
@@ -116,6 +120,9 @@ namespace Sunctum.ViewModels
         #endregion //コマンド
 
         #region プロパティ
+
+        [Dependency]
+        public IEnumerable<IDropPlugin> DropPlugins { get; set; }
 
         public IArrangedBookStorage BookCabinet
         {
@@ -244,9 +251,6 @@ namespace Sunctum.ViewModels
 
         public ReactiveProperty<int?> StarLevel { get; } = new ReactiveProperty<int?>();
 
-        [Dependency]
-        public IEnumerable<IDropPlugin> DropPlugins { get; set; }
-
         #endregion //プロパティ
 
         public DocumentViewModelBase(IDialogService dialogService)
@@ -272,6 +276,14 @@ namespace Sunctum.ViewModels
 
         private void RegisterCommands()
         {
+            BlinkGoBackButtonCommand = new DelegateCommand(() =>
+            {
+                GoPreviousImage();
+            });
+            BlinkGoNextButtonCommand = new DelegateCommand(() =>
+            {
+                GoNextImage();
+            });
             BuildBookContextMenuCommand = new DelegateCommand<ContextMenuEventArgs>(args =>
             {
                 BuildContextMenus_Books();

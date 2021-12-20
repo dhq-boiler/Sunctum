@@ -26,6 +26,8 @@ namespace Sunctum.Views
 
         public static readonly DependencyProperty ButtonContentProperty = DependencyProperty.Register("ButtonContent", typeof(object), typeof(BlinkBlackWhiteButton), new PropertyMetadata(null));
         public static readonly DependencyProperty FocusAreaProperty = DependencyProperty.Register("FocusArea", typeof(FrameworkElement), typeof(BlinkBlackWhiteButton), new PropertyMetadata(null));
+        public static readonly DependencyProperty CommandProperty = DependencyProperty.Register("Command", typeof(ICommand), typeof(BlinkBlackWhiteButton));
+        public static readonly DependencyProperty CommandParameterProperty = DependencyProperty.Register("CommandParameter", typeof(object), typeof(BlinkBlackWhiteButton));
 
         public object ButtonContent
         {
@@ -37,6 +39,18 @@ namespace Sunctum.Views
         {
             get { return (FrameworkElement)GetValue(FocusAreaProperty); }
             set { SetValue(FocusAreaProperty, value); }
+        }
+
+        public ICommand Command
+        {
+            get { return (ICommand)GetValue(CommandProperty);}
+            set { SetValue(CommandProperty, value); }
+        }
+
+        public object CommandParameter
+        {
+            get { return (object)GetValue(CommandParameterProperty);}
+            set { SetValue(CommandParameterProperty, value);}
         }
 
         public event RoutedEventHandler Click
@@ -56,6 +70,11 @@ namespace Sunctum.Views
             }
             storyboard = (Storyboard)FindResource("Storyboard_BlackWhite_Button_Color_Blink");
             storyboard.Begin(Button);
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Command?.Execute(CommandParameter);
         }
     }
 }

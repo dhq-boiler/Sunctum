@@ -12,6 +12,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
     xmlns:sys="clr-namespace:System;assembly=System.Runtime"
+    xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
     xmlns:trigger="clr-namespace:Sunctum.Views.Triggers"
     xmlns:ui.ctrl="clr-namespace:Sunctum.UI.Controls;assembly=Sunctum.UI"
     xmlns:displaytype="clr-namespace:Sunctum.Domain.Logic.DisplayType;assembly=Sunctum.Domain"
@@ -19,7 +20,7 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <i:Interaction.Triggers>
+    <!--<i:Interaction.Triggers>
         <trigger:InteractionRequestTrigger SourceObject="{Binding ChangeStarRequest}">
             <trigger:PopupWindowAction IsModal="True">
                 <trigger:PopupWindowAction.WindowContent>
@@ -27,7 +28,7 @@
                 </trigger:PopupWindowAction.WindowContent>
             </trigger:PopupWindowAction>
         </trigger:InteractionRequestTrigger>
-    </i:Interaction.Triggers>
+    </i:Interaction.Triggers>-->
     <UserControl.Resources>
         <cvt:PathGeometryConverter x:Key="PathGeometryConverter" />
         <cvt:MarginConverter x:Key="MarginConverter" />
@@ -544,14 +545,8 @@
                                     Width="75"
                                     Height="75"
                                     ButtonContent="&lt;"
-                                    Click="GoBack_Button_Click"
-                                    FocusArea="{Binding ElementName=Grid_ImageViewer_Panel_BlackWhite_Button_MouseOverArea}">
-                                    <i:Interaction.Triggers>
-                                        <trigger:InteractionRequestTrigger SourceObject="{Binding BlinkGoBackButtonRequest}">
-                                            <ei:CallMethodAction MethodName="Blink" TargetObject="{Binding ElementName=GoBack_Button}" />
-                                        </trigger:InteractionRequestTrigger>
-                                    </i:Interaction.Triggers>
-                                </local:BlinkBlackWhiteButton>
+                                    Command="{Binding BlinkGoBackButtonCommand}"
+                                    FocusArea="{Binding ElementName=Grid_ImageViewer_Panel_BlackWhite_Button_MouseOverArea}" />
                             </Grid>
                             <Grid DockPanel.Dock="Right">
                                 <local:BlinkBlackWhiteButton
@@ -559,14 +554,8 @@
                                     Width="75"
                                     Height="75"
                                     ButtonContent="&gt;"
-                                    Click="GoNext_Button_Click"
-                                    FocusArea="{Binding ElementName=Grid_ImageViewer_Panel_BlackWhite_Button_MouseOverArea}">
-                                    <i:Interaction.Triggers>
-                                        <trigger:InteractionRequestTrigger SourceObject="{Binding BlinkGoNextButtonRequest}">
-                                            <ei:CallMethodAction MethodName="Blink" TargetObject="{Binding ElementName=GoNext_Button}" />
-                                        </trigger:InteractionRequestTrigger>
-                                    </i:Interaction.Triggers>
-                                </local:BlinkBlackWhiteButton>
+                                    Command="{Binding BlinkGoNextButtonCommand}"
+                                    FocusArea="{Binding ElementName=Grid_ImageViewer_Panel_BlackWhite_Button_MouseOverArea}" />
                             </Grid>
                             <Grid />
                         </DockPanel>

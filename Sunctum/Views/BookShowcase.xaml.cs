@@ -202,18 +202,6 @@ namespace Sunctum.Views
             viewModel.CloseImage();
         }
 
-        private void GoBack_Button_Click(object sender, RoutedEventArgs e)
-        {
-            var viewModel = (DocumentViewModelBase)DataContext;
-            viewModel.GoPreviousImage();
-        }
-
-        private void GoNext_Button_Click(object sender, RoutedEventArgs e)
-        {
-            var viewModel = (DocumentViewModelBase)DataContext;
-            viewModel.GoNextImage();
-        }
-
         private void MoveBackword_Button_Click(object sender, RoutedEventArgs e)
         {
             var viewModel = (DocumentViewModelBase)DataContext;
