@@ -61,13 +61,6 @@
         <trigger:MouseWheelEventTrigger EventName="MouseWheel">
             <helper:EventToCommand Command="{Binding ActiveDocumentViewModel.MouseWheelCommand}" PassEventArgsToCommand="True" />
         </trigger:MouseWheelEventTrigger>
-        <trigger:InteractionRequestTrigger SourceObject="{Binding OpenPowerSearchRequest}">
-            <trigger:PopupWindowAction IsModal="False">
-                <trigger:PopupWindowAction.WindowContent>
-                    <local:PowerSearch />
-                </trigger:PopupWindowAction.WindowContent>
-            </trigger:PopupWindowAction>
-        </trigger:InteractionRequestTrigger>
         <trigger:InteractionRequestTrigger SourceObject="{Binding OpenStatisticsDialogRequest}">
             <trigger:PopupWindowAction IsModal="False">
                 <trigger:PopupWindowAction.WindowContent>

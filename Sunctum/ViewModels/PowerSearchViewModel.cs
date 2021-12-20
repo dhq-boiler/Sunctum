@@ -15,8 +15,6 @@ namespace Sunctum.ViewModels
 {
     internal class PowerSearchViewModel : IDialogAware
     {
-        public Action FinishInteraction { get; set; }
-
         private IArrangedBookStorage _bookStorage;
 
         public event Action<IDialogResult> RequestClose;
@@ -43,7 +41,7 @@ namespace Sunctum.ViewModels
         private void RegisterCommands()
         {
             SearchCommand = new DelegateCommand(() => Search());
-            CloseCommand = new DelegateCommand(() => FinishInteraction());
+            CloseCommand = new DelegateCommand(() => RequestClose.Invoke(new DialogResult(ButtonResult.Cancel)));
         }
 
         private void Search()
@@ -98,6 +96,8 @@ namespace Sunctum.ViewModels
 
 
             _bookStorage.SearchedBooks = new ObservableCollection<BookViewModel>(filtered.ToList());
+
+            RequestClose.Invoke(new DialogResult(ButtonResult.OK));
         }
 
         public bool CanCloseDialog()
@@ -111,6 +111,7 @@ namespace Sunctum.ViewModels
 
         public void OnDialogOpened(IDialogParameters parameters)
         {
+            _bookStorage = parameters.GetValue<IArrangedBookStorage>("Storage");
         }
     }
 }

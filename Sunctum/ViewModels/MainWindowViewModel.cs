@@ -228,8 +228,8 @@ namespace Sunctum.ViewModels
             });
             OpenPowerSearchCommand = new DelegateCommand(() =>
             {
-                throw new NotImplementedException();
-                //OpenPowerSearchRequest.Raise(new Notification() { Title = "Power search", Content = ActiveDocumentViewModel.BookCabinet });
+                IDialogResult result = new DialogResult();
+                DialogService.ShowDialog(nameof(PowerSearch), new DialogParameters() { { "Storage", ActiveDocumentViewModel.BookCabinet } }, ret => result = ret);
             });
             OpenStatisticsDialogCommand = new DelegateCommand(() =>
             {
