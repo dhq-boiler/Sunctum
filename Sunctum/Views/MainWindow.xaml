@@ -72,6 +72,7 @@
         <properties:Resources x:Key="resources" />
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <prism:ContainerProvider Type="{x:Type cvt:BookSortingToBool}" x:Key="BookSortingToBool" />
+        <prism:ContainerProvider Type="{x:Type cvt:DisplayTypeToBool}" x:Key="DisplayTypeToBool" />
         <cvt:PathToMenuItem x:Key="PathToMenuItem" />
         <cvt:ActiveDocumentConverter x:Key="ActiveDocumentConverter" />
         <cvt:WindowStateToVisibilityConverter x:Key="WindowStateToVisibilityConverter" />
@@ -245,10 +246,10 @@
                                 <MenuItem Header="{Binding MainWindow_Display_DisplayType, Source={StaticResource resources}}">
                                     <MenuItem Command="{Binding DisplaySideBySideCommand}"
                                               Header="{Binding MainWindow_Display_DisplayType_SideBySide, Source={StaticResource resources}}"
-                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.DisplayType, Mode=OneWay, Converter={cvt:DisplayTypeToBool NamedInstance=DisplayTypeToBool}, ConverterParameter=SideBySide}" />
-                                    <MenuItem Command="{Binding DetailsCommand}"
-                                              Header="{Binding MainWindow_Display_DisplayType_Details, Source={StaticResource resources}}"
-                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.DisplayType, Mode=OneWay, Converter={cvt:DisplayTypeToBool NamedInstance=DisplayTypeToBool}, ConverterParameter=Details}" />
+                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.DisplayType, Mode=OneWay, Converter={StaticResource DisplayTypeToBool}, ConverterParameter=SideBySide}" />
+                                    <MenuItem Command="{Binding DetailsCommand}"                                                            
+                                              Header="{Binding MainWindow_Display_DisplayType_Details, Source={StaticResource resources}}"  
+                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.DisplayType, Mode=OneWay, Converter={StaticResource DisplayTypeToBool}, ConverterParameter=Details}" />
                                 </MenuItem>
                             </MenuItem>
                             <MenuItem Header="{Binding MainWindow_Help, Source={StaticResource resources}}">
