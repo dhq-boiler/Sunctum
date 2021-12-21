@@ -94,8 +94,6 @@ namespace Sunctum
             containerRegistry.RegisterDialog<PowerSearch, PowerSearchViewModel>();
             containerRegistry.RegisterDialog<Views.Statistics, StatisticsDialogViewModel>();
 
-            AuthorSortingToBool.Resolve = (type) => containerRegistry.GetContainer().Resolve(type);
-            AuthorSortingToBool.ResolveNamed = (type, name) => containerRegistry.GetContainer().Resolve(type, name);
             TagSortingToBool.Resolve = (type) => containerRegistry.GetContainer().Resolve(type);
             TagSortingToBool.ResolveNamed = (type, name) => containerRegistry.GetContainer().Resolve(type, name);
         }
