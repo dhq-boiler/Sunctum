@@ -1,6 +1,4 @@
-﻿
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,23 +10,19 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace Sunctum.Views
 {
     /// <summary>
-    /// Interaction logic for AboutSunctumDialog.xaml
+    /// Version.xaml の相互作用ロジック
     /// </summary>
-    public partial class AboutSunctumDialog : Window
+    public partial class Version : UserControl
     {
-        public AboutSunctumDialog()
+        public Version()
         {
             InitializeComponent();
-        }
-
-        private void FlowDocument_PreviewMouseRightButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            e.Handled = true;
         }
     }
 }

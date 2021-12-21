@@ -93,6 +93,7 @@ namespace Sunctum
             containerRegistry.RegisterDialog<BookProperty, BookPropertyDialogViewModel>();
             containerRegistry.RegisterDialog<PowerSearch, PowerSearchViewModel>();
             containerRegistry.RegisterDialog<Views.Statistics, StatisticsDialogViewModel>();
+            containerRegistry.RegisterDialog<Views.Version, VersionViewModel>();
         }
 
         /// <summary>

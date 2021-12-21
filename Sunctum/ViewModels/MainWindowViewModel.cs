@@ -180,7 +180,7 @@ namespace Sunctum.ViewModels
         {
             AboutSunctumCommand = new DelegateCommand(() =>
             {
-                OpenAboutSunctumDialog();
+                OpenVersionDialog();
             });
             ClearSearchResultCommand = new DelegateCommand(() =>
             {
@@ -1031,10 +1031,9 @@ namespace Sunctum.ViewModels
 
         #endregion //一般
 
-        private void OpenAboutSunctumDialog()
+        private void OpenVersionDialog()
         {
-            var dialog = new AboutSunctumDialog();
-            dialog.ShowDialog();
+            DialogService.ShowDialog(nameof(Views.Version));
         }
 
         private void OpenMetadataImportSettingDialog()
