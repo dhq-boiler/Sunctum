@@ -20,15 +20,6 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <!--<i:Interaction.Triggers>
-        <trigger:InteractionRequestTrigger SourceObject="{Binding ChangeStarRequest}">
-            <trigger:PopupWindowAction IsModal="True">
-                <trigger:PopupWindowAction.WindowContent>
-                    <local:ChangeStar />
-                </trigger:PopupWindowAction.WindowContent>
-            </trigger:PopupWindowAction>
-        </trigger:InteractionRequestTrigger>
-    </i:Interaction.Triggers>-->
     <UserControl.Resources>
         <cvt:PathGeometryConverter x:Key="PathGeometryConverter" />
         <cvt:MarginConverter x:Key="MarginConverter" />
