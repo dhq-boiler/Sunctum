@@ -17,13 +17,14 @@ using Unity;
 
 namespace Sunctum.ViewModels
 {
-    public class ExportDialogViewModel : BindableBase, IDialogAware
+    public class ExportDialogViewModel : BindableBase, IDialogAware, IDisposable
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
         private BookViewModel[] _willExportBooks;
         private string _OutputDirectory;
         private bool _IncludeTabIntoFodlerName;
         private CompositeDisposable _disposables = new CompositeDisposable();
+        private bool disposedValue;
 
         [Dependency]
         public ILibrary Library { get; set; }
@@ -99,6 +100,27 @@ namespace Sunctum.ViewModels
             {
                 OutputDirectory = dialog.FileName;
             }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    _disposables.Dispose();
+                }
+
+                _disposables = null;
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }
