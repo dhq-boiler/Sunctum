@@ -1,14 +1,13 @@
-﻿
-
-using Ninject;
-using NLog;
+﻿using NLog;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.Util;
 using Sunctum.Domain.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Unity;
 
 namespace Sunctum.Domain.Logic.Async
 {
@@ -18,8 +17,8 @@ namespace Sunctum.Domain.Logic.Async
 
         private string _bookDir;
 
-        [Inject]
-        public ILibrary LibraryManager { get; set; }
+        [Dependency]
+        public Lazy<ILibrary> LibraryManager { get; set; }
 
         public IEnumerable<BookViewModel> TargetBooks { get; set; }
 
@@ -40,7 +39,7 @@ namespace Sunctum.Domain.Logic.Async
 
             foreach (var book in TargetBooks)
             {
-                LibraryManager.RunFillContentsWithImage(book);
+                LibraryManager.Value.RunFillContentsWithImage(book);
                 sequence.Add(() => CreateDirectoryIfDoesntExist(DestinationDirectory, book, IncludeTag));
                 foreach (var page in book.Contents)
                 {

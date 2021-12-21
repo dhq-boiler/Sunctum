@@ -1,8 +1,4 @@
-﻿
-
-using Ninject;
-using NLog;
-using Reactive.Bindings;
+﻿using NLog;
 using Sunctum.Domain.Extensions;
 using Sunctum.Domain.Logic.Import;
 using Sunctum.Domain.Logic.Parse;

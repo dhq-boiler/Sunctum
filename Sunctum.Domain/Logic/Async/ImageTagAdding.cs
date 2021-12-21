@@ -1,7 +1,4 @@
-﻿
-
-using Ninject;
-using NLog;
+﻿using NLog;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Extensions;
 using Sunctum.Domain.Models.Managers;
@@ -10,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Unity;
 
 namespace Sunctum.Domain.Logic.Async
 {
@@ -23,8 +21,8 @@ namespace Sunctum.Domain.Logic.Async
 
         private List<ImageViewModel> _images;
 
-        [Inject]
-        public ITagManager TagManager { get; set; }
+        [Dependency]
+        public Lazy<ITagManager> TagManager { get; set; }
 
         public IEnumerable<EntryViewModel> Entries { get; set; }
 
@@ -133,25 +131,25 @@ namespace Sunctum.Domain.Logic.Async
             sequence.Add(new Task(() =>
             {
                 var chains = from x in _images
-                             where TagManager.Chains.Count(c => c.ImageID == x.ID && c.TagID == _tag.ID) == 0
+                             where TagManager.Value.Chains.Count(c => c.ImageID == x.ID && c.TagID == _tag.ID) == 0
                              select new ImageTagViewModel(x.ID, _tag);
 
                 foreach (var chain in chains)
                 {
-                    TagManager.Chains.Add(chain);
+                    TagManager.Value.Chains.Add(chain);
                 }
             }));
 
             sequence.Add(new Task(() =>
             {
-                if (!TagManager.Tags.Contains(_tag))
+                if (!TagManager.Value.Tags.Contains(_tag))
                 {
-                    TagManager.Tags.Add(_tag);
+                    TagManager.Value.Tags.Add(_tag);
                 }
             }));
 
-            sequence.Add(new Task(() => TagManager.SelectedEntityTags = TagManager.GetCommonTags()));
-            sequence.Add(new Task(() => TagManager.ObserveSelectedEntityTags()));
+            sequence.Add(new Task(() => TagManager.Value.SelectedEntityTags = TagManager.Value.GetCommonTags()));
+            sequence.Add(new Task(() => TagManager.Value.ObserveSelectedEntityTags()));
         }
 
         public override void ConfigurePostTaskAction(AsyncTaskSequence sequence)
