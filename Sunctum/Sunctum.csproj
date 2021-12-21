@@ -279,9 +279,6 @@
     <Compile Include="ViewModels\StatisticsDialogViewModel.cs" />
     <Compile Include="ViewModels\TagPaneViewModel.cs" />
     <Compile Include="ViewModels\VersionViewModel.cs" />
-    <Compile Include="Views\AboutSunctumDialog.xaml.cs">
-      <DependentUpon>AboutSunctumDialog.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\AuthorPane.xaml.cs">
       <DependentUpon>AuthorPane.xaml</DependentUpon>
     </Compile>
@@ -332,8 +329,8 @@
     <Compile Include="Views\PowerSearch.xaml.cs">
       <DependentUpon>PowerSearch.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\PreferencesDialog.xaml.cs">
-      <DependentUpon>PreferencesDialog.xaml</DependentUpon>
+    <Compile Include="Views\Preferences.xaml.cs">
+      <DependentUpon>Preferences.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ProgressBar.xaml.cs">
       <DependentUpon>ProgressBar.xaml</DependentUpon>
@@ -369,10 +366,6 @@
     <Compile Include="Views\Version.xaml.cs">
       <DependentUpon>Version.xaml</DependentUpon>
     </Compile>
-    <Page Include="Views\AboutSunctumDialog.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Views\AuthorPane.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -437,7 +430,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\PreferencesDialog.xaml">
+    <Page Include="Views\Preferences.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

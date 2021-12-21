@@ -94,6 +94,7 @@ namespace Sunctum
             containerRegistry.RegisterDialog<PowerSearch, PowerSearchViewModel>();
             containerRegistry.RegisterDialog<Views.Statistics, StatisticsDialogViewModel>();
             containerRegistry.RegisterDialog<Views.Version, VersionViewModel>();
+            containerRegistry.RegisterDialog<Views.Preferences, PreferencesDialogViewModel>();
         }
 
         /// <summary>

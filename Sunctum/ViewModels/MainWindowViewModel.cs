@@ -1080,8 +1080,7 @@ namespace Sunctum.ViewModels
 
         public void ShowPreferenceDialog()
         {
-            PreferencesDialog dialog = new PreferencesDialog();
-            dialog.ShowDialog();
+            DialogService.ShowDialog(nameof(Preferences));
         }
 
         private async Task OpenImportLibraryDialog()

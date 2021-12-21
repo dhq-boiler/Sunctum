@@ -1,4 +1,5 @@
 ﻿using Prism.Mvvm;
+using Prism.Services.Dialogs;
 using Reactive.Bindings;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.ViewModels;
@@ -11,9 +12,11 @@ using Unity;
 
 namespace Sunctum.ViewModels
 {
-    public class PreferencesDialogViewModel : BindableBase
+    public class PreferencesDialogViewModel : BindableBase, IDialogAware
     {
         private Configuration _Config;
+
+        public event Action<IDialogResult> RequestClose;
 
         private ReadOnlyConfiguration InitialConfig { get; set; }
 
@@ -34,12 +37,10 @@ namespace Sunctum.ViewModels
 
         public ReactiveCommand<TextBox> PathReferenceCommand { get; set; } = new ReactiveCommand<TextBox>();
 
+        public string Title => "設定";
+
         public PreferencesDialogViewModel()
         {
-            var config = Configuration.ApplicationConfiguration;
-            this.InitialConfig = config.ReadOnly();
-            this.Config = (Configuration)config.Clone();
-
             RegisterCommands();
         }
 
@@ -71,7 +72,7 @@ namespace Sunctum.ViewModels
                     CheckUpdate(Config.ContentListViewItemMarginRight, InitialConfig.ContentListViewItemMarginRight);
                     CheckUpdate(Config.ContentListViewItemMarginBottom, InitialConfig.ContentListViewItemMarginBottom);
 
-                    dialog.DialogResult = true;
+                    RequestClose.Invoke(new DialogResult(ButtonResult.OK));
 
                     bool willRestart = false;
 
@@ -96,7 +97,7 @@ namespace Sunctum.ViewModels
             CancelCommand
                 .Subscribe(dialog =>
                 {
-                    dialog.DialogResult = false;
+                    RequestClose.Invoke(new DialogResult(ButtonResult.Cancel));
                 });
             PathReferenceCommand
                 .Subscribe(textbox =>
@@ -117,6 +118,22 @@ namespace Sunctum.ViewModels
             {
                 RestartRequired = true;
             }
+        }
+
+        public bool CanCloseDialog()
+        {
+            return true;
+        }
+
+        public void OnDialogClosed()
+        {
+        }
+
+        public void OnDialogOpened(IDialogParameters parameters)
+        {
+            var config = Configuration.ApplicationConfiguration;
+            this.InitialConfig = config.ReadOnly();
+            this.Config = (Configuration)config.Clone();
         }
     }
 }
