@@ -781,14 +781,14 @@ namespace Sunctum.ViewModels
             {
 
             }
-            //var dialog = new BookPropertyDialog(book);
-            //dialog.ShowDialog();
         }
 
         private void OpenExportDialog(BookViewModel[] books)
         {
-            var dialog = new ExportDialog(LibraryManager, books);
-            dialog.ShowDialog();
+            IDialogParameters parameters = new DialogParameters();
+            parameters.Add("TargetBooks", books);
+            IDialogResult result = new DialogResult();
+            dialogService.ShowDialog(nameof(Export), parameters, ret => result = ret);
         }
 
         private static void OpenImageByDefaultProgram(IEnumerable<PageViewModel> images)

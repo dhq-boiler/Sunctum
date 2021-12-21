@@ -95,6 +95,7 @@ namespace Sunctum
             containerRegistry.RegisterDialog<Views.Statistics, StatisticsDialogViewModel>();
             containerRegistry.RegisterDialog<Views.Version, VersionViewModel>();
             containerRegistry.RegisterDialog<Views.Preferences, PreferencesDialogViewModel>();
+            containerRegistry.RegisterDialog<Views.Export, ExportDialogViewModel>();
         }
 
         /// <summary>
