@@ -170,10 +170,6 @@ namespace Sunctum.ViewModels
 
         #endregion //コマンド
 
-        //public InteractionRequest<Notification> OpenPowerSearchRequest { get; } = new InteractionRequest<Notification>();
-
-        //public InteractionRequest<Notification> OpenStatisticsDialogRequest { get; } = new InteractionRequest<Notification>();
-
         #region コマンド登録
 
         private void RegisterCommands()
@@ -552,10 +548,6 @@ namespace Sunctum.ViewModels
                 NotifyActiveTabChanged();
             }
         }
-
-        //public InteractionRequest<Notification> LoadLayoutRequest { get; } = new InteractionRequest<Notification>();
-
-        //public InteractionRequest<Notification> SaveLayoutRequest { get; } = new InteractionRequest<Notification>();
 
         public LayoutAnchorable AuthorPane { get; set; }
 

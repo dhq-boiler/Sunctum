@@ -285,8 +285,8 @@
     <Compile Include="Views\EditMetadataImportSetting.xaml.cs">
       <DependentUpon>EditMetadataImportSetting.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ErrorReportDialog.xaml.cs">
-      <DependentUpon>ErrorReportDialog.xaml</DependentUpon>
+    <Compile Include="Views\ErrorReport.xaml.cs">
+      <DependentUpon>ErrorReport.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Export.xaml.cs">
       <DependentUpon>Export.xaml</DependentUpon>
@@ -378,6 +378,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\ErrorReport.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Export.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -399,10 +403,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="theme.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\ErrorReportDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

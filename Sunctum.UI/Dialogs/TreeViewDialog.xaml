@@ -37,10 +37,10 @@
             <TreeView.Resources>
                 <HierarchicalDataTemplate DataType="{x:Type core:TreeEntry}" ItemsSource="{Binding Children}">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock FontSize="20" Foreground="#499cd6">
+                        <TextBlock FontSize="20" Foreground="#499cd6" Visibility="{Binding HeaderVisibility}">
                             <Run Text="{Binding Key}" />
                         </TextBlock>
-                        <TextBlock FontSize="20" Foreground="White">
+                        <TextBlock FontSize="20" Foreground="White" Visibility="{Binding HeaderVisibility}">
                             <Run Text=" : " />
                         </TextBlock>
                         <TextBlock FontSize="20" Foreground="#b5cea8">

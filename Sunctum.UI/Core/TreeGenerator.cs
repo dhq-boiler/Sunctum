@@ -95,6 +95,16 @@ namespace Sunctum.UI.Core
 
                     previousIndentCount = indent;
                 }
+                else
+                {
+                    var currentNode = new TreeEntry(parentNode, string.Empty, 0, false);
+                    currentNode.HeaderVisibility = System.Windows.Visibility.Hidden;
+                    currentNode.Value = line;
+
+                    parentNode.Children.Add(currentNode);
+
+                    previousNode = currentNode;
+                }
             }
 
             return rootNode;

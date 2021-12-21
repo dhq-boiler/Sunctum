@@ -3,6 +3,7 @@
 using Homura.ORM;
 using NLog;
 using Prism.Ioc;
+using Prism.Services.Dialogs;
 using Prism.Unity;
 using Sunctum.Converters;
 using Sunctum.Core.Extensions;
@@ -96,6 +97,7 @@ namespace Sunctum
             containerRegistry.RegisterDialog<Views.Version, VersionViewModel>();
             containerRegistry.RegisterDialog<Views.Preferences, PreferencesDialogViewModel>();
             containerRegistry.RegisterDialog<Views.Export, ExportDialogViewModel>();
+            containerRegistry.RegisterDialog<Views.ErrorReport, ErrorReportDialogViewModel>();
         }
 
         /// <summary>
@@ -118,8 +120,15 @@ namespace Sunctum
         private void ReportUnhandledException(Exception exception)
         {
             s_logger.Error(exception);
-            var dialog = new ErrorReportDialog(exception);
-            dialog.ShowDialog();
+            var dialogService = Container.Resolve<IDialogService>();
+            IDialogParameters parameters = new DialogParameters();
+            parameters.Add("Exception", exception);
+            IDialogResult dialogResult = new DialogResult();
+            dialogService.ShowDialog(nameof(ErrorReport), parameters, ret => dialogResult = ret);
+            if (dialogResult.Result == ButtonResult.None)
+            {
+                Environment.Exit(1);
+            }
         }
 
         /// <summary>

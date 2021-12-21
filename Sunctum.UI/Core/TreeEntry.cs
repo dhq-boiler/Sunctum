@@ -1,5 +1,6 @@
 ﻿
 using System.Collections.Generic;
+using System.Windows;
 
 namespace Sunctum.UI.Core
 {
@@ -10,6 +11,8 @@ namespace Sunctum.UI.Core
         public string Key { get; set; }
 
         public object Value { get; set; }
+
+        public Visibility HeaderVisibility { get; set; } = Visibility.Visible;
 
         public List<TreeEntry> Children { get; set; }
 
