@@ -5,19 +5,20 @@ using NUnit.Framework;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
+using Sunctum.Domain.Test.Core;
 using Sunctum.Domain.ViewModels;
 using System;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
+using Unity;
 
 namespace Sunctum.Domain.Test.UnitTest
 {
     [Category("UnitTest")]
     [TestFixture]
-    public class AuthorFacadeTest
+    public class AuthorFacadeTest : TestSession
     {
-        //private static TestBootstrapper s_bootstrapper;
         private static ILibrary s_libManager;
         private string _filePath;
 
@@ -51,14 +52,7 @@ namespace Sunctum.Domain.Test.UnitTest
             _filePath = Path.Combine(TestContext.CurrentContext.TestDirectory, "AuthorFacadeTest.db");
             ConnectionManager.SetDefaultConnection($"Data Source={_filePath}", typeof(SQLiteConnection));
 
-            //s_bootstrapper = new TestBootstrapper($"Data Source={_filePath}");
-            //s_bootstrapper.Run();
-
-            var config = new Configuration();
-            config.WorkingDirectory = TestContext.CurrentContext.TestDirectory;
-            Configuration.ApplicationConfiguration = config;
-
-            //s_libManager = s_bootstrapper.Get<ILibrary>();
+            s_libManager = Container.Resolve<ILibrary>();
             s_libManager.Initialize().Wait();
             s_libManager.Load().Wait();
         }
@@ -186,6 +180,11 @@ namespace Sunctum.Domain.Test.UnitTest
             {
                 File.Delete(_filePath);
             }
+        }
+
+        public override string GetTestDirectory()
+        {
+            return TestContext.CurrentContext.TestDirectory;
         }
     }
 }
