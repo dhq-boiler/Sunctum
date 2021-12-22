@@ -3,6 +3,7 @@
 using NLog;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Sunctum.UI.Core
@@ -150,9 +151,70 @@ namespace Sunctum.UI.Core
             return mc.Groups["indent"].Value.Length;
         }
 
+        public static bool IsHead(string str)
+        {
+            var r1 = new Regex("Message");
+            var r2 = new Regex("Data");
+            var r3 = new Regex("InnerException");
+            var r4 = new Regex("StackTrace");
+            var r5 = new Regex("HelpLink");
+            var r6 = new Regex("Source");
+            var r7 = new Regex("HResult");
+            var array = new Regex[] {r1, r2, r3, r4, r5, r6, r7};
+            return array.ToList().Any(x => x.IsMatch(str));
+        }
+
         private static TreeEntry ProcessCurrentLine(StringCollectionReader scr, string line, TreeEntry parentNode, Match mc, int indent, bool isHash, bool isArray, bool saveReturn, bool replaceReturnToHalfSpace, bool saveLastReturn, bool removeLastReturn)
         {
             var currentNode = new TreeEntry(parentNode, mc.Groups["key"].Value, indent, isArray);
+            string ll;
+            bool isProcessed = false;
+            while (scr.CanRead && (ll = scr.Peek()) != null)
+            {
+                if (IsHead(ll))
+                    break;
+                var childNode = new TreeEntry(currentNode, null, indent, false);
+                childNode.Value = scr.ReadLine();
+                childNode.HeaderVisibility = System.Windows.Visibility.Hidden;
+                currentNode.Children.Add(childNode);
+                isProcessed = true;
+            }
+            if (isProcessed)
+            {
+                parentNode.Children.Add(currentNode);
+            }
+            if (scr.CanRead && IsHead(scr.Peek()))
+            {
+                if (!isProcessed)
+                {
+                    parentNode.Children.Add(currentNode);
+                }
+                var regex = new Regex("(?<before>.+?):\\s*?(?<after>.*?)$");
+                var lll = scr.ReadLine();
+                if (!regex.IsMatch(lll))
+                    throw new Exception();
+                var mc1 = regex.Match(lll);
+                currentNode = new TreeEntry(parentNode, mc1.Groups["before"].Value, 0, false);
+                currentNode.Value = mc1.Groups["after"].Value;
+                string l;
+                while (scr.CanRead && (l = scr.Peek()) != null)
+                {
+                    if (IsHead(l))
+                        break;
+                    var childNode = new TreeEntry(currentNode, null, indent, false);
+                    childNode.Value = scr.ReadLine();
+                    childNode.HeaderVisibility = System.Windows.Visibility.Hidden;
+                    currentNode.Children.Add(childNode);
+                }
+            }
+            else if (scr.CanRead)
+            {
+                currentNode.Value = scr.ReadLine();
+            }
+            else
+            {
+                currentNode.Value = line.Replace(mc.Groups["key"].Value + ":", String.Empty);
+            }
 
             parentNode.Children.Add(currentNode);
 
@@ -169,11 +231,19 @@ namespace Sunctum.UI.Core
             if (saveReturn || replaceReturnToHalfSpace)
             {
                 string multilineValue = "";
-                while ((line = scr.ReadLine()) != null)
+                while ((line = scr.Peek()) != null)
                 {
+                    var rg_data = new Regex("Data:");
+                    var rg_innerexception = new Regex("InnerException:");
+                    var rg_stacktrace = new Regex("StackTrace:");
+                    if (rg_data.IsMatch(line) || rg_innerexception.IsMatch(line) || rg_stacktrace.IsMatch(line))
+                    {
+                        break;
+                    }
                     var rg_hash = new Regex(PATTERN_VALUE);
                     if (rg_hash.IsMatch(line) || line == null)
                     {
+                        scr.MoveToNextLine();
                         //複数行の文字列の終わり
                         multilineValue = ProcessReturn(saveReturn, replaceReturnToHalfSpace, removeLastReturn, multilineValue);
 
@@ -194,22 +264,21 @@ namespace Sunctum.UI.Core
                     }
                     else
                     {
+                        scr.MoveToNextLine();
                         multilineValue += line;
-
                         multilineValue += Environment.NewLine;
-
                         multilineValue = ProcessReturn(saveReturn, replaceReturnToHalfSpace, false, multilineValue);
                     }
                 }
             }
             else
             {
-                var rg = new Regex(PATTERN_VALUE);
-                if (rg.IsMatch(line))
-                {
-                    mc = rg.Match(line);
-                    currentNode.Value = mc.Groups["value"].Value;
-                }
+                //var rg = new Regex(PATTERN_VALUE);
+                //if (rg.IsMatch(line))
+                //{
+                //    mc = rg.Match(line);
+                //    currentNode.Value = mc.Groups["value"].Value;
+                //}
             }
 
             return currentNode;

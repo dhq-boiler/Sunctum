@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Sunctum.UI.Core
 {
@@ -26,6 +27,21 @@ namespace Sunctum.UI.Core
                 return null;
             }
             return _lines[_index++];
+        }
+
+        public string Peek()
+        {
+            return _lines[_index];
+        }
+
+        public bool CanRead
+        {
+            get { return _lines.Count() > _index; }
+        }
+
+        public void MoveToNextLine()
+        {
+            _index++;
         }
 
         public void Seek(int offset, SeekOrigin origin)

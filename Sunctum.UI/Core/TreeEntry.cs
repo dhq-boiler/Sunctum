@@ -38,5 +38,10 @@ namespace Sunctum.UI.Core
             IndentCount = indentCount;
             IsArrayNode = isArrayNode;
         }
+
+        public override string ToString()
+        {
+            return $"{Key}{(HeaderVisibility == Visibility.Visible ? ":" : string.Empty)}{Value}";
+        }
     }
 }
