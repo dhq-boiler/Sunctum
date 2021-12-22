@@ -599,8 +599,6 @@ namespace Sunctum.ViewModels
                 TagManager.Sorting = ImageTagCountSorting.GetReferenceByName(tagSorting);
             }
 
-            throw new NotImplementedException("メソッドまたは操作は実装されていません。", new UnexpectedException("想定外の例外が発生しました。"));
-
             SetMainWindowTitle();
             HomeDocumentViewModel.ClearSearchResult();
             InitializeWindowComponent();
