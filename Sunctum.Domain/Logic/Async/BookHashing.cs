@@ -1,7 +1,4 @@
-﻿
-
-using Ninject;
-using NLog;
+﻿using NLog;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Load;
 using Sunctum.Domain.Models.Managers;
@@ -10,8 +7,8 @@ using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using Unity;
 
 namespace Sunctum.Domain.Logic.Async
 {
@@ -19,8 +16,8 @@ namespace Sunctum.Domain.Logic.Async
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
-        [Inject]
-        public ILibrary LibraryManager { get; set; }
+        [Dependency]
+        public Lazy<ILibrary> LibraryManager { get; set; }
 
         public UpdateRange Range { get; set; }
 
@@ -62,13 +59,13 @@ namespace Sunctum.Domain.Logic.Async
         {
             sequence.Add(new Task(() => s_logger.Info($"Begin to hash book.")));
 
-            var books = Range.FindBook(LibraryManager);
+            var books = Range.FindBook(LibraryManager.Value);
 
             sequence.Add(new Task(() => s_logger.Info($"Found : {books.Count()}")));
 
             foreach (var book in books)
             {
-                sequence.AddRange(GenerateTasksToCalcBook(LibraryManager, book));
+                sequence.AddRange(GenerateTasksToCalcBook(LibraryManager.Value, book));
             }
 
             sequence.Add(new Task(() => s_logger.Info($"Finished to Calculate Book ByteSize.")));
@@ -90,7 +87,7 @@ namespace Sunctum.Domain.Logic.Async
 
         private void ExtractFingerPrint(BookViewModel book)
         {
-            ContentsLoadTask.FillContentsWithImage(LibraryManager, book);
+            ContentsLoadTask.FillContentsWithImage(LibraryManager.Value, book);
             book.FingerPrint = Hash.Generate(book);
         }
 

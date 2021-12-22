@@ -1,10 +1,9 @@
-﻿
-
-using Ninject;
-using NLog;
+﻿using NLog;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
+using System;
+using Unity;
 
 namespace Sunctum.Domain.Logic.Async
 {
@@ -12,25 +11,25 @@ namespace Sunctum.Domain.Logic.Async
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
-        [Inject]
+        [Dependency]
         public IAuthorManager AuthorManager { get; set; }
 
-        [Inject]
-        public ILibrary LibraryManager { get; set; }
+        [Dependency]
+        public Lazy<ILibrary> LibraryManager { get; set; }
 
-        [Inject]
+        [Dependency]
         public ITagManager TagManager { get; set; }
 
-        [Inject]
+        [Dependency]
         public ITaskManager TaskManager { get; set; }
 
-        [Inject]
+        [Dependency]
         public ILibraryResetting LibraryResettingService { get; set; }
 
-        [Inject]
+        [Dependency]
         public IRecentOpenedLibraryUpdating RecentOpenedLibraryUpdating { get; set; }
 
-        [Inject]
+        [Dependency]
         public IBookLoading BookLoadingService { get; set; }
 
         public override void ConfigurePreTaskAction(AsyncTaskSequence sequence)

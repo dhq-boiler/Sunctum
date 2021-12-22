@@ -1,12 +1,14 @@
 ﻿
 
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 
 namespace Sunctum.UI.Controls
 {
+    [DesignTimeVisible(true)]
     public class SimpleGrid : Panel
     {
         #region 依存プロパティ
@@ -20,6 +22,11 @@ namespace Sunctum.UI.Controls
             typeof(int),
             typeof(SimpleGrid),
             new FrameworkPropertyMetadata(1, new PropertyChangedCallback(SimpleGrid.OnColumnsChanged)));
+
+        public static readonly DependencyProperty OrientationProperty = DependencyProperty.Register("Orientation",
+            typeof(Orientation),
+            typeof(SimpleGrid),
+            new FrameworkPropertyMetadata(Orientation.Horizontal));
 
         #endregion //依存プロパティ
 
@@ -55,6 +62,12 @@ namespace Sunctum.UI.Controls
             set { SetValue(ColumnsProperty, value); }
         }
 
+        public Orientation Orientation
+        {
+            get { return (Orientation)GetValue(OrientationProperty); }
+            set { SetValue(OrientationProperty, value); }
+        }
+
         #endregion //CLR プロパティ
 
         private List<Cell> _cells;
@@ -66,25 +79,50 @@ namespace Sunctum.UI.Controls
         /// <returns>使用する実際のサイズ。</returns>
         protected override Size ArrangeOverride(Size finalSize)
         {
-            LinkedList<List<UIElement>> rows = GetChildrenStructure();
             Rect viewport = new Rect(new Point(0, 0), finalSize);
 
-            var iterator = rows.First;
-            for (int y = 0; y < rows.Count; ++y)
+            if (Orientation == Orientation.Horizontal)
             {
-                var topHeight = _cells.Where(a => a.Y < y).GroupBy(b => b.Y).Sum(c => c.Max(d => d.Height));
-                var heightOn = _cells.Where(a => a.Y == y).Max(b => b.Height);
-                var row = iterator.Value;
-                if (row == null) continue;
-                for (int x = 0; x < row.Count; ++x)
+                LinkedList<List<UIElement>> rows = GetChildrenStructure();
+                var iterator = rows.First;
+                for (int y = 0; y < rows.Count; ++y)
                 {
-                    var cell = row[x];
+                    var topHeight = _cells.Where(a => a.Y < y).GroupBy(b => b.Y).Sum(c => c.Max(d => d.Height));
+                    var heightOn = _cells.Where(a => a.Y == y).Max(b => b.Height);
+                    var row = iterator.Value;
+                    if (row == null) continue;
+                    for (int x = 0; x < row.Count; ++x)
+                    {
+                        var cell = row[x];
+                        var leftWidth = _cells.Where(a => a.X < x).GroupBy(b => b.X).Sum(c => c.Max(d => d.Width));
+                        var widthOn = _cells.Where(a => a.X == x).Max(b => b.Width);
+                        Rect finalRect = new Rect(leftWidth, topHeight, widthOn, heightOn);
+                        cell.Arrange(finalRect);
+                    }
+                    iterator = iterator.Next;
+                }
+            }
+            else
+            {
+                LinkedList<List<UIElement>> cols = GetChildrenStructure();
+                var iterator = cols.First;
+                for (int x = 0; x < cols.Count; ++x)
+                {
                     var leftWidth = _cells.Where(a => a.X < x).GroupBy(b => b.X).Sum(c => c.Max(d => d.Width));
                     var widthOn = _cells.Where(a => a.X == x).Max(b => b.Width);
-                    Rect finalRect = new Rect(leftWidth, topHeight, widthOn, heightOn);
-                    cell.Arrange(finalRect);
+
+                    var row = iterator.Value;
+                    if (row == null) continue;
+                    for (int y = 0; y < row.Count; ++y)
+                    {
+                        var cell = row[y];
+                        var topHeight = _cells.Where(a => a.Y < y).GroupBy(b => b.Y).Sum(c => c.Max(d => d.Height));
+                        var heightOn = _cells.Where(a => a.Y == y).Max(b => b.Height);
+                        Rect finalRect = new Rect(leftWidth, topHeight, widthOn, heightOn);
+                        cell.Arrange(finalRect);
+                    }
+                    iterator = iterator.Next;
                 }
-                iterator = iterator.Next;
             }
 
             return finalSize;
@@ -98,29 +136,48 @@ namespace Sunctum.UI.Controls
         protected override Size MeasureOverride(Size availableSize)
         {
             LinkedList<List<UIElement>> rows = GetChildrenStructure();
-            _cells = getCellsSize(availableSize, rows);
+            _cells = getCellsSize(Orientation, availableSize, rows);
             double totalMaxWidth = _cells.GroupBy(a => a.X).Sum(b => b.Max(c => c.Width));
             double totalMaxHeight = _cells.GroupBy(a => a.Y).Sum(b => b.Max(c => c.Height));
 
             return new Size(totalMaxWidth, totalMaxHeight);
         }
 
-        private static List<Cell> getCellsSize(Size availableSize, LinkedList<List<UIElement>> rows)
+        private static List<Cell> getCellsSize(Orientation Orientation, Size availableSize, LinkedList<List<UIElement>> rows)
         {
             List<Cell> cells = new List<Cell>();
 
-            var iterator = rows.First;
-            for (int y = 0; y < rows.Count; ++y)
+            if (Orientation == Orientation.Horizontal)
             {
-                var row = iterator.Value;
-                for (int x = 0; x < row.Count; ++x)
+                var iterator = rows.First;
+                for (int y = 0; y < rows.Count; ++y)
                 {
-                    var cell = row[x];
-                    cell.Measure(availableSize);
-                    var disiredSize = cell.DesiredSize;
-                    cells.Add(new Cell(x, y, disiredSize.Width, disiredSize.Height));
+                    var row = iterator.Value;
+                    for (int x = 0; x < row.Count; ++x)
+                    {
+                        var cell = row[x];
+                        cell.Measure(availableSize);
+                        var disiredSize = cell.DesiredSize;
+                        cells.Add(new Cell(x, y, disiredSize.Width, disiredSize.Height));
+                    }
+                    iterator = iterator.Next;
                 }
-                iterator = iterator.Next;
+            }
+            else
+            {
+                var iterator = rows.First;
+                for (int x = 0; x < rows.Count; ++x)
+                {
+                    var row = iterator.Value;
+                    for (int y = 0; y < row.Count; ++y)
+                    {
+                        var cell = row[y];
+                        cell.Measure(availableSize);
+                        var disiredSize = cell.DesiredSize;
+                        cells.Add(new Cell(x, y, disiredSize.Width, disiredSize.Height));
+                    }
+                    iterator = iterator.Next;
+                }
             }
 
             return cells;
@@ -130,18 +187,38 @@ namespace Sunctum.UI.Controls
         {
             LinkedList<List<UIElement>> rows = new LinkedList<List<UIElement>>();
 
-            foreach (UIElement child in this.InternalChildren)
+            if (Orientation == Orientation.Horizontal)
             {
-                var currentList = rows.Last?.Value;
-                if (currentList == null || (currentList.Count == Columns && rows.Count < Rows))
+                foreach (UIElement child in this.InternalChildren)
                 {
-                    var list = new List<UIElement>();
-                    list.Add(child);
-                    rows.AddLast(list);
+                    var currentList = rows.Last?.Value;
+                    if (currentList == null || (currentList.Count == Columns && rows.Count < Rows))
+                    {
+                        var list = new List<UIElement>();
+                        list.Add(child);
+                        rows.AddLast(list);
+                    }
+                    else if (currentList.Count < Columns)
+                    {
+                        currentList.Add(child);
+                    }
                 }
-                else if (currentList.Count < Columns)
+            }
+            else
+            {
+                foreach (UIElement child in this.InternalChildren)
                 {
-                    currentList.Add(child);
+                    var currentList = rows.Last?.Value;
+                    if (currentList == null || (currentList.Count == Rows && rows.Count < Columns))
+                    {
+                        var list = new List<UIElement>();
+                        list.Add(child);
+                        rows.AddLast(list);
+                    }
+                    else if (currentList.Count < Rows)
+                    {
+                        currentList.Add(child);
+                    }
                 }
             }
 

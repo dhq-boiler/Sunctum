@@ -1,0 +1,112 @@
+﻿<UserControl x:Class="Sunctum.Views.Statistics"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Sunctum.Views"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:prism="http://prismlibrary.com/"
+             xmlns:controls="clr-namespace:Sunctum.UI.Controls;assembly=Sunctum.UI"
+             xmlns:cvt="clr-namespace:Sunctum.Converters"
+             mc:Ignorable="d" 
+             prism:ViewModelLocator.AutoWireViewModel="True"
+             d:DesignHeight="450" d:DesignWidth="800"
+             Background="White">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <UserControl.Resources>
+        <cvt:FileSizeFormatter x:Key="FileSizeFormatter" />
+    </UserControl.Resources>
+    <controls:SimpleGrid Rows="20" Columns="4" Orientation="Vertical">
+        <controls:SimpleGrid.Resources>
+            <Style TargetType="Label">
+                <Setter Property="HorizontalAlignment" Value="Right" />
+            </Style>
+        </controls:SimpleGrid.Resources>
+        <DockPanel>
+            <Label>起動回数</Label>
+            <Label Content="{Binding NumberOfBoots.Value}" />
+        </DockPanel>
+        <DockPanel>
+            <Label>ブック数</Label>
+            <Label Content="{Binding NumberOfBooks.Value}" />
+        </DockPanel>
+        <DockPanel>
+            <Label>総ファイルサイズ</Label>
+            <Label>
+                <Label.Content>
+                    <TextBlock>
+                    <Run Text="{Binding TotalFileSize.Value, Converter={StaticResource FileSizeFormatter}}" />
+                    <Run Text="(" />
+                    <Run Text="{Binding TotalFileSize.Value}" />
+                    <Run Text=")" />
+                    </TextBlock>
+                </Label.Content>
+            </Label>
+        </DockPanel>
+        <DockPanel>
+            <Label>総ページ数</Label>
+            <Label Content="{Binding NumberOfPages.Value}" />
+        </DockPanel>
+        <DockPanel>
+            <Label>著者数</Label>
+            <Label Content="{Binding NumberOfAuthors.Value}" />
+        </DockPanel>
+        <DockPanel>
+            <Label>タグ数</Label>
+            <Label Content="{Binding NumberOfTags.Value}" />
+        </DockPanel>
+        <DockPanel>
+            <Label>ブックにタグ付けした数</Label>
+            <Label Content="{Binding NumberOfBookTags.Value}" />
+        </DockPanel>
+        <DockPanel>
+            <Label>画像にタグ付けした数</Label>
+            <Label Content="{Binding NumberOfImageTags.Value}" />
+        </DockPanel>
+        <DockPanel>
+            <Label>★５のブック数</Label>
+            <Label Content="{Binding NumberOfBooks5.Value}" />
+        </DockPanel>
+        <DockPanel>
+            <Label>★４のブック数</Label>
+            <Label Content="{Binding NumberOfBooks4.Value}" />
+        </DockPanel>
+        <DockPanel>
+            <Label>★３のブック数</Label>
+            <Label Content="{Binding NumberOfBooks3.Value}" />
+        </DockPanel>
+        <DockPanel>
+            <Label>★２のブック数</Label>
+            <Label Content="{Binding NumberOfBooks2.Value}" />
+        </DockPanel>
+        <DockPanel>
+            <Label>★１のブック数</Label>
+            <Label Content="{Binding NumberOfBooks1.Value}" />
+        </DockPanel>
+        <DockPanel>
+            <Label>未評価のブック数</Label>
+            <Label Content="{Binding NumberOfBooksN.Value}" />
+        </DockPanel>
+        <DockPanel>
+            <Label>重複したブック数</Label>
+            <Label Content="{Binding NumberOfDuplicateBooks.Value}" />
+        </DockPanel>
+        <DockPanel>
+            <Label>重複した総ファイルサイズ</Label>
+            <Label>
+                <Label.Content>
+                    <TextBlock>
+                        <Run Text="{Binding TotalDuplicateBooksSize.Value, Converter={StaticResource FileSizeFormatter}}" />
+                        <Run Text="(" />
+                        <Run Text="{Binding TotalDuplicateBooksSize.Value}" />
+                        <Run Text=")" />
+                    </TextBlock>
+                </Label.Content>
+            </Label>
+        </DockPanel>
+    </controls:SimpleGrid>
+</UserControl>

@@ -1,5 +1,6 @@
 ﻿
 
+using Sunctum.Domain.ViewModels;
 using System.Collections.Generic;
 
 namespace Sunctum.Domain.Models.Managers
@@ -8,6 +9,6 @@ namespace Sunctum.Domain.Models.Managers
     {
         List<T> SelectedItems { get; set; }
 
-        void ShowBySelectedItems(IEnumerable<T> searchItems);
+        void ShowBySelectedItems(IMainWindowViewModel mainWindowViewModel, IEnumerable<T> searchItems);
     }
 }

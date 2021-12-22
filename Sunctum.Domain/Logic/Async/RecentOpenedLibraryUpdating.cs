@@ -1,33 +1,30 @@
-﻿
-
-using Ninject;
-using Sunctum.Domain.Data.Dao;
-using Sunctum.Domain.Data.Entity;
+﻿using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using Unity;
 
 namespace Sunctum.Domain.Logic.Async
 {
     public class RecentOpenedLibraryUpdating : AsyncTaskMakerBase, IRecentOpenedLibraryUpdating
     {
-        [Inject]
-        public ILibrary LibraryManager { get; set; }
+        [Dependency]
+        public Lazy<ILibrary> LibraryManager { get; set; }
 
-        [Inject]
+        [Dependency]
         public IDataAccessManager DataAccessManager { get; set; }
 
         public override void ConfigureTaskImplementation(AsyncTaskSequence sequence)
         {
             sequence.Add(() =>
             {
-                LibraryManager.AccessDispatcherObject(() =>
+                LibraryManager.Value.AccessDispatcherObject(() =>
                 {
-                    LibraryManager.RecentOpenedLibraryList?.Clear();
-                    LibraryManager.RecentOpenedLibraryList = new ObservableCollection<RecentOpenedLibrary>();
+                    LibraryManager.Value.RecentOpenedLibraryList?.Clear();
+                    LibraryManager.Value.RecentOpenedLibraryList = new ObservableCollection<RecentOpenedLibrary>();
                 });
 
                 var dao = DataAccessManager.AppDao.Build<RecentOpenedLibraryDao>();
@@ -52,9 +49,9 @@ namespace Sunctum.Domain.Logic.Async
                     var o = other.ElementAt(i - 1);
                     o.AccessOrder = i;
                     dao.Update(o);
-                    LibraryManager.AccessDispatcherObject(() =>
+                    LibraryManager.Value.AccessDispatcherObject(() =>
                     {
-                        LibraryManager.RecentOpenedLibraryList.Add(o);
+                        LibraryManager.Value.RecentOpenedLibraryList.Add(o);
                     });
                 }
                 for (int i = Configuration.ApplicationConfiguration.LibraryHistoryRecordCount; i < other.Count() - Configuration.ApplicationConfiguration.LibraryHistoryRecordCount; ++i)

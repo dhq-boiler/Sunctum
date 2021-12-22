@@ -39,7 +39,7 @@ namespace Sunctum.Domain.Models.Managers
 
         bool IsDirty(BookViewModel book);
 
-        ITagManager TagMng { get; }
+        ITagManager TagManager { get; }
 
         IProgressManager ProgressManager { get; }
 

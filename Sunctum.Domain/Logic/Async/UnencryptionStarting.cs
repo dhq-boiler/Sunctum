@@ -1,18 +1,12 @@
-﻿
-
-using Ninject;
-using NLog;
+﻿using NLog;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Encrypt;
 using Sunctum.Domain.Logic.Load;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Unity;
 
 namespace Sunctum.Domain.Logic.Async
 {
@@ -20,8 +14,8 @@ namespace Sunctum.Domain.Logic.Async
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
-        [Inject]
-        public ILibrary LibraryManager { get; set; }
+        [Dependency]
+        public Lazy<ILibrary> LibraryManager { get; set; }
         public string Password { get; set; }
 
         public override void ConfigurePreTaskAction(AsyncTaskSequence sequence)
@@ -33,11 +27,11 @@ namespace Sunctum.Domain.Logic.Async
 
         public override void ConfigureTaskImplementation(AsyncTaskSequence sequence)
         {
-            var books = LibraryManager.BookSource;
+            var books = LibraryManager.Value.BookSource;
 
             foreach (var book in books)
             {
-                ContentsLoadTask.FillContents(LibraryManager, book);
+                ContentsLoadTask.FillContents(LibraryManager.Value, book);
                 var images = book.Contents;
                 foreach (var image in images)
                 {

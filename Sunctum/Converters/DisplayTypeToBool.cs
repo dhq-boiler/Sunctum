@@ -1,24 +1,14 @@
-﻿
-
-using Ninject;
-using Sunctum.ViewModels;
+﻿using Sunctum.ViewModels;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Data;
-using System.Windows.Markup;
+using Unity;
 
 namespace Sunctum.Converters
 {
-    public class DisplayTypeToBool : MarkupExtension, IValueConverter
+    public class DisplayTypeToBool : IValueConverter
     {
-        [Inject]
+        [Dependency]
         public IHomeDocumentViewModel viewModel { get; set; }
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -33,37 +23,5 @@ namespace Sunctum.Converters
 
         public DisplayTypeToBool()
         { }
-
-        public DisplayTypeToBool(string namedInstance)
-        {
-            NamedInstance = namedInstance;
-        }
-
-        [ConstructorArgument("namedInstance")]
-        public string NamedInstance { get; set; }
-
-        public override object ProvideValue(IServiceProvider serviceProvider)
-        {
-            var provideValueTarget = (IProvideValueTarget)serviceProvider
-            .GetService(typeof(IProvideValueTarget));
-
-            // Find the type of the property we are resolving
-            var targetProperty = provideValueTarget.TargetProperty as PropertyInfo;
-
-            if (targetProperty == null)
-                throw new InvalidProgramException();
-
-            Debug.Assert(Resolve != null, "Resolve must not be null. Please initialize resolving method during application startup.");
-            Debug.Assert(ResolveNamed != null, "Resolve must not be null. Please initialize resolving method during application startup.");
-
-            // Find the implementation of the type in the container
-            return NamedInstance == null
-                ? (Resolve != null ? Resolve(targetProperty.PropertyType) : DependencyProperty.UnsetValue)
-                : (ResolveNamed != null ? ResolveNamed(targetProperty.PropertyType, NamedInstance) : DependencyProperty.UnsetValue);
-        }
-
-        public static Func<Type, object> Resolve { get; set; }
-
-        public static Func<Type, string, object> ResolveNamed { get; set; }
     }
 }

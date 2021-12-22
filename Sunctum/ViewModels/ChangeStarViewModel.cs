@@ -1,6 +1,4 @@
-﻿
-
-using Prism.Interactivity.InteractionRequest;
+﻿using Prism.Services.Dialogs;
 using Reactive.Bindings;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.ViewModels;
@@ -9,7 +7,7 @@ using System.Reactive.Linq;
 
 namespace Sunctum.ViewModels
 {
-    internal class ChangeStarViewModel : IInteractionRequestAware
+    internal class ChangeStarViewModel : IDialogAware
     {
         public ReactiveCommand Star1Command { get; }
         public ReactiveCommand Star2Command { get; }
@@ -18,8 +16,11 @@ namespace Sunctum.ViewModels
         public ReactiveCommand Star5Command { get; }
         public ReactiveCommand NotEvaluatedCommand { get; }
 
+        public string Title => "Change star";
+
         public ReactiveProperty<BookViewModel> EditTarget = new ReactiveProperty<BookViewModel>();
-        private INotification _Notification;
+
+        public event Action<IDialogResult> RequestClose;
 
         public ChangeStarViewModel()
         {
@@ -31,7 +32,7 @@ namespace Sunctum.ViewModels
             {
                 EditTarget.Value.StarLevel = 1;
                 StarFacade.InsertOrReplace(EditTarget.Value);
-                FinishInteraction();
+                RequestClose.Invoke(new DialogResult(ButtonResult.OK));
             });
 
             Star2Command = EditTarget
@@ -42,7 +43,7 @@ namespace Sunctum.ViewModels
             {
                 EditTarget.Value.StarLevel = 2;
                 StarFacade.InsertOrReplace(EditTarget.Value);
-                FinishInteraction();
+                RequestClose.Invoke(new DialogResult(ButtonResult.OK));
             });
 
             Star3Command = EditTarget
@@ -53,7 +54,7 @@ namespace Sunctum.ViewModels
             {
                 EditTarget.Value.StarLevel = 3;
                 StarFacade.InsertOrReplace(EditTarget.Value);
-                FinishInteraction();
+                RequestClose.Invoke(new DialogResult(ButtonResult.OK));
             });
 
             Star4Command = EditTarget
@@ -64,7 +65,7 @@ namespace Sunctum.ViewModels
             {
                 EditTarget.Value.StarLevel = 4;
                 StarFacade.InsertOrReplace(EditTarget.Value);
-                FinishInteraction();
+                RequestClose.Invoke(new DialogResult(ButtonResult.OK));
             });
 
             Star5Command = EditTarget
@@ -75,7 +76,7 @@ namespace Sunctum.ViewModels
             {
                 EditTarget.Value.StarLevel = 5;
                 StarFacade.InsertOrReplace(EditTarget.Value);
-                FinishInteraction();
+                RequestClose.Invoke(new DialogResult(ButtonResult.OK));
             });
 
             NotEvaluatedCommand = EditTarget
@@ -86,19 +87,21 @@ namespace Sunctum.ViewModels
             {
                 EditTarget.Value.StarLevel = null;
                 StarFacade.InsertOrReplace(EditTarget.Value);
-                FinishInteraction();
+                RequestClose.Invoke(new DialogResult(ButtonResult.OK));
             });
         }
 
-        public INotification Notification
+        public bool CanCloseDialog()
         {
-            get { return _Notification; }
-            set
-            {
-                _Notification = value;
-                EditTarget.Value = value.Content as BookViewModel;
-            }
+            return true;
         }
-        public Action FinishInteraction { get; set; }
+
+        public void OnDialogClosed()
+        {
+        }
+
+        public void OnDialogOpened(IDialogParameters parameters)
+        {
+        }
     }
 }

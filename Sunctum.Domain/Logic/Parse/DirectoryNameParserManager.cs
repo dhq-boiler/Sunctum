@@ -1,16 +1,13 @@
-﻿
-
-using Ninject;
-using Sunctum.Domain.Data.Dao;
+﻿using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Models.Managers;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Unity;
 
 namespace Sunctum.Domain.Logic.Parse
 {
     public class DirectoryNameParserManager : IDirectoryNameParserManager
     {
-        [Inject]
+        [Dependency]
         public IDataAccessManager DataAccessManager { get; set; }
 
         public ObservableCollection<DirectoryNameParser> Items { get; private set; } = new ObservableCollection<DirectoryNameParser>();

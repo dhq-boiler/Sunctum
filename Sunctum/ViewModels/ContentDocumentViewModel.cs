@@ -1,4 +1,6 @@
 ﻿
+using Prism.Services.Dialogs;
+
 namespace Sunctum.ViewModels
 {
     internal class ContentDocumentViewModel : DocumentViewModelBase
@@ -7,7 +9,8 @@ namespace Sunctum.ViewModels
         private string _title;
         private int _number;
 
-        public ContentDocumentViewModel(string title)
+        public ContentDocumentViewModel(IDialogService dialogService, string title)
+            : base(dialogService)
         {
             _title = title;
             _number = s_internalNumber++;

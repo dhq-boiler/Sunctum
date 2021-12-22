@@ -2,6 +2,7 @@
 
 using Sunctum.Domain.Logic.Async;
 using Sunctum.Domain.Models.Managers;
+using System;
 
 namespace Sunctum.Domain.Test.Logic.Async
 {
@@ -9,7 +10,7 @@ namespace Sunctum.Domain.Test.Logic.Async
     {
         public IDataAccessManager DataAccessManager { get; set; }
 
-        public ILibrary LibraryManager { get; set; }
+        public Lazy<ILibrary> LibraryManager { get; set; }
 
         public override void ConfigureTaskImplementation(AsyncTaskSequence sequence)
         { }

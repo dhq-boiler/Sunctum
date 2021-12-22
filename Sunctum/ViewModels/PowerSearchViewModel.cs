@@ -1,7 +1,7 @@
 ﻿
 
 using Prism.Commands;
-using Prism.Interactivity.InteractionRequest;
+using Prism.Services.Dialogs;
 using Reactive.Bindings;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
@@ -13,30 +13,15 @@ using System.Windows.Input;
 
 namespace Sunctum.ViewModels
 {
-    internal class PowerSearchViewModel : IInteractionRequestAware
+    internal class PowerSearchViewModel : IDialogAware
     {
-        public Action FinishInteraction { get; set; }
-
-        private INotification _notification;
         private IArrangedBookStorage _bookStorage;
+
+        public event Action<IDialogResult> RequestClose;
 
         public PowerSearchViewModel()
         {
             RegisterCommands();
-        }
-
-        public INotification Notification
-        {
-            get
-            {
-                return _notification;
-            }
-
-            set
-            {
-                _notification = value;
-                _bookStorage = value.Content as IArrangedBookStorage;
-            }
         }
 
         public ReactiveProperty<Guid> BookId { get; } = new ReactiveProperty<Guid>();
@@ -51,10 +36,12 @@ namespace Sunctum.ViewModels
 
         public ICommand CloseCommand { get; set; }
 
+        string IDialogAware.Title => "Power search";
+
         private void RegisterCommands()
         {
             SearchCommand = new DelegateCommand(() => Search());
-            CloseCommand = new DelegateCommand(() => FinishInteraction());
+            CloseCommand = new DelegateCommand(() => RequestClose.Invoke(new DialogResult(ButtonResult.Cancel)));
         }
 
         private void Search()
@@ -109,6 +96,22 @@ namespace Sunctum.ViewModels
 
 
             _bookStorage.SearchedBooks = new ObservableCollection<BookViewModel>(filtered.ToList());
+
+            RequestClose.Invoke(new DialogResult(ButtonResult.OK));
+        }
+
+        public bool CanCloseDialog()
+        {
+            return true;
+        }
+
+        public void OnDialogClosed()
+        {
+        }
+
+        public void OnDialogOpened(IDialogParameters parameters)
+        {
+            _bookStorage = parameters.GetValue<IArrangedBookStorage>("Storage");
         }
     }
 }

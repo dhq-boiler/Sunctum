@@ -1,13 +1,12 @@
-﻿
-
-using Ninject;
-using NLog;
+﻿using NLog;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Unity;
 
 namespace Sunctum.Domain.Logic.Async
 {
@@ -17,8 +16,8 @@ namespace Sunctum.Domain.Logic.Async
 
         private long _byteSize;
 
-        [Inject]
-        public ILibrary LibraryManager { get; set; }
+        [Dependency]
+        public Lazy<ILibrary> LibraryManager { get; set; }
 
         public UpdateRange Range { get; set; }
 
@@ -60,13 +59,13 @@ namespace Sunctum.Domain.Logic.Async
         {
             sequence.Add(new Task(() => s_logger.Info($"Begin to Calculate Book ByteSize.")));
 
-            var books = Range.FindBook(LibraryManager);
+            var books = Range.FindBook(LibraryManager.Value);
 
             sequence.Add(new Task(() => s_logger.Info($"Found : {books.Count()}")));
 
             foreach (var book in books)
             {
-                sequence.AddRange(GenerateTasksToCalcBook(LibraryManager, book));
+                sequence.AddRange(GenerateTasksToCalcBook(LibraryManager.Value, book));
             }
 
             sequence.Add(new Task(() => s_logger.Info($"Finished to Calculate Book ByteSize.")));

@@ -6,6 +6,7 @@ using Sunctum.Infrastructure.Data.Yaml;
 using System;
 using System.IO;
 using System.Reflection;
+using System.Windows;
 using YamlDotNet.Serialization;
 
 namespace Sunctum.Domain.Models
@@ -301,7 +302,9 @@ namespace Sunctum.Domain.Models
         #endregion // Transient Data
 
         public Configuration()
-        { }
+        {
+            WindowRect = new Rect(0, 0, SystemParameters.PrimaryScreenWidth, SystemParameters.PrimaryScreenHeight);
+        }
 
         public static Configuration Load()
         {

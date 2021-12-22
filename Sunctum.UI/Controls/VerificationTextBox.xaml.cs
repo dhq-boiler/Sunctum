@@ -54,6 +54,10 @@ namespace Sunctum.UI.Controls
             typeof(bool?),
             typeof(VerificationTextBox));
 
+        public static readonly DependencyProperty TextVerifierProperty = DependencyProperty.Register("TextVerifier", 
+            typeof(Func<string, bool?>), 
+            typeof(VerificationTextBox));
+
         #endregion //依存プロパティ
 
         #region CLRプロパティ
@@ -70,7 +74,11 @@ namespace Sunctum.UI.Controls
             set { SetValue(TextIsValidProperty, value); }
         }
 
-        public Func<string, bool?> TextVerifier { get; set; }
+        public Func<string, bool?> TextVerifier
+        {
+            get { return (Func<string, bool?>)GetValue(TextVerifierProperty);}
+            set { SetValue(TextVerifierProperty, value); }
+        }
 
         #endregion //CLRプロパティ
 

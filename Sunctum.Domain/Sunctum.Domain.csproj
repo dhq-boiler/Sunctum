@@ -48,9 +48,6 @@
     <Reference Include="Microsoft.Xaml.Behaviors, Version=1.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Xaml.Behaviors.Wpf.1.1.31\lib\net45\Microsoft.Xaml.Behaviors.dll</HintPath>
     </Reference>
-    <Reference Include="Ninject, Version=3.3.4.0, Culture=neutral, PublicKeyToken=c7192dc5380945e7, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ninject.3.3.4\lib\net45\Ninject.dll</HintPath>
-    </Reference>
     <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
       <HintPath>..\packages\NLog.4.7.9\lib\net45\NLog.dll</HintPath>
     </Reference>
@@ -65,14 +62,14 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
-    <Reference Include="Prism, Version=6.3.0.0, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
-      <HintPath>..\packages\Prism.Core.6.3.0\lib\net45\Prism.dll</HintPath>
+    <Reference Include="Prism, Version=8.1.97.5141, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
+      <HintPath>..\packages\Prism.Core.8.1.97\lib\net47\Prism.dll</HintPath>
     </Reference>
-    <Reference Include="Prism.Ninject.Wpf, Version=6.3.0.0, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
-      <HintPath>..\packages\Prism.Ninject.6.3.0\lib\net45\Prism.Ninject.Wpf.dll</HintPath>
+    <Reference Include="Prism.Unity.Wpf, Version=8.1.97.5141, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
+      <HintPath>..\packages\Prism.Unity.8.1.97\lib\net47\Prism.Unity.Wpf.dll</HintPath>
     </Reference>
-    <Reference Include="Prism.Wpf, Version=6.3.0.0, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
-      <HintPath>..\packages\Prism.Wpf.6.3.0\lib\net45\Prism.Wpf.dll</HintPath>
+    <Reference Include="Prism.Wpf, Version=8.1.97.5141, Culture=neutral, PublicKeyToken=40ee6c3a2184dc59, processorArchitecture=MSIL">
+      <HintPath>..\packages\Prism.Wpf.8.1.97\lib\net47\Prism.Wpf.dll</HintPath>
     </Reference>
     <Reference Include="ReactiveProperty, Version=8.0.0.0, Culture=neutral, PublicKeyToken=910d1732782c71cb, processorArchitecture=MSIL">
       <HintPath>..\packages\ReactiveProperty.8.0.0\lib\net461\ReactiveProperty.dll</HintPath>
@@ -147,6 +144,12 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="Unity.Abstractions, Version=5.11.7.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.Abstractions.5.11.7\lib\net48\Unity.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Container, Version=5.11.11.0, Culture=neutral, PublicKeyToken=489b6accfaf20ef0, processorArchitecture=MSIL">
+      <HintPath>..\packages\Unity.Container.5.11.11\lib\net48\Unity.Container.dll</HintPath>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="YamlDotNet, Version=9.0.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e, processorArchitecture=MSIL">
       <HintPath>..\packages\YamlDotNet.9.1.1\lib\net45\YamlDotNet.dll</HintPath>

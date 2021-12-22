@@ -1,8 +1,7 @@
-﻿
-
-using Ninject;
-using NLog;
+﻿using NLog;
 using Sunctum.Domain.Models.Managers;
+using System;
+using Unity;
 
 namespace Sunctum.Domain.Logic.Async
 {
@@ -10,8 +9,8 @@ namespace Sunctum.Domain.Logic.Async
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
-        [Inject]
-        public ILibrary LibraryManager { get; set; }
+        [Dependency]
+        public Lazy<ILibrary> LibraryManager { get; set; }
 
         public override void ConfigurePreTaskAction(AsyncTaskSequence sequence)
         {
@@ -30,13 +29,13 @@ namespace Sunctum.Domain.Logic.Async
 
         private void CleanUp()
         {
-            if (LibraryManager.BookSource != null)
+            if (LibraryManager.Value.BookSource != null)
             {
-                foreach (var book in LibraryManager.BookSource)
+                foreach (var book in LibraryManager.Value.BookSource)
                 {
                     book.Dispose();
                 }
-                LibraryManager.BookSource.Clear();
+                LibraryManager.Value.BookSource.Clear();
             }
         }
     }

@@ -1,7 +1,4 @@
-﻿
-
-using Ninject;
-using NLog;
+﻿using NLog;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Extensions;
 using Sunctum.Domain.Models;
@@ -12,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Unity;
 
 namespace Sunctum.Domain.Logic.Async
 {
@@ -25,8 +23,8 @@ namespace Sunctum.Domain.Logic.Async
 
         internal BookViewModel NewBook { get { return _newBook; } set { _newBook = value; } }
 
-        [Inject]
-        public ILibrary LibraryManager { get; set; }
+        [Dependency]
+        public Lazy<ILibrary> LibraryManager { get; set; }
 
         public string Title { get; set; }
 
@@ -80,7 +78,7 @@ namespace Sunctum.Domain.Logic.Async
 
             sequence.Add(new System.Threading.Tasks.Task(() => SetFirstPage()));
 
-            sequence.Add(new System.Threading.Tasks.Task(() => LibraryManager.AddToMemory(NewBook)));
+            sequence.Add(new System.Threading.Tasks.Task(() => LibraryManager.Value.AddToMemory(NewBook)));
 
             //ファイルコピー
             for (int i = 1; i < TargetPages.Count(); ++i)
@@ -91,7 +89,7 @@ namespace Sunctum.Domain.Logic.Async
                 AddTaskToProcessScrapPage(sequence, page, img, destination);
             }
 
-            sequence.Add(new System.Threading.Tasks.Task(() => LibraryManager.FireFillContents(NewBook)));
+            sequence.Add(new System.Threading.Tasks.Task(() => LibraryManager.Value.FireFillContents(NewBook)));
             sequence.Add(new System.Threading.Tasks.Task(() => s_logger.Info($"Pages Scrapped as:{NewBook}")));
             sequence.Add(new System.Threading.Tasks.Task(() => SetContentsRegistered()));
         }

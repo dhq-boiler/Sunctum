@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30104.148
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sunctum", "Sunctum\Sunctum.csproj", "{98CE041B-C971-4963-8A82-7E3F56CA4BC6}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -32,7 +32,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PickoutCover", "PickoutCove
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0AFE6A8C-B0F8-4726-BAA3-971C5B53BC2D}"
 	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		AUTHORS = AUTHORS
 		azure-pipelines.yml = azure-pipelines.yml
+		GitVersion.yml = GitVersion.yml
+		LICENSE = LICENSE
+		README.md = README.md
 	EndProjectSection
 EndProject
 Global

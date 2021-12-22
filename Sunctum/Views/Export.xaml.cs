@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace Sunctum.Views
 {
     /// <summary>
-    /// Statistics.xaml の相互作用ロジック
+    /// Export.xaml の相互作用ロジック
     /// </summary>
-    public partial class StatisticsDialog : UserControl
+    public partial class Export : UserControl
     {
-        public StatisticsDialog()
+        public Export()
         {
             InitializeComponent();
         }

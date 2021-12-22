@@ -5,7 +5,6 @@ using Nito.AsyncEx;
 using NUnit.Framework;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
-using Sunctum.Domain.Test.Core;
 using System;
 using System.Data.SQLite;
 using System.IO;
@@ -16,7 +15,7 @@ namespace Sunctum.Domain.Test.UnitTest
     [Category("UnitTest")]
     public class PageOrderingTest
     {
-        private static TestBootstrapper s_bootstrapper;
+        //private static TestBootstrapper s_bootstrapper;
         private string _filePath;
         private string _dirPath;
         private string _dataPath;
@@ -29,8 +28,8 @@ namespace Sunctum.Domain.Test.UnitTest
             _filePath = Path.Combine(_dirPath, "library.db");
             ConnectionManager.SetDefaultConnection($"Data Source={_filePath}", typeof(SQLiteConnection));
 
-            s_bootstrapper = new TestBootstrapper($"Data Source={_filePath}");
-            s_bootstrapper.Run();
+            //s_bootstrapper = new TestBootstrapper($"Data Source={_filePath}");
+            //s_bootstrapper.Run();
 
             if (Directory.Exists(_dirPath))
             {
@@ -48,7 +47,7 @@ namespace Sunctum.Domain.Test.UnitTest
 
             _dataPath = Path.Combine(_dirPath, "data");
 
-            _libManager = s_bootstrapper.Get<ILibrary>();
+            //_libManager = s_bootstrapper.Get<ILibrary>();
 
             AsyncContext.Run(async () =>
             {

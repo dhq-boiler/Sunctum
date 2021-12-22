@@ -3,18 +3,22 @@
 using NLog;
 using Prism.Commands;
 using Prism.Mvvm;
+using Prism.Services.Dialogs;
 using Sunctum.Infrastructure.Data.Yaml;
+using Sunctum.Properties;
 using Sunctum.UI.Dialogs;
 using System;
 using System.Windows.Input;
 
 namespace Sunctum.ViewModels
 {
-    internal class ErrorReportDialogViewModel : BindableBase
+    internal class ErrorReportDialogViewModel : BindableBase, IDialogAware
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
-        internal Exception OccuredException { get; set; }
+        public event Action<IDialogResult> RequestClose;
+
+        public Exception OccuredException { get; set; }
 
         #region コマンド
 
@@ -22,12 +26,12 @@ namespace Sunctum.ViewModels
 
         public ICommand TerminateApplicationCommand { get; set; }
 
+        public string Title => Resources.ErrorReportDialogTitle;
+
         #endregion //コマンド
 
-        internal ErrorReportDialogViewModel(Exception exception)
+        public ErrorReportDialogViewModel()
         {
-            OccuredException = exception;
-
             RegisterCommands();
         }
 
@@ -39,6 +43,7 @@ namespace Sunctum.ViewModels
             });
             TerminateApplicationCommand = new DelegateCommand(() =>
             {
+                RequestClose.Invoke(new DialogResult(ButtonResult.Cancel));
                 TerminateApplication();
             });
         }
@@ -47,7 +52,7 @@ namespace Sunctum.ViewModels
         {
             s_logger.Info($"SUNCTUM IS SHUTTING DOWN");
             s_logger.Info($"BY ERROR REPORT DIALOG");
-            Environment.Exit(0);
+            Environment.Exit(1);
         }
 
         private void OpenExceptionDetailsDialog()
@@ -56,6 +61,20 @@ namespace Sunctum.ViewModels
             TreeViewDialog dialog = new TreeViewDialog(ymlstr);
             dialog.Title = $"Exception Details[{ OccuredException.GetType().Name}]";
             dialog.ShowDialog();
+        }
+
+        public bool CanCloseDialog()
+        {
+            return true;
+        }
+
+        public void OnDialogClosed()
+        {
+        }
+
+        public void OnDialogOpened(IDialogParameters parameters)
+        {
+            OccuredException = parameters.GetValue<Exception>("Exception");
         }
     }
 }

@@ -1,11 +1,12 @@
 ﻿
 
 using Sunctum.Domain.Models.Managers;
+using System;
 
 namespace Sunctum.Domain.Logic.Async
 {
     public interface IBookLoading : IAsyncTaskMaker
     {
-        ILibrary LibraryManager { get; set; }
+        Lazy<ILibrary> LibraryManager { get; set; }
     }
 }

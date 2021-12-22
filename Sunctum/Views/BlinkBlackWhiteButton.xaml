@@ -132,6 +132,7 @@
             x:Name="Button"
             Content="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:BlinkBlackWhiteButton}}, Path=ButtonContent}"
             Style="{StaticResource BlackWhite_Button_Paging_Style}"
-            Template="{StaticResource BlackWhite_Button_Paging_ControlTemplate}" />
+            Template="{StaticResource BlackWhite_Button_Paging_ControlTemplate}"
+            Click="Button_Click" />
     </Grid>
 </UserControl>

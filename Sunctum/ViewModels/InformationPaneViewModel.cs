@@ -1,7 +1,4 @@
-﻿
-
-using Ninject;
-using Prism.Commands;
+﻿using Prism.Commands;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using System;
@@ -9,6 +6,7 @@ using System.Collections.Generic;
 using System.Media;
 using System.Windows;
 using System.Windows.Input;
+using Unity;
 
 namespace Sunctum.ViewModels
 {
@@ -16,10 +14,10 @@ namespace Sunctum.ViewModels
     {
         private List<TagViewModel> _TagListBoxSelectedItems;
 
-        [Inject]
-        public IMainWindowViewModel MainWindowViewModel { get; set; }
+        [Dependency]
+        public Lazy<IMainWindowViewModel> MainWindowViewModel { get; set; }
 
-        [Inject]
+        [Dependency]
         public ITagManager TagManager { get; set; }
 
         public override string Title
@@ -59,14 +57,14 @@ namespace Sunctum.ViewModels
         {
             CloseCommand = new DelegateCommand(() =>
             {
-                MainWindowViewModel.DisplayInformationPane = false;
+                MainWindowViewModel.Value.DisplayInformationPane = false;
             });
             DeleteTagEntryCommand = new DelegateCommand(() =>
             {
                 var items = TagListBoxSelectedItems;
                 foreach (var item in items)
                 {
-                    MainWindowViewModel.LibraryVM.TagMng.RemoveImageTag(item.Name);
+                    TagManager.RemoveImageTag(item.Name);
                 }
             });
             DropTagCommand = new DelegateCommand<DragEventArgs>(data =>
@@ -75,7 +73,7 @@ namespace Sunctum.ViewModels
                 var imageTagCount = (TagCountViewModel)d.GetData(typeof(TagCountViewModel));
                 try
                 {
-                    MainWindowViewModel.LibraryVM.TagMng.AddImageTagToSelectedObject(imageTagCount.Tag.Name);
+                    TagManager.AddImageTagToSelectedObject(imageTagCount.Tag.Name);
                 }
                 catch (ArgumentException)
                 {
@@ -84,14 +82,14 @@ namespace Sunctum.ViewModels
             });
             TagPlusCommand = new DelegateCommand<string>(async text =>
             {
-                await MainWindowViewModel.LibraryVM.TagMng.AddImageTagToSelectedObject(text);
+                await TagManager.AddImageTagToSelectedObject(text);
             });
             TagMinusCommand = new DelegateCommand(() =>
             {
                 var items = TagListBoxSelectedItems;
                 foreach (var item in items)
                 {
-                    MainWindowViewModel.LibraryVM.TagMng.RemoveImageTag(item.Name);
+                    TagManager.RemoveImageTag(item.Name);
                 }
             });
         }
