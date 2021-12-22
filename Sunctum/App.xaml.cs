@@ -49,6 +49,8 @@ namespace Sunctum
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
+            Configuration.ApplicationConfiguration = Configuration.Load();
+
             containerRegistry.GetContainer().AddExtension(new Diagnostic()).AddExtension(new LogResolvesUnityContainerExtension());
             containerRegistry.RegisterSingleton<IMainWindowViewModel, MainWindowViewModel>();
             containerRegistry.RegisterSingleton<IHomeDocumentViewModel, HomeDocumentViewModel>();
@@ -60,7 +62,6 @@ namespace Sunctum
             containerRegistry.RegisterSingleton<IAuthorManager, AuthorManager>();
             containerRegistry.RegisterSingleton<IProgressManager, ProgressManager>();
             containerRegistry.RegisterSingleton<ITaskManager, TaskManager>();
-            containerRegistry.RegisterSingleton<IDataAccessManager, DataAccessManager>();
             containerRegistry.RegisterSingleton<IBookExporting, BookExporting>();
             containerRegistry.RegisterSingleton<IBookImporting, BookImporting>();
             containerRegistry.RegisterSingleton<IBookRemoving, BookRemoving>();
@@ -88,7 +89,9 @@ namespace Sunctum
             containerRegistry.RegisterSingleton<IValueConverter, DisplayTypeToBool>("DisplayTypeToBool");
             containerRegistry.RegisterSingleton<IValueConverter, TagSortingToBool>("TagSortingToBool");
             containerRegistry.RegisterSingleton<IValueConverter, AuthorSortingToBool>("AuthorSortingToBool");
-            containerRegistry.GetContainer().Resolve<IDataAccessManager>().AppDao = new DaoBuilder(new Connection(ConnectionStringBuilder.Build(Specifications.APP_DB_FILENAME), typeof(SQLiteConnection)));
+            containerRegistry.RegisterSingleton<IDataAccessManager, DataAccessManager>();
+            containerRegistry.RegisterInstance<IDaoBuilder>(new DaoBuilder(new Connection(ConnectionStringBuilder.Build(Specifications.APP_DB_FILENAME), typeof(SQLiteConnection))), "AppDao");
+            containerRegistry.RegisterInstance<IDaoBuilder>(new DaoBuilder(new Connection(Specifications.GenerateConnectionString(Configuration.ApplicationConfiguration.WorkingDirectory), typeof(SQLiteConnection))), "WorkingDao");
 
             containerRegistry.RegisterDialog<ChangeStar, ChangeStarViewModel>();
             containerRegistry.RegisterDialog<BookProperty, BookPropertyDialogViewModel>();

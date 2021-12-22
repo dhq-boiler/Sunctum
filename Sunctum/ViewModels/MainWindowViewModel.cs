@@ -571,7 +571,6 @@ namespace Sunctum.ViewModels
                 LoadPlugins();
             }
 
-            Configuration.ApplicationConfiguration = Configuration.Load();
             WindowLeft = Configuration.ApplicationConfiguration.WindowRect.X;
             WindowTop = Configuration.ApplicationConfiguration.WindowRect.Y;
             WindowWidth = Configuration.ApplicationConfiguration.WindowRect.Width;
@@ -608,7 +607,6 @@ namespace Sunctum.ViewModels
 
             Configuration.ApplicationConfiguration.ConnectionString = Specifications.GenerateConnectionString(Configuration.ApplicationConfiguration.WorkingDirectory);
             ConnectionManager.SetDefaultConnection(Configuration.ApplicationConfiguration.ConnectionString, typeof(SQLiteConnection));
-            DataAccessManager.WorkingDao = new DaoBuilder(new Connection(Specifications.GenerateConnectionString(Configuration.ApplicationConfiguration.WorkingDirectory), typeof(SQLiteConnection)));
 
             try
             {
