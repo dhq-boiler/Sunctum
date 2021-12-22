@@ -43,50 +43,6 @@ namespace Sunctum.UI.Test
         }
 
         [Test]
-        public void PATTERN_Regex1()
-        {
-            string target = "- Image:";
-            var rg = new Regex(TreeGenerator.PATTERN_CANDIDATE);
-            Assert.That(rg.IsMatch(target), Is.True);
-
-            var mc = rg.Match(target);
-            Assert.That(mc.Groups["indent"].Value, Is.EqualTo("- "));
-            Assert.That(mc.Groups["array"].Value, Is.EqualTo("- "));
-            Assert.That(mc.Groups["key"].Value, Is.EqualTo("Image"));
-            Assert.That(mc.Groups["hash"].Value, Is.EqualTo(":"));
-            Assert.That(mc.Groups["return"].Value, Is.EqualTo(""));
-            Assert.That(mc.Groups["specify_indent"].Value, Is.EqualTo(""));
-            Assert.That(mc.Groups["sign"].Value, Is.EqualTo(""));
-        }
-
-        [Test]
-        public void PATTERN_Regex2()
-        {
-            string target = "Message: |-";
-            var rg = new Regex(TreeGenerator.PATTERN_CANDIDATE);
-            Assert.That(rg.IsMatch(target), Is.True);
-
-            var mc = rg.Match(target);
-            Assert.That(mc.Groups["indent"].Value, Is.EqualTo(""));
-            Assert.That(mc.Groups["array"].Value, Is.EqualTo(""));
-            Assert.That(mc.Groups["key"].Value, Is.EqualTo("Message"));
-            Assert.That(mc.Groups["hash"].Value, Is.EqualTo(":"));
-            Assert.That(mc.Groups["return"].Value, Is.EqualTo("|"));
-            Assert.That(mc.Groups["specify_indent"].Value, Is.EqualTo(""));
-            Assert.That(mc.Groups["sign"].Value, Is.EqualTo("-"));
-        }
-
-
-
-        [Test]
-        public void PATTERN_Regex3()
-        {
-            string target = "  UnescapedTitle: 201208-Karuizawa-53";
-            var rg = new Regex(TreeGenerator.PATTERN_CANDIDATE);
-            Assert.That(rg.IsMatch(target), Is.False);
-        }
-
-        [Test]
         public void PATTERN_VALUE_Regex()
         {
             string target = "  UnescapedTitle: 201208-Karuizawa-53";
@@ -180,13 +136,10 @@ namespace Sunctum.UI.Test
             //
             var actual = TreeGenerator.ParseYaml(yml);
             Assert.That(actual.Key, Is.EqualTo("ROOT"));
-            Assert.That(actual.Children, Has.Count.EqualTo(1));
-
-            actual = actual.Children[0];
             Assert.That(actual.Children, Has.Count.EqualTo(8));
-            Assert.That(actual.Children[0], Has.Property("Key").EqualTo("Image"));
 
-            var image = actual.Children[0];
+            var image = actual.Children[0]; //Image
+            Assert.That(image.Children, Has.Count.EqualTo(11));
             Assert.That(image.Children[0], Has.Property("Key").EqualTo("AbsoluteMasterPath").And.Property("Value").EqualTo(@"C:\Users\dhq_b_000\Desktop\TestField\data/2018/03/18/314fac0c41ac429a815cad324e562278/201208-Karuizawa-53.JPG"));
             Assert.That(image.Children[1], Has.Property("Key").EqualTo("RelativeMasterPath").And.Property("Value").EqualTo(@"data/2018/03/18/314fac0c41ac429a815cad324e562278/201208-Karuizawa-53.JPG"));
             Assert.That(image.Children[2], Has.Property("Key").EqualTo("Thumbnail"));
@@ -230,31 +183,31 @@ namespace Sunctum.UI.Test
         //     場所 System.Windows.Threading.ExceptionWrapper.InternalRealCall(Delegate callback, Object args, Int32 numArgs)
         //     場所 System.Windows.Threading.ExceptionWrapper.TryCatchWhen(Object source, Delegate callback, Object args, Int32 numArgs, Delegate catchHandler)
         //HelpLink:
-        //        Source: Sunctum
-        //        HResult: -2147467263
+        //Source: Sunctum
+        //HResult: -2147467263
             var actual = TreeGenerator.ParseYaml(yml);
             Assert.That(actual.Key, Is.EqualTo("ROOT"));
             Assert.That(actual.Children, Has.Count.EqualTo(7));
             Assert.That(actual.Children[0], Has.Property("Key").EqualTo("Message"));
-            Assert.That(actual.Children[0].Children[0], Has.Property("Value").EqualTo("  メソッドまたは操作は実装されていません。"));
+            Assert.That(actual.Children[0].Children[0], Has.Property("Value").EqualTo("メソッドまたは操作は実装されていません。"));
             Assert.That(actual.Children[1], Has.Property("Key").EqualTo("Data"));
-            Assert.That(actual.Children[1].Children[0], Has.Property("Value").EqualTo("  ? {}"));
-            Assert.That(actual.Children[1].Children[1], Has.Property("Value").EqualTo("  : "));
+            Assert.That(actual.Children[1].Children[0], Has.Property("Value").EqualTo("? {}"));
+            Assert.That(actual.Children[1].Children[1], Has.Property("Value").EqualTo(":"));
             Assert.That(actual.Children[2], Has.Property("Key").EqualTo("InnerException"));
-            Assert.That(actual.Children[3], Has.Property("Key").EqualTo("StackTrace").And.Property("Value").EqualTo(" |2-"));
-            Assert.That(actual.Children[3].Children[0], Has.Property("Value").EqualTo(@"     場所 Sunctum.ViewModels.MainWindowViewModel.<Initialize>d__304.MoveNext() 場所 Z:\Git\Sunctum\Sunctum\ViewModels\MainWindowViewModel.cs:行 601"));
-            Assert.That(actual.Children[3].Children[1], Has.Property("Value").EqualTo(@"  --- 直前に例外がスローされた場所からのスタック トレースの終わり ---"));
-            Assert.That(actual.Children[3].Children[2], Has.Property("Value").EqualTo(@"     場所 System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()"));
-            Assert.That(actual.Children[3].Children[3], Has.Property("Value").EqualTo(@"     場所 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)"));
-            Assert.That(actual.Children[3].Children[4], Has.Property("Value").EqualTo(@"     場所 System.Runtime.CompilerServices.TaskAwaiter.GetResult()"));
-            Assert.That(actual.Children[3].Children[5], Has.Property("Value").EqualTo(@"     場所 Sunctum.Views.MainWindow.<Window_Loaded>d__10.MoveNext() 場所 Z:\Git\Sunctum\Sunctum\Views\MainWindow.xaml.cs:行 35"));
-            Assert.That(actual.Children[3].Children[6], Has.Property("Value").EqualTo(@"  --- 直前に例外がスローされた場所からのスタック トレースの終わり ---"));
-            Assert.That(actual.Children[3].Children[7], Has.Property("Value").EqualTo(@"     場所 System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()"));
-            Assert.That(actual.Children[3].Children[8], Has.Property("Value").EqualTo(@"     場所 System.Windows.Threading.ExceptionWrapper.InternalRealCall(Delegate callback, Object args, Int32 numArgs)"));
-            Assert.That(actual.Children[3].Children[9], Has.Property("Value").EqualTo(@"     場所 System.Windows.Threading.ExceptionWrapper.TryCatchWhen(Object source, Delegate callback, Object args, Int32 numArgs, Delegate catchHandler)"));
-            Assert.That(actual.Children[4], Has.Property("Key").EqualTo("HelpLink").And.Property("Value").Null);
-            Assert.That(actual.Children[5], Has.Property("Key").EqualTo("Source").And.Property("Value").EqualTo(" Sunctum"));
-            Assert.That(actual.Children[6], Has.Property("Key").EqualTo("HResult").And.Property("Value").EqualTo(" -2147467263"));
+            Assert.That(actual.Children[3], Has.Property("Key").EqualTo("StackTrace").And.Property("Value").EqualTo("|2-"));
+            Assert.That(actual.Children[3].Children[0], Has.Property("Value").EqualTo(@"場所 Sunctum.ViewModels.MainWindowViewModel.<Initialize>d__304.MoveNext() 場所 Z:\Git\Sunctum\Sunctum\ViewModels\MainWindowViewModel.cs:行 601"));
+            Assert.That(actual.Children[3].Children[1], Has.Property("Value").EqualTo(@"--- 直前に例外がスローされた場所からのスタック トレースの終わり ---"));
+            Assert.That(actual.Children[3].Children[2], Has.Property("Value").EqualTo(@"場所 System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()"));
+            Assert.That(actual.Children[3].Children[3], Has.Property("Value").EqualTo(@"場所 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)"));
+            Assert.That(actual.Children[3].Children[4], Has.Property("Value").EqualTo(@"場所 System.Runtime.CompilerServices.TaskAwaiter.GetResult()"));
+            Assert.That(actual.Children[3].Children[5], Has.Property("Value").EqualTo(@"場所 Sunctum.Views.MainWindow.<Window_Loaded>d__10.MoveNext() 場所 Z:\Git\Sunctum\Sunctum\Views\MainWindow.xaml.cs:行 35"));
+            Assert.That(actual.Children[3].Children[6], Has.Property("Value").EqualTo(@"--- 直前に例外がスローされた場所からのスタック トレースの終わり ---"));
+            Assert.That(actual.Children[3].Children[7], Has.Property("Value").EqualTo(@"場所 System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()"));
+            Assert.That(actual.Children[3].Children[8], Has.Property("Value").EqualTo(@"場所 System.Windows.Threading.ExceptionWrapper.InternalRealCall(Delegate callback, Object args, Int32 numArgs)"));
+            Assert.That(actual.Children[3].Children[9], Has.Property("Value").EqualTo(@"場所 System.Windows.Threading.ExceptionWrapper.TryCatchWhen(Object source, Delegate callback, Object args, Int32 numArgs, Delegate catchHandler)"));
+            Assert.That(actual.Children[4], Has.Property("Key").EqualTo("HelpLink").And.Property("Value").EqualTo(string.Empty));
+            Assert.That(actual.Children[5], Has.Property("Key").EqualTo("Source").And.Property("Value").EqualTo("Sunctum"));
+            Assert.That(actual.Children[6], Has.Property("Key").EqualTo("HResult").And.Property("Value").EqualTo("-2147467263"));
         }
     }
 }
