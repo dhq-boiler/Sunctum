@@ -21,8 +21,12 @@ using Sunctum.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.Composition;
+using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -34,9 +38,10 @@ using Unity;
 
 namespace Sunctum.ViewModels
 {
-    public abstract class DocumentViewModelBase : DockElementViewModelBase, IDocumentViewModelBase
+    public abstract class DocumentViewModelBase : DockElementViewModelBase, IDocumentViewModelBase, IDisposable
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
+        protected CompositeDisposable disposables = new CompositeDisposable();
         private IArrangedBookStorage _Cabinet;
         private Dictionary<Guid, Point> _scrollOffset;
         private List<EntryViewModel> _SelectedEntries;
@@ -52,7 +57,7 @@ namespace Sunctum.ViewModels
         private bool _BookListIsVisible;
         private bool _ContentListIsVisible;
         private bool _ImageIsVisible;
-
+        private bool disposedValue;
         public static readonly Guid BeforeSearchPosition = Guid.Parse("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF");
         private readonly IDialogService dialogService;
 
@@ -76,7 +81,7 @@ namespace Sunctum.ViewModels
 
         public ICommand CloseTabCommand { get; set; }
 
-        public ICommand DropCommand { get; set; }
+        public ReactiveCommand<DragEventArgs> DropCommand { get; set; } = new ReactiveCommand<DragEventArgs>();
 
         public ICommand ExportBooksCommand { get; set; }
 
@@ -122,7 +127,7 @@ namespace Sunctum.ViewModels
 
         #region プロパティ
 
-        [Dependency]
+        [ImportMany]
         public IEnumerable<IDropPlugin> DropPlugins { get; set; }
 
         public IArrangedBookStorage BookCabinet
@@ -268,6 +273,20 @@ namespace Sunctum.ViewModels
                     UpdateStarLevel();
                 });
             this.dialogService = dialogService;
+            LoadPlugins();
+        }
+
+        private void LoadPlugins()
+        {
+            string pluginsPath = Directory.GetCurrentDirectory() + @"\plugins";
+            if (!Directory.Exists(pluginsPath)) Directory.CreateDirectory(pluginsPath);
+
+            //プラグイン読み込み
+            using (var catalog = new DirectoryCatalog(pluginsPath))
+            using (var container = new CompositionContainer(catalog))
+            {
+                container.SatisfyImportsOnce(this);
+            }
         }
 
         private void UpdateStarLevel()
@@ -309,13 +328,14 @@ namespace Sunctum.ViewModels
             {
                 CloseSearchPane();
             });
-            DropCommand = new DelegateCommand<DragEventArgs>(args =>
+            DropCommand.Subscribe(args =>
             {
                 foreach (var dropPlugin in DropPlugins)
                 {
                     dropPlugin.Execute(args.Data);
                 }
-            });
+            })
+            .AddTo(disposables);
             ExportBooksCommand = new DelegateCommand(() =>
             {
                 var books = BookListViewSelectedItems;
@@ -1070,5 +1090,26 @@ namespace Sunctum.ViewModels
         }
 
         #endregion //問い合わせ
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    disposables.Dispose();
+                }
+
+                disposables = null;
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }
