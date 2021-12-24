@@ -1155,11 +1155,11 @@ namespace Sunctum.ViewModels
 
         private async Task OpenImportFolderDialogThenImport()
         {
-            var dialog = new FolderSelectDialog();
+            var dialog = new FolderBrowserDialog();
 
-            if (dialog.ShowDialog() == true)
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                await LibraryVM.ImportAsync(new string[] { dialog.FileName });
+                await LibraryVM.ImportAsync(new string[] { dialog.SelectedPath });
             }
         }
 
