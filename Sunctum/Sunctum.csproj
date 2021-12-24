@@ -58,7 +58,7 @@
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.2.0" />
   </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>if not exist "$(SolutionDir)Sunctum\$(OutDir)plugins" mkdir "$(SolutionDir)Sunctum\$(OutDir)plugins"</PostBuildEvent>
+    <PostBuildEvent>if not exist "$(SolutionDir)Sunctum\bin\$(Configuration)\net6.0-windows\plugins" mkdir "$(SolutionDir)Sunctum\bin\$(Configuration)\net6.0-windows\plugins"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup />
   <ItemGroup>
