@@ -1,7 +1,6 @@
 ﻿
 
 using Homura.ORM;
-using Ninject;
 using NLog;
 using Sunctum.Domain.Bridge;
 using Sunctum.Domain.Data.Dao;
@@ -18,6 +17,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Unity;
 
 namespace Sunctum.Domain.Logic.Async
 {
@@ -31,8 +31,8 @@ namespace Sunctum.Domain.Logic.Async
         private IEnumerable<PageViewModel> _pages;
         private IEnumerable<ImageViewModel> _images;
 
-        [Inject]
-        public ILibrary LibraryManager { get; set; }
+        [Dependency]
+        public Lazy<ILibrary> LibraryManager { get; set; }
 
         public string ImportLibraryFilename { get; set; }
 
@@ -42,9 +42,9 @@ namespace Sunctum.Domain.Logic.Async
 
             Initialize(ImportLibraryFilename);
             sequence.Add(new Task(() => CreateIDConversionTable()));
-            sequence.Add(new Task(() => ImportAuthors(LibraryManager)));
-            sequence.Add(new Task(() => ImportTags(LibraryManager)));
-            sequence.AddRange(GenerateTasksToImportBooks(LibraryManager));
+            sequence.Add(new Task(() => ImportAuthors(LibraryManager.Value)));
+            sequence.Add(new Task(() => ImportTags(LibraryManager.Value)));
+            sequence.AddRange(GenerateTasksToImportBooks(LibraryManager.Value));
             sequence.Add(new Task(() => DropIDConversionTable()));
             sequence.Add(new Task(() => EndProcess()));
         }
@@ -162,10 +162,10 @@ namespace Sunctum.Domain.Logic.Async
                 }
                 itDao.Insert(imageTag.ToEntity(), _dataOpUnit.CurrentConnection);
 
-                libManager.TagMng.Chains.Add(imageTag);
+                libManager.TagManager.Chains.Add(imageTag);
             }
 
-            libManager.TagMng.ObserveTagCount();
+            libManager.TagManager.ObserveTagCount();
         }
 
         private void CopyFile(ImageViewModel image, Guid bookId)
@@ -396,7 +396,7 @@ namespace Sunctum.Domain.Logic.Async
         {
             TagDao tagDao = new TagDao();
             tagDao.Insert(add.ToEntity(), _dataOpUnit.CurrentConnection);
-            libManager.TagMng.Tags.Add(add);
+            libManager.TagManager.Tags.Add(add);
         }
 
         private void ImportAuthors(ILibrary libManager)

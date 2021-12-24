@@ -1,12 +1,12 @@
 ﻿
 
-using Ninject;
 using NLog;
 using Sunctum.Domain.ViewModels;
 using Sunctum.ViewModels;
 using System;
 using System.Windows;
 using System.Windows.Input;
+using Unity;
 
 namespace Sunctum.Views
 {
@@ -22,10 +22,10 @@ namespace Sunctum.Views
             InitializeComponent();
         }
 
-        [Inject]
+        [Dependency]
         public IMainWindowViewModel MainWindowVM { get; set; }
 
-        [Inject]
+        [Dependency]
         public IHomeDocumentViewModel HomeDocumentViewModel { get; set; }
 
         private async void Window_Loaded(object sender, RoutedEventArgs e)
@@ -38,6 +38,11 @@ namespace Sunctum.Views
         private void DockPanel_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             HomeDocumentViewModel.ResetScrollOffsetPool();
+        }
+
+        private void MainWindowInstance_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            MainWindowVM.SaveLayout();
         }
 
         private void Window_Closed(object sender, EventArgs e)

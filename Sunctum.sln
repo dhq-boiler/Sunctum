@@ -1,39 +1,44 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30104.148
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.32014.148
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sunctum", "Sunctum\Sunctum.csproj", "{98CE041B-C971-4963-8A82-7E3F56CA4BC6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sunctum", "Sunctum\Sunctum.csproj", "{98CE041B-C971-4963-8A82-7E3F56CA4BC6}"
 	ProjectSection(ProjectDependencies) = postProject
 		{2CFDB688-BBBE-4F1D-876A-CAE825761B57} = {2CFDB688-BBBE-4F1D-876A-CAE825761B57}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sunctum.Infrastructure", "Sunctum.Infrastructure\Sunctum.Infrastructure.csproj", "{2CF31D9A-E84A-415A-8063-47BD28BA52AC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sunctum.Infrastructure", "Sunctum.Infrastructure\Sunctum.Infrastructure.csproj", "{2CF31D9A-E84A-415A-8063-47BD28BA52AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sunctum.Domain", "Sunctum.Domain\Sunctum.Domain.csproj", "{DF4F0810-0869-4124-8240-10C3C2D716D8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sunctum.Domain", "Sunctum.Domain\Sunctum.Domain.csproj", "{DF4F0810-0869-4124-8240-10C3C2D716D8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sunctum.Infrastructure.Test", "Sunctum.Infrastructure.Test\Sunctum.Infrastructure.Test.csproj", "{730A9503-C8BE-4C42-98CD-6F3B8B93FBAF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sunctum.Infrastructure.Test", "Sunctum.Infrastructure.Test\Sunctum.Infrastructure.Test.csproj", "{730A9503-C8BE-4C42-98CD-6F3B8B93FBAF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sunctum.Domain.Test", "Sunctum.Domain.Test\Sunctum.Domain.Test.csproj", "{F9BE529D-67E3-490E-A9A6-246C571B6082}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sunctum.Plugin", "Sunctum.Plugin\Sunctum.Plugin.csproj", "{2CFDB688-BBBE-4F1D-876A-CAE825761B57}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sunctum.Plugin", "Sunctum.Plugin\Sunctum.Plugin.csproj", "{2CFDB688-BBBE-4F1D-876A-CAE825761B57}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DebugTools", "DebugTools\DebugTools.csproj", "{E14FCF54-0713-4A1B-B1D5-598618D4C0FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebugTools", "DebugTools\DebugTools.csproj", "{E14FCF54-0713-4A1B-B1D5-598618D4C0FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sunctum.UI", "Sunctum.UI\Sunctum.UI.csproj", "{F0CF5F50-3A7F-41C9-A486-8F38EA90C50E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sunctum.UI", "Sunctum.UI\Sunctum.UI.csproj", "{F0CF5F50-3A7F-41C9-A486-8F38EA90C50E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sunctum.UI.Test", "Sunctum.UI.Test\Sunctum.UI.Test.csproj", "{8EDF4429-251A-416D-BB68-93F227191BCF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sunctum.UI.Test", "Sunctum.UI.Test\Sunctum.UI.Test.csproj", "{8EDF4429-251A-416D-BB68-93F227191BCF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{FD8C26B5-FBDC-4457-BBAD-2A8F1FF0929D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FolderFilesImporter", "FolderFilesImporter\FolderFilesImporter.csproj", "{99514C96-792F-4493-807D-E717283DA621}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FolderFilesImporter", "FolderFilesImporter\FolderFilesImporter.csproj", "{99514C96-792F-4493-807D-E717283DA621}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PickoutCover", "PickoutCover\PickoutCover.csproj", "{7CDFB46C-5A39-4AFA-BDB9-CEA0FB05D713}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PickoutCover", "PickoutCover\PickoutCover.csproj", "{7CDFB46C-5A39-4AFA-BDB9-CEA0FB05D713}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0AFE6A8C-B0F8-4726-BAA3-971C5B53BC2D}"
 	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		AUTHORS = AUTHORS
 		azure-pipelines.yml = azure-pipelines.yml
+		GitVersion.yml = GitVersion.yml
+		LICENSE = LICENSE
+		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sunctum.Domain.Test", "Sunctum.Domain.Test\Sunctum.Domain.Test.csproj", "{D0FA054B-5C8B-4A40-9DF3-B69B44428EE8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,10 +62,6 @@ Global
 		{730A9503-C8BE-4C42-98CD-6F3B8B93FBAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{730A9503-C8BE-4C42-98CD-6F3B8B93FBAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{730A9503-C8BE-4C42-98CD-6F3B8B93FBAF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F9BE529D-67E3-490E-A9A6-246C571B6082}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F9BE529D-67E3-490E-A9A6-246C571B6082}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F9BE529D-67E3-490E-A9A6-246C571B6082}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F9BE529D-67E3-490E-A9A6-246C571B6082}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2CFDB688-BBBE-4F1D-876A-CAE825761B57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2CFDB688-BBBE-4F1D-876A-CAE825761B57}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2CFDB688-BBBE-4F1D-876A-CAE825761B57}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -85,6 +86,10 @@ Global
 		{7CDFB46C-5A39-4AFA-BDB9-CEA0FB05D713}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7CDFB46C-5A39-4AFA-BDB9-CEA0FB05D713}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7CDFB46C-5A39-4AFA-BDB9-CEA0FB05D713}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0FA054B-5C8B-4A40-9DF3-B69B44428EE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0FA054B-5C8B-4A40-9DF3-B69B44428EE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0FA054B-5C8B-4A40-9DF3-B69B44428EE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0FA054B-5C8B-4A40-9DF3-B69B44428EE8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

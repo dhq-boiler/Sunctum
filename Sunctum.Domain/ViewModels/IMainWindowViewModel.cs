@@ -46,6 +46,8 @@ namespace Sunctum.Domain.ViewModels
 
         void NewContentTab(IEnumerable<BookViewModel> list);
 
+        void SaveLayout();
+
         List<MenuItem> ExtraBookContextMenu { get; }
 
         List<MenuItem> ExtraPageContextMenu { get; }

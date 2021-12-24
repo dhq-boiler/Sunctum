@@ -11,14 +11,14 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
+using Unity;
 
 namespace Sunctum.Domain.Test.UnitTest
 {
     [Category("UnitTest")]
     [TestFixture]
-    public class PageDaoTest
+    public class PageDaoTest : TestSession
     {
-        private static TestBootstrapper s_bootstrapper;
         private ILibrary _libManager;
         private string _filePath;
         private string _dirPath;
@@ -30,9 +30,6 @@ namespace Sunctum.Domain.Test.UnitTest
             _filePath = Path.Combine(_dirPath, "library.db");
             ConnectionManager.SetDefaultConnection($"Data Source={_filePath}", typeof(SQLiteConnection));
 
-            s_bootstrapper = new TestBootstrapper($"Data Source={_filePath}");
-            s_bootstrapper.Run();
-
             if (Directory.Exists(_dirPath))
             {
                 Directory.Delete(_dirPath, true);
@@ -43,12 +40,7 @@ namespace Sunctum.Domain.Test.UnitTest
                 Directory.CreateDirectory(_dirPath);
             }
 
-
-            var config = new Configuration();
-            config.WorkingDirectory = _dirPath;
-            Configuration.ApplicationConfiguration = config;
-
-            _libManager = s_bootstrapper.Get<ILibrary>();
+            _libManager = Container.Resolve<ILibrary>();
             _libManager.Initialize().Wait();
             _libManager.Load().Wait();
         }
@@ -157,6 +149,11 @@ namespace Sunctum.Domain.Test.UnitTest
             {
                 Directory.Delete(_dirPath, true);
             }
+        }
+
+        public override string GetTestDirectory()
+        {
+            return Path.Combine(TestContext.CurrentContext.TestDirectory, "PageDaoTest");
         }
     }
 }

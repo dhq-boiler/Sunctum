@@ -1,7 +1,6 @@
 ﻿
 
 using Homura.ORM;
-using Ninject;
 using NLog;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Extensions;
@@ -14,6 +13,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Unity;
 
 namespace Sunctum.Domain.Logic.Async
 {
@@ -21,8 +21,8 @@ namespace Sunctum.Domain.Logic.Async
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
-        [Inject]
-        public ILibrary LibraryManager { get; set; }
+        [Dependency]
+        public Lazy<ILibrary> LibraryManager { get; set; }
 
         public IEnumerable<PageViewModel> TargetPages { get; set; }
 
@@ -39,7 +39,7 @@ namespace Sunctum.Domain.Logic.Async
                 sequence.Add(new Task(() => ContentsLoadTask.SetImageToPage(page)));
                 sequence.Add(new Task(() => DeleteRecordFromStorage(page)));
                 sequence.Add(new Task(() => DeleteFileFromStorage(page)));
-                sequence.Add(new Task(() => RemovePageFromBook(LibraryManager, page)));
+                sequence.Add(new Task(() => RemovePageFromBook(LibraryManager.Value, page)));
                 sequence.Add(new Task(() => s_logger.Info($"Removed Page:{page}")));
             }
         }

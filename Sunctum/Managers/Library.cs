@@ -1,7 +1,6 @@
 ﻿
 
 using Homura.ORM;
-using Ninject;
 using NLog;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Async;
@@ -14,12 +13,11 @@ using Sunctum.UI.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Data.SQLite;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime.Hosting;
 using System.Threading.Tasks;
 using System.Windows;
+using Unity;
 
 namespace Sunctum.Managers
 {
@@ -42,67 +40,70 @@ namespace Sunctum.Managers
             set { SetProperty(ref _RecentOpenedLibraryList, value); }
         }
 
-        [Inject]
-        public ITagManager TagMng { [DebuggerStepThrough] get; set; }
+        [Dependency]
+        public IPageOrderUpdating PageOrderUpdatingService { get; set; }
 
-        [Inject]
+        [Dependency]
+        public ITagManager TagManager { [DebuggerStepThrough] get; set; }
+
+        [Dependency]
         public IProgressManager ProgressManager { [DebuggerStepThrough] get; set; }
 
-        [Inject]
+        [Dependency]
         public IAuthorManager AuthorManager { [DebuggerStepThrough] get; set; }
 
-        [Inject]
+        [Dependency]
         public ITaskManager TaskManager { [DebuggerStepThrough] get; set; }
 
-        [Inject]
+        [Dependency]
         public IBookExporting BookExportingService { [DebuggerStepThrough] get; set; }
 
-        [Inject]
+        [Dependency]
         public IBookImporting BookImportingService { [DebuggerStepThrough] get; set; }
 
-        [Inject]
+        [Dependency]
         public IBookRemoving BookRemovingService { [DebuggerStepThrough] get; set; }
 
-        [Inject]
+        [Dependency]
         public ILibraryImporting LibraryImportingService { [DebuggerStepThrough] get; set; }
 
-        [Inject]
+        [Dependency]
         public ILibraryLoading LibraryLoadingService { [DebuggerStepThrough] get; set; }
 
-        [Inject]
+        [Dependency]
         public IPageRemoving PageRemovingService { [DebuggerStepThrough] get; set; }
 
-        [Inject]
+        [Dependency]
         public IPageScrapping PageScrappingService { [DebuggerStepThrough] get; set; }
 
-        [Inject]
+        [Dependency]
         public IBookThumbnailRemaking BookThumbnailRemakingService { [DebuggerStepThrough] get; set; }
 
-        [Inject]
+        [Dependency]
         public IPageThumbnailRemaking PageThumbnailRemakingService { [DebuggerStepThrough] get; set; }
 
-        [Inject]
+        [Dependency]
         public ILibraryInitializing LibraryInitializingService { [DebuggerStepThrough] get; set; }
 
-        [Inject]
+        [Dependency]
         public ILibraryResetting LibraryResettingService { [DebuggerStepThrough] get; set; }
 
-        [Inject]
+        [Dependency]
         public IByteSizeCalculating ByteSizeCalculatingService { get; set; }
 
-        [Inject]
+        [Dependency]
         public IBookHashing BookHashingService { get; set; }
 
-        [Inject]
+        [Dependency]
         public IBookTagInitializing BookTagInitializingService { get; set; }
 
-        [Inject]
+        [Dependency]
         public IEncryptionStarting EncryptionStartingService { get; set; }
 
-        [Inject]
+        [Dependency]
         public IUnencryptionStarting UnencryptionStartingService { get; set; }
 
-        [Inject]
+        [Dependency]
         public IDataAccessManager DataAccessManager { [DebuggerStepThrough] get; set; }
 
         #endregion //プロパティ
@@ -213,9 +214,6 @@ namespace Sunctum.Managers
             return PageOrdering.OrderBackward(page, book);
         }
 
-        [Inject]
-        public IPageOrderUpdating PageOrderUpdatingService { get; set; }
-
         public async Task SaveBookContentsOrder(BookViewModel target)
         {
             PageOrderUpdatingService.Target = target;
@@ -277,14 +275,12 @@ namespace Sunctum.Managers
 
         public async Task UpdateBookByteSizeAll()
         {
-            ByteSizeCalculatingService.LibraryManager = this;
             ByteSizeCalculatingService.Range = ByteSizeCalculating.UpdateRange.IsAll;
             await TaskManager.Enqueue(ByteSizeCalculatingService.GetTaskSequence());
         }
 
         public async Task UpdateBookByteSizeStillNull()
         {
-            ByteSizeCalculatingService.LibraryManager = this;
             ByteSizeCalculatingService.Range = ByteSizeCalculating.UpdateRange.IsStillNull;
             await TaskManager.Enqueue(ByteSizeCalculatingService.GetTaskSequence());
         }
@@ -295,14 +291,12 @@ namespace Sunctum.Managers
 
         public async Task UpdateBookFingerPrintAll()
         {
-            BookHashingService.LibraryManager = this;
             BookHashingService.Range = BookHashing.UpdateRange.IsAll;
             await TaskManager.Enqueue(BookHashingService.GetTaskSequence());
         }
 
         public async Task UpdateBookFingerPrintStillNull()
         {
-            BookHashingService.LibraryManager = this;
             BookHashingService.Range = BookHashing.UpdateRange.IsStillNull;
             await TaskManager.Enqueue(BookHashingService.GetTaskSequence());
         }
@@ -321,7 +315,6 @@ namespace Sunctum.Managers
 
         public async Task StartEncryption(string password)
         {
-            EncryptionStartingService.LibraryManager = this;
             EncryptionStartingService.Password = password;
             await TaskManager.Enqueue(EncryptionStartingService.GetTaskSequence());
         }
@@ -349,7 +342,6 @@ namespace Sunctum.Managers
 
         public async Task StartUnencryption(string password)
         {
-            UnencryptionStartingService.LibraryManager = this;
             UnencryptionStartingService.Password = password;
             await TaskManager.Enqueue(UnencryptionStartingService.GetTaskSequence());
         }

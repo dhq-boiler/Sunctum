@@ -1,9 +1,5 @@
-﻿
-
-using Prism.Interactivity.InteractionRequest;
-using Reactive.Bindings;
+﻿using Reactive.Bindings;
 using Sunctum.Domain.Logic.Parse;
-using Sunctum.Properties;
 using System;
 using System.Reactive.Linq;
 using System.Windows;
@@ -30,9 +26,9 @@ namespace Sunctum.ViewModels
 
         public ReactiveCommand<Window> CloseCommand { get; } = new ReactiveCommand<Window>();
 
-        public InteractionRequest<Notification> AddRequest { get; } = new InteractionRequest<Notification>();
+        //public InteractionRequest<Notification> AddRequest { get; } = new InteractionRequest<Notification>();
 
-        public InteractionRequest<Notification> EditRequest { get; } = new InteractionRequest<Notification>();
+        //public InteractionRequest<Notification> EditRequest { get; } = new InteractionRequest<Notification>();
 
         public MetadataImportSettingDialogViewModel(IDirectoryNameParserManager directoryNameParserManager)
         {
@@ -56,21 +52,27 @@ namespace Sunctum.ViewModels
                 .Subscribe(() => Down());
             AddCommand
                 .Select(_ => new DirectoryNameParser())
-                .Subscribe(x => AddRequest.Raise(new Notification
-                {
-                    Title = Resources.EditMetadataImportSettingDialogTitle_Add,
-                    Content = x
-                }));
+                .Subscribe(x =>
+                throw new NotImplementedException()
+                //AddRequest.Raise(new Notification
+                //{
+                //    Title = Resources.EditMetadataImportSettingDialogTitle_Add,
+                //    Content = x
+                //})
+                );
             EditCommand = SelectedParser
                 .Select(x => x != null)
                 .ToReactiveCommand();
             EditCommand
                 .Select(_ => SelectedParser.Value.Model)
-                .Subscribe(x => EditRequest.Raise(new Notification
-                {
-                    Title = Resources.EditMetadataImportSettingDialogTitle_Edit,
-                    Content = x
-                }));
+                .Subscribe(x =>
+                throw new NotImplementedException()
+                //EditRequest.Raise(new Notification
+                //{
+                //    Title = Resources.EditMetadataImportSettingDialogTitle_Edit,
+                //    Content = x
+                //})
+                );
             RemoveCommand = SelectedParser
                 .Select(x => x != null)
                 .ToReactiveCommand();

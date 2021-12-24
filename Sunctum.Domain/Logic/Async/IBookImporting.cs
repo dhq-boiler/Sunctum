@@ -2,13 +2,14 @@
 
 using Reactive.Bindings;
 using Sunctum.Domain.Models.Managers;
+using System;
 using System.Collections.Generic;
 
 namespace Sunctum.Domain.Logic.Async
 {
     public interface IBookImporting : IAsyncTaskMaker
     {
-        ILibrary LibraryManager { get; set; }
+        Lazy<ILibrary> LibraryManager { get; set; }
 
         IEnumerable<string> ObjectPaths { get; set; }
 

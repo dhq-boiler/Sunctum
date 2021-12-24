@@ -1,30 +1,26 @@
-﻿<Window
-    x:Class="Sunctum.Views.ExportDialog"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="clr-namespace:Sunctum.Views"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:properties="clr-namespace:Sunctum.Properties"
-    xmlns:ui.ctrl="clr-namespace:Sunctum.UI.Controls;assembly=Sunctum.UI"
-    SizeToContent="WidthAndHeight"
-    mc:Ignorable="d">
-    <Window.Resources>
+﻿<UserControl x:Class="Sunctum.Views.Export"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Sunctum.Views"
+             xmlns:properties="clr-namespace:Sunctum.Properties"
+             xmlns:ui.ctrl="clr-namespace:Sunctum.UI.Controls;assembly=Sunctum.UI"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    <UserControl.Resources>
         <properties:Resources x:Key="resources" />
-    </Window.Resources>
-    <Window.Title>
-        <Binding Path="ExportDialogTitle" Source="{StaticResource resources}" />
-    </Window.Title>
+    </UserControl.Resources>
     <DockPanel>
         <DockPanel DockPanel.Dock="Bottom">
             <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
                 <Button
-                    Click="OKButton_Click"
+                    Command="{Binding OKCommand}"
                     Content="{Binding Common_Ok, Source={StaticResource resources}}"
                     IsEnabled="{Binding TextIsValid, ElementName=TextBox_OutputDirectory, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
                     Style="{StaticResource OKButtonStyle}" />
                 <Button
-                    Click="CancelButton_Click"
+                    Command="{Binding CancelCommand}"
                     Content="{Binding Common_Cancel, Source={StaticResource resources}}"
                     Style="{StaticResource CancelCloseButtonStyle}" />
             </StackPanel>
@@ -40,14 +36,15 @@
                     <Button
                         x:Name="Button_Reference"
                         Width="25"
-                        Click="Button_Reference_Click"
-                        DockPanel.Dock="Right">
+                        DockPanel.Dock="Right"
+                        Command="{Binding ReferenceCommand}">
                         ...
                     </Button>
                     <ui.ctrl:VerificationTextBox
                         x:Name="TextBox_OutputDirectory"
                         Width="300"
-                        Text="{Binding OutputDirectory, Mode=TwoWay}" />
+                        Text="{Binding OutputDirectory, Mode=TwoWay}"
+                        TextVerifier="{Binding TextVerifier.Value}" />
                 </DockPanel>
             </ui.ctrl:SimpleGrid>
         </DockPanel>
@@ -60,4 +57,4 @@
                 IsThreeState="False" />
         </GroupBox>
     </DockPanel>
-</Window>
+</UserControl>

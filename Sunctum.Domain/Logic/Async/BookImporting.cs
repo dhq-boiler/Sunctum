@@ -1,8 +1,4 @@
-﻿
-
-using Ninject;
-using NLog;
-using Reactive.Bindings;
+﻿using NLog;
 using Sunctum.Domain.Extensions;
 using Sunctum.Domain.Logic.Import;
 using Sunctum.Domain.Logic.Parse;
@@ -12,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Unity;
 
 namespace Sunctum.Domain.Logic.Async
 {
@@ -22,10 +19,10 @@ namespace Sunctum.Domain.Logic.Async
         public BookImporting()
         { }
 
-        [Inject]
-        public ILibrary LibraryManager { get; set; }
+        [Dependency]
+        public Lazy<ILibrary> LibraryManager { get; set; }
 
-        [Inject]
+        [Dependency]
         public IDirectoryNameParserManager DirectoryNameParserManager { get; set; }
 
         public string MasterDirectory { get; set; }
@@ -43,7 +40,7 @@ namespace Sunctum.Domain.Logic.Async
         {
             List<Importer> importers = new List<Importer>();
 
-            DiscriminateDroppedEntries(ObjectPaths, importers, LibraryManager);
+            DiscriminateDroppedEntries(ObjectPaths, importers, LibraryManager.Value);
 
             var workingDirectory = Configuration.ApplicationConfiguration.WorkingDirectory;
             var now = DateTime.Now;
@@ -118,7 +115,7 @@ namespace Sunctum.Domain.Logic.Async
                 var task = importers.ElementAt(i);
                 Guid entryNameSeedGuid = Guid.NewGuid();
                 var entryName = entryNameSeedGuid.ToString("N");
-                var t = task.GenerateTasks(LibraryManager, copyTo, entryName, null, (importer, bookvm) =>
+                var t = task.GenerateTasks(LibraryManager.Value, copyTo, entryName, null, (importer, bookvm) =>
                 {
                     bookvm.CurrentProcessProgress.Value.Count.Value = importer.Processed;
                     bookvm.CurrentProcessProgress.Value.TotalCount.Value = importer.Count;

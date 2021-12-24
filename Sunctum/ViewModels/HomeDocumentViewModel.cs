@@ -1,6 +1,7 @@
 ﻿
 
 using NLog;
+using Prism.Services.Dialogs;
 
 namespace Sunctum.ViewModels
 {
@@ -22,7 +23,8 @@ namespace Sunctum.ViewModels
             get { return "home"; }
         }
 
-        public HomeDocumentViewModel()
+        public HomeDocumentViewModel(IDialogService dialogService)
+            : base(dialogService)
         {
         }
     }

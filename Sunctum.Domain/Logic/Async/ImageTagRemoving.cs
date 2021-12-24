@@ -1,14 +1,13 @@
-﻿
-
-using Ninject;
-using NLog;
+﻿using NLog;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Extensions;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Unity;
 
 namespace Sunctum.Domain.Logic.Async
 {
@@ -18,8 +17,8 @@ namespace Sunctum.Domain.Logic.Async
 
         public IEnumerable<EntryViewModel> Entries { get; set; }
 
-        [Inject]
-        public ITagManager TagManager { get; set; }
+        [Dependency]
+        public Lazy<ITagManager> TagManager { get; set; }
 
         public IEnumerable<string> TagNames { get; set; }
 
@@ -49,7 +48,7 @@ namespace Sunctum.Domain.Logic.Async
                             }));
                             sequence.Add(new Task(() =>
                             {
-                                Remove.ImageTagRemoving.Remove(TagManager, p.Image, tagName);
+                                Remove.ImageTagRemoving.Remove(TagManager.Value, p.Image, tagName);
                             }));
                         }
 
@@ -74,7 +73,7 @@ namespace Sunctum.Domain.Logic.Async
                         }));
                         sequence.Add(new Task(() =>
                         {
-                            Remove.ImageTagRemoving.Remove(TagManager, page.Image, tagName);
+                            Remove.ImageTagRemoving.Remove(TagManager.Value, page.Image, tagName);
                         }));
 
                         sequence.Add(new Task(() =>
@@ -113,7 +112,7 @@ namespace Sunctum.Domain.Logic.Async
                     {
                         sequence.Add(new Task(() =>
                         {
-                            Remove.ImageTagRemoving.Remove(TagManager, page.Image, tagName);
+                            Remove.ImageTagRemoving.Remove(TagManager.Value, page.Image, tagName);
                         }));
 
                         sequence.Add(new Task(() =>
@@ -149,9 +148,9 @@ namespace Sunctum.Domain.Logic.Async
                     }
                 }
 
-                sequence.Add(new Task(() => TagManager.SelectedEntityTags = TagManager.GetCommonTags()));
-                sequence.Add(new Task(() => TagManager.ObserveSelectedEntityTags()));
-                sequence.Add(new Task(() => TagManager.ObserveTagCount()));
+                sequence.Add(new Task(() => TagManager.Value.SelectedEntityTags = TagManager.Value.GetCommonTags()));
+                sequence.Add(new Task(() => TagManager.Value.ObserveSelectedEntityTags()));
+                sequence.Add(new Task(() => TagManager.Value.ObserveTagCount()));
             }
         }
 

@@ -7,7 +7,7 @@ trigger:
 - master
 
 pool:
-  vmImage: 'windows-latest'
+  vmImage: 'windows-2022'
 
 variables:
   solution: '**/*.sln'
@@ -17,28 +17,33 @@ variables:
 steps:
 - task: NuGetToolInstaller@1
 
-- task: NuGetCommand@2
+- task: DotNetCoreCLI@2
+  displayName: 'NuGet パッケージの復元'
   inputs:
-    restoreSolution: '$(solution)'
+    command: 'restore'
+    projects: '$(TargetSolution)'
+    feedsToUse: 'select'
 
-- task: VSBuild@1
+- task: DotNetCoreCLI@2
+  displayName: 'アプリケーションのビルド'
   inputs:
-    solution: '$(solution)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    command: 'build'
+    projects: '$(TargetSolution)'
+    arguments: '--configuration $(BuildConfiguration)'  
 
-- task: VSTest@2
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet test'
   inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-    testAssemblyVer2: |
-      **\*Test.dll
+    command: 'test'
+    arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura -- RunConfiguration.DisableAppDomain=true'
+    publishTestResults: true
+    projects: '*[Tt]est.csproj'
 
 # Archive files
 # Compress files into .7z, .tar.gz, or .zip
 - task: ArchiveFiles@2
   inputs:
-    rootFolderOrFile: '$(System.DefaultWorkingDirectory)\Sunctum\bin\Release' 
+    rootFolderOrFile: '$(System.DefaultWorkingDirectory)\Sunctum\bin\Release\net6.0-windows' 
     includeRootFolder: false
     archiveType: 'zip' # Options: zip, 7z, tar, wim
     tarCompression: 'gz' # Optional. Options: gz, bz2, xz, none

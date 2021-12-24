@@ -20,6 +20,7 @@ namespace Sunctum.UI.Controls
     /// Wraps System.Windows.Forms.OpenFileDialog to make it present
     /// a vista-style dialog.
     /// </summary>
+    [Obsolete]
     public class FolderSelectDialog
     {
         // Wrapped dialog

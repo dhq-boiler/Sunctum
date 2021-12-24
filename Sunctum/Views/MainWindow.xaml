@@ -1,25 +1,23 @@
 ﻿<Window x:Class="Sunctum.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:avalonDock="http://schemas.xceed.com/wpf/xaml/avalondock"
-        xmlns:behavior="clr-namespace:Sunctum.Views.Behaviors"
-        xmlns:cvt="clr-namespace:Sunctum.Converters"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
-        xmlns:helper="clr-namespace:Sunctum.Helpers"
-        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-        xmlns:local="clr-namespace:Sunctum.Views"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:prism="http://prismlibrary.com/"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:avalonDock="http://schemas.xceed.com/wpf/xaml/avalondock"
+        xmlns:cvt="clr-namespace:Sunctum.Converters"
+        xmlns:helper="clr-namespace:Sunctum.Helpers"
         xmlns:properties="clr-namespace:Sunctum.Properties"
-        xmlns:trigger="clr-namespace:Sunctum.Views.Triggers"
-        xmlns:ui.ctrl="clr-namespace:Sunctum.UI.Controls;assembly=Sunctum.UI"
         xmlns:viewModel="clr-namespace:Sunctum.ViewModels"
+        xmlns:local="clr-namespace:Sunctum.Views"
+        xmlns:trigger="clr-namespace:Sunctum.Views.Triggers"
         x:Name="MainWindowInstance"
         Width="{Binding WindowWidth, Mode=TwoWay}"
         Height="{Binding WindowHeight, Mode=TwoWay}"
         prism:ViewModelLocator.AutoWireViewModel="True"
         Closed="Window_Closed"
+        Closing="MainWindowInstance_Closing"
         Left="{Binding WindowLeft, Mode=TwoWay}"
         Loaded="Window_Loaded"
         Top="{Binding WindowTop, Mode=TwoWay}"
@@ -60,20 +58,6 @@
         <trigger:MouseWheelEventTrigger EventName="MouseWheel">
             <helper:EventToCommand Command="{Binding ActiveDocumentViewModel.MouseWheelCommand}" PassEventArgsToCommand="True" />
         </trigger:MouseWheelEventTrigger>
-        <trigger:InteractionRequestTrigger SourceObject="{Binding OpenPowerSearchRequest}">
-            <trigger:PopupWindowAction IsModal="False">
-                <trigger:PopupWindowAction.WindowContent>
-                    <local:PowerSearch />
-                </trigger:PopupWindowAction.WindowContent>
-            </trigger:PopupWindowAction>
-        </trigger:InteractionRequestTrigger>
-        <trigger:InteractionRequestTrigger SourceObject="{Binding OpenStatisticsDialogRequest}">
-            <trigger:PopupWindowAction IsModal="False">
-                <trigger:PopupWindowAction.WindowContent>
-                    <local:StatisticsDialog />
-                </trigger:PopupWindowAction.WindowContent>
-            </trigger:PopupWindowAction>
-        </trigger:InteractionRequestTrigger>
     </i:Interaction.Triggers>
     <Window.InputBindings>
         <KeyBinding Key="F"
@@ -87,7 +71,8 @@
     <Window.Resources>
         <properties:Resources x:Key="resources" />
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-        <cvt:BookSortingToBool x:Key="BookSortingToBool" />
+        <prism:ContainerProvider Type="{x:Type cvt:BookSortingToBool}" x:Key="BookSortingToBool" />
+        <prism:ContainerProvider Type="{x:Type cvt:DisplayTypeToBool}" x:Key="DisplayTypeToBool" />
         <cvt:PathToMenuItem x:Key="PathToMenuItem" />
         <cvt:ActiveDocumentConverter x:Key="ActiveDocumentConverter" />
         <cvt:WindowStateToVisibilityConverter x:Key="WindowStateToVisibilityConverter" />
@@ -217,54 +202,54 @@
                                 <MenuItem Header="{Binding MainWindow_Display_Sorting, Source={StaticResource resources}}">
                                     <MenuItem Command="{Binding SortBookByLoadedAscCommand}"
                                               Header="{Binding MainWindow_Display_Sorting_LoadedAsc, Source={StaticResource resources}}"
-                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByLoadedAsc}" />
+                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={StaticResource BookSortingToBool}, ConverterParameter=ByLoadedAsc}" />
                                     <MenuItem Command="{Binding SortBookByLoadedDescCommand}"
                                               Header="{Binding MainWindow_Display_Sorting_LoadedDesc, Source={StaticResource resources}}"
-                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByLoadedDesc}" />
+                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={StaticResource BookSortingToBool}, ConverterParameter=ByLoadedDesc}" />
                                     <MenuItem Command="{Binding SortBookByTitleAscCommand}"
                                               Header="{Binding MainWindow_Display_Sorting_TitleAsc, Source={StaticResource resources}}"
-                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByTitleAsc}" />
+                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={StaticResource BookSortingToBool}, ConverterParameter=ByTitleAsc}" />
                                     <MenuItem Command="{Binding SortBookByTitleDescCommand}"
                                               Header="{Binding MainWindow_Display_Sorting_TitleDesc, Source={StaticResource resources}}"
-                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByTitleDesc}" />
+                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={StaticResource BookSortingToBool}, ConverterParameter=ByTitleDesc}" />
                                     <MenuItem Command="{Binding SortBookByAuthorAscCommand}"
                                               Header="{Binding MainWindow_Display_Sorting_AuthorAsc, Source={StaticResource resources}}"
-                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByAuthorAsc}" />
+                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={StaticResource BookSortingToBool}, ConverterParameter=ByAuthorAsc}" />
                                     <MenuItem Command="{Binding SortBookByAuthorDescCommand}"
                                               Header="{Binding MainWindow_Display_Sorting_AuthorDesc, Source={StaticResource resources}}"
-                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByAuthorDesc}" />
+                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={StaticResource BookSortingToBool}, ConverterParameter=ByAuthorDesc}" />
                                     <MenuItem Command="{Binding SortBookByCoverBlueAscCommand}"
                                               Header="{Binding MainWindow_Display_Sorting_CoverBlueAsc, Source={StaticResource resources}}"
-                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByCoverBlueAsc}" />
+                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={StaticResource BookSortingToBool}, ConverterParameter=ByCoverBlueAsc}" />
                                     <MenuItem Command="{Binding SortBookByCoverBlueDescCommand}"
                                               Header="{Binding MainWindow_Display_Sorting_CoverBlueDesc, Source={StaticResource resources}}"
-                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByCoverBlueDesc}" />
+                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={StaticResource BookSortingToBool}, ConverterParameter=ByCoverBlueDesc}" />
                                     <MenuItem Command="{Binding SortBookByCoverGreenAscCommand}"
                                               Header="{Binding MainWindow_Display_Sorting_CoverGreenAsc, Source={StaticResource resources}}"
-                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByCoverGreenAsc}" />
+                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={StaticResource BookSortingToBool}, ConverterParameter=ByCoverGreenAsc}" />
                                     <MenuItem Command="{Binding SortBookByCoverGreenDescCommand}"
                                               Header="{Binding MainWindow_Display_Sorting_CoverGreenDesc, Source={StaticResource resources}}"
-                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByCoverGreenDesc}" />
+                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={StaticResource BookSortingToBool}, ConverterParameter=ByCoverGreenDesc}" />
                                     <MenuItem Command="{Binding SortBookByCoverRedAscCommand}"
                                               Header="{Binding MainWindow_Display_Sorting_CoverRedAsc, Source={StaticResource resources}}"
-                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByCoverRedAsc}" />
+                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={StaticResource BookSortingToBool}, ConverterParameter=ByCoverRedAsc}" />
                                     <MenuItem Command="{Binding SortBookByCoverRedDescCommand}"
                                               Header="{Binding MainWindow_Display_Sorting_CoverRedDesc, Source={StaticResource resources}}"
-                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByCoverRedDesc}" />
+                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={StaticResource BookSortingToBool}, ConverterParameter=ByCoverRedDesc}" />
                                     <MenuItem Command="{Binding SortBookByFingerPrintAscCommand}"
                                               Header="{Binding MainWindow_Display_Sorting_FingerPrintAsc, Source={StaticResource resources}}"
-                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByFingerPrintAsc}" />
+                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={StaticResource BookSortingToBool}, ConverterParameter=ByFingerPrintAsc}" />
                                     <MenuItem Command="{Binding SortBookByFingerPrintDescCommand}"
                                               Header="{Binding MainWindow_Display_Sorting_FingerPrintDesc, Source={StaticResource resources}}"
-                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={cvt:BookSortingToBool NamedInstance=BookSortingToBool}, ConverterParameter=ByFingerPrintDesc}" />
+                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.Sorting, Mode=OneWay, Converter={StaticResource BookSortingToBool}, ConverterParameter=ByFingerPrintDesc}" />
                                 </MenuItem>
                                 <MenuItem Header="{Binding MainWindow_Display_DisplayType, Source={StaticResource resources}}">
                                     <MenuItem Command="{Binding DisplaySideBySideCommand}"
                                               Header="{Binding MainWindow_Display_DisplayType_SideBySide, Source={StaticResource resources}}"
-                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.DisplayType, Mode=OneWay, Converter={cvt:DisplayTypeToBool NamedInstance=DisplayTypeToBool}, ConverterParameter=SideBySide}" />
-                                    <MenuItem Command="{Binding DetailsCommand}"
-                                              Header="{Binding MainWindow_Display_DisplayType_Details, Source={StaticResource resources}}"
-                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.DisplayType, Mode=OneWay, Converter={cvt:DisplayTypeToBool NamedInstance=DisplayTypeToBool}, ConverterParameter=Details}" />
+                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.DisplayType, Mode=OneWay, Converter={StaticResource DisplayTypeToBool}, ConverterParameter=SideBySide}" />
+                                    <MenuItem Command="{Binding DetailsCommand}"                                                            
+                                              Header="{Binding MainWindow_Display_DisplayType_Details, Source={StaticResource resources}}"  
+                                              IsChecked="{Binding ActiveDocumentViewModel.BookCabinet.DisplayType, Mode=OneWay, Converter={StaticResource DisplayTypeToBool}, ConverterParameter=Details}" />
                                 </MenuItem>
                             </MenuItem>
                             <MenuItem Header="{Binding MainWindow_Help, Source={StaticResource resources}}">
@@ -350,12 +335,6 @@
                                    AnchorablesSource="{Binding DockingPaneViewModels}"
                                    DocumentsSource="{Binding DockingDocumentViewModels}">
             <i:Interaction.Triggers>
-                <trigger:InteractionRequestTrigger SourceObject="{Binding LoadLayoutRequest}">
-                    <trigger:LoadLayoutAction />
-                </trigger:InteractionRequestTrigger>
-                <trigger:InteractionRequestTrigger SourceObject="{Binding SaveLayoutRequest}">
-                    <trigger:SaveLayoutAction />
-                </trigger:InteractionRequestTrigger>
                 <i:EventTrigger EventName="ActiveContentChanged">
                     <i:CallMethodAction MethodName="ChangeActiveContent" TargetObject="{Binding}" />
                 </i:EventTrigger>

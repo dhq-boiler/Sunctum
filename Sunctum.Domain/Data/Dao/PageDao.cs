@@ -25,7 +25,7 @@ namespace Sunctum.Domain.Data.Dao
         public PageDao(Type entityVersionType) : base(entityVersionType)
         { }
 
-        protected override void VerifyColumnDefinitions(DbConnection conn)
+        protected override void VerifyColumnDefinitions(IDbConnection conn)
         {
             var columnDefinitions = GetColumnDefinitions(conn);
             foreach (var column in Columns)
@@ -54,7 +54,7 @@ namespace Sunctum.Domain.Data.Dao
             }
         }
 
-        public IEnumerable<Page> FindByBookIdTop1(Guid bookID, DbConnection conn = null)
+        public IEnumerable<Page> FindByBookIdTop1(Guid bookID, IDbConnection conn = null)
         {
             bool isTransaction = conn != null;
 
@@ -96,7 +96,7 @@ namespace Sunctum.Domain.Data.Dao
             }
         }
 
-        public IEnumerable<Page> FindAll(string anotherDatabaseAliasName, DbConnection conn = null)
+        public IEnumerable<Page> FindAll(string anotherDatabaseAliasName, IDbConnection conn = null)
         {
             bool isTransaction = conn != null;
 
@@ -178,7 +178,7 @@ namespace Sunctum.Domain.Data.Dao
             }
         }
 
-        internal void GetProperty(ref PageViewModel page, DbConnection conn = null)
+        internal void GetProperty(ref PageViewModel page, IDbConnection conn = null)
         {
             bool isTransaction = conn != null;
 
@@ -243,7 +243,7 @@ namespace Sunctum.Domain.Data.Dao
             }
         }
 
-        public void IncrementPageIndex(Guid bookID, DbConnection conn = null)
+        public void IncrementPageIndex(Guid bookID, IDbConnection conn = null)
         {
             bool isTransaction = conn != null;
 

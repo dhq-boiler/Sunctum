@@ -1,21 +1,22 @@
 ﻿
 
 using Homura.Core;
-using Ninject;
 using NLog;
 using Prism.Commands;
-using Prism.Interactivity.InteractionRequest;
+using Prism.Services.Dialogs;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using Sunctum.Converters;
+using Sunctum.Core.Extensions;
 using Sunctum.Domain.Extensions;
+using Sunctum.Domain.Logic.DisplayType;
 using Sunctum.Domain.Logic.Load;
 using Sunctum.Domain.Logic.Query;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
-using Sunctum.Infrastructure.Core;
 using Sunctum.Plugin;
+using Sunctum.UI.Controls;
 using Sunctum.Views;
 using System;
 using System.Collections.Generic;
@@ -29,6 +30,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using Unity;
 
 namespace Sunctum.ViewModels
 {
@@ -52,12 +54,17 @@ namespace Sunctum.ViewModels
         private bool _ImageIsVisible;
 
         public static readonly Guid BeforeSearchPosition = Guid.Parse("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF");
+        private readonly IDialogService dialogService;
 
         public ILibrary LibraryManager { get; set; }
 
         public IMainWindowViewModel MainWindowViewModel { get; set; }
 
         #region コマンド
+
+        public ICommand BlinkGoBackButtonCommand { get; set; }
+
+        public ICommand BlinkGoNextButtonCommand { get; set; }
 
         public ICommand BuildBookContextMenuCommand { get; set; }
 
@@ -115,21 +122,8 @@ namespace Sunctum.ViewModels
 
         #region プロパティ
 
-        public InteractionRequest<Notification> ChangeStarRequest { get; } = new InteractionRequest<Notification>();
-
-        public InteractionRequest<Notification> ResetScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
-
-        public InteractionRequest<Notification> StoreBookScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
-
-        public InteractionRequest<Notification> StoreContentScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
-
-        public InteractionRequest<Notification> RestoreBookScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
-
-        public InteractionRequest<Notification> RestoreContentScrollOffsetRequest { get; } = new InteractionRequest<Notification>();
-
-        public InteractionRequest<Notification> BlinkGoNextButtonRequest { get; } = new InteractionRequest<Notification>();
-
-        public InteractionRequest<Notification> BlinkGoBackButtonRequest { get; } = new InteractionRequest<Notification>();
+        [Dependency]
+        public IEnumerable<IDropPlugin> DropPlugins { get; set; }
 
         public IArrangedBookStorage BookCabinet
         {
@@ -258,12 +252,9 @@ namespace Sunctum.ViewModels
 
         public ReactiveProperty<int?> StarLevel { get; } = new ReactiveProperty<int?>();
 
-        [Inject]
-        public IEnumerable<IDropPlugin> DropPlugins { get; set; }
-
         #endregion //プロパティ
 
-        public DocumentViewModelBase()
+        public DocumentViewModelBase(IDialogService dialogService)
         {
             RegisterCommands();
             SelectedEntries = new List<EntryViewModel>();
@@ -276,6 +267,7 @@ namespace Sunctum.ViewModels
                 {
                     UpdateStarLevel();
                 });
+            this.dialogService = dialogService;
         }
 
         private void UpdateStarLevel()
@@ -285,6 +277,14 @@ namespace Sunctum.ViewModels
 
         private void RegisterCommands()
         {
+            BlinkGoBackButtonCommand = new DelegateCommand(() =>
+            {
+                GoPreviousImage();
+            });
+            BlinkGoNextButtonCommand = new DelegateCommand(() =>
+            {
+                GoNextImage();
+            });
             BuildBookContextMenuCommand = new DelegateCommand<ContextMenuEventArgs>(args =>
             {
                 BuildContextMenus_Books();
@@ -297,7 +297,8 @@ namespace Sunctum.ViewModels
             });
             ChangeStarCommand = new DelegateCommand(() =>
             {
-                ChangeStarRequest.Raise(new Notification() { Title = "Change Star", Content = BookListViewSelectedItems.First() });
+                IDialogResult result = new DialogResult();
+                dialogService.ShowDialog(nameof(ChangeStar), ret => result = ret);
                 UpdateStarLevel();
             });
             CloseTabCommand = new DelegateCommand(() =>
@@ -492,18 +493,23 @@ namespace Sunctum.ViewModels
 
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    StoreBookScrollOffsetRequest.Raise(new Notification()
+                    var displayType = BookCabinet.DisplayType;
+                    if (displayType == DisplayType.SideBySide)
                     {
-                        Content = new Tuple<Dictionary<Guid, Point>, Guid>(_scrollOffset, bookId)
-                    });
+                        var virtualizingWrapPanel = Application.Current.MainWindow.FindChild<VirtualizingWrapPanel>("BookListViewVirtualinzingWrapPanel");
+                        _scrollOffset[bookId] = virtualizingWrapPanel.GetOffset();
+                    }
+                    else if (displayType == DisplayType.Details)
+                    {
+                        var virtualizingStackPanel = Application.Current.MainWindow.FindChild<System.Windows.Controls.VirtualizingStackPanel>("BookListViewDetailsVirtualizingStackPanel");
+                        _scrollOffset[bookId] = new Point(virtualizingStackPanel.HorizontalOffset, virtualizingStackPanel.VerticalOffset);
+                    }
                 });
             }
             else
             {
-                StoreContentScrollOffsetRequest.Raise(new Notification()
-                {
-                    Content = new Tuple<Dictionary<Guid, Point>, Guid>(_scrollOffset, bookId)
-                });
+                var virtualizingWrapPanel = Application.Current.MainWindow.FindChild<VirtualizingWrapPanel>("ContentsListViewVirtualizingWrapPanel");
+                _scrollOffset[bookId] = virtualizingWrapPanel.GetOffset();
             }
         }
 
@@ -515,28 +521,64 @@ namespace Sunctum.ViewModels
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
-                    RestoreBookScrollOffsetRequest.Raise(new Notification()
-                    {
-                        Content = new Tuple<Dictionary<Guid, Point>, Guid>(_scrollOffset, bookId)
-                    });
+                    RestoreScrollOffsetInternal(bookId);
                 });
             }
             else
             {
-                RestoreContentScrollOffsetRequest.Raise(new Notification()
-                {
-                    Content = new Tuple<Dictionary<Guid, Point>, Guid>(_scrollOffset, bookId)
-                });
+                RestoreScrollOffsetInternal(bookId);
             }
 
             _scrollOffset.Remove(bookId);
+        }
+
+        private void RestoreScrollOffsetInternal(Guid bookId)
+        {
+            var displayType = BookCabinet.DisplayType;
+            if (displayType == DisplayType.SideBySide)
+            {
+                var virtualizingWrapPanel = Application.Current.MainWindow.FindChild<VirtualizingWrapPanel>("BookListViewVirtualinzingWrapPanel");
+                if (_scrollOffset.ContainsKey(bookId))
+                {
+                    virtualizingWrapPanel.SetOffset(_scrollOffset[bookId]);
+                }
+                else
+                {
+                    virtualizingWrapPanel.ResetOffset();
+                }
+            }
+            else if (displayType == DisplayType.Details)
+            {
+                var virtualizingStackPanel = Application.Current.MainWindow.FindChild<System.Windows.Controls.VirtualizingStackPanel>("BookListViewDetailsVirtualizingStackPanel");
+                if (_scrollOffset.ContainsKey(bookId))
+                {
+                    virtualizingStackPanel.SetHorizontalOffset(_scrollOffset[bookId].X);
+                    virtualizingStackPanel.SetVerticalOffset(_scrollOffset[bookId].Y);
+                }
+                else
+                {
+                    virtualizingStackPanel.SetHorizontalOffset(0);
+                    virtualizingStackPanel.SetVerticalOffset(0);
+                }
+            }
         }
 
         public void ResetScrollOffset()
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
-                ResetScrollOffsetRequest.Raise(new Notification());
+                var displayType = BookCabinet.DisplayType;
+                if (displayType == DisplayType.SideBySide)
+                {
+                    var virtualizingWrapPanel = Application.Current.MainWindow.FindChild<VirtualizingWrapPanel>("BookListViewVirtualinzingWrapPanel");
+                    virtualizingWrapPanel.ResetOffset();
+                }
+                else if (displayType == DisplayType.Details)
+                {
+                    var virtualizingStackPanel = Application.Current.MainWindow.FindChild<System.Windows.Controls.VirtualizingStackPanel>("BookListViewDetailsVirtualizingStackPanel");
+                    virtualizingStackPanel.SetHorizontalOffset(0);
+                    virtualizingStackPanel.SetVerticalOffset(0);
+                }
             });
         }
 
@@ -731,14 +773,22 @@ namespace Sunctum.ViewModels
 
         private void OpenBookPropertyDialog(BookViewModel book)
         {
-            var dialog = new BookPropertyDialog(book);
-            dialog.ShowDialog();
+            IDialogParameters parameter = new DialogParameters();
+            parameter.Add("Book", book);
+            IDialogResult result = new DialogResult();
+            dialogService.ShowDialog(nameof(BookProperty), parameter, ret => result = ret);
+            if (result != null && result.Result == ButtonResult.OK)
+            {
+
+            }
         }
 
         private void OpenExportDialog(BookViewModel[] books)
         {
-            var dialog = new ExportDialog(LibraryManager, books);
-            dialog.ShowDialog();
+            IDialogParameters parameters = new DialogParameters();
+            parameters.Add("TargetBooks", books);
+            IDialogResult result = new DialogResult();
+            dialogService.ShowDialog(nameof(Export), parameters, ret => result = ret);
         }
 
         private static void OpenImageByDefaultProgram(IEnumerable<PageViewModel> images)
@@ -877,7 +927,7 @@ namespace Sunctum.ViewModels
             StoreScrollOffset(Guid.Empty);
             OpenedBook = book;
             RestoreScrollOffset(OpenedBook.ID);
-            this.MainWindowViewModel.LibraryVM.TagMng.ClearSelectedEntries();
+            this.MainWindowViewModel.LibraryVM.TagManager.ClearSelectedEntries();
             Task.Factory.StartNew(() => this.MainWindowViewModel.LibraryVM.FireFillContents(book));
             BookListIsVisible = false;
             ContentListIsVisible = true;
@@ -891,7 +941,7 @@ namespace Sunctum.ViewModels
             {
                 StoreScrollOffset(OpenedBook.ID);
                 RestoreScrollOffset(Guid.Empty);
-                this.MainWindowViewModel.LibraryVM.TagMng.ClearSelectedEntries();
+                this.MainWindowViewModel.LibraryVM.TagManager.ClearSelectedEntries();
             }
             OpenedBook = null;
         }
@@ -986,12 +1036,14 @@ namespace Sunctum.ViewModels
 
         private void BeginAnimation_Tick_PreviousImageButton()
         {
-            BlinkGoBackButtonRequest.Raise(new Notification());
+            throw new NotImplementedException();
+            //BlinkGoBackButtonRequest.Raise(new Notification());
         }
 
         private void BeginAnimation_Tick_NextImageButton()
         {
-            BlinkGoNextButtonRequest.Raise(new Notification());
+            throw new NotImplementedException();
+            //BlinkGoNextButtonRequest.Raise(new Notification());
         }
 
         #endregion //キーボード操作

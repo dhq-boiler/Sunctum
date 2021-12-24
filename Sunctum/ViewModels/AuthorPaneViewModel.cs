@@ -1,15 +1,14 @@
-﻿
-
-using Ninject;
-using Prism.Commands;
+﻿using Prism.Commands;
 using Sunctum.Domain.Logic.Query;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
+using Unity;
 
 namespace Sunctum.ViewModels
 {
@@ -18,19 +17,25 @@ namespace Sunctum.ViewModels
         private ObservableCollection<System.Windows.Controls.Control> _AuthorContextMenuItems;
         private List<AuthorCountViewModel> _AuthorListBoxSelectedItems;
 
-        [Inject]
-        public IMainWindowViewModel MainWindowViewModel { get; set; }
+        public AuthorPaneViewModel()
+        {
+            RegisterCommands();
+            AuthorListBoxSelectedItems = new List<AuthorCountViewModel>();
+        }
 
-        [Inject]
+        [Dependency]
+        public Lazy<IMainWindowViewModel> MainWindowViewModel { get; set; }
+
+        [Dependency]
         public IHomeDocumentViewModel HomeDocumentViewModel { get; set; }
 
-        [Inject]
+        [Dependency]
         public ILibrary LibraryManager { get; set; }
 
-        [Inject]
+        [Dependency]
         public IAuthorManager AuthorManager { get; set; }
 
-        [Inject, Named("AuthorSortingToBool")]
+        [Dependency("AuthorSortingToBool")]
         public IValueConverter AuthorSortingToBool { get; set; }
 
         public override string Title
@@ -60,12 +65,6 @@ namespace Sunctum.ViewModels
         public ICommand ClearResultSearchingByAuthorCommand { get; set; }
 
         public ICommand SearchByAuthorCommand { get; set; }
-
-        public AuthorPaneViewModel()
-        {
-            RegisterCommands();
-            AuthorListBoxSelectedItems = new List<AuthorCountViewModel>();
-        }
 
         public void ClearSelectedItems()
         {
@@ -164,20 +163,20 @@ namespace Sunctum.ViewModels
 
         private void ClearResultSearchingByAuthor()
         {
-            var activeViewModel = MainWindowViewModel.ActiveDocumentViewModel;
+            var activeViewModel = MainWindowViewModel.Value.ActiveDocumentViewModel;
             activeViewModel.BookCabinet.ClearSearchResult();
             AuthorManager.ClearSearchResult();
         }
 
         private void SearchByAuthor(IEnumerable<AuthorCountViewModel> items)
         {
-            var activeViewModel = MainWindowViewModel.ActiveDocumentViewModel;
+            var activeViewModel = MainWindowViewModel.Value.ActiveDocumentViewModel;
             activeViewModel.BookCabinet.ClearSearchResult();
             foreach (var item in items)
             {
                 item.IsSearchingKey = true;
             }
-            AuthorManager.ShowBySelectedItems(items.Select(ac => ac.Author));
+            AuthorManager.ShowBySelectedItems(MainWindowViewModel.Value, items.Select(ac => ac.Author));
             HomeDocumentViewModel.ResetScrollOffset();
         }
 

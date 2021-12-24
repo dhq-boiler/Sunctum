@@ -1,15 +1,14 @@
-﻿
-
-using Ninject;
-using Prism.Commands;
+﻿using Prism.Commands;
 using Sunctum.Domain.Logic.Query;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
+using Unity;
 
 namespace Sunctum.ViewModels
 {
@@ -17,6 +16,20 @@ namespace Sunctum.ViewModels
     {
         private List<TagCountViewModel> _TagListBoxSelectedItems;
         private ObservableCollection<System.Windows.Controls.Control> _TagContextMenuItems;
+
+        public TagPaneViewModel()
+        {
+            RegisterCommands();
+        }
+
+        [Dependency]
+        public Lazy<IMainWindowViewModel> MainWindowViewModel { get; set; }
+
+        [Dependency]
+        public ITagManager TagManager { get; set; }
+
+        [Dependency("TagSortingToBool")]
+        public IValueConverter TagSortingToBool { get; set; }
 
         public override string Title
         {
@@ -42,31 +55,11 @@ namespace Sunctum.ViewModels
             set { SetProperty(ref _TagContextMenuItems, value); }
         }
 
-        [Inject]
-        public IMainWindowViewModel MainWindowViewModel { get; set; }
-
-        [Inject]
-        public IHomeDocumentViewModel HomeDocumentViewModel { get; set; }
-
-        [Inject]
-        public ILibrary LibraryManager { get; set; }
-
-        [Inject]
-        public ITagManager TagManager { get; set; }
-
-        [Inject, Named("TagSortingToBool")]
-        public IValueConverter TagSortingToBool { get; set; }
-
         public ICommand ClearResultSearchingByTagCommand { get; set; }
 
         public ICommand DeleteTagEntryCommand { get; set; }
 
         public ICommand SearchByTagCommand { get; set; }
-
-        public TagPaneViewModel()
-        {
-            RegisterCommands();
-        }
 
         private void RegisterCommands()
         {
@@ -170,19 +163,19 @@ namespace Sunctum.ViewModels
 
         private void ClearResultSearchingByTag()
         {
-            var activeViewModel = MainWindowViewModel.ActiveDocumentViewModel;
+            var activeViewModel = MainWindowViewModel.Value.ActiveDocumentViewModel;
             activeViewModel.BookCabinet.ClearSearchResult();
         }
 
         private void SearchByTag(IEnumerable<TagCountViewModel> items)
         {
-            var activeViewModel = MainWindowViewModel.ActiveDocumentViewModel;
+            var activeViewModel = MainWindowViewModel.Value.ActiveDocumentViewModel;
             activeViewModel.BookCabinet.ClearSearchResult();
             foreach (var item in items)
             {
                 item.IsSearchingKey = true;
             }
-            TagManager.ShowBySelectedItems(items.Select(itc => itc.Tag));
+            TagManager.ShowBySelectedItems(MainWindowViewModel.Value, items.Select(itc => itc.Tag));
             activeViewModel.ResetScrollOffset();
         }
 
