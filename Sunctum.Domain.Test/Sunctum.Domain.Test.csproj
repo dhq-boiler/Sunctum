@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0-windows</TargetFramework>
@@ -18,6 +18,87 @@
   <ItemGroup>
     <ProjectReference Include="..\Sunctum.Domain\Sunctum.Domain.csproj" />
     <ProjectReference Include="..\Sunctum\Sunctum.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="TestData\minecraft_screenshots\2015-03-05_02.46.55.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\minecraft_screenshots\2015-03-05_03.28.02.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\minecraft_screenshots\2015-03-05_03.28.09.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\minecraft_screenshots\2015-03-05_03.28.14.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\minecraft_screenshots\2015-03-05_03.28.21.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\minecraft_screenshots\2015-03-05_03.35.03.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\minecraft_screenshots\2015-03-05_03.35.43.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\minecraft_screenshots\2015-03-05_03.36.17.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\minecraft_screenshots\2015-03-05_03.36.53.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\minecraft_screenshots\2015-03-05_03.37.38.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\minecraft_screenshots\2015-03-05_07.00.55.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\minecraft_screenshots\2015-03-05_07.00.56.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\minecraft_screenshots\2015-03-05_07.00.58.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\minecraft_screenshots\2015-03-05_07.00.59.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\minecraft_screenshots\2015-03-05_07.01.00.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\minecraft_screenshots\2015-03-05_07.01.02.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\minecraft_screenshots\2015-03-05_07.01.21.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\minecraft_screenshots\2015-03-05_07.22.14.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\minecraft_screenshots\2015-03-05_07.28.12.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\minecraft_screenshots\2015-03-05_07.28.32.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\minecraft_screenshots\2015-03-05_07.44.19.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\minecraft_screenshots\2015-03-05_08.40.58.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\minecraft_screenshots\2015-03-05_08.40.59.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\minecraft_screenshots\2015-03-05_08.41.17.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\minecraft_screenshots\2017-06-24_01.31.28.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="TestData\minecraft_screenshots\2017-06-24_01.31.55.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
