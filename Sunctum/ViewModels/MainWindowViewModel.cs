@@ -1002,10 +1002,6 @@ namespace Sunctum.ViewModels
             {
                 config.WindowRect = new Domain.Models.Rect(WindowLeft, WindowTop, WindowWidth, WindowHeight);
             }
-            else
-            {
-                config.WindowRect = null;
-            }
             Configuration.Save(config);
 
             Dispose();
