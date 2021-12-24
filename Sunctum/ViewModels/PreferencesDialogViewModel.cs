@@ -6,8 +6,8 @@ using Sunctum.Domain.ViewModels;
 using Sunctum.UI.Controls;
 using System;
 using System.Diagnostics;
-using System.Web.UI.WebControls;
 using System.Windows;
+using System.Windows.Controls;
 using Unity;
 
 namespace Sunctum.ViewModels

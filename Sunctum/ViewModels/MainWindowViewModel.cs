@@ -40,6 +40,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Forms;
 using System.Windows.Input;
 using Unity;
 using Xceed.Wpf.AvalonDock;
@@ -225,7 +226,7 @@ namespace Sunctum.ViewModels
             });
             OpenPowerSearchCommand = new DelegateCommand(() =>
             {
-                IDialogResult result = new DialogResult();
+                IDialogResult result = new Prism.Services.Dialogs.DialogResult();
                 DialogService.ShowDialog(nameof(PowerSearch), new DialogParameters() { { "Storage", ActiveDocumentViewModel.BookCabinet } }, ret => result = ret);
             });
             OpenStatisticsDialogCommand = new DelegateCommand(() =>
@@ -579,7 +580,11 @@ namespace Sunctum.ViewModels
 
             if (shiftPressed || Configuration.ApplicationConfiguration.WorkingDirectory == null)
             {
-                OpenSwitchLibraryDialogAndChangeWorkingDirectory();
+                if (!OpenSwitchLibraryDialogAndChangeWorkingDirectory())
+                {
+                    Close();
+                    return;
+                }
             }
 
             CloseAllTab();
@@ -788,7 +793,7 @@ namespace Sunctum.ViewModels
             using (var catalog = new DirectoryCatalog(pluginsPath))
             using (var container = new CompositionContainer(catalog))
             {
-                if (catalog.LoadedFiles.Count > 0) container.SatisfyImportsOnce(this);
+                container.SatisfyImportsOnce(this);
             }
 
             foreach (var plugin in Plugins)
@@ -940,11 +945,12 @@ namespace Sunctum.ViewModels
 
         private bool OpenSwitchLibraryDialogAndChangeWorkingDirectory()
         {
-            var dialog = new FolderSelectDialog();
-            dialog.Title = "ライブラリディレクトリの場所";
-            if (dialog.ShowDialog() == true)
+            var dialog = new FolderBrowserDialog();
+            dialog.UseDescriptionForTitle = true;
+            dialog.Description = "ライブラリディレクトリの場所";
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                Configuration.ApplicationConfiguration.WorkingDirectory = dialog.FileName;
+                Configuration.ApplicationConfiguration.WorkingDirectory = dialog.SelectedPath;
                 Configuration.Save(Configuration.ApplicationConfiguration);
                 return true;
             }
@@ -1007,7 +1013,7 @@ namespace Sunctum.ViewModels
 
         public void Close()
         {
-            Application.Current.Shutdown();
+            System.Windows.Application.Current.Shutdown();
         }
 
         public void ChangeActiveContent()

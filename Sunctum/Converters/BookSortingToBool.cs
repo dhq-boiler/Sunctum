@@ -1,5 +1,4 @@
-﻿using Microsoft.Practices.ServiceLocation;
-using Sunctum.ViewModels;
+﻿using Sunctum.ViewModels;
 using System;
 using System.Globalization;
 using System.Windows.Data;
