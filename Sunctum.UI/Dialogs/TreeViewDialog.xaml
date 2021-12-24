@@ -6,6 +6,7 @@
     xmlns:core="clr-namespace:Sunctum.UI.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="clr-namespace:Sunctum.UI.Controls"
     Title="TreeViewDialog"
     mc:Ignorable="d">
     <Window.Resources>
@@ -43,15 +44,7 @@
                         <TextBlock FontSize="20" Foreground="White" Visibility="{Binding HeaderVisibility}">
                             <Run Text=" : " />
                         </TextBlock>
-                        <TextBlock FontSize="20" Foreground="#b5cea8">
-                            <Run DataContext="{Binding Value}" Text="{Binding Mode=OneWay}">
-                                <Run.Style>
-                                    <Style TargetType="{x:Type Run}">
-                                        <Setter Property="Text" Value="{Binding Mode=OneWay}" />
-                                    </Style>
-                                </Run.Style>
-                            </Run>
-                        </TextBlock>
+                        <controls:SelectableLabel Text="{Binding Value}" FontSize="20" Foreground="#b5cea8" />
                     </StackPanel>
                 </HierarchicalDataTemplate>
             </TreeView.Resources>

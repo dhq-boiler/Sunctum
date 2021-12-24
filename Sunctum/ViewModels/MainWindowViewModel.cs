@@ -570,7 +570,7 @@ namespace Sunctum.ViewModels
                 LibraryVM.ProgressManager.PropertyChanged += ProgressManager_PropertyChanged;
                 TagPaneViewModel.BuildContextMenus_Tags();
                 AuthorPaneViewModel.BuildContextMenus_Authors();
-                LoadPlugins();
+                //LoadPlugins();
             }
 
             WindowLeft = Configuration.ApplicationConfiguration.WindowRect.X;

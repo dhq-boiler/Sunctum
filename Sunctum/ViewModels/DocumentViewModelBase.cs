@@ -3,6 +3,7 @@
 using Homura.Core;
 using NLog;
 using Prism.Commands;
+using Prism.Regions;
 using Prism.Services.Dialogs;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
@@ -273,21 +274,21 @@ namespace Sunctum.ViewModels
                     UpdateStarLevel();
                 });
             this.dialogService = dialogService;
-            LoadPlugins();
+            //LoadPlugins();
         }
 
-        private void LoadPlugins()
-        {
-            string pluginsPath = Directory.GetCurrentDirectory() + @"\plugins";
-            if (!Directory.Exists(pluginsPath)) Directory.CreateDirectory(pluginsPath);
+        //private void LoadPlugins()
+        //{
+        //    string pluginsPath = Directory.GetCurrentDirectory() + @"\plugins";
+        //    if (!Directory.Exists(pluginsPath)) Directory.CreateDirectory(pluginsPath);
 
-            //プラグイン読み込み
-            using (var catalog = new DirectoryCatalog(pluginsPath))
-            using (var container = new CompositionContainer(catalog))
-            {
-                container.SatisfyImportsOnce(this);
-            }
-        }
+        //    //プラグイン読み込み
+        //    using (var catalog = new DirectoryCatalog(pluginsPath))
+        //    using (var container = new CompositionContainer(catalog))
+        //    {
+        //        container.SatisfyImportsOnce(this);
+        //    }
+        //}
 
         private void UpdateStarLevel()
         {
@@ -784,8 +785,7 @@ namespace Sunctum.ViewModels
             {
                 Header = "Extra",
             };
-            var binding = new Binding("MainWindowViewModel.ExtraPageContextMenu");
-            menuitem.SetBinding(ItemsControl.ItemsSourceProperty, binding);
+            menuitem.SetValue(RegionManager.RegionNameProperty, "ExtraPage");
             menulist.Add(menuitem);
 
             ContentsContextMenuItems = menulist;

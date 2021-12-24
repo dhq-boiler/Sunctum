@@ -3,6 +3,7 @@
 using Homura.ORM;
 using NLog;
 using Prism.Ioc;
+using Prism.Modularity;
 using Prism.Services.Dialogs;
 using Prism.Unity;
 using Sunctum.Converters;
@@ -18,6 +19,7 @@ using Sunctum.ViewModels;
 using Sunctum.Views;
 using System;
 using System.Data.SQLite;
+using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Data;
@@ -45,6 +47,11 @@ namespace Sunctum
         protected override Window CreateShell()
         {
             return Container.Resolve<MainWindow>();
+        }
+
+        protected override IModuleCatalog CreateModuleCatalog()
+        {
+            return new DirectoryModuleCatalog() { ModulePath = $"{Directory.GetCurrentDirectory()}\\plugins\\" };
         }
 
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
