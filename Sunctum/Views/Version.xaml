@@ -18,7 +18,7 @@
     <DockPanel>
         <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
-                <uicontrols:SelectableLabel FontSize="30" Text="boiler's Graphics"
+                <uicontrols:SelectableLabel FontSize="30" Text="Sunctum"
                                             VerticalContentAlignment="Center" />
             </StackPanel>
             <StackPanel Orientation="Horizontal">

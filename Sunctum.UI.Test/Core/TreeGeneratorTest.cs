@@ -43,50 +43,6 @@ namespace Sunctum.UI.Test
         }
 
         [Test]
-        public void PATTERN_Regex1()
-        {
-            string target = "- Image:";
-            var rg = new Regex(TreeGenerator.PATTERN_CANDIDATE);
-            Assert.That(rg.IsMatch(target), Is.True);
-
-            var mc = rg.Match(target);
-            Assert.That(mc.Groups["indent"].Value, Is.EqualTo("- "));
-            Assert.That(mc.Groups["array"].Value, Is.EqualTo("- "));
-            Assert.That(mc.Groups["key"].Value, Is.EqualTo("Image"));
-            Assert.That(mc.Groups["hash"].Value, Is.EqualTo(":"));
-            Assert.That(mc.Groups["return"].Value, Is.EqualTo(""));
-            Assert.That(mc.Groups["specify_indent"].Value, Is.EqualTo(""));
-            Assert.That(mc.Groups["sign"].Value, Is.EqualTo(""));
-        }
-
-        [Test]
-        public void PATTERN_Regex2()
-        {
-            string target = "Message: |-";
-            var rg = new Regex(TreeGenerator.PATTERN_CANDIDATE);
-            Assert.That(rg.IsMatch(target), Is.True);
-
-            var mc = rg.Match(target);
-            Assert.That(mc.Groups["indent"].Value, Is.EqualTo(""));
-            Assert.That(mc.Groups["array"].Value, Is.EqualTo(""));
-            Assert.That(mc.Groups["key"].Value, Is.EqualTo("Message"));
-            Assert.That(mc.Groups["hash"].Value, Is.EqualTo(":"));
-            Assert.That(mc.Groups["return"].Value, Is.EqualTo("|"));
-            Assert.That(mc.Groups["specify_indent"].Value, Is.EqualTo(""));
-            Assert.That(mc.Groups["sign"].Value, Is.EqualTo("-"));
-        }
-
-
-
-        [Test]
-        public void PATTERN_Regex3()
-        {
-            string target = "  UnescapedTitle: 201208-Karuizawa-53";
-            var rg = new Regex(TreeGenerator.PATTERN_CANDIDATE);
-            Assert.That(rg.IsMatch(target), Is.False);
-        }
-
-        [Test]
         public void PATTERN_VALUE_Regex()
         {
             string target = "  UnescapedTitle: 201208-Karuizawa-53";
@@ -180,13 +136,10 @@ namespace Sunctum.UI.Test
             //
             var actual = TreeGenerator.ParseYaml(yml);
             Assert.That(actual.Key, Is.EqualTo("ROOT"));
-            Assert.That(actual.Children, Has.Count.EqualTo(1));
-
-            actual = actual.Children[0];
             Assert.That(actual.Children, Has.Count.EqualTo(8));
-            Assert.That(actual.Children[0], Has.Property("Key").EqualTo("Image"));
 
-            var image = actual.Children[0];
+            var image = actual.Children[0]; //Image
+            Assert.That(image.Children, Has.Count.EqualTo(11));
             Assert.That(image.Children[0], Has.Property("Key").EqualTo("AbsoluteMasterPath").And.Property("Value").EqualTo(@"C:\Users\dhq_b_000\Desktop\TestField\data/2018/03/18/314fac0c41ac429a815cad324e562278/201208-Karuizawa-53.JPG"));
             Assert.That(image.Children[1], Has.Property("Key").EqualTo("RelativeMasterPath").And.Property("Value").EqualTo(@"data/2018/03/18/314fac0c41ac429a815cad324e562278/201208-Karuizawa-53.JPG"));
             Assert.That(image.Children[2], Has.Property("Key").EqualTo("Thumbnail"));
@@ -211,61 +164,50 @@ namespace Sunctum.UI.Test
         [Test]
         public void ParseException()
         {
-            string yml = "Message: |-\r\n  インデックスは一覧の範囲内になければなりません。\r\n  パラメーター名:index\r\nParamName: index\r\nData:\r\n  ? {}\r\n  : \r\nStackTrace: |2-\r\n     場所 System.ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument argument, ExceptionResource resource)\r\n     場所 System.Collections.ObjectModel.Collection`1.Insert(Int32 index, T item)\r\n     場所 Sunctum.Domain.Logic.PageSorting.PageOrdering.OrderBackward(Page page, Book book) 場所 C:\\Git\\Sunctum\\Sunctum.Domain\\Logic\\PageSorting\\PageOrdering.cs:行 27\r\n     場所 Sunctum.ViewModel.Manager.LibraryManager.OrderBackward(Page page, Book book) 場所 C:\\Git\\Sunctum\\Sunctum\\ViewModel\\Manager\\LibraryManager.cs:行 469\r\n     場所 Sunctum.ViewModel.MainWindowViewModel.MovePageBackward(Page page) 場所 C:\\Git\\Sunctum\\Sunctum\\ViewModel\\MainWindowViewModel.cs:行 1298\r\n     場所 Sunctum.MainWindow.MoveBackword_Button_Click(Object sender, RoutedEventArgs e) 場所 C:\\Git\\Sunctum\\Sunctum\\MainWindow.xaml.cs:行 181\r\n     場所 System.Windows.RoutedEventHandlerInfo.InvokeHandler(Object target, RoutedEventArgs routedEventArgs)\r\n     場所 System.Windows.EventRoute.InvokeHandlersImpl(Object source, RoutedEventArgs args, Boolean reRaised)\r\n     場所 System.Windows.UIElement.RaiseEventImpl(DependencyObject sender, RoutedEventArgs args)\r\n     場所 System.Windows.UIElement.RaiseEvent(RoutedEventArgs e)\r\n     場所 System.Windows.Controls.Primitives.ButtonBase.OnClick()\r\n     場所 System.Windows.Controls.Button.OnClick()\r\n     場所 System.Windows.Controls.Primitives.ButtonBase.OnMouseLeftButtonUp(MouseButtonEventArgs e)\r\n     場所 System.Windows.UIElement.OnMouseLeftButtonUpThunk(Object sender, MouseButtonEventArgs e)\r\n     場所 System.Windows.Input.MouseButtonEventArgs.InvokeEventHandler(Delegate genericHandler, Object genericTarget)\r\n     場所 System.Windows.RoutedEventArgs.InvokeHandler(Delegate handler, Object target)\r\n     場所 System.Windows.RoutedEventHandlerInfo.InvokeHandler(Object target, RoutedEventArgs routedEventArgs)\r\n     場所 System.Windows.EventRoute.InvokeHandlersImpl(Object source, RoutedEventArgs args, Boolean reRaised)\r\n     場所 System.Windows.UIElement.ReRaiseEventAs(DependencyObject sender, RoutedEventArgs args, RoutedEvent newEvent)\r\n     場所 System.Windows.UIElement.OnMouseUpThunk(Object sender, MouseButtonEventArgs e)\r\n     場所 System.Windows.Input.MouseButtonEventArgs.InvokeEventHandler(Delegate genericHandler, Object genericTarget)\r\n     場所 System.Windows.RoutedEventArgs.InvokeHandler(Delegate handler, Object target)\r\n     場所 System.Windows.RoutedEventHandlerInfo.InvokeHandler(Object target, RoutedEventArgs routedEventArgs)\r\n     場所 System.Windows.EventRoute.InvokeHandlersImpl(Object source, RoutedEventArgs args, Boolean reRaised)\r\n     場所 System.Windows.UIElement.RaiseEventImpl(DependencyObject sender, RoutedEventArgs args)\r\n     場所 System.Windows.UIElement.RaiseTrustedEvent(RoutedEventArgs args)\r\n     場所 System.Windows.UIElement.RaiseEvent(RoutedEventArgs args, Boolean trusted)\r\n     場所 System.Windows.Input.InputManager.ProcessStagingArea()\r\n     場所 System.Windows.Input.InputManager.ProcessInput(InputEventArgs input)\r\n     場所 System.Windows.Input.InputProviderSite.ReportInput(InputReport inputReport)\r\n     場所 System.Windows.Interop.HwndMouseInputProvider.ReportInput(IntPtr hwnd, InputMode mode, Int32 timestamp, RawMouseActions actions, Int32 x, Int32 y, Int32 wheel)\r\n     場所 System.Windows.Interop.HwndMouseInputProvider.FilterMessage(IntPtr hwnd, WindowMessage msg, IntPtr wParam, IntPtr lParam, Boolean& handled)\r\n     場所 System.Windows.Interop.HwndSource.InputFilterMessage(IntPtr hwnd, Int32 msg, IntPtr wParam, IntPtr lParam, Boolean& handled)\r\n     場所 MS.Win32.HwndWrapper.WndProc(IntPtr hwnd, Int32 msg, IntPtr wParam, IntPtr lParam, Boolean& handled)\r\n     場所 MS.Win32.HwndSubclass.DispatcherCallbackOperation(Object o)\r\n     場所 System.Windows.Threading.ExceptionWrapper.InternalRealCall(Delegate callback, Object args, Int32 numArgs)\r\n     場所 System.Windows.Threading.ExceptionWrapper.TryCatchWhen(Object source, Delegate callback, Object args, Int32 numArgs, Delegate catchHandler)\r\nSource: mscorlib\r\nHResult: -2146233086\r\n";
-            //Message: |-
-            //  インデックスは一覧の範囲内になければなりません。
-            //  パラメーター名: index
-            //ParamName: index
-            //StackTrace: |2-
-            //     場所 System.ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument argument, ExceptionResource resource)
-            //     場所 System.Collections.ObjectModel.Collection`1.Insert(Int32 index, T item)
-            //     場所 Sunctum.Domain.Logic.PageSorting.PageOrdering.OrderBackward(Page page, Book book) 場所 C:\Git\Sunctum\Sunctum.Domain\Logic\PageSorting\PageOrdering.cs:行 27
-            //     場所 Sunctum.ViewModel.Manager.LibraryManager.OrderBackward(Page page, Book book) 場所 C:\Git\Sunctum\Sunctum\ViewModel\Manager\LibraryManager.cs:行 469
-            //     場所 Sunctum.ViewModel.MainWindowViewModel.MovePageBackward(Page page) 場所 C:\Git\Sunctum\Sunctum\ViewModel\MainWindowViewModel.cs:行 1298
-            //     場所 Sunctum.MainWindow.MoveBackword_Button_Click(Object sender, RoutedEventArgs e) 場所 C:\Git\Sunctum\Sunctum\MainWindow.xaml.cs:行 181
-            //     場所 System.Windows.RoutedEventHandlerInfo.InvokeHandler(Object target, RoutedEventArgs routedEventArgs)
-            //     場所 System.Windows.EventRoute.InvokeHandlersImpl(Object source, RoutedEventArgs args, Boolean reRaised)
-            //     場所 System.Windows.UIElement.RaiseEventImpl(DependencyObject sender, RoutedEventArgs args)
-            //     場所 System.Windows.UIElement.RaiseEvent(RoutedEventArgs e)
-            //     場所 System.Windows.Controls.Primitives.ButtonBase.OnClick()
-            //     場所 System.Windows.Controls.Button.OnClick()
-            //     場所 System.Windows.Controls.Primitives.ButtonBase.OnMouseLeftButtonUp(MouseButtonEventArgs e)
-            //     場所 System.Windows.UIElement.OnMouseLeftButtonUpThunk(Object sender, MouseButtonEventArgs e)
-            //     場所 System.Windows.Input.MouseButtonEventArgs.InvokeEventHandler(Delegate genericHandler, Object genericTarget)
-            //     場所 System.Windows.RoutedEventArgs.InvokeHandler(Delegate handler, Object target)
-            //     場所 System.Windows.RoutedEventHandlerInfo.InvokeHandler(Object target, RoutedEventArgs routedEventArgs)
-            //     場所 System.Windows.EventRoute.InvokeHandlersImpl(Object source, RoutedEventArgs args, Boolean reRaised)
-            //     場所 System.Windows.UIElement.ReRaiseEventAs(DependencyObject sender, RoutedEventArgs args, RoutedEvent newEvent)
-            //     場所 System.Windows.UIElement.OnMouseUpThunk(Object sender, MouseButtonEventArgs e)
-            //     場所 System.Windows.Input.MouseButtonEventArgs.InvokeEventHandler(Delegate genericHandler, Object genericTarget)
-            //     場所 System.Windows.RoutedEventArgs.InvokeHandler(Delegate handler, Object target)
-            //     場所 System.Windows.RoutedEventHandlerInfo.InvokeHandler(Object target, RoutedEventArgs routedEventArgs)
-            //     場所 System.Windows.EventRoute.InvokeHandlersImpl(Object source, RoutedEventArgs args, Boolean reRaised)
-            //     場所 System.Windows.UIElement.RaiseEventImpl(DependencyObject sender, RoutedEventArgs args)
-            //     場所 System.Windows.UIElement.RaiseTrustedEvent(RoutedEventArgs args)
-            //     場所 System.Windows.UIElement.RaiseEvent(RoutedEventArgs args, Boolean trusted)
-            //     場所 System.Windows.Input.InputManager.ProcessStagingArea()
-            //     場所 System.Windows.Input.InputManager.ProcessInput(InputEventArgs input)
-            //     場所 System.Windows.Input.InputProviderSite.ReportInput(InputReport inputReport)
-            //     場所 System.Windows.Interop.HwndMouseInputProvider.ReportInput(IntPtr hwnd, InputMode mode, Int32 timestamp, RawMouseActions actions, Int32 x, Int32 y, Int32 wheel)
-            //     場所 System.Windows.Interop.HwndMouseInputProvider.FilterMessage(IntPtr hwnd, WindowMessage msg, IntPtr wParam, IntPtr lParam, Boolean & handled)
-            //     場所 System.Windows.Interop.HwndSource.InputFilterMessage(IntPtr hwnd, Int32 msg, IntPtr wParam, IntPtr lParam, Boolean & handled)
-            //     場所 MS.Win32.HwndWrapper.WndProc(IntPtr hwnd, Int32 msg, IntPtr wParam, IntPtr lParam, Boolean & handled)
-            //     場所 MS.Win32.HwndSubclass.DispatcherCallbackOperation(Object o)
-            //     場所 System.Windows.Threading.ExceptionWrapper.InternalRealCall(Delegate callback, Object args, Int32 numArgs)
-            //     場所 System.Windows.Threading.ExceptionWrapper.TryCatchWhen(Object source, Delegate callback, Object args, Int32 numArgs, Delegate catchHandler)
-            //Source: mscorlib
-            //HResult: -2146233086
-            //
+            string yml = "Message: |-\r\n  メソッドまたは操作は実装されていません。\r\nData:\r\n  ? {}\r\n  : \r\nInnerException: \r\nStackTrace: |2-\r\n     場所 Sunctum.ViewModels.MainWindowViewModel.<Initialize>d__304.MoveNext() 場所 Z:\\Git\\Sunctum\\Sunctum\\ViewModels\\MainWindowViewModel.cs:行 601\r\n  --- 直前に例外がスローされた場所からのスタック トレースの終わり ---\r\n     場所 System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()\r\n     場所 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)\r\n     場所 System.Runtime.CompilerServices.TaskAwaiter.GetResult()\r\n     場所 Sunctum.Views.MainWindow.<Window_Loaded>d__10.MoveNext() 場所 Z:\\Git\\Sunctum\\Sunctum\\Views\\MainWindow.xaml.cs:行 35\r\n  --- 直前に例外がスローされた場所からのスタック トレースの終わり ---\r\n     場所 System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()\r\n     場所 System.Windows.Threading.ExceptionWrapper.InternalRealCall(Delegate callback, Object args, Int32 numArgs)\r\n     場所 System.Windows.Threading.ExceptionWrapper.TryCatchWhen(Object source, Delegate callback, Object args, Int32 numArgs, Delegate catchHandler)\r\nHelpLink: \r\nSource: Sunctum\r\nHResult: -2147467263";
+        //Message: | -
+        //メソッドまたは操作は実装されていません。
+        //Data:
+        //  ? { }
+        //  : 
+        //InnerException:
+        //        StackTrace: | 2 -
+        //             場所 Sunctum.ViewModels.MainWindowViewModel.< Initialize > d__304.MoveNext() 場所 Z:\Git\Sunctum\Sunctum\ViewModels\MainWindowViewModel.cs:行 601
+        //             -- - 直前に例外がスローされた場所からのスタック トレースの終わり-- -
+        //                 場所 System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+        //     場所 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+        //     場所 System.Runtime.CompilerServices.TaskAwaiter.GetResult()
+        //     場所 Sunctum.Views.MainWindow.< Window_Loaded > d__10.MoveNext() 場所 Z:\Git\Sunctum\Sunctum\Views\MainWindow.xaml.cs:行 35
+        //     -- - 直前に例外がスローされた場所からのスタック トレースの終わり-- -
+        //         場所 System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+        //     場所 System.Windows.Threading.ExceptionWrapper.InternalRealCall(Delegate callback, Object args, Int32 numArgs)
+        //     場所 System.Windows.Threading.ExceptionWrapper.TryCatchWhen(Object source, Delegate callback, Object args, Int32 numArgs, Delegate catchHandler)
+        //HelpLink:
+        //Source: Sunctum
+        //HResult: -2147467263
             var actual = TreeGenerator.ParseYaml(yml);
             Assert.That(actual.Key, Is.EqualTo("ROOT"));
-            Assert.That(actual.Children, Has.Count.EqualTo(6));
-            Assert.That(actual.Children[0], Has.Property("Key").EqualTo("Message").And.Property("Value").EqualTo("  インデックスは一覧の範囲内になければなりません。\r\n  パラメーター名:index"));
-            Assert.That(actual.Children[1], Has.Property("Key").EqualTo("ParamName").And.Property("Value").EqualTo("index"));
-            Assert.That(actual.Children[2], Has.Property("Key").EqualTo("Data"));
-            Assert.That(actual.Children[3], Has.Property("Key").EqualTo("StackTrace").And.Property("Value").EqualTo("     場所 System.ThrowHelper.ThrowArgumentOutOfRangeException(ExceptionArgument argument, ExceptionResource resource)\r\n     場所 System.Collections.ObjectModel.Collection`1.Insert(Int32 index, T item)\r\n     場所 Sunctum.Domain.Logic.PageSorting.PageOrdering.OrderBackward(Page page, Book book) 場所 C:\\Git\\Sunctum\\Sunctum.Domain\\Logic\\PageSorting\\PageOrdering.cs:行 27\r\n     場所 Sunctum.ViewModel.Manager.LibraryManager.OrderBackward(Page page, Book book) 場所 C:\\Git\\Sunctum\\Sunctum\\ViewModel\\Manager\\LibraryManager.cs:行 469\r\n     場所 Sunctum.ViewModel.MainWindowViewModel.MovePageBackward(Page page) 場所 C:\\Git\\Sunctum\\Sunctum\\ViewModel\\MainWindowViewModel.cs:行 1298\r\n     場所 Sunctum.MainWindow.MoveBackword_Button_Click(Object sender, RoutedEventArgs e) 場所 C:\\Git\\Sunctum\\Sunctum\\MainWindow.xaml.cs:行 181\r\n     場所 System.Windows.RoutedEventHandlerInfo.InvokeHandler(Object target, RoutedEventArgs routedEventArgs)\r\n     場所 System.Windows.EventRoute.InvokeHandlersImpl(Object source, RoutedEventArgs args, Boolean reRaised)\r\n     場所 System.Windows.UIElement.RaiseEventImpl(DependencyObject sender, RoutedEventArgs args)\r\n     場所 System.Windows.UIElement.RaiseEvent(RoutedEventArgs e)\r\n     場所 System.Windows.Controls.Primitives.ButtonBase.OnClick()\r\n     場所 System.Windows.Controls.Button.OnClick()\r\n     場所 System.Windows.Controls.Primitives.ButtonBase.OnMouseLeftButtonUp(MouseButtonEventArgs e)\r\n     場所 System.Windows.UIElement.OnMouseLeftButtonUpThunk(Object sender, MouseButtonEventArgs e)\r\n     場所 System.Windows.Input.MouseButtonEventArgs.InvokeEventHandler(Delegate genericHandler, Object genericTarget)\r\n     場所 System.Windows.RoutedEventArgs.InvokeHandler(Delegate handler, Object target)\r\n     場所 System.Windows.RoutedEventHandlerInfo.InvokeHandler(Object target, RoutedEventArgs routedEventArgs)\r\n     場所 System.Windows.EventRoute.InvokeHandlersImpl(Object source, RoutedEventArgs args, Boolean reRaised)\r\n     場所 System.Windows.UIElement.ReRaiseEventAs(DependencyObject sender, RoutedEventArgs args, RoutedEvent newEvent)\r\n     場所 System.Windows.UIElement.OnMouseUpThunk(Object sender, MouseButtonEventArgs e)\r\n     場所 System.Windows.Input.MouseButtonEventArgs.InvokeEventHandler(Delegate genericHandler, Object genericTarget)\r\n     場所 System.Windows.RoutedEventArgs.InvokeHandler(Delegate handler, Object target)\r\n     場所 System.Windows.RoutedEventHandlerInfo.InvokeHandler(Object target, RoutedEventArgs routedEventArgs)\r\n     場所 System.Windows.EventRoute.InvokeHandlersImpl(Object source, RoutedEventArgs args, Boolean reRaised)\r\n     場所 System.Windows.UIElement.RaiseEventImpl(DependencyObject sender, RoutedEventArgs args)\r\n     場所 System.Windows.UIElement.RaiseTrustedEvent(RoutedEventArgs args)\r\n     場所 System.Windows.UIElement.RaiseEvent(RoutedEventArgs args, Boolean trusted)\r\n     場所 System.Windows.Input.InputManager.ProcessStagingArea()\r\n     場所 System.Windows.Input.InputManager.ProcessInput(InputEventArgs input)\r\n     場所 System.Windows.Input.InputProviderSite.ReportInput(InputReport inputReport)\r\n     場所 System.Windows.Interop.HwndMouseInputProvider.ReportInput(IntPtr hwnd, InputMode mode, Int32 timestamp, RawMouseActions actions, Int32 x, Int32 y, Int32 wheel)\r\n     場所 System.Windows.Interop.HwndMouseInputProvider.FilterMessage(IntPtr hwnd, WindowMessage msg, IntPtr wParam, IntPtr lParam, Boolean& handled)\r\n     場所 System.Windows.Interop.HwndSource.InputFilterMessage(IntPtr hwnd, Int32 msg, IntPtr wParam, IntPtr lParam, Boolean& handled)\r\n     場所 MS.Win32.HwndWrapper.WndProc(IntPtr hwnd, Int32 msg, IntPtr wParam, IntPtr lParam, Boolean& handled)\r\n     場所 MS.Win32.HwndSubclass.DispatcherCallbackOperation(Object o)\r\n     場所 System.Windows.Threading.ExceptionWrapper.InternalRealCall(Delegate callback, Object args, Int32 numArgs)\r\n     場所 System.Windows.Threading.ExceptionWrapper.TryCatchWhen(Object source, Delegate callback, Object args, Int32 numArgs, Delegate catchHandler)"));
-            Assert.That(actual.Children[4], Has.Property("Key").EqualTo("Source").And.Property("Value").EqualTo("mscorlib"));
-            Assert.That(actual.Children[5], Has.Property("Key").EqualTo("HResult").And.Property("Value").EqualTo("-2146233086"));
+            Assert.That(actual.Children, Has.Count.EqualTo(7));
+            Assert.That(actual.Children[0], Has.Property("Key").EqualTo("Message"));
+            Assert.That(actual.Children[0].Children[0], Has.Property("Value").EqualTo("メソッドまたは操作は実装されていません。"));
+            Assert.That(actual.Children[1], Has.Property("Key").EqualTo("Data"));
+            Assert.That(actual.Children[1].Children[0], Has.Property("Value").EqualTo("? {}"));
+            Assert.That(actual.Children[1].Children[1], Has.Property("Value").EqualTo(":"));
+            Assert.That(actual.Children[2], Has.Property("Key").EqualTo("InnerException"));
+            Assert.That(actual.Children[3], Has.Property("Key").EqualTo("StackTrace").And.Property("Value").EqualTo("|2-"));
+            Assert.That(actual.Children[3].Children[0], Has.Property("Value").EqualTo(@"場所 Sunctum.ViewModels.MainWindowViewModel.<Initialize>d__304.MoveNext() 場所 Z:\Git\Sunctum\Sunctum\ViewModels\MainWindowViewModel.cs:行 601"));
+            Assert.That(actual.Children[3].Children[1], Has.Property("Value").EqualTo(@"--- 直前に例外がスローされた場所からのスタック トレースの終わり ---"));
+            Assert.That(actual.Children[3].Children[2], Has.Property("Value").EqualTo(@"場所 System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()"));
+            Assert.That(actual.Children[3].Children[3], Has.Property("Value").EqualTo(@"場所 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)"));
+            Assert.That(actual.Children[3].Children[4], Has.Property("Value").EqualTo(@"場所 System.Runtime.CompilerServices.TaskAwaiter.GetResult()"));
+            Assert.That(actual.Children[3].Children[5], Has.Property("Value").EqualTo(@"場所 Sunctum.Views.MainWindow.<Window_Loaded>d__10.MoveNext() 場所 Z:\Git\Sunctum\Sunctum\Views\MainWindow.xaml.cs:行 35"));
+            Assert.That(actual.Children[3].Children[6], Has.Property("Value").EqualTo(@"--- 直前に例外がスローされた場所からのスタック トレースの終わり ---"));
+            Assert.That(actual.Children[3].Children[7], Has.Property("Value").EqualTo(@"場所 System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()"));
+            Assert.That(actual.Children[3].Children[8], Has.Property("Value").EqualTo(@"場所 System.Windows.Threading.ExceptionWrapper.InternalRealCall(Delegate callback, Object args, Int32 numArgs)"));
+            Assert.That(actual.Children[3].Children[9], Has.Property("Value").EqualTo(@"場所 System.Windows.Threading.ExceptionWrapper.TryCatchWhen(Object source, Delegate callback, Object args, Int32 numArgs, Delegate catchHandler)"));
+            Assert.That(actual.Children[4], Has.Property("Key").EqualTo("HelpLink").And.Property("Value").EqualTo(string.Empty));
+            Assert.That(actual.Children[5], Has.Property("Key").EqualTo("Source").And.Property("Value").EqualTo("Sunctum"));
+            Assert.That(actual.Children[6], Has.Property("Key").EqualTo("HResult").And.Property("Value").EqualTo("-2147467263"));
         }
     }
 }

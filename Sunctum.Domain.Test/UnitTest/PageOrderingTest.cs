@@ -5,17 +5,18 @@ using Nito.AsyncEx;
 using NUnit.Framework;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
+using Sunctum.Domain.Test.Core;
 using System;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
+using Unity;
 
 namespace Sunctum.Domain.Test.UnitTest
 {
     [Category("UnitTest")]
-    public class PageOrderingTest
+    public class PageOrderingTest : TestSession
     {
-        //private static TestBootstrapper s_bootstrapper;
         private string _filePath;
         private string _dirPath;
         private string _dataPath;
@@ -28,9 +29,6 @@ namespace Sunctum.Domain.Test.UnitTest
             _filePath = Path.Combine(_dirPath, "library.db");
             ConnectionManager.SetDefaultConnection($"Data Source={_filePath}", typeof(SQLiteConnection));
 
-            //s_bootstrapper = new TestBootstrapper($"Data Source={_filePath}");
-            //s_bootstrapper.Run();
-
             if (Directory.Exists(_dirPath))
             {
                 Directory.Delete(_dirPath, true);
@@ -41,13 +39,9 @@ namespace Sunctum.Domain.Test.UnitTest
                 Directory.CreateDirectory(_dirPath);
             }
 
-            var config = new Configuration();
-            config.WorkingDirectory = _dirPath;
-            Configuration.ApplicationConfiguration = config;
-
             _dataPath = Path.Combine(_dirPath, "data");
 
-            //_libManager = s_bootstrapper.Get<ILibrary>();
+            _libManager = Container.Resolve<ILibrary>();
 
             AsyncContext.Run(async () =>
             {
@@ -142,6 +136,11 @@ namespace Sunctum.Domain.Test.UnitTest
             {
                 Directory.Delete(_dirPath, true);
             }
+        }
+
+        public override string GetTestDirectory()
+        {
+            return Path.Combine(TestContext.CurrentContext.TestDirectory, "PageOrderingTest");
         }
     }
 }
