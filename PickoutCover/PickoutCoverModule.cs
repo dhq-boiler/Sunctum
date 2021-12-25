@@ -3,6 +3,7 @@ using PickoutCover.Views;
 using Prism.Ioc;
 using Prism.Modularity;
 using Prism.Regions;
+using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace PickoutCover
         public void OnInitialized(IContainerProvider containerProvider)
         {
             var regionManager = containerProvider.Resolve<IRegionManager>();
-            regionManager.RegisterViewWithRegion("ExtraPage", typeof(PickoutCoverMenu));
+            regionManager.RegisterViewWithRegion("ExtraPage", typeof(Views.PickoutCoverMenu));
         }
 
         public void RegisterTypes(IContainerRegistry containerRegistry)
@@ -24,6 +25,7 @@ namespace PickoutCover
             containerRegistry.RegisterDialog<Views.PickoutCover, PickoutCoverViewModel>();
             containerRegistry.RegisterSingleton<PickoutCoverViewModel>();
             containerRegistry.RegisterSingleton<ViewModels.PickoutCoverMenuViewModel>();
+            containerRegistry.RegisterSingleton<PickoutCoverMenu>();
         }
     }
 }

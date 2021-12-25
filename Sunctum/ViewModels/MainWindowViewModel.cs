@@ -20,7 +20,6 @@ using Sunctum.Domain.Logic.ImageTagCountSorting;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
-using Sunctum.Exceptions;
 using Sunctum.Plugin;
 using Sunctum.UI.Controls;
 using Sunctum.UI.Dialogs;
@@ -29,8 +28,6 @@ using Sunctum.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
@@ -57,7 +54,6 @@ namespace Sunctum.ViewModels
         private bool _DisplayTagPane;
         private bool _DisplayInformationPane;
         private bool _DisplayAuthorPane;
-        private IEnumerable<IAddMenuPlugin> _Plugins;
         private string _TooltipOnProgressBar;
         private double _WindowLeft;
         private double _WindowTop;
@@ -421,12 +417,8 @@ namespace Sunctum.ViewModels
             set { SetProperty(ref _LibraryVM, value); }
         }
 
-        [ImportMany]
-        public IEnumerable<IAddMenuPlugin> Plugins
-        {
-            get { return _Plugins; }
-            set { SetProperty(ref _Plugins, value); }
-        }
+        [Dependency]
+        public IEnumerable<Lazy<IAddMenuPlugin>> Plugins { get; set; }
 
         [Dependency]
         public IDataAccessManager DataAccessManager { get; set; }
@@ -570,7 +562,6 @@ namespace Sunctum.ViewModels
                 LibraryVM.ProgressManager.PropertyChanged += ProgressManager_PropertyChanged;
                 TagPaneViewModel.BuildContextMenus_Tags();
                 AuthorPaneViewModel.BuildContextMenus_Authors();
-                //LoadPlugins();
             }
 
             WindowLeft = Configuration.ApplicationConfiguration.WindowRect.X;
@@ -775,52 +766,6 @@ namespace Sunctum.ViewModels
             if (e.ModifiedCount > 0)
             {
                 SQLiteBaseDao<Dummy>.Vacuum(DataAccessManager.AppDao.CurrentConnection);
-            }
-        }
-
-        private void LoadPlugins()
-        {
-            string pluginsPath = Directory.GetCurrentDirectory() + @"\plugins";
-            if (!Directory.Exists(pluginsPath)) Directory.CreateDirectory(pluginsPath);
-
-            //プラグイン読み込み
-            using (var catalog = new DirectoryCatalog(pluginsPath))
-            using (var container = new CompositionContainer(catalog))
-            {
-                container.SatisfyImportsOnce(this);
-            }
-
-            foreach (var plugin in Plugins)
-            {
-                var flags = plugin.Where().GetFlags();
-                foreach (var flag in flags)
-                {
-                    switch (flag)
-                    {
-                        case MenuType.MainWindow_Book_ContextMenu:
-                            var menu = plugin.GetMenu(MenuType.MainWindow_Book_ContextMenu, () => HomeDocumentViewModel.SelectedEntries.Where(e => e is BookViewModel).Cast<BookViewModel>()) as System.Windows.Controls.MenuItem;
-                            ExtraBookContextMenu.Add(menu);
-                            break;
-                        case MenuType.MainWindow_Page_ContextMenu:
-                            menu = plugin.GetMenu(MenuType.MainWindow_Page_ContextMenu, () => HomeDocumentViewModel.SelectedEntries.Where(e => e is PageViewModel).Cast<PageViewModel>()) as System.Windows.Controls.MenuItem;
-                            ExtraPageContextMenu.Add(menu);
-                            break;
-                        case MenuType.MainWindow_Tag_ContextMenu:
-                            menu = plugin.GetMenu(MenuType.MainWindow_Tag_ContextMenu, () => TagManager.TagCount.Where(e => e is TagCountViewModel).Cast<TagCountViewModel>()) as System.Windows.Controls.MenuItem;
-                            ExtraTagContextMenu.Add(menu);
-                            break;
-                        case MenuType.MainWindow_Author_ContextMenu:
-                            menu = plugin.GetMenu(MenuType.MainWindow_Author_ContextMenu, () => AuthorManager.SelectedItems.Where(e => e is AuthorViewModel).Cast<AuthorViewModel>()) as System.Windows.Controls.MenuItem;
-                            ExtraAuthorContextMenu.Add(menu);
-                            break;
-                    }
-                }
-
-                var assembly = Assembly.GetAssembly(plugin.GetType());
-                var codebase = assembly.GetName().CodeBase.ToString();
-                var uri = new UriBuilder(codebase);
-                var path = Uri.UnescapeDataString(uri.Path);
-                s_logger.Info($"Plugin Loaded '{plugin.GetType().Name}' from '{path}' {assembly.GetName().Version.ToString()}");
             }
         }
 

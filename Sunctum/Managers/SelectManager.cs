@@ -11,7 +11,7 @@ namespace Sunctum.Managers
 {
     public class SelectManager : ISelectManager
     {
-        public Type SelectedType { get; set; }
+        public Type ElementSelectedType { get; set; }
 
         private ObservableCollection<object> _selectedItems;
 
@@ -21,7 +21,7 @@ namespace Sunctum.Managers
             set
             {
                 _selectedItems = value;
-                SelectedType = value.FirstOrEmpty().GetType();
+                ElementSelectedType = value.FirstOrEmpty().GetType();
             }
         }
 

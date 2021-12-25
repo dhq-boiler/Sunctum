@@ -10,7 +10,7 @@ using System.ComponentModel.Composition;
 using System.Windows;
 using System.Windows.Input;
 
-namespace DebugTools
+namespace CopyAsYamlFormat
 {
 #if DEBUG
     public class CopyAsYamlFormatPlugin : IAddMenuPlugin

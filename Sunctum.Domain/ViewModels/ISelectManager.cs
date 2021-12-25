@@ -10,7 +10,7 @@ namespace Sunctum.Domain.ViewModels
 {
     public interface ISelectManager
     {
-        Type SelectedType { get; set; }
+        Type ElementSelectedType { get; set; }
         ObservableCollection<object> SelectedItems { get; set; }
 
         ObservableCollection<T> GetCollection<T>() where T : EntityBaseObjectViewModel;

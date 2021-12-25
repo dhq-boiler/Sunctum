@@ -22,10 +22,7 @@ using Sunctum.Views;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -342,7 +339,6 @@ namespace Sunctum.ViewModels
                 if (OpenedPage != null)
                 {
                     GoPreviousImage();
-                    BeginAnimation_Tick_PreviousImageButton();
                 }
                 else if (OpenedBook != null)
                 {
@@ -404,7 +400,6 @@ namespace Sunctum.ViewModels
                 if (OpenedPage != null)
                 {
                     GoNextImage();
-                    BeginAnimation_Tick_NextImageButton();
                 }
                 else if (OpenedBook != null)
                 {
@@ -722,8 +717,9 @@ namespace Sunctum.ViewModels
             {
                 Header = "Extra",
             };
-            binding = new Binding("MainWindowViewModel.ExtraBookContextMenu");
-            menuitem.SetBinding(ItemsControl.ItemsSourceProperty, binding);
+            menuitem.SetValue(RegionManager.RegionNameProperty, "ExtraBook");
+            SelectManager.SelectedItems = SelectedEntries.Where(x => x is BookViewModel).Cast<object>().ToObservableCollection();
+            SelectManager.ElementSelectedType = typeof(BookViewModel);
             menulist.Add(menuitem);
 
             BooksContextMenuItems = menulist;
@@ -778,6 +774,7 @@ namespace Sunctum.ViewModels
             };
             menuitem.SetValue(RegionManager.RegionNameProperty, "ExtraPage");
             SelectManager.SelectedItems = SelectedEntries.Where(x => x is PageViewModel).Cast<object>().ToObservableCollection();
+            SelectManager.ElementSelectedType = typeof(PageViewModel);
             menulist.Add(menuitem);
 
             ContentsContextMenuItems = menulist;
@@ -1043,22 +1040,6 @@ namespace Sunctum.ViewModels
         }
 
         #endregion //ページ単位ソート
-
-        #region キーボード操作
-
-        private void BeginAnimation_Tick_PreviousImageButton()
-        {
-            throw new NotImplementedException();
-            //BlinkGoBackButtonRequest.Raise(new Notification());
-        }
-
-        private void BeginAnimation_Tick_NextImageButton()
-        {
-            throw new NotImplementedException();
-            //BlinkGoNextButtonRequest.Raise(new Notification());
-        }
-
-        #endregion //キーボード操作
 
         #region インポート
 

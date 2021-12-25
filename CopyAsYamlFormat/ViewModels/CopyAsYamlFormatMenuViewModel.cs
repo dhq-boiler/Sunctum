@@ -1,41 +1,39 @@
 ﻿using Prism.Mvvm;
-using Prism.Regions;
-using Prism.Services.Dialogs;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using Sunctum.Domain.ViewModels;
+using Sunctum.Infrastructure.Data.Yaml;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using Unity;
 
-namespace PickoutCover.ViewModels
+namespace CopyAsYamlFormat.ViewModels
 {
-    public class PickoutCoverMenuViewModel : BindableBase, IDisposable
+    public class CopyAsYamlFormatMenuViewModel : BindableBase, IDisposable
     {
         private CompositeDisposable disposables = new CompositeDisposable();
         private bool disposedValue;
 
-        public PickoutCoverMenuViewModel(IDialogService dialogService)
+        public CopyAsYamlFormatMenuViewModel()
         {
-            PickoutCoverCommand.Subscribe(_ =>
+            CopyAsYamlFormatCommand.Subscribe(_ =>
             {
-                IDialogParameters dialogParameters = new DialogParameters();
-                var selectedPages = SelectManager.GetCollection<PageViewModel>();
-                dialogParameters.Add("page", selectedPages.First());
-                IDialogResult dialogResult = new DialogResult();
-                dialogService.ShowDialog(nameof(Views.PickoutCover), dialogParameters, ret => dialogResult = ret);
+                var parameter = SelectManager.SelectedItems;
+                var yaml = YamlConverter.ToYaml(parameter);
+                Clipboard.SetText(yaml);
             })
             .AddTo(disposables);
         }
-
+        
         [Dependency]
         public ISelectManager SelectManager { get; set; }
 
-        public ReactiveCommand PickoutCoverCommand { get; } = new ReactiveCommand();
+        public ReactiveCommand CopyAsYamlFormatCommand { get; } = new ReactiveCommand();
 
         protected virtual void Dispose(bool disposing)
         {

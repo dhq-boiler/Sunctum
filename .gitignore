@@ -34,3 +34,6 @@ Homura/bin/
 Homura/obj/
 Homura.Test/obj/
 gitversion.json
+*.user
+bin/
+obj/

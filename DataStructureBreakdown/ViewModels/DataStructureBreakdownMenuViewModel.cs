@@ -1,9 +1,10 @@
 ﻿using Prism.Mvvm;
-using Prism.Regions;
 using Prism.Services.Dialogs;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using Sunctum.Domain.ViewModels;
+using Sunctum.Infrastructure.Data.Yaml;
+using Sunctum.UI.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,22 +13,22 @@ using System.Text;
 using System.Threading.Tasks;
 using Unity;
 
-namespace PickoutCover.ViewModels
+namespace DataStructureBreakdown.ViewModels
 {
-    public class PickoutCoverMenuViewModel : BindableBase, IDisposable
+    public class DataStructureBreakdownMenuViewModel : BindableBase, IDisposable
     {
         private CompositeDisposable disposables = new CompositeDisposable();
         private bool disposedValue;
 
-        public PickoutCoverMenuViewModel(IDialogService dialogService)
+        public DataStructureBreakdownMenuViewModel()
         {
-            PickoutCoverCommand.Subscribe(_ =>
+            DataStructureBreakdownCommand.Subscribe(_ =>
             {
-                IDialogParameters dialogParameters = new DialogParameters();
-                var selectedPages = SelectManager.GetCollection<PageViewModel>();
-                dialogParameters.Add("page", selectedPages.First());
-                IDialogResult dialogResult = new DialogResult();
-                dialogService.ShowDialog(nameof(Views.PickoutCover), dialogParameters, ret => dialogResult = ret);
+                var parameter = SelectManager.GetCollection<EntityBaseObjectViewModel>();
+                var yaml = YamlConverter.ToYaml(parameter);
+                TreeViewDialog dialog = new TreeViewDialog(yaml);
+                dialog.Title = "Data Structure Breakdown";
+                dialog.ShowDialog();
             })
             .AddTo(disposables);
         }
@@ -35,7 +36,7 @@ namespace PickoutCover.ViewModels
         [Dependency]
         public ISelectManager SelectManager { get; set; }
 
-        public ReactiveCommand PickoutCoverCommand { get; } = new ReactiveCommand();
+        public ReactiveCommand DataStructureBreakdownCommand { get; } = new ReactiveCommand();
 
         protected virtual void Dispose(bool disposing)
         {
@@ -50,6 +51,7 @@ namespace PickoutCover.ViewModels
                 disposedValue = true;
             }
         }
+
 
         public void Dispose()
         {

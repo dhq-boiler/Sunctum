@@ -1,5 +1,4 @@
-﻿using PickoutCover.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,17 +13,16 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace PickoutCover.Views
+namespace DataStructureBreakdown.Views
 {
     /// <summary>
-    /// PickoutCoverMenu.xaml の相互作用ロジック
+    /// DataStructureBreakdownMenu.xaml の相互作用ロジック
     /// </summary>
-    public partial class PickoutCoverMenu : MenuItem
+    public partial class DataStructureBreakdownMenu : MenuItem
     {
-        public PickoutCoverMenu(PickoutCoverMenuViewModel pickoutCoverMenuViewModel)
+        public DataStructureBreakdownMenu()
         {
             InitializeComponent();
-            DataContext = pickoutCoverMenuViewModel;
         }
     }
 }

@@ -44,7 +44,7 @@
                         <TextBlock FontSize="20" Foreground="White" Visibility="{Binding HeaderVisibility}">
                             <Run Text=" : " />
                         </TextBlock>
-                        <controls:SelectableLabel Text="{Binding Value}" FontSize="20" Foreground="#b5cea8" />
+                        <controls:SelectableLabel Text="{Binding Value}" FontSize="20" Foreground="White" />
                     </StackPanel>
                 </HierarchicalDataTemplate>
             </TreeView.Resources>
