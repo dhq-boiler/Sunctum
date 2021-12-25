@@ -133,8 +133,8 @@ namespace Sunctum.ViewModels
 
         #region プロパティ
 
-        [ImportMany]
-        public IEnumerable<IDropPlugin> DropPlugins { get; set; }
+        [Dependency]
+        public IEnumerable<Lazy<IDropPlugin>> DropPlugins { get; set; }
 
         public IArrangedBookStorage BookCabinet
         {
@@ -279,21 +279,7 @@ namespace Sunctum.ViewModels
                     UpdateStarLevel();
                 });
             this.dialogService = dialogService;
-            //LoadPlugins();
         }
-
-        //private void LoadPlugins()
-        //{
-        //    string pluginsPath = Directory.GetCurrentDirectory() + @"\plugins";
-        //    if (!Directory.Exists(pluginsPath)) Directory.CreateDirectory(pluginsPath);
-
-        //    //プラグイン読み込み
-        //    using (var catalog = new DirectoryCatalog(pluginsPath))
-        //    using (var container = new CompositionContainer(catalog))
-        //    {
-        //        container.SatisfyImportsOnce(this);
-        //    }
-        //}
 
         private void UpdateStarLevel()
         {
@@ -338,7 +324,7 @@ namespace Sunctum.ViewModels
             {
                 foreach (var dropPlugin in DropPlugins)
                 {
-                    dropPlugin.Execute(args.Data);
+                    dropPlugin.Value.Execute(args.Data);
                 }
             })
             .AddTo(disposables);
