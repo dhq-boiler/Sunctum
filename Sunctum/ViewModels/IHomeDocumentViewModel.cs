@@ -19,7 +19,7 @@ namespace Sunctum.ViewModels
         ObservableCollection<Control> ContentsContextMenuItems { get; set; }
         List<PageViewModel> ContentsListViewSelectedItems { get; set; }
         int CurrentPage { get; }
-        ILibrary LibraryManager { get; set; }
+        Lazy<ILibrary> LibraryManager { get; set; }
         BookViewModel OpenedBook { get; set; }
         PageViewModel OpenedPage { get; set; }
         bool SearchPaneIsVisible { get; set; }

@@ -589,9 +589,6 @@ namespace Sunctum.ViewModels
 
             CloseAllTab();
 
-            HomeDocumentViewModel.LibraryManager = LibraryVM;
-            ((DocumentViewModelBase)HomeDocumentViewModel).MainWindowViewModel = this;
-
             var authorSorting = Configuration.ApplicationConfiguration.AuthorSorting;
             if (authorSorting != null)
             {
@@ -678,13 +675,12 @@ namespace Sunctum.ViewModels
 
         public void NewSearchTab(ObservableCollection<BookViewModel> onStage)
         {
-            var newTabViewModel = new SearchDocumentViewModel(DialogService, "Search results");
-            newTabViewModel.LibraryManager = LibraryVM;
+            var newTabViewModel = (App.Current.Resources["Ioc"] as IUnityContainer).Resolve<IDocumentViewModelBase>("SearchDocumentViewModel");
+            newTabViewModel.Title = "Search results";
             newTabViewModel.BookCabinet = LibraryVM.CreateBookStorage();
             newTabViewModel.BookCabinet.BookSource = new ObservableCollection<BookViewModel>(onStage);
             newTabViewModel.BookCabinet.Sorting = (App.Current.MainWindow.DataContext as MainWindowViewModel).ActiveDocumentViewModel.BookCabinet.Sorting;
             newTabViewModel.BookCabinet.DisplayType = (App.Current.MainWindow.DataContext as MainWindowViewModel).ActiveDocumentViewModel.BookCabinet.DisplayType;
-            newTabViewModel.MainWindowViewModel = this;
             DockingDocumentViewModels.Add(newTabViewModel);
 
             (LibraryVM as IObservable<BookCollectionChanged>)
@@ -698,14 +694,13 @@ namespace Sunctum.ViewModels
 
         public void NewContentTab(BookViewModel bookViewModel)
         {
-            var newTabViewModel = new ContentDocumentViewModel(DialogService, bookViewModel.Title);
-            newTabViewModel.LibraryManager = LibraryVM;
+            var newTabViewModel = (App.Current.Resources["Ioc"] as IUnityContainer).Resolve<IDocumentViewModelBase>("ContentDocumentViewModel");
+            newTabViewModel.Title = bookViewModel.Title;
             newTabViewModel.BookCabinet = LibraryVM.CreateBookStorage();
             newTabViewModel.BookCabinet.BookSource = new ObservableCollection<BookViewModel>();
             newTabViewModel.BookCabinet.BookSource.Add(bookViewModel);
             newTabViewModel.BookCabinet.Sorting = (App.Current.MainWindow.DataContext as MainWindowViewModel).ActiveDocumentViewModel.BookCabinet.Sorting;
             newTabViewModel.BookCabinet.DisplayType = (App.Current.MainWindow.DataContext as MainWindowViewModel).ActiveDocumentViewModel.BookCabinet.DisplayType;
-            newTabViewModel.MainWindowViewModel = this;
             DockingDocumentViewModels.Add(newTabViewModel);
 
             (LibraryVM as IObservable<BookCollectionChanged>)
@@ -719,14 +714,13 @@ namespace Sunctum.ViewModels
 
         public void NewContentTab(IEnumerable<BookViewModel> list)
         {
-            var newTabViewModel = new ContentDocumentViewModel(DialogService, "Filtered");
-            newTabViewModel.LibraryManager = LibraryVM;
+            var newTabViewModel = (App.Current.Resources["Ioc"] as IUnityContainer).Resolve<IDocumentViewModelBase>("ContentDocumentViewModel");
+            newTabViewModel.Title = "Filtered";
             newTabViewModel.BookCabinet = LibraryVM.CreateBookStorage();
             newTabViewModel.BookCabinet.BookSource = new ObservableCollection<BookViewModel>();
             newTabViewModel.BookCabinet.BookSource.AddRange(list);
             newTabViewModel.BookCabinet.Sorting = (App.Current.MainWindow.DataContext as MainWindowViewModel).ActiveDocumentViewModel.BookCabinet.Sorting;
             newTabViewModel.BookCabinet.DisplayType = (App.Current.MainWindow.DataContext as MainWindowViewModel).ActiveDocumentViewModel.BookCabinet.DisplayType;
-            newTabViewModel.MainWindowViewModel = this;
             DockingDocumentViewModels.Add(newTabViewModel);
 
             (LibraryVM as IObservable<BookCollectionChanged>)

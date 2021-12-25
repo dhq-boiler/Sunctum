@@ -60,7 +60,6 @@ namespace Sunctum
 
             containerRegistry.GetContainer().AddExtension(new Diagnostic()).AddExtension(new LogResolvesUnityContainerExtension());
             containerRegistry.RegisterSingleton<IMainWindowViewModel, MainWindowViewModel>();
-            containerRegistry.RegisterSingleton<IHomeDocumentViewModel, HomeDocumentViewModel>();
             containerRegistry.RegisterSingleton<IAuthorPaneViewModel, AuthorPaneViewModel>();
             containerRegistry.RegisterSingleton<ITagPaneViewModel, TagPaneViewModel>();
             containerRegistry.RegisterSingleton<IInformationPaneViewModel, InformationPaneViewModel>();
@@ -108,6 +107,13 @@ namespace Sunctum
             containerRegistry.RegisterDialog<Views.Preferences, PreferencesDialogViewModel>();
             containerRegistry.RegisterDialog<Views.Export, ExportDialogViewModel>();
             containerRegistry.RegisterDialog<Views.ErrorReport, ErrorReportDialogViewModel>();
+
+            containerRegistry.RegisterSingleton<ISelectManager, SelectManager>();
+            containerRegistry.RegisterSingleton<IHomeDocumentViewModel, HomeDocumentViewModel>();
+            containerRegistry.Register<IDocumentViewModelBase, SearchDocumentViewModel>("SearchDocumentViewModel");
+            containerRegistry.Register<IDocumentViewModelBase, ContentDocumentViewModel>("ContentDocumentViewModel");
+
+            App.Current.Resources.Add("Ioc", containerRegistry.GetContainer());
         }
 
         /// <summary>

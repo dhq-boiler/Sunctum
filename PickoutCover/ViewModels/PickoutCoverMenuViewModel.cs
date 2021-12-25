@@ -3,6 +3,7 @@ using Prism.Regions;
 using Prism.Services.Dialogs;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
+using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,10 +21,11 @@ namespace PickoutCover.ViewModels
 
         public PickoutCoverMenuViewModel(IDialogService dialogService)
         {
-            PickoutCoverCommand.Subscribe(dataContext =>
+            PickoutCoverCommand.Subscribe(_ =>
             {
                 IDialogParameters dialogParameters = new DialogParameters();
-                dialogParameters.Add("page", dataContext);
+                var selectedPages = SelectManager.GetCollection<PageViewModel>();
+                dialogParameters.Add("page", selectedPages.First());
                 IDialogResult dialogResult = new DialogResult();
                 dialogService.ShowDialog(nameof(Views.PickoutCover), dialogParameters, ret => dialogResult = ret);
             })
@@ -31,9 +33,12 @@ namespace PickoutCover.ViewModels
         }
 
         [Dependency]
+        public ISelectManager SelectManager { get; set; }
+
+        [Dependency]
         public PickoutCoverViewModel PickoutCoverDialogViewModel { get; set; }
 
-        public ReactiveCommand<object> PickoutCoverCommand { get; } = new ReactiveCommand<object>();
+        public ReactiveCommand PickoutCoverCommand { get; } = new ReactiveCommand();
 
         protected virtual void Dispose(bool disposing)
         {

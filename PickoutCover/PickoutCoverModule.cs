@@ -22,6 +22,7 @@ namespace PickoutCover
         public void RegisterTypes(IContainerRegistry containerRegistry)
         {
             containerRegistry.RegisterDialog<Views.PickoutCover, PickoutCoverViewModel>();
+            containerRegistry.RegisterSingleton<PickoutCoverViewModel>();
             containerRegistry.RegisterSingleton<ViewModels.PickoutCoverMenuViewModel>();
         }
     }

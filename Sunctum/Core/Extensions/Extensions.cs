@@ -298,5 +298,10 @@ namespace Sunctum.Core.Extensions
             }
             return child;
         }
+
+        public static T FirstOrEmpty<T>(this IEnumerable<T> list) where T : new()
+        {
+            return list.Count() > 0 ? list.First() : new T();
+        }
     }
 }

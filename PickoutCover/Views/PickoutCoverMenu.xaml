@@ -7,6 +7,5 @@
              mc:Ignorable="d"
              Header="表紙切り取りツール"
              Command="{Binding PickoutCoverCommand}"
-             CommandParameter="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ContextMenu}}, Path=PlacementTarget.Tag}"
              d:DesignHeight="450" d:DesignWidth="800">
 </MenuItem>
