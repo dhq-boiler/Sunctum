@@ -38,7 +38,7 @@ steps:
     command: 'test'
     arguments: '--configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura -- RunConfiguration.DisableAppDomain=true'
     publishTestResults: true
-    projects: '*[Tt]est.csproj'
+    projects: '$(TargetSolution)'
 
 # Archive files
 # Compress files into .7z, .tar.gz, or .zip
