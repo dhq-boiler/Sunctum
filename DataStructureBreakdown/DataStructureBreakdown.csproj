@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+	<UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Prism.Core" Version="8.1.97" />
+    <PackageReference Include="Prism.Unity" Version="8.1.97" />
+    <PackageReference Include="Prism.Wpf" Version="8.1.97" />
+    <PackageReference Include="ReactiveProperty.WPF" Version="8.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sunctum.Plugin\Sunctum.Plugin.csproj" />
+    <ProjectReference Include="..\Sunctum.UI\Sunctum.UI.csproj" />
+  </ItemGroup>
+  <PropertyGroup>
+  	<PostBuildEvent>
+		copy /Y "$(SolutionDir)DataStructureBreakdown\bin\$(Configuration)\net6.0-windows\DataStructureBreakdown.dll" "$(SolutionDir)Sunctum\bin\$(Configuration)\net6.0-windows\plugins\DataStructureBreakdown.dll"
+	</PostBuildEvent>
+  </PropertyGroup>
+
+</Project>

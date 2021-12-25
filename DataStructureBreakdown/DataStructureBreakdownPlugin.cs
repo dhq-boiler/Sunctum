@@ -12,11 +12,9 @@ using System.ComponentModel.Composition;
 using System.Windows;
 using System.Windows.Input;
 
-namespace DebugTools
+namespace DataStructureBreakdown
 {
 #if DEBUG
-
-    [Export(typeof(IAddMenuPlugin))]
     public class DataStructureBreakdownPlugin : IAddMenuPlugin
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();

@@ -5,7 +5,7 @@ using System;
 using System.Globalization;
 using System.Windows.Data;
 
-namespace PickoutCover.View.Converter
+namespace PickoutCover.Views.Converters
 {
     internal class CoverSideCandidateToInt : IValueConverter
     {

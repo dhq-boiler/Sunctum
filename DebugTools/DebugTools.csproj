@@ -23,8 +23,8 @@
   </ItemGroup>
   <PropertyGroup />
   <PropertyGroup>
-    <PostBuildEvent>
+	<PostBuildEvent>
 		copy /Y "$(SolutionDir)DebugTools\bin\$(Configuration)\net6.0-windows\DebugTools.dll" "$(SolutionDir)Sunctum\bin\$(Configuration)\net6.0-windows\plugins\DebugTools.dll"
-    </PostBuildEvent>
+	</PostBuildEvent>
   </PropertyGroup>
 </Project>

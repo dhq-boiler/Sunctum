@@ -16,6 +16,7 @@
                         Margin="0"
                         Padding="0"
                         Content="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Button}}, Path=Content}"
+                        Foreground="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType=UserControl}, Path=Foreground}"
                         Visibility="Visible" />
                     <TextBox
                         Margin="0"

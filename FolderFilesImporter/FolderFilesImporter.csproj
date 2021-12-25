@@ -7,10 +7,6 @@
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.Transactions" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Sunctum.Domain\Sunctum.Domain.csproj" />
     <ProjectReference Include="..\Sunctum.Plugin\Sunctum.Plugin.csproj" />
   </ItemGroup>

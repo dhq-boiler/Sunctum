@@ -3,6 +3,7 @@
 using Homura.Core;
 using NLog;
 using Prism.Commands;
+using Prism.Regions;
 using Prism.Services.Dialogs;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
@@ -23,6 +24,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -34,9 +36,10 @@ using Unity;
 
 namespace Sunctum.ViewModels
 {
-    public abstract class DocumentViewModelBase : DockElementViewModelBase, IDocumentViewModelBase
+    public abstract class DocumentViewModelBase : DockElementViewModelBase, IDocumentViewModelBase, IDisposable
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
+        protected CompositeDisposable disposables = new CompositeDisposable();
         private IArrangedBookStorage _Cabinet;
         private Dictionary<Guid, Point> _scrollOffset;
         private List<EntryViewModel> _SelectedEntries;
@@ -52,13 +55,18 @@ namespace Sunctum.ViewModels
         private bool _BookListIsVisible;
         private bool _ContentListIsVisible;
         private bool _ImageIsVisible;
-
+        private bool disposedValue;
         public static readonly Guid BeforeSearchPosition = Guid.Parse("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF");
         private readonly IDialogService dialogService;
 
-        public ILibrary LibraryManager { get; set; }
+        [Dependency]
+        public ISelectManager SelectManager { get; set; }
 
-        public IMainWindowViewModel MainWindowViewModel { get; set; }
+        [Dependency]
+        public Lazy<ILibrary> LibraryManager { get; set; }
+
+        [Dependency]
+        public Lazy<IMainWindowViewModel> MainWindowViewModel { get; set; }
 
         #region コマンド
 
@@ -76,7 +84,7 @@ namespace Sunctum.ViewModels
 
         public ICommand CloseTabCommand { get; set; }
 
-        public ICommand DropCommand { get; set; }
+        public ReactiveCommand<DragEventArgs> DropCommand { get; set; } = new ReactiveCommand<DragEventArgs>();
 
         public ICommand ExportBooksCommand { get; set; }
 
@@ -123,7 +131,7 @@ namespace Sunctum.ViewModels
         #region プロパティ
 
         [Dependency]
-        public IEnumerable<IDropPlugin> DropPlugins { get; set; }
+        public IEnumerable<Lazy<IDropPlugin>> DropPlugins { get; set; }
 
         public IArrangedBookStorage BookCabinet
         {
@@ -303,19 +311,20 @@ namespace Sunctum.ViewModels
             });
             CloseTabCommand = new DelegateCommand(() =>
             {
-                MainWindowViewModel.CloseTab(this);
+                MainWindowViewModel.Value.CloseTab(this);
             });
             CloseSearchPaneCommand = new DelegateCommand(() =>
             {
                 CloseSearchPane();
             });
-            DropCommand = new DelegateCommand<DragEventArgs>(args =>
+            DropCommand.Subscribe(args =>
             {
                 foreach (var dropPlugin in DropPlugins)
                 {
-                    dropPlugin.Execute(args.Data);
+                    dropPlugin.Value.Execute(args.Data);
                 }
-            });
+            })
+            .AddTo(disposables);
             ExportBooksCommand = new DelegateCommand(() =>
             {
                 var books = BookListViewSelectedItems;
@@ -323,14 +332,13 @@ namespace Sunctum.ViewModels
             });
             FilterBooksCommand = new DelegateCommand(() =>
             {
-                MainWindowViewModel.NewContentTab(BookListViewSelectedItems);
+                MainWindowViewModel.Value.NewContentTab(BookListViewSelectedItems);
             });
             LeftKeyDownCommand = new DelegateCommand(() =>
             {
                 if (OpenedPage != null)
                 {
                     GoPreviousImage();
-                    BeginAnimation_Tick_PreviousImageButton();
                 }
                 else if (OpenedBook != null)
                 {
@@ -371,8 +379,8 @@ namespace Sunctum.ViewModels
             });
             OpenBookInNewTabCommand = new DelegateCommand(() =>
             {
-                MainWindowViewModel.NewContentTab(BookListViewSelectedItems.First());
-                MainWindowViewModel.ActiveDocumentViewModel.OpenBook(BookListViewSelectedItems.First());
+                MainWindowViewModel.Value.NewContentTab(BookListViewSelectedItems.First());
+                MainWindowViewModel.Value.ActiveDocumentViewModel.OpenBook(BookListViewSelectedItems.First());
             });
             OpenBookPropertyDialogCommand = new DelegateCommand(() =>
             {
@@ -392,7 +400,6 @@ namespace Sunctum.ViewModels
                 if (OpenedPage != null)
                 {
                     GoNextImage();
-                    BeginAnimation_Tick_NextImageButton();
                 }
                 else if (OpenedBook != null)
                 {
@@ -424,7 +431,7 @@ namespace Sunctum.ViewModels
             });
             SearchInNewTabCommand = new DelegateCommand(() =>
             {
-                MainWindowViewModel.NewSearchTab(BookCabinet.OnStage);
+                MainWindowViewModel.Value.NewSearchTab(BookCabinet.OnStage);
             });
             SendBookToExistTabCommand = new DelegateCommand<IDocumentViewModelBase>(p =>
             {
@@ -435,7 +442,7 @@ namespace Sunctum.ViewModels
             });
             SendBookToNewTabCommand = new DelegateCommand(() =>
             {
-                MainWindowViewModel.NewContentTab(BookListViewSelectedItems);
+                MainWindowViewModel.Value.NewContentTab(BookListViewSelectedItems);
             });
             ScrapPagesCommand = new DelegateCommand<object>(async (p) =>
             {
@@ -650,7 +657,7 @@ namespace Sunctum.ViewModels
                 Header = "新しいタブ",
                 Command = SendBookToNewTabCommand
             });
-            foreach (var item in MainWindowViewModel.DockingDocumentViewModels.Where(t => !t.ContentId.Equals("home") && !t.ContentId.Equals(this.ContentId)))
+            foreach (var item in MainWindowViewModel.Value.DockingDocumentViewModels.Where(t => !t.ContentId.Equals("home") && !t.ContentId.Equals(ContentId)))
             {
                 menuitem.Items.Add(new MenuItem()
                 {
@@ -710,8 +717,9 @@ namespace Sunctum.ViewModels
             {
                 Header = "Extra",
             };
-            binding = new Binding("MainWindowViewModel.ExtraBookContextMenu");
-            menuitem.SetBinding(ItemsControl.ItemsSourceProperty, binding);
+            menuitem.SetValue(RegionManager.RegionNameProperty, "ExtraBook");
+            SelectManager.SelectedItems = SelectedEntries.Where(x => x is BookViewModel).Cast<object>().ToObservableCollection();
+            SelectManager.ElementSelectedType = typeof(BookViewModel);
             menulist.Add(menuitem);
 
             BooksContextMenuItems = menulist;
@@ -764,8 +772,9 @@ namespace Sunctum.ViewModels
             {
                 Header = "Extra",
             };
-            var binding = new Binding("MainWindowViewModel.ExtraPageContextMenu");
-            menuitem.SetBinding(ItemsControl.ItemsSourceProperty, binding);
+            menuitem.SetValue(RegionManager.RegionNameProperty, "ExtraPage");
+            SelectManager.SelectedItems = SelectedEntries.Where(x => x is PageViewModel).Cast<object>().ToObservableCollection();
+            SelectManager.ElementSelectedType = typeof(PageViewModel);
             menulist.Add(menuitem);
 
             ContentsContextMenuItems = menulist;
@@ -798,17 +807,17 @@ namespace Sunctum.ViewModels
 
         public async Task RemovePage(IEnumerable<PageViewModel> pages)
         {
-            await LibraryManager.RemovePages(pages.ToArray());
+            await LibraryManager.Value.RemovePages(pages.ToArray());
         }
 
         public async Task RemoveBook(BookViewModel[] books)
         {
-            await LibraryManager.RemoveBooks(books);
+            await LibraryManager.Value.RemoveBooks(books);
         }
 
         private async Task ScrapPages(IEnumerable<PageViewModel> pages)
         {
-            await LibraryManager.ScrapPages(null, Specifications.SCRAPPED_NEW_BOOK_TITLE, pages.ToArray());
+            await LibraryManager.Value.ScrapPages(null, Specifications.SCRAPPED_NEW_BOOK_TITLE, pages.ToArray());
         }
 
         #endregion //コンテキストメニュー
@@ -907,12 +916,12 @@ namespace Sunctum.ViewModels
 
         private async Task RemakeThumbnail(IEnumerable<BookViewModel> books)
         {
-            await LibraryManager.RemakeThumbnail(books);
+            await LibraryManager.Value.RemakeThumbnail(books);
         }
 
         private async Task RemakeThumbnail(IEnumerable<PageViewModel> pages)
         {
-            await LibraryManager.RemakeThumbnail(pages);
+            await LibraryManager.Value.RemakeThumbnail(pages);
         }
 
         #endregion //サムネイル再作成
@@ -927,8 +936,8 @@ namespace Sunctum.ViewModels
             StoreScrollOffset(Guid.Empty);
             OpenedBook = book;
             RestoreScrollOffset(OpenedBook.ID);
-            this.MainWindowViewModel.LibraryVM.TagManager.ClearSelectedEntries();
-            Task.Factory.StartNew(() => this.MainWindowViewModel.LibraryVM.FireFillContents(book));
+            LibraryManager.Value.TagManager.ClearSelectedEntries();
+            Task.Factory.StartNew(() => LibraryManager.Value.FireFillContents(book));
             BookListIsVisible = false;
             ContentListIsVisible = true;
         }
@@ -941,7 +950,7 @@ namespace Sunctum.ViewModels
             {
                 StoreScrollOffset(OpenedBook.ID);
                 RestoreScrollOffset(Guid.Empty);
-                this.MainWindowViewModel.LibraryVM.TagManager.ClearSelectedEntries();
+                LibraryManager.Value.TagManager.ClearSelectedEntries();
             }
             OpenedBook = null;
         }
@@ -1008,17 +1017,17 @@ namespace Sunctum.ViewModels
 
         public void MovePageForward(PageViewModel page)
         {
-            OpenedBook = LibraryManager.OrderForward(page, OpenedBook);
+            OpenedBook = LibraryManager.Value.OrderForward(page, OpenedBook);
         }
 
         public void MovePageBackward(PageViewModel page)
         {
-            OpenedBook = LibraryManager.OrderBackward(page, OpenedBook);
+            OpenedBook = LibraryManager.Value.OrderBackward(page, OpenedBook);
         }
 
         public async Task SaveOpenedBookContentsOrder()
         {
-            await LibraryManager.SaveBookContentsOrder(OpenedBook);
+            await LibraryManager.Value.SaveBookContentsOrder(OpenedBook);
             SetFirstPage();
         }
 
@@ -1032,27 +1041,11 @@ namespace Sunctum.ViewModels
 
         #endregion //ページ単位ソート
 
-        #region キーボード操作
-
-        private void BeginAnimation_Tick_PreviousImageButton()
-        {
-            throw new NotImplementedException();
-            //BlinkGoBackButtonRequest.Raise(new Notification());
-        }
-
-        private void BeginAnimation_Tick_NextImageButton()
-        {
-            throw new NotImplementedException();
-            //BlinkGoNextButtonRequest.Raise(new Notification());
-        }
-
-        #endregion //キーボード操作
-
         #region インポート
 
         public async Task ImportAsync(string[] objectPaths)
         {
-            await LibraryManager.ImportAsync(objectPaths);
+            await LibraryManager.Value.ImportAsync(objectPaths);
         }
 
         #endregion //インポート
@@ -1070,5 +1063,26 @@ namespace Sunctum.ViewModels
         }
 
         #endregion //問い合わせ
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    disposables.Dispose();
+                }
+
+                disposables = null;
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
     }
 }

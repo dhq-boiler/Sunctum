@@ -59,12 +59,12 @@ namespace Sunctum.Views
             if (viewModel == null) return;
 
             viewModel.RemoveFromSelectedEntries(e.RemovedItems.Cast<EntryViewModel>());
-            viewModel.MainWindowViewModel.LibraryVM.TagManager.Unselect(e.RemovedItems.Cast<EntryViewModel>());
+            viewModel.MainWindowViewModel.Value.LibraryVM.TagManager.Unselect(e.RemovedItems.Cast<EntryViewModel>());
 
             viewModel.AddToSelectedEntries(e.AddedItems.Cast<EntryViewModel>());
-            viewModel.MainWindowViewModel.LibraryVM.TagManager.AddToSelectedEntries(e.AddedItems.Cast<EntryViewModel>());
+            viewModel.MainWindowViewModel.Value.LibraryVM.TagManager.AddToSelectedEntries(e.AddedItems.Cast<EntryViewModel>());
 
-            viewModel.MainWindowViewModel.LibraryVM.TagManager.ObserveSelectedEntityTags();
+            viewModel.MainWindowViewModel.Value.LibraryVM.TagManager.ObserveSelectedEntityTags();
         }
 
         private void Book_ListViewItem_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -155,15 +155,16 @@ namespace Sunctum.Views
         private void Contents_ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var viewModel = (DocumentViewModelBase)DataContext;
+            if (viewModel == null) return;
             viewModel.ContentsListViewSelectedItems = Contents_ListView.SelectedItems.Cast<PageViewModel>().ToList();
 
             viewModel.RemoveFromSelectedEntries(e.RemovedItems.Cast<EntryViewModel>());
-            viewModel.MainWindowViewModel.LibraryVM.TagManager.Unselect(e.RemovedItems.Cast<EntryViewModel>());
+            viewModel.MainWindowViewModel.Value.LibraryVM.TagManager.Unselect(e.RemovedItems.Cast<EntryViewModel>());
 
             viewModel.AddToSelectedEntries(e.AddedItems.Cast<EntryViewModel>());
-            viewModel.MainWindowViewModel.LibraryVM.TagManager.AddToSelectedEntries(e.AddedItems.Cast<EntryViewModel>());
+            viewModel.MainWindowViewModel.Value.LibraryVM.TagManager.AddToSelectedEntries(e.AddedItems.Cast<EntryViewModel>());
 
-            viewModel.MainWindowViewModel.LibraryVM.TagManager.ObserveSelectedEntityTags();
+            viewModel.MainWindowViewModel.Value.LibraryVM.TagManager.ObserveSelectedEntityTags();
         }
 
         private void Contents_ListViewItem_PreviewDragOver(object sender, DragEventArgs e)
@@ -283,7 +284,7 @@ namespace Sunctum.Views
 
                 try
                 {
-                    viewModel.MainWindowViewModel.LibraryVM.TagManager.AddTagTo(entries, imageTagCount.Tag.Name);
+                    viewModel.MainWindowViewModel.Value.LibraryVM.TagManager.AddTagTo(entries, imageTagCount.Tag.Name);
                 }
                 catch (ArgumentException)
                 {

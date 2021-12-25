@@ -9,7 +9,7 @@ namespace Sunctum.Domain.ViewModels
         private bool _IsVisible;
         private bool _IsSelected;
 
-        public abstract string Title { get; }
+        public abstract string Title { get; set; }
 
         public abstract string ContentId { get; }
 

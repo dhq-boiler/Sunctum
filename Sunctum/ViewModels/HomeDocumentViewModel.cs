@@ -16,6 +16,7 @@ namespace Sunctum.ViewModels
         public override string Title
         {
             get { return "Home"; }
+            set { }
         }
 
         public override string ContentId

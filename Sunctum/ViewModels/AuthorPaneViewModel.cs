@@ -1,4 +1,5 @@
 ﻿using Prism.Commands;
+using Prism.Regions;
 using Sunctum.Domain.Logic.Query;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
@@ -6,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using Unity;
@@ -41,6 +43,7 @@ namespace Sunctum.ViewModels
         public override string Title
         {
             get { return "Author"; }
+            set { }
         }
 
         public override string ContentId
@@ -150,6 +153,7 @@ namespace Sunctum.ViewModels
             {
                 Header = "Ex",
             };
+            menuitem.SetValue(RegionManager.RegionNameProperty, "ExtraAuthor");
             AuthorContextMenuItems.Add(menuitem);
         }
 
