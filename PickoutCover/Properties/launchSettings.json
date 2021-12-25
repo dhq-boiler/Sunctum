@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PickoutCover": {
+      "commandName": "Project",
+      "nativeDebugging": false
+    }
+  }
+}

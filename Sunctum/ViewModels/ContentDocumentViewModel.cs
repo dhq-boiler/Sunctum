@@ -9,14 +9,17 @@ namespace Sunctum.ViewModels
         private string _title;
         private int _number;
 
-        public ContentDocumentViewModel(IDialogService dialogService, string title)
+        public ContentDocumentViewModel(IDialogService dialogService)
             : base(dialogService)
         {
-            _title = title;
             _number = s_internalNumber++;
         }
 
-        public override string Title => _title;
+        public override string Title 
+        {
+            get { return _title; }
+            set { _title = value; }
+        }
 
         public override string ContentId => $"content-{_number}";
 

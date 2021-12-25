@@ -1,4 +1,5 @@
 ﻿using Prism.Commands;
+using Prism.Regions;
 using Sunctum.Domain.Logic.Query;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
@@ -34,6 +35,7 @@ namespace Sunctum.ViewModels
         public override string Title
         {
             get { return "Tag"; }
+            set { }
         }
 
         public override string ContentId
@@ -150,6 +152,7 @@ namespace Sunctum.ViewModels
             {
                 Header = "Ex",
             };
+            menuitem.SetValue(RegionManager.RegionNameProperty, "ExtraTag");
             TagContextMenuItems.Add(menuitem);
         }
 

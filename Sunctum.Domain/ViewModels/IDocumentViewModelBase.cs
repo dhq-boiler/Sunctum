@@ -15,20 +15,21 @@ namespace Sunctum.Domain.ViewModels
         ObservableCollection<BookViewModel> BookListViewSelectedItems { get; set; }
         ObservableCollection<Control> BooksContextMenuItems { get; set; }
         bool CanClose { get; }
+        string Title { get; set; }
+        string ContentId { get; }
+        bool IsVisible { get; set; }
+        bool IsSelected { get; set; }
         ObservableCollection<Control> ContentsContextMenuItems { get; set; }
         List<PageViewModel> ContentsListViewSelectedItems { get; set; }
         int CurrentPage { get; }
-        bool IsVisible { get; set; }
-        ILibrary LibraryManager { get; set; }
-        IMainWindowViewModel MainWindowViewModel { get; set; }
+        Lazy<ILibrary> LibraryManager { get; set; }
+        Lazy<IMainWindowViewModel> MainWindowViewModel { get; set; }
         BookViewModel OpenedBook { get; set; }
         PageViewModel OpenedPage { get; set; }
         bool SearchPaneIsVisible { get; set; }
         string SearchStatusText { get; }
         string SearchText { get; set; }
         List<EntryViewModel> SelectedEntries { get; }
-        string Title { get; }
-        string ContentId { get; }
         string UnescapedSearchText { get; set; }
 
         event EventHandler SearchCleared;

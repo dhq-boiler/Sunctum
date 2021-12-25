@@ -7,28 +7,31 @@ using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;
 using PickoutCover.Domain.Logic.Async;
 using PickoutCover.Domain.Logic.CoverSegment;
-using PickoutCover.View.Dialog;
+using Prism.Services.Dialogs;
+using Reactive.Bindings;
+using Reactive.Bindings.Extensions;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Unity;
 
-namespace PickoutCover.ViewModel
+namespace PickoutCover.ViewModels
 {
-    public class PickOutCoverDialogViewModel : NotifyPropertyChangedImpl
+    public class PickoutCoverViewModel : NotifyPropertyChangedImpl, IDialogAware
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
         private const string CHANGE_COVER_SIDE_CANDIDATE_LEFT = "LEFT";
         private const string CHANGE_COVER_SIDE_CANDIDATE_RIGHT = "RIGHT";
 
+        private CompositeDisposable disposables = new CompositeDisposable();
         private PageViewModel _page;
-        private ILibrary _libraryVM;
-        private PickOutCoverDialog _pickOutCoverDialog;
         private IEnumerable<int> _indexes;
         private CoverSideCandidate _coverLeftSide;
         private CoverSideCandidate _coverRightSide;
@@ -39,14 +42,29 @@ namespace PickoutCover.ViewModel
         private CoverSideCandidate _selectedPredictedRightSide;
         private WriteableBitmap _preview;
 
-        public PickOutCoverDialogViewModel(PickOutCoverDialog pickOutCoverDialog, PageViewModel page, ILibrary libraryVM)
+        [Dependency]
+        public ILibrary Library { get; set; }
+
+        [Dependency]
+        public ITaskManager TaskManager{ get; set; }
+
+        public ReactiveCommand OKCommand { get; set; } = new ReactiveCommand();
+        public ReactiveCommand CancelCommand { get; set; } = new ReactiveCommand();
+
+        public PickoutCoverViewModel()
         {
-            _page = page;
-            _pickOutCoverDialog = pickOutCoverDialog;
-            _libraryVM = libraryVM;
-            _baseBitmap = CoverSegmentExtractor.LoadBitmap(page.Image.AbsoluteMasterPath);
-            Initialize();
             PropertyChanged += PickOutCoverDialogViewModel_PropertyChanged;
+            OKCommand.Subscribe(_ =>
+            {
+                ExtractCover();
+                RequestClose.Invoke(new DialogResult(ButtonResult.OK));
+            })
+            .AddTo(disposables);
+            CancelCommand.Subscribe(_ =>
+            {
+                RequestClose.Invoke(new DialogResult(ButtonResult.Cancel));
+            })
+            .AddTo(disposables);
         }
 
         internal void ExtractCover()
@@ -56,8 +74,8 @@ namespace PickoutCover.ViewModel
                 using (var trans = new DataOperationUnit())
                 {
                     trans.Open(ConnectionManager.DefaultConnection);
-                    var coverSegmenting = new CoverSegmenting(_libraryVM, _page, CoverLeftSide, CoverRightSide, trans);
-                    await _libraryVM.TaskManager.Enqueue(coverSegmenting.GetTaskSequence());
+                    var coverSegmenting = new CoverSegmenting(Library, _page, CoverLeftSide, CoverRightSide, trans);
+                    await TaskManager.Enqueue(coverSegmenting.GetTaskSequence());
                 }
             });
         }
@@ -228,6 +246,8 @@ namespace PickoutCover.ViewModel
         private IEnumerable<CoverSideCandidate> _CoverLeftSideSource;
         private IEnumerable<CoverSideCandidate> _CoverRightSideSource;
 
+        public event Action<IDialogResult> RequestClose;
+
         public IEnumerable<CoverSideCandidate> CoverLeftSideSource
         {
             get { return _CoverLeftSideSource; }
@@ -326,6 +346,8 @@ namespace PickoutCover.ViewModel
                                   PropertyNameUtility.GetPropertyName(() => CoverRightSideSource));
             }
         }
+
+        public string Title => throw new NotImplementedException();
 
         public void UpdateCoverSideBindingSource(string place, bool keepSelectedItem = true)
         {
@@ -470,6 +492,22 @@ namespace PickoutCover.ViewModel
             }
 
             return ret.OrderBy(a => a.Offset);
+        }
+
+        public bool CanCloseDialog()
+        {
+            return true;
+        }
+
+        public void OnDialogClosed()
+        {
+        }
+
+        public void OnDialogOpened(IDialogParameters parameters)
+        {
+            _page = parameters.GetValue<PageViewModel>("page");
+            _baseBitmap = CoverSegmentExtractor.LoadBitmap(_page.Image.AbsoluteMasterPath);
+            Initialize();
         }
 
         public class BookSize : BaseObject

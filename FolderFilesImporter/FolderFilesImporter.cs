@@ -10,8 +10,7 @@ using Unity;
 
 namespace FolderFilesImporter
 {
-    [Export(typeof(IDropPlugin))]
-    public class FolderFilesImporterPlugin : IDropPlugin
+    public class FolderFilesImporter : IDropPlugin
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 

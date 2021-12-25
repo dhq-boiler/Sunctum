@@ -3,6 +3,7 @@
 using Homura.ORM;
 using NLog;
 using Prism.Ioc;
+using Prism.Modularity;
 using Prism.Services.Dialogs;
 using Prism.Unity;
 using Sunctum.Converters;
@@ -18,6 +19,7 @@ using Sunctum.ViewModels;
 using Sunctum.Views;
 using System;
 using System.Data.SQLite;
+using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Data;
@@ -47,13 +49,17 @@ namespace Sunctum
             return Container.Resolve<MainWindow>();
         }
 
+        protected override IModuleCatalog CreateModuleCatalog()
+        {
+            return new DirectoryModuleCatalog() { ModulePath = $"{Directory.GetCurrentDirectory()}\\plugins\\" };
+        }
+
         protected override void RegisterTypes(IContainerRegistry containerRegistry)
         {
             Configuration.ApplicationConfiguration = Configuration.Load();
 
             containerRegistry.GetContainer().AddExtension(new Diagnostic()).AddExtension(new LogResolvesUnityContainerExtension());
             containerRegistry.RegisterSingleton<IMainWindowViewModel, MainWindowViewModel>();
-            containerRegistry.RegisterSingleton<IHomeDocumentViewModel, HomeDocumentViewModel>();
             containerRegistry.RegisterSingleton<IAuthorPaneViewModel, AuthorPaneViewModel>();
             containerRegistry.RegisterSingleton<ITagPaneViewModel, TagPaneViewModel>();
             containerRegistry.RegisterSingleton<IInformationPaneViewModel, InformationPaneViewModel>();
@@ -101,6 +107,13 @@ namespace Sunctum
             containerRegistry.RegisterDialog<Views.Preferences, PreferencesDialogViewModel>();
             containerRegistry.RegisterDialog<Views.Export, ExportDialogViewModel>();
             containerRegistry.RegisterDialog<Views.ErrorReport, ErrorReportDialogViewModel>();
+
+            containerRegistry.RegisterSingleton<ISelectManager, SelectManager>();
+            containerRegistry.RegisterSingleton<IHomeDocumentViewModel, HomeDocumentViewModel>();
+            containerRegistry.Register<IDocumentViewModelBase, SearchDocumentViewModel>("SearchDocumentViewModel");
+            containerRegistry.Register<IDocumentViewModelBase, ContentDocumentViewModel>("ContentDocumentViewModel");
+
+            App.Current.Resources.Add("Ioc", containerRegistry.GetContainer());
         }
 
         /// <summary>
