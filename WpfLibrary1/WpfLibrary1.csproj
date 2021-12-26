@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Prism.Unity" Version="8.1.97" />
+    <PackageReference Include="Prism.Wpf" Version="8.1.97" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sunctum.Plugin\Sunctum.Plugin.csproj" />
+  </ItemGroup>
+
+	<PropertyGroup>
+		<PostBuildEvent>
+			copy /Y "$(SolutionDir)WpfLibrary1\bin\$(Configuration)\net6.0-windows\WpfLibrary1.dll" "$(SolutionDir)Sunctum\bin\$(Configuration)\net6.0-windows\plugins\WpfLibrary1.dll"
+		</PostBuildEvent>
+	</PropertyGroup>
+</Project>
