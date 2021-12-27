@@ -4,7 +4,6 @@ using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Plugin;
 using System;
-using System.ComponentModel.Composition;
 using System.Windows;
 using Unity;
 

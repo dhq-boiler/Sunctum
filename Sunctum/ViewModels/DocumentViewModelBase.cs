@@ -303,10 +303,12 @@ namespace Sunctum.ViewModels
                 BuildContextMenus_Contents();
                 (args.Source as FrameworkElement).ContextMenu.IsOpen = true;
             });
-            ChangeStarCommand = new DelegateCommand(() =>
+            ChangeStarCommand = new DelegateCommand<ObservableCollection<BookViewModel>>(args =>
             {
                 IDialogResult result = new DialogResult();
-                dialogService.ShowDialog(nameof(ChangeStar), ret => result = ret);
+                IDialogParameters parameters = new DialogParameters();
+                parameters.Add("Book", args.First());
+                dialogService.ShowDialog(nameof(ChangeStar), parameters, ret => result = ret);
                 UpdateStarLevel();
             });
             CloseTabCommand = new DelegateCommand(() =>
@@ -671,7 +673,8 @@ namespace Sunctum.ViewModels
             menuitem = new MenuItem()
             {
                 Header = "DUMMY",
-                Command = ChangeStarCommand
+                Command = ChangeStarCommand,
+                CommandParameter = SelectedEntries.Where(x => x is BookViewModel).Cast<BookViewModel>().ToObservableCollection()
             };
             var binding = new Binding("StarLevel.Value") { Converter = new StarLevelToStringConverter(), UpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged };
             menuitem.SetBinding(MenuItem.HeaderProperty, binding);

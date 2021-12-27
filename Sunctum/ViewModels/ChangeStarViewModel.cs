@@ -102,6 +102,7 @@ namespace Sunctum.ViewModels
 
         public void OnDialogOpened(IDialogParameters parameters)
         {
+            EditTarget.Value = parameters.GetValue<BookViewModel>("Book");
         }
     }
 }
