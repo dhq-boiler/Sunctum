@@ -251,7 +251,11 @@ namespace Sunctum.ViewModels
 
         internal void OpenDir()
         {
-            Process.Start(SaveDir);
+            Process.Start(new ProcessStartInfo()
+            {
+                UseShellExecute = true,
+                FileName = SaveDir
+            });
         }
 
         internal void UpdateBook()
