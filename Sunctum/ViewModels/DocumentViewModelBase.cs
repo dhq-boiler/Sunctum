@@ -864,7 +864,7 @@ namespace Sunctum.ViewModels
 
         private bool AuthorNameContainsSearchText(BookViewModel target, string searchingText)
         {
-            if (target == null || target.Author == null)
+            if (target == null || target.Author is null)
             {
                 return false;
             }
@@ -873,7 +873,7 @@ namespace Sunctum.ViewModels
 
         private bool TitleContainsSearchText(BookViewModel target, string searchingText)
         {
-            if (target == null)
+            if (target == null || target.Title is null)
             {
                 return false;
             }
@@ -882,7 +882,7 @@ namespace Sunctum.ViewModels
 
         private bool FingerPrintContainsSearchText(BookViewModel target, string searchingText)
         {
-            if (target == null)
+            if (target == null || target.FingerPrint is null)
             {
                 return false;
             }
