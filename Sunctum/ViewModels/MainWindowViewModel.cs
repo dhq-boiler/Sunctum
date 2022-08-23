@@ -234,6 +234,7 @@ namespace Sunctum.ViewModels
                 bool changed = OpenSwitchLibraryDialogAndChangeWorkingDirectory();
                 if (changed)
                 {
+                    Terminate();
                     CloseAllTab();
                     await LibraryVM.Reset();
                     await Initialize(false);
@@ -319,6 +320,7 @@ namespace Sunctum.ViewModels
             });
             SwitchLibraryCommand = new DelegateCommand<RecentOpenedLibrary>(async (p) =>
             {
+                Terminate();
                 await LibraryVM.Reset();
                 Configuration.ApplicationConfiguration.WorkingDirectory = p.Path;
                 Configuration.Save(Configuration.ApplicationConfiguration);
