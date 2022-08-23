@@ -13,6 +13,7 @@ namespace Sunctum.Domain.ViewModels
         private string _Title;
         private bool _IsLoaded;
         private int? _StarLevel;
+        private string _FingerPrint;
 
         protected EntryViewModel()
         { }
@@ -48,6 +49,14 @@ namespace Sunctum.Domain.ViewModels
         {
             get { return Title != null ? HttpUtility.HtmlDecode(Title) : null; }
             set { Title = HttpUtility.HtmlEncode(value); }
+        }
+
+        public string FingerPrint
+        {
+            [DebuggerStepThrough]
+            get
+            { return _FingerPrint; }
+            set { SetProperty(ref _FingerPrint, value); }
         }
 
         public bool IsLoaded

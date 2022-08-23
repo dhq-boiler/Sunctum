@@ -12,7 +12,7 @@ namespace Sunctum.Domain.Extensions
             var fromPropertyInfos = from.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
             foreach (var fromPropertyInfo in fromPropertyInfos.Where(x => !x.Name.Equals("Item"))) //except indexer
             {
-                var toPropertyInfo = to.GetType().GetProperty(fromPropertyInfo.Name);
+                var toPropertyInfo = to.GetType().GetProperty(fromPropertyInfo.Name, BindingFlags.SetProperty);
 
                 if (toPropertyInfo != null)
                 {
