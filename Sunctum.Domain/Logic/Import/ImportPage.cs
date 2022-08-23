@@ -54,10 +54,10 @@ namespace Sunctum.Domain.Logic.Import
             PageTitle = entryName;
             var filename = entryName + System.IO.Path.GetExtension(Path);
             var source = Path;
-            var destination = copyTo + "\\" + filename;
+            Destination = copyTo + "\\" + filename;
 
-            ret.Add(new System.Threading.Tasks.Task(() => CreateTaskToCopyImage(Path, source, destination)));
-            ret.Add(new System.Threading.Tasks.Task(() => CreateTaskToInsertImage(entryName, destination, dataOpUnit)));
+            ret.Add(new System.Threading.Tasks.Task(() => CreateTaskToCopyImage(Path, source, Destination)));
+            ret.Add(new System.Threading.Tasks.Task(() => CreateTaskToInsertImage(entryName, Destination, dataOpUnit)));
             if (_isContent)
             {
                 ret.Add(new System.Threading.Tasks.Task(() => CreateTaskToInsertPage(entryName, dataOpUnit)));
@@ -77,7 +77,7 @@ namespace Sunctum.Domain.Logic.Import
         {
             Guid imageID = Guid.NewGuid();
             InsertedImage = new ImageViewModel(imageID, entryName, destination, Configuration.ApplicationConfiguration);
-            InsertedImage.ByteSize = FileLength;
+            InsertedImage.ByteSize = Size;
             ImageFacade.Insert(InsertedImage, dataOpUnit);
         }
 
@@ -89,6 +89,8 @@ namespace Sunctum.Domain.Logic.Import
             GeneratedPage.ImageID = InsertedImage.ID;
             GeneratedPage.BookID = BookID;
             GeneratedPage.PageIndex = PageIndex;
+            GeneratedPage.Image = InsertedImage;
+            GeneratedPage.FingerPrint = FingerPrint = Hash.Generate(GeneratedPage);
             PageFacade.Insert(GeneratedPage, dataOpUnit);
         }
 
@@ -97,9 +99,9 @@ namespace Sunctum.Domain.Logic.Import
             try
             {
                 var fileInfo = new FileInfo(source);
-                FileLength = fileInfo.Length;
+                Size = fileInfo.Length;
                 File.Copy(source, destination);
-                s_logger.Debug($"Copy:{source} {FileSize.ConvertFileSizeUnit(FileLength)}");
+                s_logger.Debug($"Copy:{source} {FileSize.ConvertFileSizeUnit(Size)}");
             }
             catch (IOException e)
             {
@@ -121,7 +123,7 @@ namespace Sunctum.Domain.Logic.Import
 
         public string PageTitle { get; set; }
 
-        public long FileLength { get; set; }
+        public string Destination { get; private set; }
 
         #region IDisposable Support
         private bool _disposedValue = false;

@@ -91,9 +91,7 @@ namespace Sunctum.Domain.Logic.Import
                 ProcessChildren(library, ret, directoryPath, child, dataOpUnit, progressUpdatingAction);
             }
 
-            ret.Add(new Task(() => WriteFilesSize()));
-
-            ret.Add(new Task(() => WriteFingerPrint()));
+            ret.Add(new Task(() => WriteMetadata()));
 
             ret.Add(new Task(() => TagImage(library.TagManager)));
 
@@ -106,10 +104,11 @@ namespace Sunctum.Domain.Logic.Import
             return ret;
         }
 
-        private void WriteFingerPrint()
+        protected void WriteMetadata()
         {
-            ContentsLoadTask.FillContentsWithImage(LibraryManager, _book);
-            _book.FingerPrint = Hash.Generate(_book);
+            _book.ByteSize = 0;
+            _children.ForEach(c => _book.ByteSize += ((ImportPage)c).Size);
+            _book.FingerPrint = Hash.Generate(_children);
             BookFacade.Update(_book);
         }
 
@@ -124,13 +123,6 @@ namespace Sunctum.Domain.Logic.Import
                 BookTagFacade.Insert(newBookTag);
                 tagMng.BookTagChains.Add(newBookTag);
             }
-        }
-
-        protected void WriteFilesSize()
-        {
-            _book.ByteSize = 0;
-            _children.ForEach(c => _book.ByteSize += ((ImportPage)c).FileLength);
-            BookFacade.Update(_book);
         }
 
         private void TagImage(ITagManager tagManager)

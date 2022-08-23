@@ -15,6 +15,8 @@ namespace Sunctum.Domain.Logic.Import
         public int Processed { get; protected set; }
         public string Name { get; protected set; }
         public string Path { get; private set; }
+        public long Size { get; set; }
+        public string FingerPrint { get; set; }
 
         protected Importer()
         { }
