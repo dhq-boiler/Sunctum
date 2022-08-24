@@ -1,10 +1,12 @@
 ﻿
 
+using Reactive.Bindings;
 using Sunctum.Domain.Models.Managers;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Shell;
 
 namespace Sunctum.Domain.ViewModels
 {
@@ -55,5 +57,7 @@ namespace Sunctum.Domain.ViewModels
         List<MenuItem> ExtraTagContextMenu { get; }
 
         List<MenuItem> ExtraAuthorContextMenu { get; }
+
+        ReactivePropertySlim<TaskbarItemInfo> TaskbarItemInfo { get; }
     }
 }
