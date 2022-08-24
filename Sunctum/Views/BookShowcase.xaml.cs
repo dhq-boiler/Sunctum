@@ -273,7 +273,7 @@ namespace Sunctum.Views
             e.Handled = true;
         }
 
-        private void ProcessInDrop(object sender, DragEventArgs e)
+        private async void ProcessInDrop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(typeof(TagCountViewModel)))
             {
@@ -284,12 +284,18 @@ namespace Sunctum.Views
 
                 try
                 {
-                    viewModel.MainWindowViewModel.Value.LibraryVM.TagManager.AddTagTo(entries, imageTagCount.Tag.Name);
+                    await viewModel.MainWindowViewModel.Value.LibraryVM.TagManager.AddTagTo(entries, imageTagCount.Tag.Name);
                 }
                 catch (ArgumentException)
                 {
                     System.Media.SystemSounds.Beep.Play();
                 }
+            }
+            else if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                var paths = e.Data.GetData(DataFormats.FileDrop) as string[];
+                var viewModel = (DocumentViewModelBase)DataContext;
+                await viewModel.LibraryManager.Value.ImportAsync(paths);
             }
         }
     }

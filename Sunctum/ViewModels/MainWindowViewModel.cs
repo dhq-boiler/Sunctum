@@ -7,6 +7,7 @@ using NLog;
 using Prism.Commands;
 using Prism.Mvvm;
 using Prism.Services.Dialogs;
+using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using Sunctum.Core.Extensions;
 using Sunctum.Core.Notifications;
@@ -39,6 +40,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Shell;
 using Unity;
 using Xceed.Wpf.AvalonDock;
 using Xceed.Wpf.AvalonDock.Layout;
@@ -552,6 +554,8 @@ namespace Sunctum.ViewModels
         public LayoutAnchorable InformationPane { get; set; }
 
         public Configuration Configuration { get { return Configuration.ApplicationConfiguration; } }
+
+        public ReactivePropertySlim<TaskbarItemInfo> TaskbarItemInfo { get; set; } = new ReactivePropertySlim<TaskbarItemInfo>(new System.Windows.Shell.TaskbarItemInfo());
 
         #endregion
 

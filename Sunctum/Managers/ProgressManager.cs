@@ -1,11 +1,14 @@
 ﻿
 
 using Homura.Core;
+using Microsoft.AspNetCore.Components;
 using Prism.Mvvm;
 using Sunctum.Domail.Util;
 using Sunctum.Domain.Models.Managers;
+using Sunctum.Domain.ViewModels;
 using Sunctum.Infrastructure.Core;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Sunctum.Managers
 {
@@ -50,6 +53,9 @@ namespace Sunctum.Managers
 
         public TimeSpan? EstimateRemainTime { get; private set; }
 
+        [Unity.Dependency]
+        public Lazy<IMainWindowViewModel> mainWindowViewModel { get; set; }
+
         public ProgressManager()
         { }
 
@@ -68,6 +74,14 @@ namespace Sunctum.Managers
         {
             _TotalCount = total;
             _Current = current;
+            App.Current.Dispatcher.BeginInvoke(() =>
+            {
+                if (!(mainWindowViewModel is null))
+                {
+                    mainWindowViewModel.Value.TaskbarItemInfo.Value.ProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal;
+                    mainWindowViewModel.Value.TaskbarItemInfo.Value.ProgressValue = (double)current / (double)total;
+                }
+            });
             timekeeper.RecordTime();
             if (current > 100 && current < total)
             {
@@ -105,6 +119,13 @@ namespace Sunctum.Managers
         public void Complete()
         {
             Current = TotalCount = 1;
+            App.Current.Dispatcher.BeginInvoke(() =>
+            {
+                if (!(mainWindowViewModel is null))
+                {
+                    mainWindowViewModel.Value.TaskbarItemInfo.Value.ProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
+                }
+            });
         }
 
         public void Abort()
