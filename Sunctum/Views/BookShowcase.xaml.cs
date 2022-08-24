@@ -291,12 +291,6 @@ namespace Sunctum.Views
                     System.Media.SystemSounds.Beep.Play();
                 }
             }
-            else if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                var paths = e.Data.GetData(DataFormats.FileDrop) as string[];
-                var viewModel = (DocumentViewModelBase)DataContext;
-                await viewModel.LibraryManager.Value.ImportAsync(paths);
-            }
         }
     }
 }
