@@ -74,14 +74,17 @@ namespace Sunctum.Managers
         {
             _TotalCount = total;
             _Current = current;
-            App.Current.Dispatcher.BeginInvoke(() =>
+            if (App.Current is not null)
             {
-                if (!(mainWindowViewModel is null))
+                App.Current.Dispatcher.BeginInvoke(() =>
                 {
-                    mainWindowViewModel.Value.TaskbarItemInfo.Value.ProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal;
-                    mainWindowViewModel.Value.TaskbarItemInfo.Value.ProgressValue = (double)current / (double)total;
-                }
-            });
+                    if (!(mainWindowViewModel is null))
+                    {
+                        mainWindowViewModel.Value.TaskbarItemInfo.Value.ProgressState = System.Windows.Shell.TaskbarItemProgressState.Normal;
+                        mainWindowViewModel.Value.TaskbarItemInfo.Value.ProgressValue = (double)current / (double)total;
+                    }
+                });
+            }
             timekeeper.RecordTime();
             if (current > 100 && current < total)
             {
@@ -119,13 +122,16 @@ namespace Sunctum.Managers
         public void Complete()
         {
             Current = TotalCount = 1;
-            App.Current.Dispatcher.BeginInvoke(() =>
+            if (App.Current is not null)
             {
-                if (!(mainWindowViewModel is null))
+                App.Current.Dispatcher.BeginInvoke(() =>
                 {
-                    mainWindowViewModel.Value.TaskbarItemInfo.Value.ProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
-                }
-            });
+                    if (!(mainWindowViewModel is null))
+                    {
+                        mainWindowViewModel.Value.TaskbarItemInfo.Value.ProgressState = System.Windows.Shell.TaskbarItemProgressState.None;
+                    }
+                });
+            }
         }
 
         public void Abort()
