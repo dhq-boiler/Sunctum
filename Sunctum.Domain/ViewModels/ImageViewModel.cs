@@ -181,7 +181,14 @@ namespace Sunctum.Domain.ViewModels
                     return OnmemoryImageManager.Instance.PullAsMemoryStream(this.ID).Length;
                 }
 
-                return new FileInfo(AbsoluteMasterPath).Length;
+                if (File.Exists(AbsoluteMasterPath))
+                {
+                    return new FileInfo(AbsoluteMasterPath).Length;
+                }
+                else
+                {
+                    return 0L;
+                }
             }
         }
 
