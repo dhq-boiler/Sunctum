@@ -10,9 +10,9 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
-using System.Windows.Media.Converters;
 using System.Windows.Media.Imaging;
 
 namespace Sunctum.Converters
@@ -24,6 +24,11 @@ namespace Sunctum.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             string path = value as string;
+            if (!File.Exists(path))
+            {
+                s_logger.Debug($"Do not convert because file does not exist.");
+                return DependencyProperty.UnsetValue;
+            }
             s_logger.Debug($"Load bitmap:{path}");
             return LoadBitmap(path);
         }
