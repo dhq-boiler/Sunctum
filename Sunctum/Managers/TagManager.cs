@@ -109,6 +109,10 @@ namespace Sunctum.Managers
                 case NotifyCollectionChangedAction.Remove:
                     foreach (var removetag in e.OldItems.Cast<ImageTagViewModel>())
                     {
+                        if (removetag.Tag is null)
+                        {
+                            removetag.Tag = TagFacade.FindBy(removetag.TagID);
+                        }
                         if (TagCount.Where(tc => tc.Tag.Name == removetag.Tag.Name).Count() == 1)
                         {
                             var tagCount = TagCount.Single(tc => tc.Tag.Name == removetag.Tag.Name);
