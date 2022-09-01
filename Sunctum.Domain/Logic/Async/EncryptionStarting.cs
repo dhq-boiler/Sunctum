@@ -38,7 +38,15 @@ namespace Sunctum.Domain.Logic.Async
                 foreach (var image in images)
                 {
                     ContentsLoadTask.Load(image);
-                    sequence.Add(() => Encryptor.Encrypt(image.Image, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{image.Image.ID}{Path.GetExtension(image.Image.AbsoluteMasterPath)}", Password));
+                    sequence.Add(() =>
+                    {
+                        var dirPath = $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{image.Image.ID.ToString().Substring(0, 2)}";
+                        if (!Directory.Exists(dirPath))
+                        {
+                            Directory.CreateDirectory(dirPath);
+                        }
+                    });
+                    sequence.Add(() => Encryptor.Encrypt(image.Image, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{image.Image.ID.ToString().Substring(0, 2)}\\{image.Image.ID}{Path.GetExtension(image.Image.AbsoluteMasterPath)}", Password));
                     sequence.Add(() => Encryptor.DeleteOriginal(image));
                 }
             }
