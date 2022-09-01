@@ -1,6 +1,8 @@
 ﻿using NLog;
 using Sunctum.Domain.Models.Managers;
+using Sunctum.Domain.ViewModels;
 using System;
+using System.Linq;
 using Unity;
 
 namespace Sunctum.Domain.Logic.Async
@@ -11,6 +13,9 @@ namespace Sunctum.Domain.Logic.Async
 
         [Dependency]
         public Lazy<ILibrary> LibraryManager { get; set; }
+
+        [Dependency]
+        public Lazy<IMainWindowViewModel> mainWindowViewModel { get; set; }
 
         public override void ConfigurePreTaskAction(AsyncTaskSequence sequence)
         {
@@ -37,6 +42,8 @@ namespace Sunctum.Domain.Logic.Async
                 }
                 LibraryManager.Value.BookSource.Clear();
             }
+
+            mainWindowViewModel.Value.DockingDocumentViewModels.ToList().ForEach(x => x.SelectedEntries.Clear());
         }
     }
 }
