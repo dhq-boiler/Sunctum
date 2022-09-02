@@ -43,8 +43,8 @@ namespace Sunctum.Domain.Logic.Async
                 foreach (var page in book.Contents)
                 {
                     sequence.Add(new Task(() => RemoveImageTagByImage(LibraryManager.Value, page)));
-                    sequence.Add(new Task(() => PageRemoving.DeleteRecordFromStorage(page)));
                     sequence.Add(new Task(() => PageRemoving.DeleteFileFromStorage(page)));
+                    sequence.Add(new Task(() => PageRemoving.DeleteRecordFromStorage(page)));
                     sequence.Add(new Task(() => ProcessedCount++));
                     sequence.Add(new Task(() => book.CurrentProcessProgress.Value.Count.Value = ProcessedCount));
                 }
