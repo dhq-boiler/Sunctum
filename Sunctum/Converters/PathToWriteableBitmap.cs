@@ -11,6 +11,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -24,7 +25,17 @@ namespace Sunctum.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             string path = value as string;
-            if (!File.Exists(path))
+            if (Guid.TryParse(path, out var guid))
+            {
+                var image = ImageFacade.FindBy(guid);
+                if (!image.IsDecrypted)
+                {
+                    image.DecryptImage();
+                }
+                var bitmap = OnmemoryImageManager.Instance.PullAsWriteableBitmap(guid);
+                return bitmap;
+            }
+            else if (!File.Exists(path))
             {
                 s_logger.Debug($"Do not convert because file does not exist.");
                 return DependencyProperty.UnsetValue;
