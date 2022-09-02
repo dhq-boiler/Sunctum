@@ -40,7 +40,11 @@ namespace Sunctum.Converters
             {
                 if (thumbnail.RelativeMasterPath is null)
                 {
-                    thumbnail = ThumbnailFacade.FindByImageID(image.ID);
+                    var th = ThumbnailFacade.FindByImageID(image.ID);
+                    if (th is not null)
+                    {
+                        thumbnail = th;
+                    }
                 }
                 if (image is not null && Configuration.ApplicationConfiguration.LibraryIsEncrypted)
                 {
