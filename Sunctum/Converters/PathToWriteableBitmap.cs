@@ -2,9 +2,13 @@
 
 using NLog;
 using OpenCvSharp;
+using OpenCvSharp.WpfExtensions;
 using Sunctum.Domain.Data.DaoFacade;
+using Sunctum.Domain.Logic.Generate;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
+using Sunctum.Domain.Util;
+using Sunctum.Domain.ViewModels;
 using System;
 using System.Globalization;
 using System.IO;
@@ -24,63 +28,92 @@ namespace Sunctum.Converters
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string path = value as string;
-            if (Guid.TryParse(path, out var guid))
+            var image = value as ImageViewModel;
+            var thumbnail = image?.Thumbnail;
+
+            if (parameter is not null && parameter.Equals("RAW"))
             {
-                var image = ImageFacade.FindBy(guid);
-                if (!image.IsDecrypted)
-                {
-                    image.DecryptImage();
-                }
-                var bitmap = OnmemoryImageManager.Instance.PullAsWriteableBitmap(guid);
-                return bitmap;
+                return LoadBitmap(image);
             }
-            else if (!File.Exists(path))
+
+            if (thumbnail is not null)
             {
-                s_logger.Debug($"Do not convert because file does not exist.");
+                if (thumbnail.RelativeMasterPath is null)
+                {
+                    thumbnail = ThumbnailFacade.FindByImageID(image.ID);
+                }
+                if (image is not null && Configuration.ApplicationConfiguration.LibraryIsEncrypted)
+                {
+                    image.DecryptImage(true);
+                }
+                if (Guid.TryParse(Path.GetFileNameWithoutExtension(thumbnail.AbsoluteMasterPath), out var guid))
+                {
+                    var bitmap = OnmemoryImageManager.Instance.PullAsWriteableBitmap(guid, true);
+                    if (bitmap is null)
+                    {
+                        return LoadBitmap(thumbnail.AbsoluteMasterPath);
+                    }
+                    return bitmap;
+                }
                 return DependencyProperty.UnsetValue;
             }
-            s_logger.Debug($"Load bitmap:{path}");
-            return LoadBitmap(path);
+            else if (image is not null)
+            {
+                return LoadBitmap(image);
+            }
+            else
+            {
+                return DependencyProperty.UnsetValue;
+            }
+        }
+
+        private object LoadBitmap(ImageViewModel image)
+        {
+            if (Configuration.ApplicationConfiguration.LibraryIsEncrypted)
+            {
+                var bitmap = OnmemoryImageManager.Instance.PullAsWriteableBitmap(image.ID, false);
+                if (bitmap is null)
+                {
+                    image.DecryptImage(false);
+                    return OnmemoryImageManager.Instance.PullAsWriteableBitmap(image.ID, false);
+                }
+                return bitmap;
+            }
+            else
+            {
+                if (!File.Exists(image.AbsoluteMasterPath))
+                {
+                    s_logger.Debug($"Do not convert because file does not exist.");
+                    return DependencyProperty.UnsetValue;
+                }
+                s_logger.Debug($"Load bitmap:{image.AbsoluteMasterPath}");
+                return LoadBitmap(image.AbsoluteMasterPath);
+            }
         }
 
         private object LoadBitmap(string path)
         {
             try
             {
-                Guid guid;
-                if (Guid.TryParse(path, out guid))
+                using (Mat mat = new Mat(path, ImreadModes.Unchanged))
                 {
-                    var image = ImageFacade.FindBy(guid);
-                    if (!image.IsDecrypted)
+                    if (mat.Rows == 0 || mat.Cols == 0)
                     {
-                        image.DecryptImage();
-                    }
-                    var bitmap = OnmemoryImageManager.Instance.PullAsWriteableBitmap(guid);
-                    return bitmap;
-                }
-                else
-                {
-                    using (Mat mat = new Mat(path, ImreadModes.Unchanged))
-                    {
-                        if (mat.Rows == 0 || mat.Cols == 0)
+                        var fileInfo = new FileInfo(path);
+                        if (fileInfo.Length == 0)
                         {
-                            var fileInfo = new FileInfo(path);
-                            if (fileInfo.Length == 0)
-                            {
-                                s_logger.Error($"File is broken:{path}");
-                                return null;
-                            }
-                            if (Path.GetExtension(path) == ".gif")
-                            {
-                                return null;
-                            }
-                            Thread.Sleep(100);
-                            s_logger.Error($"Retry to load bitmap:{path}");
-                            return LoadBitmap(path);
+                            s_logger.Error($"File is broken:{path}");
+                            return null;
                         }
-                        return ToWriteableBitmap(mat);
+                        if (Path.GetExtension(path) == ".gif")
+                        {
+                            return null;
+                        }
+                        Thread.Sleep(100);
+                        s_logger.Error($"Retry to load bitmap:{path}");
+                        return LoadBitmap(path);
                     }
+                    return ToWriteableBitmap(mat);
                 }
             }
             catch (OutOfMemoryException e)

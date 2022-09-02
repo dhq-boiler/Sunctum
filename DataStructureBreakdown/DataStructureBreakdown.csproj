@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net6.0-windows10.0.22000.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 	<UseWPF>true</UseWPF>
@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup>
   	<PostBuildEvent>
-		copy /Y "$(SolutionDir)DataStructureBreakdown\bin\$(Configuration)\net6.0-windows\DataStructureBreakdown.dll" "$(SolutionDir)Sunctum\bin\$(Configuration)\net6.0-windows\plugins\DataStructureBreakdown.dll"
+		copy /Y "$(SolutionDir)DataStructureBreakdown\bin\$(Configuration)\net6.0-windows10.0.22000.0\DataStructureBreakdown.dll" "$(SolutionDir)Sunctum\bin\$(Configuration)\net6.0-windows10.0.22000.0\plugins\DataStructureBreakdown.dll"
 	</PostBuildEvent>
   </PropertyGroup>
 

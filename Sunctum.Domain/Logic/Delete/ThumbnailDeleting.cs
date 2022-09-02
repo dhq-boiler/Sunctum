@@ -20,7 +20,11 @@ namespace Sunctum.Domain.Logic.Delete
             Contract.Requires(target.Thumbnail != null);
 
             var deleting = target.Thumbnail;
-            target.Thumbnail = null;
+            if (deleting.RelativeMasterPath is null)
+            {
+                ThumbnailFacade.DeleteWhereIDIs(deleting.ID);
+                return;
+            }
 
             Thread.Sleep(0);
 
@@ -28,6 +32,8 @@ namespace Sunctum.Domain.Logic.Delete
             s_logger.Debug($"Deleted File:{deleting.AbsoluteMasterPath}");
 
             ThumbnailFacade.DeleteWhereIDIs(deleting.ID);
+
+            target.Thumbnail = null;
         }
     }
 }

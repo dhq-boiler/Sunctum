@@ -14,17 +14,18 @@ namespace Sunctum.Domain.Models.Managers
     public class OnmemoryImageManager
     {
         private static readonly OnmemoryImageManager s_instance = new OnmemoryImageManager();
-        private Dictionary<Guid, MemoryStream> _map = new Dictionary<Guid, MemoryStream>();
+        private Dictionary<Tuple<Guid, bool>, MemoryStream> _map = new Dictionary<Tuple<Guid, bool>, MemoryStream>();
 
         public static OnmemoryImageManager Instance { get { return s_instance; } }
 
-        public void Put(Guid key, MemoryStream stream)
+        public void Put(Guid key, bool isThumbnail, MemoryStream stream)
         {
-            if (_map.ContainsKey(key))
+            var tuple = new Tuple<Guid, bool>(key, isThumbnail);
+            if (_map.ContainsKey(tuple))
             {
-                _map.Remove(key);
+                _map.Remove(tuple);
             }
-            _map.Add(key, stream);
+            _map.Add(tuple, stream);
         }
 
         public void Clear()
@@ -32,11 +33,12 @@ namespace Sunctum.Domain.Models.Managers
             _map.Clear();
         }
 
-        public MemoryStream PullAsMemoryStream(Guid key)
+        public MemoryStream PullAsMemoryStream(Guid key, bool isThumbnail)
         {
-            if (_map.ContainsKey(key))
+            var tuple = new Tuple<Guid, bool>(key, isThumbnail);
+            if (_map.ContainsKey(tuple))
             {
-                return _map[key];
+                return _map[tuple];
             }
             else
             {
@@ -44,11 +46,12 @@ namespace Sunctum.Domain.Models.Managers
             }
         }
 
-        public WriteableBitmap PullAsWriteableBitmap(Guid key)
+        public WriteableBitmap PullAsWriteableBitmap(Guid key, bool isThumbnail)
         {
-            if (_map.ContainsKey(key))
+            var tuple = new Tuple<Guid, bool>(key, isThumbnail);
+            if (_map.ContainsKey(tuple))
             {
-                var stream = _map[key];
+                var stream = _map[tuple];
                 stream.Seek(0, SeekOrigin.Begin);
                 WriteableBitmap bitmap = new WriteableBitmap(BitmapFrame.Create(stream));
                 return bitmap;
@@ -59,9 +62,10 @@ namespace Sunctum.Domain.Models.Managers
             }
         }
 
-        public bool Exists(Guid key)
+        public bool Exists(Guid key, bool isThumbnail)
         {
-            return _map.ContainsKey(key);
+            var tuple = new Tuple<Guid, bool>(key, isThumbnail);
+            return _map.ContainsKey(tuple);
         }
     }
 }

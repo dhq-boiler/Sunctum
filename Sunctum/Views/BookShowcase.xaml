@@ -5,17 +5,17 @@
     xmlns:behavior="clr-namespace:Sunctum.Views.Behaviors"
     xmlns:cvt="clr-namespace:Sunctum.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
+    xmlns:displaytype="clr-namespace:Sunctum.Domain.Logic.DisplayType;assembly=Sunctum.Domain"
     xmlns:ei="http://schemas.microsoft.com/xaml/behaviors"
-    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:helper="clr-namespace:Sunctum.Helpers"
+    xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
     xmlns:local="clr-namespace:Sunctum.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:prism="http://prismlibrary.com/"
     xmlns:sys="clr-namespace:System;assembly=System.Runtime"
-    xmlns:diag="clr-namespace:System.Diagnostics;assembly=WindowsBase"
     xmlns:trigger="clr-namespace:Sunctum.Views.Triggers"
     xmlns:ui.ctrl="clr-namespace:Sunctum.UI.Controls;assembly=Sunctum.UI"
-    xmlns:displaytype="clr-namespace:Sunctum.Domain.Logic.DisplayType;assembly=Sunctum.Domain"
     x:Name="BookShowcaseInternal"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -87,7 +87,7 @@
                     MaxWidth="{Binding Configuration.ContentListViewItemWidth}"
                     MaxHeight="{Binding Configuration.ContentListViewItemImageHeight}"
                     Margin="5"
-                    Source="{Binding Image.Path, Converter={StaticResource ImageConverter}}">
+                    Source="{Binding Image, Converter={StaticResource ImageConverter}}">
                     <Image.Style>
                         <Style TargetType="{x:Type Image}">
                             <Style.Triggers>
@@ -139,7 +139,7 @@
                     MaxWidth="{Binding Configuration.ContentListViewItemWidth}"
                     MaxHeight="{Binding Configuration.ContentListViewItemImageHeight}"
                     Margin="5"
-                    Source="{Binding Image.Path, Converter={StaticResource ImageConverter}}" />
+                    Source="{Binding Image, Converter={StaticResource ImageConverter}}" />
                 <Label
                     Grid.Row="1"
                     Grid.Column="0"
@@ -190,7 +190,7 @@
                     Height="{Binding Configuration.BookListViewItemImageHeight}"
                     MaxWidth="{Binding Configuration.BookListViewItemWidth}"
                     MaxHeight="{Binding Configuration.BookListViewItemImageHeight}"
-                    Source="{Binding FirstPage.Image.Path, Converter={StaticResource ImageConverter}}">
+                    Source="{Binding FirstPage.Image, Converter={StaticResource ImageConverter}}">
                     <Image.Style>
                         <Style TargetType="{x:Type Image}">
                             <Style.Triggers>
@@ -212,9 +212,8 @@
                     Height="{Binding Configuration.BookListViewItemImageHeight}"
                     MaxWidth="{Binding Configuration.BookListViewItemWidth}"
                     MaxHeight="{Binding Configuration.BookListViewItemImageHeight}"
-                    Source="{Binding FirstPage.Image.Path, Converter={StaticResource ImageConverter}}"
-                    Clip="{Binding Path=CurrentProcessProgress.Value.Rate.Value, Converter={StaticResource PathGeometryConverter}, UpdateSourceTrigger=PropertyChanged}">
-                </Image>
+                    Clip="{Binding Path=CurrentProcessProgress.Value.Rate.Value, Converter={StaticResource PathGeometryConverter}, UpdateSourceTrigger=PropertyChanged}"
+                    Source="{Binding FirstPage.Image, Converter={StaticResource ImageConverter}}" />
 
                 <ui.ctrl:AutoScrollingHyperlink
                     Grid.Row="1"
@@ -347,10 +346,10 @@
                 PreviewDragOver="Book_ListView_PreviewDragOver"
                 SelectionChanged="Book_ListView_SelectionChanged"
                 SelectionMode="Extended"
+                View="{Binding BookCabinet.DisplayType, Converter={StaticResource DisplayType2ViewConverter}}"
                 VirtualizingPanel.IsVirtualizing="True"
                 VirtualizingPanel.VirtualizationMode="Recycling"
-                Visibility="{Binding BookListIsVisible, Converter={StaticResource BoolToVisibilityConverter}}"
-                View="{Binding BookCabinet.DisplayType, Converter={StaticResource DisplayType2ViewConverter}}">
+                Visibility="{Binding BookListIsVisible, Converter={StaticResource BoolToVisibilityConverter}}">
                 <i:Interaction.Triggers>
                     <trigger:HomeKeyDownEventTrigger>
                         <trigger:ScrollTopAction TargetObject="{Binding ElementName=Book_ListView}" />
@@ -522,7 +521,10 @@
                 </Grid>
                 <Grid>
                     <Grid>
-                        <Image Source="{Binding OpenedPage.Image.OnStagePath, Converter={StaticResource ImageConverter}}" Stretch="Uniform" RenderOptions.BitmapScalingMode="HighQuality" />
+                        <Image
+                            RenderOptions.BitmapScalingMode="HighQuality"
+                            Source="{Binding OpenedPage.Image, Converter={StaticResource ImageConverter}, ConverterParameter=RAW}"
+                            Stretch="Uniform" />
                     </Grid>
                     <Grid
                         x:Name="Grid_ImageViewer_Panel_BlackWhite_Button_MouseOverArea"
