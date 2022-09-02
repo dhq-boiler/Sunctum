@@ -4,6 +4,7 @@ using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Logic.Load;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
+using Sunctum.Domain.Util;
 using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -81,7 +82,7 @@ namespace Sunctum.Domain.Logic.Encrypt
             File.Delete(page.Image.AbsoluteMasterPath);
         }
 
-        public static void Decrypt(string encryptedFilePath, string password)
+        public static void Decrypt(string encryptedFilePath, string password, bool isThumbnail)
         {
             int len;
             byte[] buffer = new byte[4096];
@@ -122,7 +123,16 @@ namespace Sunctum.Domain.Logic.Encrypt
                 }
             }
 
-            OnmemoryImageManager.Instance.Put(Guid.Parse(Path.GetFileNameWithoutExtension(encryptedFilePath)), outstream);
+            if (!isThumbnail)
+            {
+                OnmemoryImageManager.Instance.Put(Guid.Parse(Path.GetFileNameWithoutExtension(encryptedFilePath)), false, outstream);
+            }
+            else
+            {
+                var filename = Guid.Parse(Path.GetFileNameWithoutExtension(encryptedFilePath)).ToString("N") + System.IO.Path.GetExtension(encryptedFilePath);
+                var stream = ThumbnailGenerator.ScaleDownAndSaveAndToMemoryStream(outstream, filename);
+                OnmemoryImageManager.Instance.Put(Guid.Parse(Path.GetFileNameWithoutExtension(encryptedFilePath)), true, stream);
+            }
         }
 
         public static void Decrypt(string encryptedFilePath, string outputFilePath, string password)

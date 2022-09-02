@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0-windows</TargetFramework>
+    <TargetFramework>net6.0-windows10.0.22000.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
 	<UseWPF>true</UseWPF>
@@ -19,7 +19,7 @@
   </ItemGroup>
 	<PropertyGroup>
 		<PostBuildEvent>
-			copy /Y "$(SolutionDir)CopyAsYamlFormat\bin\$(Configuration)\net6.0-windows\CopyAsYamlFormat.dll" "$(SolutionDir)Sunctum\bin\$(Configuration)\net6.0-windows\plugins\CopyAsYamlFormat.dll"
+			copy /Y "$(SolutionDir)CopyAsYamlFormat\bin\$(Configuration)\net6.0-windows10.0.22000.0\CopyAsYamlFormat.dll" "$(SolutionDir)Sunctum\bin\$(Configuration)\net6.0-windows10.0.22000.0\plugins\CopyAsYamlFormat.dll"
 		</PostBuildEvent>
 	</PropertyGroup>
 

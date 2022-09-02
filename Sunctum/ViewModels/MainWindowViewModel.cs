@@ -252,6 +252,7 @@ namespace Sunctum.ViewModels
             });
             ReloadLibraryCommand = new DelegateCommand(async () =>
             {
+                Terminate();
                 CloseAllTab();
                 await LibraryVM.Reset();
                 await Initialize(false);
@@ -610,7 +611,7 @@ namespace Sunctum.ViewModels
             try
             {
                 await LibraryVM.Initialize();
-                LibraryVM.UnlockIfLocked();
+                await LibraryVM.UnlockIfLocked();
                 await LibraryVM.Load()
                     .ContinueWith(_ =>
                     {

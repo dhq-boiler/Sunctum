@@ -20,7 +20,7 @@ namespace Sunctum.Converters
                 ContentsLoadTask.Load(page);
                 if (Configuration.ApplicationConfiguration.LibraryIsEncrypted)
                 {
-                    page.Image.DecryptImage();
+                    page.Image.DecryptImage(true);
                 }
             });
             return new TaskCompletionSource<object>(task);

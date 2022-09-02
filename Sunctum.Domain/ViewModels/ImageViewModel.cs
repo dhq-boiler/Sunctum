@@ -94,16 +94,16 @@ namespace Sunctum.Domain.ViewModels
         {
             get
             {
-                return OnmemoryImageManager.Instance.Exists(this.ID);
+                return OnmemoryImageManager.Instance.Exists(this.ID, false);
             }
         }
 
-        public void DecryptImage()
+        public void DecryptImage(bool isThumbnail)
         {
-            if (!OnmemoryImageManager.Instance.Exists(this.ID))
+            if (!OnmemoryImageManager.Instance.Exists(this.ID, isThumbnail))
             {
                 var image = EncryptImageFacade.FindBy(this.ID);
-                Encryptor.Decrypt(image.EncryptFilePath, Configuration.Password);
+                Encryptor.Decrypt(image.EncryptFilePath, Configuration.Password, isThumbnail);
             }
         }
 
@@ -177,8 +177,8 @@ namespace Sunctum.Domain.ViewModels
                 if (EncryptImageFacade.AnyEncrypted())
                 {
                     var image = EncryptImageFacade.FindBy(this.ID);
-                    Encryptor.Decrypt(image.EncryptFilePath, Configuration.Password);
-                    return OnmemoryImageManager.Instance.PullAsMemoryStream(this.ID).Length;
+                    Encryptor.Decrypt(image.EncryptFilePath, Configuration.Password, false);
+                    return OnmemoryImageManager.Instance.PullAsMemoryStream(this.ID, false).Length;
                 }
 
                 if (File.Exists(AbsoluteMasterPath))

@@ -4,6 +4,7 @@ using Homura.ORM;
 using NLog;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Async;
+using Sunctum.Domain.Logic.Encrypt;
 using Sunctum.Domain.Logic.PageSorting;
 using Sunctum.Domain.Logic.Query;
 using Sunctum.Domain.Models;
@@ -319,7 +320,7 @@ namespace Sunctum.Managers
             await TaskManager.Enqueue(EncryptionStartingService.GetTaskSequence());
         }
 
-        public bool UnlockIfLocked()
+        public async Task<bool> UnlockIfLocked()
         {
             var encryptedItems = EncryptImageFacade.FindAll();
             if (encryptedItems.Count() == 0)
@@ -327,16 +328,25 @@ namespace Sunctum.Managers
                 return false;
             }
 
-            InputPasswordDialog dialog = new InputPasswordDialog("このライブラリは暗号化されています。閲覧するにはパスワードが必要です。");
-
-            if (dialog.ShowDialog() == true)
+            var password = await PasswordManager.SignInAsync(Environment.UserName);
+            if (password is not null)
             {
-                Configuration.ApplicationConfiguration.Password = dialog.Password;
+                Configuration.ApplicationConfiguration.Password = password;
                 return true;
             }
             else
             {
-                return false;
+                InputPasswordDialog dialog = new InputPasswordDialog("このライブラリは暗号化されています。閲覧するにはパスワードが必要です。");
+
+                if (dialog.ShowDialog() == true)
+                {
+                    Configuration.ApplicationConfiguration.Password = dialog.Password;
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
         }
 

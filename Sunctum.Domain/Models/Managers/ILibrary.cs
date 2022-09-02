@@ -57,7 +57,7 @@ namespace Sunctum.Domain.Models.Managers
 
         IArrangedBookStorage CreateBookStorage();
         Task UpdateBookTag();
-        bool UnlockIfLocked();
+        Task<bool> UnlockIfLocked();
         Task StartUnencryption(string password);
         Task UpdateBookFingerPrintAll();
         Task UpdateBookFingerPrintStillNull();

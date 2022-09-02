@@ -30,7 +30,7 @@ namespace Sunctum.Domain.Logic.Async
             sequence.Add(() => Configuration.ApplicationConfiguration.LibraryIsEncrypted = true);
             sequence.Add(() => Configuration.ApplicationConfiguration.Password = Password);
             sequence.Add(() => Directory.Delete($"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.CACHE_DIRECTORY}", true));
-
+            sequence.Add(() => PasswordManager.SetPassword(Password, Environment.UserName));
             foreach (var book in books)
             {
                 ContentsLoadTask.FillContents(LibraryManager.Value, book);
