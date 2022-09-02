@@ -5,6 +5,7 @@ using NLog;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Extensions;
 using Sunctum.Domain.Logic.Load;
+using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using System;
@@ -37,8 +38,8 @@ namespace Sunctum.Domain.Logic.Async
             foreach (var page in TargetPages)
             {
                 sequence.Add(new Task(() => ContentsLoadTask.SetImageToPage(page)));
-                sequence.Add(new Task(() => DeleteRecordFromStorage(page)));
                 sequence.Add(new Task(() => DeleteFileFromStorage(page)));
+                sequence.Add(new Task(() => DeleteRecordFromStorage(page)));
                 sequence.Add(new Task(() => RemovePageFromBook(LibraryManager.Value, page)));
                 sequence.Add(new Task(() => s_logger.Info($"Removed Page:{page}")));
             }
@@ -57,8 +58,8 @@ namespace Sunctum.Domain.Logic.Async
             foreach (var page in pages)
             {
                 tasks.Add(new Task(() => ContentsLoadTask.SetImageToPage(page)));
-                tasks.Add(new Task(() => DeleteRecordFromStorage(page, dataOpUnit)));
                 tasks.Add(new Task(() => DeleteFileFromStorage(page)));
+                tasks.Add(new Task(() => DeleteRecordFromStorage(page, dataOpUnit)));
                 tasks.Add(new Task(() => RemovePageFromBook(libVM, page)));
                 tasks.Add(new Task(() => s_logger.Info($"Removed Page:{page}")));
             }
@@ -103,6 +104,25 @@ namespace Sunctum.Domain.Logic.Async
                 }
             }
 
+            if (Configuration.ApplicationConfiguration.LibraryIsEncrypted)
+            {
+                var encryptImage = EncryptImageFacade.FindBy(page.ImageID);
+                if (encryptImage is not null && File.Exists(encryptImage.EncryptFilePath))
+                {
+                    try
+                    {
+                        File.Delete(encryptImage.EncryptFilePath);
+                        s_logger.Debug($"Delete image file: {encryptImage.EncryptFilePath}");
+                    }
+                    catch (IOException e)
+                    {
+                        s_logger.Error($"Failed to delete image file. (filename:{encryptImage.EncryptFilePath}, page:{page})");
+                        s_logger.Debug(e);
+                        throw;
+                    }
+                }
+            }
+
             if (page.Image.ThumbnailGenerated)
             {
                 filename = page.Image.Thumbnail.AbsoluteMasterPath;
@@ -127,6 +147,12 @@ namespace Sunctum.Domain.Logic.Async
         internal static void DeleteRecordFromStorage(PageViewModel page, DataOperationUnit dataOpUnit = null)
         {
             Debug.Assert(page != null);
+
+            if (Configuration.ApplicationConfiguration.LibraryIsEncrypted)
+            {
+                EncryptImageFacade.DeleteBy(page.ImageID);
+            }
+
             PageFacade.DeleteWhereIDIs(page.ID, dataOpUnit);
             ImageFacade.DeleteWhereIDIs(page.ImageID, dataOpUnit);
             if (page.Image != null)

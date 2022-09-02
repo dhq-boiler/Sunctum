@@ -3,11 +3,13 @@
 using Homura.ORM;
 using NLog;
 using Sunctum.Domain.Data.DaoFacade;
+using Sunctum.Domain.Logic.Encrypt;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Util;
 using Sunctum.Domain.ViewModels;
 using System;
 using System.IO;
+using System.Security.Cryptography.Xml;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -49,8 +51,8 @@ namespace Sunctum.Domain.Logic.Generate
                 var encryptImage = EncryptImageFacade.FindBy(target.ID);
                 if (encryptImage != null)
                 {
-                    //暗号化実施時はサムネイル画像を出力しない
-                    s_logger.Info($"Sunctum will not output a thumbnail image because it is in encrypted. {target.ID}");
+                    Encryptor.Decrypt(encryptImage.EncryptFilePath, Configuration.ApplicationConfiguration.Password, true);
+                    thumbnail.RelativeMasterPath = $"{Path.GetDirectoryName(target.RelativeMasterPath)}\\{target.ID.ToString("N")}{Path.GetExtension(target.RelativeMasterPath)}";
                 }
                 else
                 {
