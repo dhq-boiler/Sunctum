@@ -1,6 +1,7 @@
 ﻿
 using Homura.ORM;
 using NLog;
+using Reactive.Bindings;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Generate;
 using Sunctum.Domain.Models;
@@ -35,7 +36,8 @@ namespace Sunctum.Domain.Logic.Load
 
                 libVM.BookSource.CollectionChanged -= libVM.AuthorManager.LoadedBooks_CollectionChanged;
 
-                libVM.BookSource = new ObservableCollection<BookViewModel>(BookFacade.FindAllWithAuthor(dataOpUnit));
+                libVM.BookSource = new ReactiveCollection<BookViewModel>();
+                libVM.BookSource.AddRange(BookFacade.FindAllWithAuthor(dataOpUnit));
                 libVM.AuthorManager.LoadAuthorCount();
                 libVM.BookSource.CollectionChanged += libVM.AuthorManager.LoadedBooks_CollectionChanged;
             }

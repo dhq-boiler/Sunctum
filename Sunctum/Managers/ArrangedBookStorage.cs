@@ -2,13 +2,13 @@
 
 using Homura.Core;
 using NLog;
+using Reactive.Bindings;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.BookSorting;
 using Sunctum.Domain.Logic.DisplayType;
 using Sunctum.Domain.Logic.Query;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
-using Sunctum.Infrastructure.Core;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -20,7 +20,7 @@ namespace Sunctum.Managers
     public class ArrangedBookStorage : BookStorage, IArrangedBookStorage
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
-        private ObservableCollection<BookViewModel> _SearchedBooks;
+        private ReactiveCollection<BookViewModel> _SearchedBooks;
         private IBookSorting _BookSorting;
         private IDisplayType _DisplayType;
 
@@ -31,14 +31,14 @@ namespace Sunctum.Managers
             DisplayType = Sunctum.Domain.Logic.DisplayType.DisplayType.SideBySide;
         }
 
-        public ArrangedBookStorage(ObservableCollection<BookViewModel> collection)
+        public ArrangedBookStorage(ReactiveCollection<BookViewModel> collection)
             : base(collection)
         {
             Sorting = BookSorting.ByLoadedAsc;
             DisplayType = Sunctum.Domain.Logic.DisplayType.DisplayType.SideBySide;
         }
 
-        public ObservableCollection<BookViewModel> SearchedBooks
+        public ReactiveCollection<BookViewModel> SearchedBooks
         {
             [DebuggerStepThrough]
             get
@@ -51,7 +51,7 @@ namespace Sunctum.Managers
             }
         }
 
-        private ObservableCollection<BookViewModel> DisplayableBookSource
+        private ReactiveCollection<BookViewModel> DisplayableBookSource
         {
             [DebuggerStepThrough]
             get
@@ -67,9 +67,14 @@ namespace Sunctum.Managers
             }
         }
 
-        public override ObservableCollection<BookViewModel> OnStage
+        public override ReactiveCollection<BookViewModel> OnStage
         {
-            get { return new ObservableCollection<BookViewModel>(Sorting.Sort(DisplayableBookSource)); }
+            get
+            {
+                var ret = new ReactiveCollection<BookViewModel>();
+                ret.AddRange(Sorting.Sort(DisplayableBookSource));
+                return ret;
+            }
         }
 
         public bool IsSearching
@@ -146,7 +151,8 @@ namespace Sunctum.Managers
                 else
                 {
                     s_logger.Debug($"Search Word:{searchingText}");
-                    SearchedBooks = new ObservableCollection<BookViewModel>(BookSource.Where(b => AuthorNameContainsSearchText(b, searchingText) || TitleContainsSearchText(b, searchingText)));
+                    SearchedBooks = new ReactiveCollection<BookViewModel>();
+                    SearchedBooks.AddRange(BookSource.Where(b => AuthorNameContainsSearchText(b, searchingText) || TitleContainsSearchText(b, searchingText)));
 
                     OnSearched(new SearchedEventArgs(searchingText, _previousSearchingText));
                 }

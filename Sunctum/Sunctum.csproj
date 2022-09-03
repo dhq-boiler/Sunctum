@@ -45,20 +45,23 @@
     <ProjectReference Include="..\Sunctum.UI\Sunctum.UI.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Castle.Core" Version="4.4.1" />
-    <PackageReference Include="GitVersion.MsBuild" Version="5.8.1" />
-    <PackageReference Include="MdXaml" Version="1.12.0" />
-    <PackageReference Include="NLog.Schema" Version="4.7.13" />
-    <PackageReference Include="OpenCvSharp4.Windows" Version="4.5.3.20211207" />
+    <PackageReference Include="GitVersion.MsBuild" Version="5.10.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="MdXaml" Version="1.15.0" />
+    <PackageReference Include="NLog.Schema" Version="5.0.4" />
+    <PackageReference Include="OpenCvSharp4.Windows" Version="4.6.0.20220608" />
+    <PackageReference Include="OpenCvSharp4.WpfExtensions" Version="4.6.0.20220608" />
     <PackageReference Include="System.Reactive.Core" Version="5.0.0" />
     <PackageReference Include="System.Reactive.Interfaces" Version="5.0.0" />
     <PackageReference Include="System.Reactive.Linq" Version="5.0.0" />
     <PackageReference Include="System.Reactive.PlatformServices" Version="5.0.0" />
     <PackageReference Include="System.Reactive.Windows.Threading" Version="5.0.0" />
-    <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.3.261602">
+    <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.336902">
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.2.0" />
+    <PackageReference Include="Extended.Wpf.Toolkit" Version="4.4.0" />
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>if not exist "$(SolutionDir)Sunctum\bin\$(Configuration)\net6.0-windows10.0.22000.0\plugins" mkdir "$(SolutionDir)Sunctum\bin\$(Configuration)\net6.0-windows10.0.22000.0\plugins"</PostBuildEvent>

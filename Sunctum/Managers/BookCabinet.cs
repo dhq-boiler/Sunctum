@@ -1,5 +1,6 @@
 ﻿
 
+using Reactive.Bindings;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using System;
@@ -9,7 +10,7 @@ namespace Sunctum.Managers
 {
     public class BookCabinet : ArrangedBookStorage, IObserver<BookCollectionChanged>
     {
-        public BookCabinet(ObservableCollection<BookViewModel> collection)
+        public BookCabinet(ReactiveCollection<BookViewModel> collection)
             : base(collection)
         { }
 
