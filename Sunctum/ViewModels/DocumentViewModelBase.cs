@@ -853,7 +853,8 @@ namespace Sunctum.ViewModels
                 else
                 {
                     s_logger.Debug($"Search Word:{searchingText}");
-                    BookCabinet.SearchedBooks = new ObservableCollection<BookViewModel>(BookCabinet.BookSource.Where(b => AuthorNameContainsSearchText(b, searchingText) || TitleContainsSearchText(b, searchingText) || FingerPrintContainsSearchText(b, searchingText)));
+                    BookCabinet.SearchedBooks = new ReactiveCollection<BookViewModel>();
+                    BookCabinet.SearchedBooks.AddRange(BookCabinet.BookSource.Where(b => AuthorNameContainsSearchText(b, searchingText) || TitleContainsSearchText(b, searchingText) || FingerPrintContainsSearchText(b, searchingText)));
 
                     OnSearched(new SearchedEventArgs(searchingText, _previousSearchingText));
                 }

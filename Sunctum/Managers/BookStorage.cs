@@ -3,6 +3,7 @@
 using Homura.Core;
 using NLog;
 using Prism.Mvvm;
+using Reactive.Bindings;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Load;
 using Sunctum.Domain.Logic.Query;
@@ -19,21 +20,22 @@ namespace Sunctum.Managers
     public class BookStorage : BindableBase, IBookStorage
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
-        private ObservableCollection<BookViewModel> _LoadedBooks;
+        private ReactiveCollection<BookViewModel> _LoadedBooks;
         protected IObserver<BookCollectionChanged> observer;
         private FillContentsTaskManager _fcTaskManager = new FillContentsTaskManager();
 
         public BookStorage()
         {
-            BookSource = new ObservableCollection<BookViewModel>();
+            BookSource = new ReactiveCollection<BookViewModel>();
         }
 
-        public BookStorage(ObservableCollection<BookViewModel> collection)
+        public BookStorage(ReactiveCollection<BookViewModel> collection)
         {
-            BookSource = new ObservableCollection<BookViewModel>(collection); //copy elements, not copy reference
+            BookSource = new ReactiveCollection<BookViewModel>();
+            BookSource.AddRange(collection);
         }
 
-        public ObservableCollection<BookViewModel> BookSource
+        public ReactiveCollection<BookViewModel> BookSource
         {
             [DebuggerStepThrough]
             get
@@ -45,7 +47,7 @@ namespace Sunctum.Managers
             }
         }
 
-        public virtual ObservableCollection<BookViewModel> OnStage
+        public virtual ReactiveCollection<BookViewModel> OnStage
         {
             get
             {

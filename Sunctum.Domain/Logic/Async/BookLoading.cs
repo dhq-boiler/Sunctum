@@ -1,4 +1,5 @@
 ﻿using NLog;
+using Reactive.Bindings;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
@@ -36,7 +37,11 @@ namespace Sunctum.Domain.Logic.Async
 
             sequence.Add(() => LibraryManager.Value.BookSource.CollectionChanged -= AuthorManager.LoadedBooks_CollectionChanged);
 
-            sequence.Add(() => LibraryManager.Value.BookSource = new ObservableCollection<BookViewModel>(BookFacade.FindAllWithAuthor(null)));
+            sequence.Add(() =>
+            {
+                LibraryManager.Value.BookSource = new ReactiveCollection<BookViewModel>();
+                LibraryManager.Value.BookSource.AddRange(BookFacade.FindAllWithAuthor(null));
+            });
 
             sequence.Add(() => LibraryManager.Value.BookSource.CollectionChanged += AuthorManager.LoadedBooks_CollectionChanged);
 

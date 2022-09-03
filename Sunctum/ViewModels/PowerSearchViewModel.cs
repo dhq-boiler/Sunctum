@@ -95,7 +95,8 @@ namespace Sunctum.ViewModels
             }
 
 
-            _bookStorage.SearchedBooks = new ObservableCollection<BookViewModel>(filtered.ToList());
+            _bookStorage.SearchedBooks = new ReactiveCollection<BookViewModel>();
+            _bookStorage.SearchedBooks.AddRange(filtered.ToList());
 
             RequestClose.Invoke(new DialogResult(ButtonResult.OK));
         }

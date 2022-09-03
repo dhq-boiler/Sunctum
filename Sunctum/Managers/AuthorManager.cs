@@ -4,6 +4,7 @@ using Homura.Core;
 using NLog;
 using Prism.Commands;
 using Prism.Mvvm;
+using Reactive.Bindings;
 using Sunctum.Core.Notifications;
 using Sunctum.Domail.Util;
 using Sunctum.Domain.Data.DaoFacade;
@@ -279,7 +280,8 @@ namespace Sunctum.Managers
                         select b;
 
             activeViewModel.SearchText = $"{ToSearchText(SelectedItems)}";
-            activeViewModel.BookCabinet.SearchedBooks = new ObservableCollection<BookViewModel>(books.ToList());
+            activeViewModel.BookCabinet.SearchedBooks = new ReactiveCollection<BookViewModel>();
+            activeViewModel.BookCabinet.SearchedBooks.AddRange(books.ToList());
         }
 
         private object ToSearchText(List<AuthorViewModel> selectedItems)
