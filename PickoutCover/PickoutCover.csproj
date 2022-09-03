@@ -12,6 +12,7 @@
 	<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="OpenCvSharp4.WpfExtensions" Version="4.6.0.20220608" />
     <PackageReference Include="Prism.Unity" Version="8.1.97" />
     <PackageReference Include="Prism.Wpf" Version="8.1.97" />
   </ItemGroup>
