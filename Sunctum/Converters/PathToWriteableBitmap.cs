@@ -2,12 +2,9 @@
 
 using NLog;
 using OpenCvSharp;
-using OpenCvSharp.WpfExtensions;
 using Sunctum.Domain.Data.DaoFacade;
-using Sunctum.Domain.Logic.Generate;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
-using Sunctum.Domain.Util;
 using Sunctum.Domain.ViewModels;
 using System;
 using System.Globalization;
@@ -15,7 +12,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -48,7 +44,14 @@ namespace Sunctum.Converters
                 }
                 if (image is not null && Configuration.ApplicationConfiguration.LibraryIsEncrypted)
                 {
-                    image.DecryptImage(true);
+                    try
+                    {
+                        image.DecryptImage(true);
+                    }
+                    catch (ArgumentException e)
+                    {
+                        return LoadBitmap($"{Configuration.ApplicationConfiguration.ExecutingDirectory}\\{Specifications.LOCK_ICON_FILE}");
+                    }
                 }
                 if (Guid.TryParse(Path.GetFileNameWithoutExtension(thumbnail.AbsoluteMasterPath), out var guid))
                 {

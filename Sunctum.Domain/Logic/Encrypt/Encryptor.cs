@@ -84,6 +84,10 @@ namespace Sunctum.Domain.Logic.Encrypt
 
         public static void Decrypt(string encryptedFilePath, string password, bool isThumbnail)
         {
+            if (password is null || string.IsNullOrWhiteSpace(password))
+            {
+                throw new ArgumentException($"password is not specified.");
+            }
             int len;
             byte[] buffer = new byte[4096];
 
