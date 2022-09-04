@@ -39,7 +39,7 @@ namespace Sunctum.Domain.Logic.Async
 
             sequence.Add(() =>
             {
-                LibraryManager.Value.BookSource = new ReactiveCollection<BookViewModel>();
+                LibraryManager.Value.BookSource.Clear();
                 LibraryManager.Value.BookSource.AddRange(BookFacade.FindAllWithAuthor(null));
             });
 

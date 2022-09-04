@@ -8,7 +8,7 @@ namespace Sunctum.Domain.Models.Managers
 {
     public interface IBookStorage : IObservable<BookCollectionChanged>
     {
-        ReactiveCollection<BookViewModel> BookSource { get; set; }
+        ReactiveCollection<BookViewModel> BookSource { get; }
         ReactiveCollection<BookViewModel> OnStage { get; }
 
         void AccessDispatcherObject(Action accessAction);
