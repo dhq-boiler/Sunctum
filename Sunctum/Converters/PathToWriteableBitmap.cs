@@ -2,6 +2,7 @@
 
 using NLog;
 using OpenCvSharp;
+using OpenCvSharp.WpfExtensions;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
@@ -48,7 +49,7 @@ namespace Sunctum.Converters
                     {
                         image.DecryptImage(true);
                     }
-                    catch (ArgumentException e)
+                    catch (ArgumentException)
                     {
                         return LoadBitmap($"{Configuration.ApplicationConfiguration.ExecutingDirectory}\\{Specifications.LOCK_ICON_FILE}");
                     }
@@ -110,17 +111,17 @@ namespace Sunctum.Converters
                         if (fileInfo.Length == 0)
                         {
                             s_logger.Error($"File is broken:{path}");
-                            return null;
+                            return DependencyProperty.UnsetValue;
                         }
                         if (Path.GetExtension(path) == ".gif")
                         {
-                            return null;
+                            return DependencyProperty.UnsetValue;
                         }
                         Thread.Sleep(100);
                         s_logger.Error($"Retry to load bitmap:{path}");
                         return LoadBitmap(path);
                     }
-                    return ToWriteableBitmap(mat);
+                    return WriteableBitmapConverter.ToWriteableBitmap(mat);
                 }
             }
             catch (OutOfMemoryException e)
@@ -128,31 +129,39 @@ namespace Sunctum.Converters
                 s_logger.Error(e);
                 GC.WaitForPendingFinalizers();
                 GC.Collect();
-                return null;
+                return DependencyProperty.UnsetValue;
             }
             catch (COMException e)
             {
                 s_logger.Error(e);
                 GC.WaitForPendingFinalizers();
                 GC.Collect();
-                return null;
+                return DependencyProperty.UnsetValue;
             }
             catch (OpenCVException e)
             {
                 s_logger.Error(e);
                 GC.WaitForPendingFinalizers();
                 GC.Collect();
-                return null;
+                return DependencyProperty.UnsetValue;
             }
             catch (FileNotFoundException e)
             {
                 s_logger.Error(e);
                 GC.WaitForPendingFinalizers();
                 GC.Collect();
-                return LoadBitmap($"{Configuration.ApplicationConfiguration.ExecutingDirectory}\\{Specifications.LOCK_ICON_FILE}");
+                if (Configuration.ApplicationConfiguration.LibraryIsEncrypted)
+                {
+                    return LoadBitmap($"{Configuration.ApplicationConfiguration.ExecutingDirectory}\\{Specifications.LOCK_ICON_FILE}");
+                }
+                else
+                {
+                    return DependencyProperty.UnsetValue;
+                }
             }
         }
 
+        [Obsolete]
         private WriteableBitmap ToWriteableBitmap(Mat mat)
         {
             WriteableBitmap bitmap = new WriteableBitmap(mat.Cols, mat.Rows, 92, 92, SelectChannels(mat), null);
@@ -163,6 +172,7 @@ namespace Sunctum.Converters
                 {
                     bitmap.Lock();
 
+                    byte* p_src = (byte*)mat.Data.ToPointer();
                     byte* p_dst = (byte*)bitmap.BackBuffer.ToPointer();
                     int step_dst = bitmap.BackBufferStride;
                     int channels = mat.Channels();
@@ -174,8 +184,7 @@ namespace Sunctum.Converters
                         {
                             for (int c = 0; c < channels; ++c)
                             {
-                                var bytes = PickPixel(mat, y, x, c);
-                                *(p_dst + y * step_dst + x * channels + c) = bytes;
+                                *(p_dst + y * step_dst + x * channels + c) = *(p_src + y * step_src + x * channels + c);
                             }
                         }
                     }
@@ -191,6 +200,8 @@ namespace Sunctum.Converters
             return bitmap;
         }
 
+
+        [Obsolete]
         private byte PickPixel(Mat mat, int y, int x, int c)
         {
             switch (mat.Channels())
