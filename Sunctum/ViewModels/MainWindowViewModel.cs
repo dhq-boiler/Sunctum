@@ -676,7 +676,7 @@ namespace Sunctum.ViewModels
             var newTabViewModel = (App.Current.Resources["Ioc"] as IUnityContainer).Resolve<IDocumentViewModelBase>("SearchDocumentViewModel");
             newTabViewModel.Title = "Search results";
             newTabViewModel.BookCabinet = LibraryVM.CreateBookStorage();
-            newTabViewModel.BookCabinet.BookSource = new ReactiveCollection<BookViewModel>();
+            newTabViewModel.BookCabinet.BookSource.Clear();
             newTabViewModel.BookCabinet.BookSource.AddRange(onStage);
             newTabViewModel.BookCabinet.Sorting = (App.Current.MainWindow.DataContext as MainWindowViewModel).ActiveDocumentViewModel.BookCabinet.Sorting;
             newTabViewModel.BookCabinet.DisplayType = (App.Current.MainWindow.DataContext as MainWindowViewModel).ActiveDocumentViewModel.BookCabinet.DisplayType;
@@ -696,7 +696,7 @@ namespace Sunctum.ViewModels
             var newTabViewModel = (App.Current.Resources["Ioc"] as IUnityContainer).Resolve<IDocumentViewModelBase>("ContentDocumentViewModel");
             newTabViewModel.Title = bookViewModel.Title;
             newTabViewModel.BookCabinet = LibraryVM.CreateBookStorage();
-            newTabViewModel.BookCabinet.BookSource = new ReactiveCollection<BookViewModel>();
+            newTabViewModel.BookCabinet.BookSource.Clear();
             newTabViewModel.BookCabinet.BookSource.Add(bookViewModel);
             newTabViewModel.BookCabinet.Sorting = (App.Current.MainWindow.DataContext as MainWindowViewModel).ActiveDocumentViewModel.BookCabinet.Sorting;
             newTabViewModel.BookCabinet.DisplayType = (App.Current.MainWindow.DataContext as MainWindowViewModel).ActiveDocumentViewModel.BookCabinet.DisplayType;
@@ -716,7 +716,7 @@ namespace Sunctum.ViewModels
             var newTabViewModel = (App.Current.Resources["Ioc"] as IUnityContainer).Resolve<IDocumentViewModelBase>("ContentDocumentViewModel");
             newTabViewModel.Title = "Filtered";
             newTabViewModel.BookCabinet = LibraryVM.CreateBookStorage();
-            newTabViewModel.BookCabinet.BookSource = new ReactiveCollection<BookViewModel>();
+            newTabViewModel.BookCabinet.BookSource.Clear();
             newTabViewModel.BookCabinet.BookSource.AddRange(list);
             newTabViewModel.BookCabinet.Sorting = (App.Current.MainWindow.DataContext as MainWindowViewModel).ActiveDocumentViewModel.BookCabinet.Sorting;
             newTabViewModel.BookCabinet.DisplayType = (App.Current.MainWindow.DataContext as MainWindowViewModel).ActiveDocumentViewModel.BookCabinet.DisplayType;

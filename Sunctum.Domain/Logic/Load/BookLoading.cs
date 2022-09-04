@@ -36,7 +36,7 @@ namespace Sunctum.Domain.Logic.Load
 
                 libVM.BookSource.CollectionChanged -= libVM.AuthorManager.LoadedBooks_CollectionChanged;
 
-                libVM.BookSource = new ReactiveCollection<BookViewModel>();
+                libVM.BookSource.Clear();
                 libVM.BookSource.AddRange(BookFacade.FindAllWithAuthor(dataOpUnit));
                 libVM.AuthorManager.LoadAuthorCount();
                 libVM.BookSource.CollectionChanged += libVM.AuthorManager.LoadedBooks_CollectionChanged;

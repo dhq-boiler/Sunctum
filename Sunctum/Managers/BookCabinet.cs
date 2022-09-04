@@ -25,7 +25,8 @@ namespace Sunctum.Managers
         public void OnNext(BookCollectionChanged value)
         {
             value.TargetChange.ApplyChange(BookSource, value.Target);
-            BookSource = BookSource; //Raise Notification
+            RaisePropertyChanged(nameof(BookSource));
+            RaisePropertyChanged(nameof(OnStage));
         }
     }
 }

@@ -4,6 +4,7 @@ using Homura.Core;
 using NLog;
 using Prism.Mvvm;
 using Reactive.Bindings;
+using Reactive.Bindings.Extensions;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Load;
 using Sunctum.Domain.Logic.Query;
@@ -26,34 +27,18 @@ namespace Sunctum.Managers
 
         public BookStorage()
         {
-            BookSource = new ReactiveCollection<BookViewModel>();
+            _LoadedBooks = new ReactiveCollection<BookViewModel>();
         }
 
         public BookStorage(ReactiveCollection<BookViewModel> collection)
         {
-            BookSource = new ReactiveCollection<BookViewModel>();
+            _LoadedBooks = new ReactiveCollection<BookViewModel>();
             BookSource.AddRange(collection);
         }
 
-        public ReactiveCollection<BookViewModel> BookSource
-        {
-            [DebuggerStepThrough]
-            get
-            { return _LoadedBooks; }
-            set
-            {
-                SetProperty(ref _LoadedBooks, value);
-                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
-            }
-        }
+        public ReactiveCollection<BookViewModel> BookSource => _LoadedBooks;
 
-        public virtual ReactiveCollection<BookViewModel> OnStage
-        {
-            get
-            {
-                return BookSource;
-            }
-        }
+        public virtual ReactiveCollection<BookViewModel> OnStage => BookSource;
 
         #region オンメモリ
 
