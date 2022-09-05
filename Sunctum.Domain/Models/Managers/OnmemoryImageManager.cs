@@ -24,11 +24,10 @@ namespace Sunctum.Domain.Models.Managers
         public void Put(Guid key, bool isThumbnail, MemoryStream stream)
         {
             var tuple = new Tuple<Guid, bool>(key, isThumbnail);
-            if (_map.ContainsKey(tuple))
+            if (!_map.ContainsKey(tuple))
             {
-                _map.Remove(tuple);
+                _map.Add(tuple, stream);
             }
-            _map.Add(tuple, stream);
         }
 
         public void Clear()
