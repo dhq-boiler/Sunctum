@@ -342,7 +342,7 @@
                 x:Name="Book_ListView"
                 behavior:MultiSelectorBehaviours.SynchronizedSelectedItems="{Binding BookListViewSelectedItems}"
                 AllowDrop="True"
-                ItemsSource="{Binding BookCabinet.OnStage}"
+                ItemsSource="{Binding BookCabinet.OnStage, UpdateSourceTrigger=PropertyChanged}"
                 PreviewDragOver="Book_ListView_PreviewDragOver"
                 SelectionChanged="Book_ListView_SelectionChanged"
                 SelectionMode="Extended"
@@ -466,7 +466,7 @@
                 </Grid>
                 <ListView
                     x:Name="Contents_ListView"
-                    ItemsSource="{Binding OpenedBook.Contents}"
+                    ItemsSource="{Binding OpenedBook.Contents, UpdateSourceTrigger=PropertyChanged}"
                     SelectionChanged="Contents_ListView_SelectionChanged"
                     SizeChanged="Contents_ListView_SizeChanged"
                     Style="{StaticResource Contents_ListView_Style}"
