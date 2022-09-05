@@ -25,6 +25,11 @@ namespace Sunctum.Converters
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (value is null)
+            {
+                return DependencyProperty.UnsetValue;
+            }
+
             var image = value as ImageViewModel;
             var thumbnail = image?.Thumbnail;
 
