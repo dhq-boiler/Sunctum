@@ -137,14 +137,14 @@ namespace Sunctum.UI.Controls
 
         public void UpdateTextIsValidImmediately()
         {
-            if (TextVerifier != null)
+            Dispatcher.Invoke(() =>
             {
-                Dispatcher.Invoke(() =>
+                if (TextVerifier != null)
                 {
                     TextIsValid = Text != null && Text.Count() > 0 ? (bool?)TextVerifier(Text) : null;
                     RaiseTextIsValidChangedEvent();
-                });
-            }
+                }
+            });
         }
     }
 }

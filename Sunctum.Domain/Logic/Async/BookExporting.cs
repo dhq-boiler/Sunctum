@@ -1,5 +1,6 @@
 ﻿using NLog;
 using Sunctum.Domain.Data.DaoFacade;
+using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.Util;
 using Sunctum.Domain.ViewModels;
@@ -88,16 +89,24 @@ namespace Sunctum.Domain.Logic.Async
         {
             try
             {
-                if (tags != null && tags.Count() > 0)
+                if (Configuration.ApplicationConfiguration.LibraryIsEncrypted)
+                {
+                    string tagsString = BuildTagsString(tags);
+                    var encryptImage = EncryptImageFacade.FindBy(page.Image.ID);
+                    Encrypt.Encryptor.Decrypt(encryptImage.EncryptFilePath, Configuration.ApplicationConfiguration.Password, false);
+                    var decryptStream = OnmemoryImageManager.Instance.PullAsMemoryStream(page.Image.ID, false);
+                    using (var writeTo = new FileStream($"{_bookDir}\\{Path.GetFileNameWithoutExtension(page.Image.AbsoluteMasterPath)}_{tagsString}{Path.GetExtension(page.Image.AbsoluteMasterPath)}", FileMode.Create))
+                    {
+                        decryptStream.Seek(0, SeekOrigin.Begin);
+                        decryptStream.CopyTo(writeTo);
+                    }
+                    s_logger.Debug($"FileCopy src:'{page.ImageID.ToString("N")}' dest:'{_bookDir}\\{Path.GetFileNameWithoutExtension(page.Image.AbsoluteMasterPath)}_{tagsString}{Path.GetExtension(page.Image.AbsoluteMasterPath)}'");
+                }
+                else
                 {
                     string tagsString = BuildTagsString(tags);
                     File.Copy(page.Image.AbsoluteMasterPath, $"{_bookDir}\\{Path.GetFileNameWithoutExtension(page.Image.AbsoluteMasterPath)}_{tagsString}{Path.GetExtension(page.Image.AbsoluteMasterPath)}");
                     s_logger.Debug($"FileCopy src:'{page.Image.AbsoluteMasterPath}' dest:'{_bookDir}\\{Path.GetFileNameWithoutExtension(page.Image.AbsoluteMasterPath)}_{tagsString}{Path.GetExtension(page.Image.AbsoluteMasterPath)}'");
-                }
-                else
-                {
-                    File.Copy(page.Image.AbsoluteMasterPath, $"{_bookDir}\\{Path.GetFileName(page.Image.AbsoluteMasterPath)}");
-                    s_logger.Debug($"FileCopy src:'{page.Image.AbsoluteMasterPath}' dest:'{_bookDir}\\{Path.GetFileName(page.Image.AbsoluteMasterPath)}'");
                 }
             }
             catch (IOException e)
@@ -121,13 +130,22 @@ namespace Sunctum.Domain.Logic.Async
                 _bookDir += $"{tagString}";
             }
 
-            _bookDir += $"[{book.Author?.Name}]{escape(book.Title)}";
+            if (book.Author is not null && !string.IsNullOrWhiteSpace(book.Author.Name))
+            {
+                _bookDir += $"[{book.Author?.Name}]";
+            }
+            _bookDir += escape(book.Title);
 
             CreateDirectoryIfDoesntExist(_bookDir);
         }
 
         private static string BuildTagsString(IEnumerable<TagViewModel> tags)
         {
+            if (!tags.Any())
+            {
+                return string.Empty;
+            }
+
             string tagString = $"(";
             foreach (var t in tags)
             {

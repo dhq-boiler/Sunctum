@@ -93,12 +93,12 @@ namespace Sunctum.ViewModels
 
         internal void ShowOpenFileDialog()
         {
-            var dialog = new FolderSelectDialog();
+            var dialog = new System.Windows.Forms.FolderBrowserDialog();
             dialog.InitialDirectory = OutputDirectory;
 
-            if (dialog.ShowDialog() == true)
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                OutputDirectory = dialog.FileName;
+                OutputDirectory = dialog.SelectedPath;
             }
         }
 
