@@ -1,9 +1,12 @@
 ﻿using NLog;
+using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Encrypt;
 using Sunctum.Domain.Logic.Load;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
+using Sunctum.Domain.ViewModels;
 using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using Unity;
 
@@ -18,6 +21,15 @@ namespace Sunctum.Domain.Logic.Async
         [Dependency]
         public Lazy<ILibrary> LibraryManager { get; set; }
 
+        [Dependency]
+        public ILibraryResetting libraryResetting { get; set; }
+
+        [Dependency]
+        public ITaskManager taskManager { get; set; }
+
+        [Dependency]
+        public Lazy<IMainWindowViewModel> mainWindowViewModel { get; set; }
+
         public override void ConfigurePreTaskAction(AsyncTaskSequence sequence)
         {
             sequence.Add(() => s_logger.Info($"Start Encryption"));
@@ -25,19 +37,21 @@ namespace Sunctum.Domain.Logic.Async
 
         public override void ConfigureTaskImplementation(AsyncTaskSequence sequence)
         {
-            var books = LibraryManager.Value.BookSource;
+            taskManager.Enqueue(libraryResetting.GetTaskSequence());
+            LibraryManager.Value.BookSource.AddRange(BookFacade.FindAllWithFillContents(null));
 
             sequence.Add(() => Configuration.ApplicationConfiguration.LibraryIsEncrypted = true);
             sequence.Add(() => Configuration.ApplicationConfiguration.Password = Password);
             sequence.Add(() => Directory.Delete($"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.CACHE_DIRECTORY}", true));
             sequence.Add(() => PasswordManager.SetPassword(Password, Environment.UserName));
+
+            var books = LibraryManager.Value.BookSource;
+
             foreach (var book in books)
             {
-                ContentsLoadTask.FillContents(LibraryManager.Value, book);
                 var images = book.Contents;
                 foreach (var image in images)
                 {
-                    ContentsLoadTask.Load(image);
                     sequence.Add(() =>
                     {
                         var dirPath = $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{image.Image.ID.ToString().Substring(0, 2)}";
@@ -50,6 +64,8 @@ namespace Sunctum.Domain.Logic.Async
                     sequence.Add(() => Encryptor.DeleteOriginal(image));
                 }
             }
+            sequence.Add(() => mainWindowViewModel.Value.Terminate());
+            sequence.Add(() => mainWindowViewModel.Value.Initialize(false, false));
         }
 
         public override void ConfigurePostTaskAction(AsyncTaskSequence sequence)
