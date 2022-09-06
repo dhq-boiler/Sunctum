@@ -16,6 +16,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows;
 using Unity;
@@ -328,25 +329,38 @@ namespace Sunctum.Managers
                 return false;
             }
 
-            var password = await PasswordManager.SignInAsync(Environment.UserName);
-            if (password is not null)
+            try
             {
-                Configuration.ApplicationConfiguration.Password = password;
-                return true;
-            }
-            else
-            {
-                InputPasswordDialog dialog = new InputPasswordDialog("このライブラリは暗号化されています。閲覧するにはパスワードが必要です。");
-
-                if (dialog.ShowDialog() == true)
+                var password = await PasswordManager.SignInAsync(Environment.UserName);
+                if (password is not null)
                 {
-                    Configuration.ApplicationConfiguration.Password = dialog.Password;
+                    Configuration.ApplicationConfiguration.Password = password;
                     return true;
                 }
                 else
                 {
-                    return false;
+                    return CallInputPasswordDialog();
                 }
+            }
+            catch (COMException e)
+            {
+                return CallInputPasswordDialog();
+            }
+        }
+
+        private static bool CallInputPasswordDialog()
+        {
+            InputPasswordDialog dialog = new InputPasswordDialog("このライブラリは暗号化されています。閲覧するにはパスワードが必要です。");
+
+            if (dialog.ShowDialog() == true)
+            {
+                Configuration.ApplicationConfiguration.Password = dialog.Password;
+                PasswordManager.SetPassword(dialog.Password, Environment.UserName);
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
