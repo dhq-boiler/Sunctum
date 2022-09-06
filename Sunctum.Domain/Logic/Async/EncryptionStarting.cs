@@ -4,6 +4,7 @@ using Sunctum.Domain.Logic.Encrypt;
 using Sunctum.Domain.Logic.Load;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
+using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -25,6 +26,9 @@ namespace Sunctum.Domain.Logic.Async
 
         [Dependency]
         public ITaskManager taskManager { get; set; }
+
+        [Dependency]
+        public Lazy<IMainWindowViewModel> mainWindowViewModel { get; set; }
 
         public override void ConfigurePreTaskAction(AsyncTaskSequence sequence)
         {
@@ -60,6 +64,8 @@ namespace Sunctum.Domain.Logic.Async
                     sequence.Add(() => Encryptor.DeleteOriginal(image));
                 }
             }
+
+            sequence.Add(() => mainWindowViewModel.Value.Initialize(false, false));
         }
 
         public override void ConfigurePostTaskAction(AsyncTaskSequence sequence)

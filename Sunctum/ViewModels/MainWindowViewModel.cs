@@ -737,7 +737,10 @@ namespace Sunctum.ViewModels
         {
             if (DockingDocumentViewModels == null) return;
 
-            DockingDocumentViewModels.Clear();
+            App.Current.Dispatcher.Invoke(() =>
+            {
+                DockingDocumentViewModels.Clear();
+            });
         }
 
         private void NotifyActiveTabChanged()
@@ -925,10 +928,13 @@ namespace Sunctum.ViewModels
 
         public void SaveLayout()
         {
-            Debug.Assert(App.Current.MainWindow != null);
-            var dockingManager = App.Current.MainWindow.GetChildOfType<DockingManager>();
-            var serializer = new XmlLayoutSerializer(dockingManager);
-            serializer.Serialize(Specifications.APP_LAYOUT_CONFIG_FILENAME);
+            App.Current.Dispatcher.Invoke(() =>
+            {
+                Debug.Assert(App.Current.MainWindow != null);
+                var dockingManager = App.Current.MainWindow.GetChildOfType<DockingManager>();
+                var serializer = new XmlLayoutSerializer(dockingManager);
+                serializer.Serialize(Specifications.APP_LAYOUT_CONFIG_FILENAME);
+            });
         }
 
         public void Terminate()
