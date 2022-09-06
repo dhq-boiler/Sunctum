@@ -46,8 +46,8 @@ namespace Sunctum.Managers
             set
             {
                 SetProperty(ref _SearchedBooks, value);
-                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
-                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => IsSearching));
+                RaisePropertyChanged(nameof(OnStage));
+                RaisePropertyChanged(nameof(IsSearching));
             }
         }
 

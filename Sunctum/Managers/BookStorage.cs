@@ -14,6 +14,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Windows;
 
 namespace Sunctum.Managers
@@ -62,8 +63,7 @@ namespace Sunctum.Managers
         protected void Internal_AddToMemory(BookViewModel book)
         {
             BookSource.Add(book);
-            RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
-            if (observer != null)
+            if (observer is not null)
             {
                 observer.OnNext(new BookCollectionChanged()
                 {
@@ -71,6 +71,11 @@ namespace Sunctum.Managers
                     TargetChange = new BookCollectionChanged.Add()
                 });
             }
+            else
+            {
+                s_logger.Warn($"observer is null!");
+            }
+            RaisePropertyChanged(nameof(OnStage));
         }
 
         protected virtual void Internal_UpdateInMemory(BookViewModel book)
@@ -78,8 +83,7 @@ namespace Sunctum.Managers
             BookFacade.Update(book);
             int index = BookSource.IndexOf(BookSource.Where(b => b.ID.Equals(book.ID)).Single());
             BookSource[index] = book;
-            RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
-            if (observer != null)
+            if (observer is not null)
             {
                 observer.OnNext(new BookCollectionChanged()
                 {
@@ -87,13 +91,17 @@ namespace Sunctum.Managers
                     TargetChange = new BookCollectionChanged.Update()
                 });
             }
+            else
+            {
+                s_logger.Warn($"observer is null!");
+            }
+            RaisePropertyChanged(nameof(OnStage));
         }
 
         protected void Internal_RemoveBookFromMemory(BookViewModel book)
         {
             BookSource.Remove(book);
-            RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => OnStage));
-            if (observer != null)
+            if (observer is not null)
             {
                 observer.OnNext(new BookCollectionChanged()
                 {
@@ -101,6 +109,11 @@ namespace Sunctum.Managers
                     TargetChange = new BookCollectionChanged.Remove()
                 });
             }
+            else
+            {
+                s_logger.Warn($"observer is null!");
+            }
+            RaisePropertyChanged(nameof(OnStage));
         }
 
         #endregion //private
