@@ -238,7 +238,6 @@ namespace Sunctum.ViewModels
                 {
                     Terminate();
                     CloseAllTab();
-                    await LibraryVM.Reset();
                     await Initialize(false);
                 }
             });
@@ -254,7 +253,6 @@ namespace Sunctum.ViewModels
             {
                 Terminate();
                 CloseAllTab();
-                await LibraryVM.Reset();
                 await Initialize(false);
             });
             ShowPreferenceDialogCommand = new DelegateCommand(() =>
@@ -612,6 +610,7 @@ namespace Sunctum.ViewModels
             {
                 await LibraryVM.Initialize();
                 await LibraryVM.UnlockIfLocked();
+                await LibraryVM.Reset();
                 await LibraryVM.Load()
                     .ContinueWith(_ =>
                     {
@@ -951,11 +950,12 @@ namespace Sunctum.ViewModels
             }
             Configuration.Save(config);
 
-            Dispose();
+            _disposable.Clear();
         }
 
         public void Close()
         {
+            _disposable.Dispose();
             System.Windows.Application.Current.Shutdown();
         }
 
