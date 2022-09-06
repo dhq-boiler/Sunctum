@@ -64,7 +64,7 @@ namespace Sunctum.Domain.Logic.Async
                     sequence.Add(() => Encryptor.DeleteOriginal(image));
                 }
             }
-
+            sequence.Add(() => mainWindowViewModel.Value.Terminate());
             sequence.Add(() => mainWindowViewModel.Value.Initialize(false, false));
         }
 

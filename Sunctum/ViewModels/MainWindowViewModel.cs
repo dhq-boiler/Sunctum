@@ -808,8 +808,6 @@ namespace Sunctum.ViewModels
                 DockingPaneViewModels.Add((InformationPaneViewModel)InformationPaneViewModel);
             }
 
-            LoadLayout();
-
             HomeDocumentViewModel.CloseSearchPane();
             HomeDocumentViewModel.CloseImage();
             HomeDocumentViewModel.CloseBook();

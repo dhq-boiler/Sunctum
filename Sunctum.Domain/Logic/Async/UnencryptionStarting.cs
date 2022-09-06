@@ -53,6 +53,7 @@ namespace Sunctum.Domain.Logic.Async
                     sequence.Add(() => Encryptor.Decrypt(_TargetEncryptImage.EncryptFilePath, page.Image.AbsoluteMasterPath, Password));
                     sequence.Add(() => File.Delete($"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{page.Image.ID}{Path.GetExtension(page.Image.AbsoluteMasterPath)}"));
                     sequence.Add(() => EncryptImageFacade.DeleteBy(page.Image.ID));
+                    sequence.Add(() => ThumbnailFacade.DeleteWhereIDIs(page.Image.Thumbnail.ID));
                     sequence.Add(() => page.Image.Thumbnail = null);
                 }
             }
@@ -60,6 +61,7 @@ namespace Sunctum.Domain.Logic.Async
             sequence.Add(() => OnmemoryImageManager.Instance.Clear());
             sequence.Add(() => Configuration.ApplicationConfiguration.Password = null);
             sequence.Add(() => Configuration.ApplicationConfiguration.LibraryIsEncrypted = false);
+            sequence.Add(() => mainWindowViewModel.Value.Terminate());
             sequence.Add(() => mainWindowViewModel.Value.Initialize(false, false));
         }
     }
