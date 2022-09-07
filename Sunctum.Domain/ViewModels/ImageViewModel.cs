@@ -19,7 +19,7 @@ namespace Sunctum.Domain.ViewModels
         public ImageViewModel()
         { }
 
-        public ImageViewModel(Guid id, string title, string masterPath, Configuration config)
+        public ImageViewModel(Guid id, string title, string masterPath, bool isEncrypted, Configuration config)
             : base(id, title)
         {
             Configuration = config;
@@ -31,6 +31,7 @@ namespace Sunctum.Domain.ViewModels
             {
                 RelativeMasterPath = masterPath;
             }
+            IsEncrypted = isEncrypted;
         }
 
         public static string MakeRelativeMasterPath(string workingDirectory, string absoluteMasterPath)

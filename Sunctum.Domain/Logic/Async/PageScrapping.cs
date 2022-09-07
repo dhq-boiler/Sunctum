@@ -199,7 +199,7 @@ namespace Sunctum.Domain.Logic.Async
 
         private void CreateImage(ImageViewModel img, string destination)
         {
-            _newimg = new ImageViewModel(Guid.NewGuid(), img.Title, destination, Configuration.ApplicationConfiguration);
+            _newimg = new ImageViewModel(Guid.NewGuid(), img.Title, destination, img.IsEncrypted, Configuration.ApplicationConfiguration);
             ImageFacade.Insert(_newimg);
         }
 

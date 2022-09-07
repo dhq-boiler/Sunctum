@@ -4,11 +4,13 @@ using Homura.Core;
 using Homura.ORM;
 using Homura.ORM.Migration;
 using Homura.ORM.Setup;
+using Homura.QueryBuilder.Iso.Dml;
 using NLog;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Data.Dao.Migration.Plan;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Parse;
+using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Conversion;
 using Sunctum.Domain.Models.Managers;
 using System;
@@ -138,12 +140,20 @@ namespace Sunctum.Domain.Logic.Async
 
         private void LibraryInitializing_FinishedToUpgradeTo_Version_6(object sender, VersionChangeEventArgs e)
         {
-            var encryptImages = EncryptImageFacade.FindAll();
-            foreach (var encryptImage in encryptImages)
+            using (var dataOpUnit = new DataOperationUnit())
             {
-                var image = ImageFacade.FindBy(encryptImage.TargetImageID);
-                image.IsEncrypted = true; //EncryptImageテーブルに存在するエントリは暗号化済みとしてマーク
-                ImageFacade.Update(image);
+                dataOpUnit.Open(ConnectionManager.DefaultConnection);
+                dataOpUnit.BeginTransaction();
+
+                var encryptImages = EncryptImageFacade.FindAll(dataOpUnit);
+                foreach (var encryptImage in encryptImages)
+                {
+                    var image = ImageFacade.FindBy(encryptImage.TargetImageID, dataOpUnit);
+                    image.IsEncrypted = true; //EncryptImageテーブルに存在するエントリは暗号化済みとしてマーク
+                    ImageFacade.Update(image, dataOpUnit);
+                }
+
+                dataOpUnit.Commit();
             }
         }
     }

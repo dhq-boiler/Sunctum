@@ -237,6 +237,7 @@ namespace Sunctum.Domain.Data.Dao
                                                    .Column("i", "ID").As("iId")
                                                    .Column("i", "Title").As("iTitle")
                                                    .Column("i", "MasterPath").As("iMasterPath")
+                                                   .Column("i", "IsEncrypted").As("iIsEncrypted")
                                                    .Column("t", "ID").As("tId")
                                                    .Column("t", "ImageID").As("tImageId")
                                                    .Column("t", "Path").As("tPath")
@@ -279,6 +280,7 @@ namespace Sunctum.Domain.Data.Dao
                                 image.ID = rdr.SafeGetGuid("iId", null);
                                 image.Title = rdr.SafeGetString("iTitle", null);
                                 image.RelativeMasterPath = rdr.SafeGetString("iMasterPath", null);
+                                image.IsEncrypted = rdr.SafeGetBoolean("iIsEncrypted", null);
                                 page.Image = image;
 
                                 if (!rdr.IsDBNull("tId") && !rdr.IsDBNull("tImageId") && !rdr.IsDBNull("tPath"))

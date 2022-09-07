@@ -16,10 +16,10 @@ namespace Sunctum.Domain.Data.DaoFacade
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
-        public static IEnumerable<EncryptImage> FindAll()
+        public static IEnumerable<EncryptImage> FindAll(DataOperationUnit dataOpUnit = null)
         {
             EncryptImageDao dao = new EncryptImageDao();
-            return dao.FindAll();
+            return dao.FindAll(dataOpUnit?.CurrentConnection);
         }
 
         internal static EncryptImage FindBy(Guid targetImageId, DataOperationUnit dataOperationUnit = null)

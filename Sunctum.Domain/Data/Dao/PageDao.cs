@@ -190,6 +190,7 @@ namespace Sunctum.Domain.Data.Dao
                                                    .Column("i", "ID").As("iId")
                                                    .Column("i", "Title").As("iTitle")
                                                    .Column("i", "MasterPath").As("iMasterPath")
+                                                   .Column("i", "IsEncrypted").As("iIsEncrypted")
                                                    .Column("t", "ID").As("tId")
                                                    .Column("t", "ImageID").As("tImageId")
                                                    .Column("t", "Path").As("tPath")
@@ -210,6 +211,7 @@ namespace Sunctum.Domain.Data.Dao
                                 page.Image = new ImageViewModel(rdr.SafeGetGuid("iId", null),
                                                                 rdr.SafeGetString("iTitle", null),
                                                                 rdr.SafeGetString("iMasterpath", null),
+                                                                rdr.SafeGetBoolean("iIsEncrypted", null),
                                                                 Configuration.ApplicationConfiguration);
 
                                 if (string.IsNullOrWhiteSpace(page.Image.RelativeMasterPath))
