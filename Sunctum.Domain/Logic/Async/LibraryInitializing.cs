@@ -7,6 +7,7 @@ using Homura.ORM.Setup;
 using NLog;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Data.Dao.Migration.Plan;
+using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Parse;
 using Sunctum.Domain.Models.Conversion;
 using Sunctum.Domain.Models.Managers;
@@ -68,6 +69,8 @@ namespace Sunctum.Domain.Logic.Async
                     dvManager.RegisterChangePlan(new ChangePlan_Version_4());
                     dvManager.RegisterChangePlan(new ChangePlan_Version_5());
                     dvManager.GetPlan(new Version_5()).FinishedToUpgradeTo += LibraryInitializing_FinishedToUpgradeTo_Version_5;
+                    dvManager.RegisterChangePlan(new ChangePlan_Version_6());
+                    dvManager.GetPlan(new Version_6()).FinishedToUpgradeTo += LibraryInitializing_FinishedToUpgradeTo_Version_6;
                     dvManager.FinishedToUpgradeTo += DvManager_FinishedToUpgradeTo;
 
                     dvManager.UpgradeToTargetVersion();
@@ -131,6 +134,17 @@ namespace Sunctum.Domain.Logic.Async
         {
             BookHashingService.Range = BookHashing.UpdateRange.IsAll;
             await TaskManager.Enqueue(BookHashingService.GetTaskSequence());
+        }
+
+        private void LibraryInitializing_FinishedToUpgradeTo_Version_6(object sender, VersionChangeEventArgs e)
+        {
+            var encryptImages = EncryptImageFacade.FindAll();
+            foreach (var encryptImage in encryptImages)
+            {
+                var image = ImageFacade.FindBy(encryptImage.TargetImageID);
+                image.IsEncrypted = true; //EncryptImageテーブルに存在するエントリは暗号化済みとしてマーク
+                ImageFacade.Update(image);
+            }
         }
     }
 }

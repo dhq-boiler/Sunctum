@@ -52,12 +52,12 @@ namespace Sunctum.Domain.Logic.Load
                 if (book.FirstPage?.Image == null || book.FirstPage?.Image?.Thumbnail == null)
                 {
                     LoadFirstPageAndThumbnail(book, dataOpUnit);
-                    if (book.FirstPage?.Image != null && (Configuration.ApplicationConfiguration.LibraryIsEncrypted || book.FirstPage.Image.ThumbnailLoaded))
+                    if (book.FirstPage?.Image != null && (book.FirstPage.Image.IsEncrypted || book.FirstPage.Image.ThumbnailLoaded))
                     {
                         book.IsLoaded = true;
                     }
-                    var firstPageIsNull = book.FirstPage.Image != null;
-                    if (!Configuration.ApplicationConfiguration.LibraryIsEncrypted && firstPageIsNull && !book.FirstPage.Image.ThumbnailGenerated)
+                    var firstPageIsNotNull = book.FirstPage is not null && book.FirstPage.Image is not null;
+                    if (firstPageIsNotNull && !book.FirstPage.Image.IsEncrypted && !book.FirstPage.Image.ThumbnailGenerated)
                     {
                         GenerateThumbnailCondition(book, dataOpUnit);
                     }

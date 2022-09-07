@@ -1,11 +1,11 @@
 ﻿
 
+using Homura.Extensions;
 using Homura.ORM;
 using Homura.QueryBuilder.Iso.Dml;
 using Homura.QueryBuilder.Vendor.SQLite.Dml;
 using NLog;
 using Sunctum.Domain.Models;
-using Sunctum.Domain.Util;
 using System;
 using System.Collections.Generic;
 using System.Data;

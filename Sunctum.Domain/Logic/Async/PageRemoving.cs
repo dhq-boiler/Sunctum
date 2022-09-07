@@ -104,7 +104,7 @@ namespace Sunctum.Domain.Logic.Async
                 }
             }
 
-            if (Configuration.ApplicationConfiguration.LibraryIsEncrypted)
+            if (page.Image.IsEncrypted)
             {
                 var encryptImage = EncryptImageFacade.FindBy(page.ImageID);
                 if (encryptImage is not null && File.Exists(encryptImage.EncryptFilePath))

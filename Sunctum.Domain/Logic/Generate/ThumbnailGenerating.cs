@@ -38,8 +38,8 @@ namespace Sunctum.Domain.Logic.Generate
         {
             lock (target)
             {
-                //暗号化している場合は無視する
-                if (!Configuration.ApplicationConfiguration.LibraryIsEncrypted && !File.Exists(target.AbsoluteMasterPath))
+                //暗号化しておらず、ファイルが存在しない場合
+                if (!target.IsEncrypted && !File.Exists(target.AbsoluteMasterPath))
                 {
                     throw new FileNotFoundException(target.AbsoluteMasterPath);
                 }
@@ -49,7 +49,7 @@ namespace Sunctum.Domain.Logic.Generate
                 thumbnail.ImageID = target.ID;
 
                 var encryptImage = EncryptImageFacade.FindBy(target.ID);
-                if (encryptImage != null)
+                if (encryptImage != null && !string.IsNullOrWhiteSpace(Configuration.ApplicationConfiguration.Password))
                 {
                     Encryptor.Decrypt(encryptImage.EncryptFilePath, Configuration.ApplicationConfiguration.Password, true);
                     thumbnail.RelativeMasterPath = $"{Path.GetDirectoryName(target.RelativeMasterPath)}\\{target.ID.ToString("N")}{Path.GetExtension(target.RelativeMasterPath)}";

@@ -7,7 +7,6 @@ using Sunctum.Domain.Logic.Encrypt;
 using Sunctum.Domain.Logic.Generate;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
-using Sunctum.Infrastructure.Core;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -52,6 +51,7 @@ namespace Sunctum.Domain.ViewModels
         private string _RelativeMasterPath;
         private ThumbnailViewModel _Thumbnail;
         private long? _ByteSize;
+        private bool _IsEncrypted;
 
         #region Configuration
 
@@ -103,6 +103,8 @@ namespace Sunctum.Domain.ViewModels
             if (!OnmemoryImageManager.Instance.Exists(this.ID, isThumbnail))
             {
                 var image = EncryptImageFacade.FindBy(this.ID);
+                if (image is null)
+                    return;
                 Encryptor.Decrypt(image.EncryptFilePath, Configuration.Password, isThumbnail);
             }
         }
@@ -121,6 +123,14 @@ namespace Sunctum.Domain.ViewModels
             get
             { return _ByteSize; }
             set { SetProperty(ref _ByteSize, value); }
+        }
+
+        public bool IsEncrypted
+        {
+            [DebuggerStepThrough]
+            get
+            { return _IsEncrypted; }
+            set { SetProperty(ref _IsEncrypted, value); }
         }
 
         public ThumbnailViewModel Thumbnail

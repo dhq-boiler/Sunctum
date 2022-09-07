@@ -1,5 +1,6 @@
 ﻿
 
+using Homura.ORM;
 using NLog;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Models;
@@ -21,16 +22,16 @@ namespace Sunctum.Domain.Data.DaoFacade
             return dao.FindAll();
         }
 
-        internal static EncryptImage FindBy(Guid targetImageId)
+        internal static EncryptImage FindBy(Guid targetImageId, DataOperationUnit dataOperationUnit = null)
         {
             EncryptImageDao dao = new EncryptImageDao();
-            return dao.FindBy(new Dictionary<string, object>() { { "TargetImageID", targetImageId } }).SingleOrDefault();
+            return dao.FindBy(new Dictionary<string, object>() { { "TargetImageID", targetImageId } }, dataOperationUnit?.CurrentConnection).SingleOrDefault();
         }
 
-        internal static void DeleteBy(Guid targetImageId)
+        internal static void DeleteBy(Guid targetImageId, DataOperationUnit dataOperationUnit = null)
         {
             EncryptImageDao dao = new EncryptImageDao();
-            dao.Delete(new Dictionary<string, object>() { { "TargetImageID", targetImageId } });
+            dao.Delete(new Dictionary<string, object>() { { "TargetImageID", targetImageId } }, dataOperationUnit?.CurrentConnection);
         }
 
         internal static bool AnyEncrypted()

@@ -350,18 +350,21 @@ namespace Sunctum.Managers
 
         private static bool CallInputPasswordDialog()
         {
-            InputPasswordDialog dialog = new InputPasswordDialog("このライブラリは暗号化されています。閲覧するにはパスワードが必要です。");
+            return App.Current.Dispatcher.Invoke(() =>
+            {
+                InputPasswordDialog dialog = new InputPasswordDialog("このライブラリは暗号化されています。閲覧するにはパスワードが必要です。");
 
-            if (dialog.ShowDialog() == true)
-            {
-                Configuration.ApplicationConfiguration.Password = dialog.Password;
-                PasswordManager.SetPassword(dialog.Password, Environment.UserName);
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+                if (dialog.ShowDialog() == true)
+                {
+                    Configuration.ApplicationConfiguration.Password = dialog.Password;
+                    PasswordManager.SetPassword(dialog.Password, Environment.UserName);
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            });
         }
 
         public async Task StartUnencryption(string password)

@@ -50,18 +50,20 @@ namespace Sunctum.Domain.Logic.Async
             foreach (var book in books)
             {
                 var images = book.Contents;
-                foreach (var image in images)
+                foreach (var page in images)
                 {
                     sequence.Add(() =>
                     {
-                        var dirPath = $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{image.Image.ID.ToString().Substring(0, 2)}";
+                        var dirPath = $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{page.Image.ID.ToString().Substring(0, 2)}";
                         if (!Directory.Exists(dirPath))
                         {
                             Directory.CreateDirectory(dirPath);
                         }
                     });
-                    sequence.Add(() => Encryptor.Encrypt(image.Image, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{image.Image.ID.ToString().Substring(0, 2)}\\{image.Image.ID}{Path.GetExtension(image.Image.AbsoluteMasterPath)}", Password));
-                    sequence.Add(() => Encryptor.DeleteOriginal(image));
+                    sequence.Add(() => Encryptor.Encrypt(page.Image, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{page.Image.ID.ToString().Substring(0, 2)}\\{page.Image.ID}{Path.GetExtension(page.Image.AbsoluteMasterPath)}", Password));
+                    sequence.Add(() => Encryptor.DeleteOriginal(page));
+                    sequence.Add(() => page.Image.IsEncrypted = true);
+                    sequence.Add(() => ImageFacade.Update(page.Image));
                 }
             }
             sequence.Add(() => mainWindowViewModel.Value.Terminate());

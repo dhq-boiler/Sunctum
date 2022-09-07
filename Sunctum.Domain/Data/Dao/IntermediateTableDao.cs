@@ -1,10 +1,10 @@
 ﻿
 
+using Homura.Extensions;
 using Homura.ORM;
 using Homura.ORM.Mapping;
 using Homura.QueryBuilder.Iso.Dml;
 using Sunctum.Domain.Models;
-using Sunctum.Domain.Util;
 using System;
 using System.Collections.Generic;
 using System.Data;

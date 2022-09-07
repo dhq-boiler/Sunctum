@@ -16,10 +16,11 @@ namespace Sunctum.Domain.Logic.Delete
 
         public static void DeleteThumbnail(ImageViewModel target, DataOperationUnit dataOpUnit = null)
         {
-            Contract.Requires(target != null);
-            Contract.Requires(target.Thumbnail != null);
-
             var deleting = target.Thumbnail;
+            if (deleting is null)
+            {
+                return;
+            }
             if (deleting.RelativeMasterPath is null)
             {
                 ThumbnailFacade.DeleteWhereIDIs(deleting.ID);

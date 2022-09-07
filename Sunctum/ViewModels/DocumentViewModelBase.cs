@@ -518,6 +518,7 @@ namespace Sunctum.ViewModels
             else
             {
                 var virtualizingWrapPanel = Application.Current.MainWindow.FindChild<VirtualizingWrapPanel>("ContentsListViewVirtualizingWrapPanel");
+                if (virtualizingWrapPanel is null) return;
                 _scrollOffset[bookId] = virtualizingWrapPanel.GetOffset();
             }
         }
