@@ -7,6 +7,7 @@ using OpenCvSharp.WpfExtensions;
 using PickoutCover.Domain.Logic.CoverSegment;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Async;
+using Sunctum.Domain.Logic.Encrypt;
 using Sunctum.Domain.Logic.Generate;
 using Sunctum.Domain.Logic.Query;
 using Sunctum.Domain.Models;
@@ -73,7 +74,7 @@ namespace PickoutCover.Domain.Logic.Async
         private static void CreateEntities(ILibrary _libraryVM, PageViewModel _page, CoverSegmenting cs, DataOperationUnit dataOpUnit)
         {
             Guid imageID = Guid.NewGuid();
-            var image = new ImageViewModel(imageID, "cover", cs._masterPath, Configuration.ApplicationConfiguration);
+            var image = new ImageViewModel(imageID, "cover", cs._masterPath, Configuration.ApplicationConfiguration.LibraryIsEncrypted, Configuration.ApplicationConfiguration);
             image.Configuration = Configuration.ApplicationConfiguration;
             image.ID = imageID;
             image.UnescapedTitle = "cover";
@@ -97,6 +98,12 @@ namespace PickoutCover.Domain.Logic.Async
             page.PageIndex = 1;
             page.Image = image;
             PageFacade.Insert(page, dataOpUnit);
+
+            var encryptImage = EncryptImageFacade.FindBy(image.ID);
+            if (Configuration.ApplicationConfiguration.LibraryIsEncrypted && encryptImage is not null)
+            {
+                Encryptor.Encrypt(page.Image, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{page.Image.ID.ToString().Substring(0, 2)}\\{page.Image.ID}{Path.GetExtension(page.Image.AbsoluteMasterPath)}", Configuration.ApplicationConfiguration.Password);
+            }
 
             var book = _libraryVM.OnStage.Where(b => b.ID.Equals(_page.BookID)).Single();
             book.FirstPage = page;

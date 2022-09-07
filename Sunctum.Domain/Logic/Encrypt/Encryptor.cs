@@ -19,7 +19,7 @@ using System.Windows;
 
 namespace Sunctum.Domain.Logic.Encrypt
 {
-    internal static class Encryptor
+    public static class Encryptor
     {
         public static void Encrypt(ImageViewModel image, string OutFilePath, string password)
         {
