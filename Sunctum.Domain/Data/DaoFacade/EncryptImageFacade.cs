@@ -22,7 +22,7 @@ namespace Sunctum.Domain.Data.DaoFacade
             return dao.FindAll(dataOpUnit?.CurrentConnection);
         }
 
-        internal static EncryptImage FindBy(Guid targetImageId, DataOperationUnit dataOperationUnit = null)
+        public static EncryptImage FindBy(Guid targetImageId, DataOperationUnit dataOperationUnit = null)
         {
             EncryptImageDao dao = new EncryptImageDao();
             return dao.FindBy(new Dictionary<string, object>() { { "TargetImageID", targetImageId } }, dataOperationUnit?.CurrentConnection).SingleOrDefault();
