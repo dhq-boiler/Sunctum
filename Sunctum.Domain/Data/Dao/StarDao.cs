@@ -1,9 +1,9 @@
 ﻿
 
+using Homura.Extensions;
 using Homura.ORM;
 using Homura.QueryBuilder.Iso.Dml;
 using Sunctum.Domain.Models;
-using Sunctum.Domain.Util;
 using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;

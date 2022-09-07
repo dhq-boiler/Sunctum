@@ -104,7 +104,7 @@ namespace Sunctum.Managers
 
         private void AuthorCountDecrement(NotifyCollectionChangedEventArgs e)
         {
-            foreach (var removeBook in e.OldItems.Cast<BookViewModel>().Where(b => b.Author != null))
+            foreach (var removeBook in e.OldItems.Cast<BookViewModel>().Where(b => b is not null && b.Author is not null))
             {
                 if (AuthorCount.Where(ac => ac.Author.Name == removeBook.Author.Name).Count() == 1)
                 {
@@ -116,7 +116,7 @@ namespace Sunctum.Managers
 
         private void AuthorCountInsertOrIncrement(NotifyCollectionChangedEventArgs e)
         {
-            foreach (var newBook in e.NewItems.Cast<BookViewModel>().Where(b => b.Author != null))
+            foreach (var newBook in e.NewItems.Cast<BookViewModel>().Where(b => b is not null && b.Author is not null))
             {
                 if (AuthorCount.Where(ac => ac.Author.Name == newBook.Author.Name).Count() == 1)
                 {

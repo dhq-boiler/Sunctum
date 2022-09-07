@@ -1,5 +1,6 @@
 ﻿
 
+using Homura.Extensions;
 using Homura.ORM;
 using Homura.QueryBuilder.Iso.Dml;
 using NLog;
@@ -31,6 +32,7 @@ namespace Sunctum.Domain.Data.Dao
                 ID = reader.SafeGetGuid("ID", Table),
                 Title = reader.SafeGetString("Title", Table),
                 RelativeMasterPath = reader.SafeGetString("MasterPath", Table),
+                IsEncrypted = reader.SafeGetBoolean("IsEncrypted", Table),
             };
         }
 
@@ -50,6 +52,7 @@ namespace Sunctum.Domain.Data.Dao
                     using (var query = new Select().Column("i", "ID")
                                                    .Column("i", "Title")
                                                    .Column("i", "MasterPath")
+                                                   .Column("i", "IsEncrypted")
                                                    .From.Table(new Table<Book>().Name, "b")
                                                    .Inner.Join(new Table<Page>().Name, "p").On.Column("p", "BookID").EqualTo.Column("b", "ID")
                                                    .Inner.Join(new Table<Image>().Name, "i").On.Column("p", "ImageID").EqualTo.Column("i", "ID")
@@ -59,6 +62,7 @@ namespace Sunctum.Domain.Data.Dao
                                                    .Column("i", "ID")
                                                    .Column("i", "Title")
                                                    .Column("i", "MasterPath")
+                                                   .Column("i", "IsEncrypted")
                                                    .From.Table(new Table<Page>().Name, "p")
                                                    .Inner.Join(new Table<Image>().Name, "i").On.Column("p", "ImageID").EqualTo.Column("i", "ID")
                                                    .Where.Column("p", "ID").In.Array(pageIds.Cast<object>())
@@ -67,6 +71,7 @@ namespace Sunctum.Domain.Data.Dao
                                                     .Column("i", "ID")
                                                     .Column("i", "Title")
                                                     .Column("i", "MasterPath")
+                                                    .Column("i", "IsEncrypted")
                                                     .From.Table(new Table<Image>().Name, "i")
                                                     .Where.Column("ID").In.Array(imageIds.Cast<object>()))
                     {

@@ -48,7 +48,7 @@ namespace Sunctum.Converters
                         thumbnail = th;
                     }
                 }
-                if (image is not null && Configuration.ApplicationConfiguration.LibraryIsEncrypted)
+                if (image is not null && image.IsEncrypted)
                 {
                     try
                     {
@@ -56,7 +56,7 @@ namespace Sunctum.Converters
                     }
                     catch (ArgumentException)
                     {
-                        return LoadBitmap($"{Configuration.ApplicationConfiguration.ExecutingDirectory}\\{Specifications.LOCK_ICON_FILE}");
+                        return LoadBitmap($"{Configuration.ApplicationConfiguration.ExecutingDirectory}\\{Specifications.LOCK_ICON_FILE}", image.IsEncrypted);
                     }
                 }
                 if (Guid.TryParse(Path.GetFileNameWithoutExtension(thumbnail.AbsoluteMasterPath), out var guid))
@@ -64,7 +64,7 @@ namespace Sunctum.Converters
                     var bitmap = OnmemoryImageManager.Instance.PullAsWriteableBitmap(guid, true);
                     if (bitmap is null)
                     {
-                        return LoadBitmap(thumbnail.AbsoluteMasterPath);
+                        return LoadBitmap(thumbnail.AbsoluteMasterPath, image.IsEncrypted);
                     }
                     return bitmap;
                 }
@@ -82,7 +82,7 @@ namespace Sunctum.Converters
 
         private object LoadBitmap(ImageViewModel image)
         {
-            if (Configuration.ApplicationConfiguration.LibraryIsEncrypted)
+            if (image.IsEncrypted)
             {
                 var bitmap = OnmemoryImageManager.Instance.PullAsWriteableBitmap(image.ID, false);
                 if (bitmap is null)
@@ -100,11 +100,11 @@ namespace Sunctum.Converters
                     return DependencyProperty.UnsetValue;
                 }
                 s_logger.Debug($"Load bitmap:{image.AbsoluteMasterPath}");
-                return LoadBitmap(image.AbsoluteMasterPath);
+                return LoadBitmap(image.AbsoluteMasterPath, image.IsEncrypted);
             }
         }
 
-        private object LoadBitmap(string path)
+        private object LoadBitmap(string path, bool IsEncrypted)
         {
             try
             {
@@ -124,7 +124,7 @@ namespace Sunctum.Converters
                         }
                         Thread.Sleep(100);
                         s_logger.Error($"Retry to load bitmap:{path}");
-                        return LoadBitmap(path);
+                        return LoadBitmap(path, IsEncrypted);
                     }
                     return WriteableBitmapConverter.ToWriteableBitmap(mat);
                 }
@@ -155,9 +155,9 @@ namespace Sunctum.Converters
                 s_logger.Error(e);
                 GC.WaitForPendingFinalizers();
                 GC.Collect();
-                if (Configuration.ApplicationConfiguration.LibraryIsEncrypted)
+                if (IsEncrypted)
                 {
-                    return LoadBitmap($"{Configuration.ApplicationConfiguration.ExecutingDirectory}\\{Specifications.LOCK_ICON_FILE}");
+                    return LoadBitmap($"{Configuration.ApplicationConfiguration.ExecutingDirectory}\\{Specifications.LOCK_ICON_FILE}", false);
                 }
                 else
                 {

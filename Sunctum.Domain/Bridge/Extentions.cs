@@ -40,7 +40,8 @@ namespace Sunctum.Domain.Bridge
                 ByteSize = obj.ByteSize,
                 ID = obj.ID,
                 RelativeMasterPath = obj.RelativeMasterPath,
-                Title = obj.Title
+                Title = obj.Title,
+                IsEncrypted = obj.IsEncrypted,
             };
         }
 

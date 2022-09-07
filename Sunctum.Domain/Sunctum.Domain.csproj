@@ -9,7 +9,10 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="Data\Rdbms\Dml\" />
+    <Compile Remove="Data\Rdbms\Dml\**" />
+    <EmbeddedResource Remove="Data\Rdbms\Dml\**" />
+    <None Remove="Data\Rdbms\Dml\**" />
+    <Page Remove="Data\Rdbms\Dml\**" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sunctum.Infrastructure\Sunctum.Infrastructure.csproj" />
@@ -29,7 +32,8 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="6.0.0" />
-    <PackageReference Include="Homura" Version="3.4.2" />
+    <PackageReference Include="Homura" Version="3.5.3" />
+    <PackageReference Include="TxFileManager" Version="1.5.0.1" />
   </ItemGroup>
   <ItemGroup>
     <Compile Remove="Logic\Menu\MenuType.cs" />

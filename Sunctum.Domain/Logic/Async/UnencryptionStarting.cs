@@ -1,4 +1,6 @@
-﻿using NLog;
+﻿using ChinhDo.Transactions;
+using Homura.ORM;
+using NLog;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Encrypt;
 using Sunctum.Domain.Logic.Load;
@@ -8,6 +10,7 @@ using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Transactions;
 using Unity;
 
 namespace Sunctum.Domain.Logic.Async
@@ -43,18 +46,61 @@ namespace Sunctum.Domain.Logic.Async
             LibraryManager.Value.BookSource.AddRange(BookFacade.FindAllWithFillContents(null));
 
             var books = LibraryManager.Value.BookSource;
+            var dataOpUnit = new DataOperationUnit();
 
             foreach (var book in books)
             {
                 var pages = book.Contents;
                 foreach (var page in pages)
                 {
-                    sequence.Add(() => _TargetEncryptImage = EncryptImageFacade.FindBy(page.Image.ID));
-                    sequence.Add(() => Encryptor.Decrypt(_TargetEncryptImage.EncryptFilePath, page.Image.AbsoluteMasterPath, Password));
-                    sequence.Add(() => File.Delete($"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{page.Image.ID}{Path.GetExtension(page.Image.AbsoluteMasterPath)}"));
-                    sequence.Add(() => EncryptImageFacade.DeleteBy(page.Image.ID));
-                    sequence.Add(() => ThumbnailFacade.DeleteWhereIDIs(page.Image.Thumbnail.ID));
-                    sequence.Add(() => page.Image.Thumbnail = null);
+                    sequence.Add(() =>
+                    {
+                        dataOpUnit = new DataOperationUnit();
+                        dataOpUnit.Open(ConnectionManager.DefaultConnection);
+                        dataOpUnit.BeginTransaction();
+                        try
+                        {
+                            using (var scope = new TransactionScope())
+                            {
+                                _TargetEncryptImage = EncryptImageFacade.FindBy(page.Image.ID, dataOpUnit);
+                                if (_TargetEncryptImage is not null)
+                                {
+                                    var fileMgr = new TxFileManager();
+                                    Encryptor.Decrypt(_TargetEncryptImage.EncryptFilePath, page.Image.AbsoluteMasterPath, Password, fileMgr);
+                                    fileMgr.Delete(_TargetEncryptImage.EncryptFilePath);
+                                    EncryptImageFacade.DeleteBy(page.Image.ID, dataOpUnit);
+                                }
+                                if (page.Image.Thumbnail is not null)
+                                {
+                                    ThumbnailFacade.DeleteWhereIDIs(page.Image.Thumbnail.ID, dataOpUnit);
+                                }
+                                page.Image.Thumbnail = null;
+                                page.Image.IsEncrypted = false;
+                                ImageFacade.Update(page.Image, dataOpUnit);
+                                scope.Complete();
+                            }
+                            dataOpUnit.Commit();
+                        }
+                        catch (Exception)
+                        {
+                            if (File.Exists(page.Image.AbsoluteMasterPath))
+                            {
+                                EncryptImageFacade.DeleteBy(page.Image.ID, dataOpUnit);
+                                if (page.Image.Thumbnail is not null)
+                                {
+                                    ThumbnailFacade.DeleteWhereIDIs(page.Image.Thumbnail.ID, dataOpUnit);
+                                }
+                                page.Image.Thumbnail = null;
+                                page.Image.IsEncrypted = false;
+                                ImageFacade.Update(page.Image, dataOpUnit);
+                                dataOpUnit.Commit();
+                            }
+                            else
+                            {
+                                dataOpUnit.Rollback();
+                            }
+                        }
+                    });
                 }
             }
             sequence.Add(() => PasswordManager.RemovePassword(Environment.UserName));

@@ -76,7 +76,7 @@ namespace Sunctum.Domain.Logic.Import
         private void CreateTaskToInsertImage(string entryName, string destination, DataOperationUnit dataOpUnit)
         {
             Guid imageID = Guid.NewGuid();
-            InsertedImage = new ImageViewModel(imageID, entryName, destination, Configuration.ApplicationConfiguration);
+            InsertedImage = new ImageViewModel(imageID, entryName, destination, Configuration.ApplicationConfiguration.LibraryIsEncrypted, Configuration.ApplicationConfiguration);
             InsertedImage.ByteSize = Size;
             ImageFacade.Insert(InsertedImage, dataOpUnit);
         }

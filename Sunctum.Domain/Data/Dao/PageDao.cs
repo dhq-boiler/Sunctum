@@ -1,11 +1,11 @@
 ﻿
 
+using Homura.Extensions;
 using Homura.ORM;
 using Homura.QueryBuilder.Iso.Dml;
 using Homura.QueryBuilder.Vendor.SQLite.Dml;
 using NLog;
 using Sunctum.Domain.Models;
-using Sunctum.Domain.Util;
 using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -35,15 +35,9 @@ namespace Sunctum.Domain.Data.Dao
                     var targetColumn = columnDefinitions.SingleOrDefault(c => c.ColumnName == column.ColumnName);
                     if (targetColumn != null)
                     {
-                        if (targetColumn.DataType != column.DataType)
+                        if (targetColumn.DBDataType != column.DBDataType)
                         {
-                            throw new NotMatchColumnException($"{TableName}.{column.ColumnName} DataType client:{column.DataType}, but database:{targetColumn.DataType}");
-                        }
-                        if (targetColumn.Order != column.Order)
-                        {
-                            var overridedColumn = new OverridedColumn((Column)column, newOrder: targetColumn.Order);
-                            OverridedColumns.Add(overridedColumn);
-                            s_logger.Debug($"{TableName}.{column.ColumnName} overrided:{overridedColumn}");
+                            throw new NotMatchColumnException($"{TableName}.{column.ColumnName} DataType client:{column.DBDataType}, but database:{targetColumn.DBDataType}");
                         }
                     }
                     else
@@ -196,6 +190,7 @@ namespace Sunctum.Domain.Data.Dao
                                                    .Column("i", "ID").As("iId")
                                                    .Column("i", "Title").As("iTitle")
                                                    .Column("i", "MasterPath").As("iMasterPath")
+                                                   .Column("i", "IsEncrypted").As("iIsEncrypted")
                                                    .Column("t", "ID").As("tId")
                                                    .Column("t", "ImageID").As("tImageId")
                                                    .Column("t", "Path").As("tPath")
@@ -216,6 +211,7 @@ namespace Sunctum.Domain.Data.Dao
                                 page.Image = new ImageViewModel(rdr.SafeGetGuid("iId", null),
                                                                 rdr.SafeGetString("iTitle", null),
                                                                 rdr.SafeGetString("iMasterpath", null),
+                                                                rdr.SafeGetBoolean("iIsEncrypted", null),
                                                                 Configuration.ApplicationConfiguration);
 
                                 if (string.IsNullOrWhiteSpace(page.Image.RelativeMasterPath))

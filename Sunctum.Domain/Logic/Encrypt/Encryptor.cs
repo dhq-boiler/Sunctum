@@ -1,5 +1,6 @@
 ﻿
 
+using ChinhDo.Transactions;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Logic.Load;
 using Sunctum.Domain.Models;
@@ -139,7 +140,7 @@ namespace Sunctum.Domain.Logic.Encrypt
             }
         }
 
-        public static void Decrypt(string encryptedFilePath, string outputFilePath, string password)
+        public static void Decrypt(string encryptedFilePath, string outputFilePath, string password, TxFileManager txFileManager)
         {
             int len;
             byte[] buffer = new byte[4096];
@@ -148,6 +149,8 @@ namespace Sunctum.Domain.Logic.Encrypt
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(outputFilePath));
             }
+
+            txFileManager.Snapshot(outputFilePath);
 
             using (var outstream = new FileStream(outputFilePath, FileMode.Create))
             {

@@ -115,10 +115,10 @@ namespace Sunctum.Domain.Data.DaoFacade
             return ret;
         }
 
-        public static void Update(ImageViewModel image)
+        public static void Update(ImageViewModel image, DataOperationUnit dataOpUnit = null)
         {
             ImageDao dao = new ImageDao();
-            dao.Update(image.ToEntity());
+            dao.Update(image.ToEntity(), dataOpUnit?.CurrentConnection);
         }
     }
 }
