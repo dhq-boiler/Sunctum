@@ -32,7 +32,7 @@ namespace Sunctum.Domain.Data.Dao
                                                    .Column("it", "TagID").As("itTagId")
                                                    .From.Table(new Table<Book>(typeof(VersionOrigin)).Name, "b")
                                                    .Inner.Join(new Table<Page>().Name, "p").On.Column("p", "BookID").EqualTo.Column("b", "ID")
-                                                   .Inner.Join(new Table<Image>().Name, "i").On.Column("i", "ID").EqualTo.Column("p", "ImageID")
+                                                   .Inner.Join(new Table<Image>(typeof(VersionOrigin)).Name, "i").On.Column("i", "ID").EqualTo.Column("p", "ImageID")
                                                    .Inner.Join(new Table<ImageTag>().Name, "it").On.Column("it", "ImageID").EqualTo.Column("i", "ID"))
                     {
                         string sql = query.ToSql();

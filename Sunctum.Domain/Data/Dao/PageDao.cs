@@ -35,14 +35,13 @@ namespace Sunctum.Domain.Data.Dao
                     var targetColumn = columnDefinitions.SingleOrDefault(c => c.ColumnName == column.ColumnName);
                     if (targetColumn != null)
                     {
-                        if (targetColumn.DBDataType != column.DBDataType)
-                        {
-                            throw new NotMatchColumnException($"{TableName}.{column.ColumnName} DataType client:{column.DBDataType}, but database:{targetColumn.DBDataType}");
-                        }
+                        throw new NotMatchColumnException($"{TableName}.{column.ColumnName} DataType client:{column.DBDataType}, but database:{targetColumn.DBDataType}");
                     }
-                    else
+                    if (targetColumn.Order != column.Order)
                     {
-                        throw new NotExistColumnException($"{TableName}.{column.ColumnName} not exists current database. ConnectionString:{this.CurrentConnection.ConnectionString}");
+                        var overridedColumn = new OverridedColumn((Column)column, newOrder: targetColumn.Order);
+                        OverridedColumns.Add(overridedColumn);
+                        s_logger.Debug($"{TableName}.{column.ColumnName} overrided:{overridedColumn}");
                     }
                 }
             }
