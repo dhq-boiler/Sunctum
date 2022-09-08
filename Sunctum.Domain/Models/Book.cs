@@ -28,7 +28,7 @@ namespace Sunctum.Domain.Models
         [Since(typeof(VersionOrigin))]
         public DateTime? PublishDate { get; internal set; }
 
-        [Column("ByteSize", "INTEGER", 4)]
+        [Column("ByteSize", "INTEGER", 4, Homura.ORM.HandlingDefaultValue.AsValue)]
         [Since(typeof(Version_1))]
         public long? ByteSize
         {
@@ -38,7 +38,7 @@ namespace Sunctum.Domain.Models
             set { SetProperty(ref _ByteSize, value); }
         }
 
-        [Column("FingerPrint", "TEXT", 5)]
+        [Column("FingerPrint", "TEXT", 5, Homura.ORM.HandlingDefaultValue.AsValue)]
         [Since(typeof(Version_2))]
         public string FingerPrint
         {

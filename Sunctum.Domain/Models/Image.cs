@@ -23,7 +23,7 @@ namespace Sunctum.Domain.Models
             set { SetProperty(ref _RelativeMasterPath, value); }
         }
 
-        [Column("ByteSize", "INTEGER", 3)]
+        [Column("ByteSize", "INTEGER", 3, Homura.ORM.HandlingDefaultValue.AsValue)]
         [Since(typeof(Version_1))]
         public long? ByteSize
         {
