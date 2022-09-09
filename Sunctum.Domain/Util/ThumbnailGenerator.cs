@@ -78,54 +78,6 @@ namespace Sunctum.Domain.Util
             }
         }
 
-        public static string ScaleDownAndSave(Stream stream, string filename)
-        {
-            try
-            {
-                using (Bitmap src = new Bitmap(stream))
-                {
-                    int width, height;
-
-                    if (src.Width > src.Height)
-                    {
-                        width = 300;
-                        height = (int)(300.0 / src.Width * src.Height);
-                    }
-                    else
-                    {
-                        height = 300;
-                        width = (int)(300.0 / src.Height * src.Width);
-                    }
-
-                    Bitmap dest = new Bitmap(width, height);
-                    using (Graphics g = Graphics.FromImage(dest))
-                    {
-                        foreach (InterpolationMode im in Enum.GetValues(typeof(InterpolationMode)))
-                        {
-                            if (im == InterpolationMode.Invalid)
-                                continue;
-                            g.InterpolationMode = im;
-                            g.DrawImage(src, 0, 0, width, height);
-                            string newFileName = GetAbsoluteCacheFilePath(filename);
-                            CreateCacheDirectoryIfDoesntExist();
-                            dest.Save(newFileName);
-                            return newFileName;
-                        }
-                    }
-                }
-            }
-            catch (IOException)
-            {
-                throw;
-            }
-            catch (ArgumentException)
-            {
-                throw;
-            }
-
-            return null;
-        }
-
         public static MemoryStream ScaleDownAndSaveAndToMemoryStream(Stream stream, string filename)
         {
             try
