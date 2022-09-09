@@ -33,9 +33,9 @@ namespace Sunctum.Domain.Data.Dao
                 if (!columnDefinitions.Contains(column))
                 {
                     var targetColumn = columnDefinitions.SingleOrDefault(c => c.ColumnName == column.ColumnName);
-                    if (targetColumn != null)
+                    if (targetColumn is null)
                     {
-                        throw new NotMatchColumnException($"{TableName}.{column.ColumnName} DataType client:{column.DBDataType}, but database:{targetColumn.DBDataType}");
+                        throw new NotMatchColumnException($"{TableName}.{column.ColumnName} DataType client:{column.DBDataType}, but database didn't have {TableName}.{column.ColumnName}");
                     }
                     if (targetColumn.Order != column.Order)
                     {
