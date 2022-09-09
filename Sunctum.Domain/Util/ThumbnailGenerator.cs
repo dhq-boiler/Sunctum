@@ -2,6 +2,7 @@
 
 using NLog;
 using OpenCvSharp;
+using OpenCvSharp.Extensions;
 using Sunctum.Domain.Models;
 using System;
 using System.Drawing;
@@ -49,7 +50,7 @@ namespace Sunctum.Domain.Util
         {
             try
             {
-                using (Bitmap src = new Bitmap(filename))
+                using (var src = new Mat(filename, ImreadModes.Unchanged))
                 {
                     int width, height;
 
@@ -63,20 +64,8 @@ namespace Sunctum.Domain.Util
                         height = 300;
                         width = (int)(300.0 / src.Height * src.Width);
                     }
-
-                    Bitmap dest = new Bitmap(width, height);
-                    using (Graphics g = Graphics.FromImage(dest))
-                    {
-                        foreach (InterpolationMode im in Enum.GetValues(typeof(InterpolationMode)))
-                        {
-                            if (im == InterpolationMode.Invalid)
-                                continue;
-                            g.InterpolationMode = im;
-                            g.DrawImage(src, 0, 0, width, height);
-                            return dest;
-                        }
-                    }
-                    return null;
+                    src.Resize(new OpenCvSharp.Size(width, height), 0, 0, OpenCvSharp.InterpolationFlags.Lanczos4);
+                    return BitmapConverter.ToBitmap(src);
                 }
             }
             catch (IOException)
