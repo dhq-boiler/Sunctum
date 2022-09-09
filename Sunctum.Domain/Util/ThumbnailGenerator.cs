@@ -1,6 +1,8 @@
 ﻿
 
 using NLog;
+using OpenCvSharp;
+using OpenCvSharp.Extensions;
 using Sunctum.Domain.Models;
 using System;
 using System.Drawing;
@@ -48,7 +50,7 @@ namespace Sunctum.Domain.Util
         {
             try
             {
-                using (Bitmap src = new Bitmap(filename))
+                using (var src = new Mat(filename, ImreadModes.Unchanged))
                 {
                     int width, height;
 
@@ -62,20 +64,8 @@ namespace Sunctum.Domain.Util
                         height = 300;
                         width = (int)(300.0 / src.Height * src.Width);
                     }
-
-                    Bitmap dest = new Bitmap(width, height);
-                    using (Graphics g = Graphics.FromImage(dest))
-                    {
-                        foreach (InterpolationMode im in Enum.GetValues(typeof(InterpolationMode)))
-                        {
-                            if (im == InterpolationMode.Invalid)
-                                continue;
-                            g.InterpolationMode = im;
-                            g.DrawImage(src, 0, 0, width, height);
-                            return dest;
-                        }
-                    }
-                    return null;
+                    src.Resize(new OpenCvSharp.Size(width, height), 0, 0, OpenCvSharp.InterpolationFlags.Lanczos4);
+                    return BitmapConverter.ToBitmap(src);
                 }
             }
             catch (IOException)
@@ -86,61 +76,14 @@ namespace Sunctum.Domain.Util
             {
                 throw;
             }
-        }
-
-        public static string ScaleDownAndSave(Stream stream, string filename)
-        {
-            try
-            {
-                using (Bitmap src = new Bitmap(stream))
-                {
-                    int width, height;
-
-                    if (src.Width > src.Height)
-                    {
-                        width = 300;
-                        height = (int)(300.0 / src.Width * src.Height);
-                    }
-                    else
-                    {
-                        height = 300;
-                        width = (int)(300.0 / src.Height * src.Width);
-                    }
-
-                    Bitmap dest = new Bitmap(width, height);
-                    using (Graphics g = Graphics.FromImage(dest))
-                    {
-                        foreach (InterpolationMode im in Enum.GetValues(typeof(InterpolationMode)))
-                        {
-                            if (im == InterpolationMode.Invalid)
-                                continue;
-                            g.InterpolationMode = im;
-                            g.DrawImage(src, 0, 0, width, height);
-                            string newFileName = GetAbsoluteCacheFilePath(filename);
-                            CreateCacheDirectoryIfDoesntExist();
-                            dest.Save(newFileName);
-                            return newFileName;
-                        }
-                    }
-                }
-            }
-            catch (IOException)
-            {
-                throw;
-            }
-            catch (ArgumentException)
-            {
-                throw;
-            }
-
-            return null;
         }
 
         public static MemoryStream ScaleDownAndSaveAndToMemoryStream(Stream stream, string filename)
         {
             try
             {
-                using (Bitmap src = new Bitmap(stream))
+                stream.Seek(0, SeekOrigin.Begin);
+                using (var src = Mat.FromStream(stream, ImreadModes.Unchanged))
                 {
                     int width, height;
 
@@ -154,34 +97,8 @@ namespace Sunctum.Domain.Util
                         height = 300;
                         width = (int)(300.0 / src.Height * src.Width);
                     }
-
-                    Bitmap dest = new Bitmap(width, height);
-                    using (Graphics g = Graphics.FromImage(dest))
-                    {
-                        foreach (InterpolationMode im in Enum.GetValues(typeof(InterpolationMode)))
-                        {
-                            if (im == InterpolationMode.Invalid)
-                                continue;
-                            g.InterpolationMode = im;
-                            g.DrawImage(src, 0, 0, width, height);
-                            var memstream = new MemoryStream();
-                            switch (Path.GetExtension(filename))
-                            {
-                                case ".jpeg":
-                                case ".jpg":
-                                    dest.Save(memstream, ImageFormat.Jpeg);
-                                    break;
-                                case ".png":
-                                    dest.Save(memstream, ImageFormat.Png);
-                                    break;
-                                case ".bmp":
-                                    dest.Save(memstream, ImageFormat.Bmp);
-                                    break;
-                            }
-                            memstream.Seek(0, SeekOrigin.Begin);
-                            return memstream;
-                        }
-                    }
+                    src.Resize(new OpenCvSharp.Size(width, height), 0, 0, OpenCvSharp.InterpolationFlags.Lanczos4);
+                    return src.ToMemoryStream(ext: Path.GetExtension(filename));
                 }
             }
             catch (IOException)
