@@ -98,6 +98,7 @@ namespace Sunctum
             containerRegistry.RegisterSingleton<IDataAccessManager, DataAccessManager>();
             containerRegistry.RegisterInstance<IDaoBuilder>(new DaoBuilder(new Connection(ConnectionStringBuilder.Build(Specifications.APP_DB_FILENAME), typeof(SQLiteConnection))), "AppDao");
             containerRegistry.RegisterInstance<IDaoBuilder>(new DaoBuilder(new Connection(Specifications.GenerateConnectionString(Configuration.ApplicationConfiguration.WorkingDirectory), typeof(SQLiteConnection))), "WorkingDao");
+            containerRegistry.RegisterInstance<IDaoBuilder>(new DaoBuilder(new Connection(ConnectionStringBuilder.Build(Specifications.VC_DB_FILENAME), typeof(SQLiteConnection))), "VcDao");
 
             containerRegistry.RegisterDialog<ChangeStar, ChangeStarViewModel>();
             containerRegistry.RegisterDialog<BookProperty, BookPropertyDialogViewModel>();
