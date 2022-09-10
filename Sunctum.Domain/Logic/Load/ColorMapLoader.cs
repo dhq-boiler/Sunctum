@@ -43,12 +43,15 @@ namespace Sunctum.Domain.Logic.Load
             using (var dou = new DataOperationUnit())
             {
                 dou.Open(ConnectionManager.DefaultConnection);
+                dou.BeginTransaction();
 
                 for (int i = 0; i < colorInfoList.Count(); ++i)
                 {
                     var value = colorInfoList.ElementAt(i);
                     ColorMapFacade.InsertOrReplace(new ColorMap(bookID, (int)color, i, value.Median, imageID, Specifications.HORIZONTAL_SEGMENT_COUNT, Specifications.VERTICAL_SEGMENT_COUNT), dou);
                 }
+
+                dou.Commit();
             }
         }
     }

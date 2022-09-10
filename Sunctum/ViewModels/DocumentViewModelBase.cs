@@ -1032,6 +1032,7 @@ namespace Sunctum.ViewModels
 
         public async Task SaveOpenedBookContentsOrder()
         {
+            Debug.Assert(OpenedBook is not null);
             await LibraryManager.Value.SaveBookContentsOrder(OpenedBook);
             SetFirstPage();
         }

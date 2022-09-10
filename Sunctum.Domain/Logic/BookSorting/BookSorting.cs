@@ -44,6 +44,7 @@ namespace Sunctum.Domain.Logic.BookSorting
         {
             using (var dou = new DataOperationUnit())
             {
+                dou.Open(ConnectionManager.DefaultConnection);
                 var loading = loadedSource.Where(b => b.Author == null);
                 foreach (var book in loading)
                 {
@@ -57,6 +58,7 @@ namespace Sunctum.Domain.Logic.BookSorting
             var notAvailable = loadedSource.Where(x => x.FirstPage == null);
             using (var dou = new DataOperationUnit())
             {
+                dou.Open(ConnectionManager.DefaultConnection);
                 foreach (var book in notAvailable)
                 {
                     BookLoading.Load(book, dou);

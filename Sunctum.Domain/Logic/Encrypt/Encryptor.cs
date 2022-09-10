@@ -1,6 +1,7 @@
 ﻿
 
 using ChinhDo.Transactions;
+using Homura.ORM;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Logic.Load;
 using Sunctum.Domain.Models;
@@ -71,7 +72,15 @@ namespace Sunctum.Domain.Logic.Encrypt
             encryptImage.EncryptFilePath = OutFilePath;
 
             EncryptImageDao dao = new EncryptImageDao();
-            dao.InsertOrReplace(encryptImage);
+            using (var dataOpUnit = new DataOperationUnit())
+            {
+                dataOpUnit.Open(ConnectionManager.DefaultConnection);
+                dataOpUnit.BeginTransaction();
+
+                dao.InsertOrReplace(encryptImage);
+
+                dataOpUnit.Commit();
+            }
         }
 
         public static void DeleteOriginal(PageViewModel page)
