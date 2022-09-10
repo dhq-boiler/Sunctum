@@ -18,10 +18,6 @@ namespace Sunctum.Converters
             var task = Task.Run(() =>
             {
                 ContentsLoadTask.Load(page);
-                if (page.Image is not null && page.Image.IsEncrypted)
-                {
-                    page.Image.DecryptImage(true);
-                }
             });
             return new TaskCompletionSource<object>(task);
         }

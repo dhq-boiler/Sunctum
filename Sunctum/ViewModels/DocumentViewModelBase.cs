@@ -1034,15 +1034,6 @@ namespace Sunctum.ViewModels
         {
             Debug.Assert(OpenedBook is not null);
             await LibraryManager.Value.SaveBookContentsOrder(OpenedBook);
-            SetFirstPage();
-        }
-
-        private void SetFirstPage()
-        {
-            if (OpenedBook.Contents.Count() > 0)
-            {
-                OpenedBook.FirstPage = OpenedBook.Contents.First();
-            }
         }
 
         #endregion //ページ単位ソート

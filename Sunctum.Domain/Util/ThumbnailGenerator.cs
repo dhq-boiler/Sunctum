@@ -64,8 +64,10 @@ namespace Sunctum.Domain.Util
                         height = 300;
                         width = (int)(300.0 / src.Height * src.Width);
                     }
-                    src.Resize(new OpenCvSharp.Size(width, height), 0, 0, OpenCvSharp.InterpolationFlags.Lanczos4);
-                    return BitmapConverter.ToBitmap(src);
+                    using (var small = src.Resize(new OpenCvSharp.Size(width, height), 0, 0, OpenCvSharp.InterpolationFlags.Lanczos4))
+                    {
+                        return BitmapConverter.ToBitmap(small);
+                    }
                 }
             }
             catch (IOException)
@@ -97,8 +99,10 @@ namespace Sunctum.Domain.Util
                         height = 300;
                         width = (int)(300.0 / src.Height * src.Width);
                     }
-                    src.Resize(new OpenCvSharp.Size(width, height), 0, 0, OpenCvSharp.InterpolationFlags.Lanczos4);
-                    return src.ToMemoryStream(ext: Path.GetExtension(filename));
+                    using (var small = src.Resize(new OpenCvSharp.Size(width, height), 0, 0, OpenCvSharp.InterpolationFlags.Lanczos4))
+                    {
+                        return small.ToMemoryStream(ext: Path.GetExtension(filename));
+                    }
                 }
             }
             catch (IOException)
