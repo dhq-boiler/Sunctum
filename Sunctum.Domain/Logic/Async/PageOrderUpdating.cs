@@ -27,6 +27,14 @@ namespace Sunctum.Domain.Logic.Async
             {
                 sequence.Add(() => UpdatePageOrderIf(_index++));
             }
+
+            sequence.Add(() =>
+            {
+                if (Target.Contents.Count > 0)
+                {
+                    Target.FirstPage = Target.Contents[0];
+                }
+            });
         }
 
         private void UpdatePageOrderIf(int i)
