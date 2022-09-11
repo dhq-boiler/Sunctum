@@ -6,6 +6,7 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sunctum", "Sunctum\Sunctum.csproj", "{98CE041B-C971-4963-8A82-7E3F56CA4BC6}"
 	ProjectSection(ProjectDependencies) = postProject
 		{2CFDB688-BBBE-4F1D-876A-CAE825761B57} = {2CFDB688-BBBE-4F1D-876A-CAE825761B57}
+		{FF8FFB8A-DC78-44E6-8017-FF5BCA453374} = {FF8FFB8A-DC78-44E6-8017-FF5BCA453374}
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sunctum.Infrastructure", "Sunctum.Infrastructure\Sunctum.Infrastructure.csproj", "{2CF31D9A-E84A-415A-8063-47BD28BA52AC}"
@@ -38,9 +39,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sunctum.Domain.Test", "Sunc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PickoutCover", "PickoutCover\PickoutCover.csproj", "{8BF5837E-0632-4AD0-8273-B32F637C3246}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataStructureBreakdown", "DataStructureBreakdown\DataStructureBreakdown.csproj", "{4819AE12-78A0-48A3-9031-F26D0304BF4F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataStructureBreakdown", "DataStructureBreakdown\DataStructureBreakdown.csproj", "{4819AE12-78A0-48A3-9031-F26D0304BF4F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CopyAsYamlFormat", "CopyAsYamlFormat\CopyAsYamlFormat.csproj", "{7DA0ED5C-7586-485A-AD89-AB7D38654C73}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CopyAsYamlFormat", "CopyAsYamlFormat\CopyAsYamlFormat.csproj", "{7DA0ED5C-7586-485A-AD89-AB7D38654C73}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "boilersUpdater", "boilersUpdater\boilersUpdater.csproj", "{FF8FFB8A-DC78-44E6-8017-FF5BCA453374}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -96,6 +99,10 @@ Global
 		{7DA0ED5C-7586-485A-AD89-AB7D38654C73}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7DA0ED5C-7586-485A-AD89-AB7D38654C73}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7DA0ED5C-7586-485A-AD89-AB7D38654C73}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF8FFB8A-DC78-44E6-8017-FF5BCA453374}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF8FFB8A-DC78-44E6-8017-FF5BCA453374}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF8FFB8A-DC78-44E6-8017-FF5BCA453374}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF8FFB8A-DC78-44E6-8017-FF5BCA453374}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

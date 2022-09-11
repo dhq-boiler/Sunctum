@@ -45,6 +45,8 @@ using Unity;
 using Xceed.Wpf.AvalonDock;
 using Xceed.Wpf.AvalonDock.Layout;
 using Xceed.Wpf.AvalonDock.Layout.Serialization;
+using YamlDotNet.Core.Tokens;
+using YamlDotNet.Core;
 
 namespace Sunctum.ViewModels
 {
@@ -167,6 +169,8 @@ namespace Sunctum.ViewModels
         public ICommand UpdateBookFingerPrintAllCommand { get; set; }
 
         public ICommand UpdateBookFingerPrintStillNullCommand { get; set; }
+
+        public ICommand UpdateApplicationCommand { get; set; }
 
         #endregion //コマンド
 
@@ -396,6 +400,10 @@ namespace Sunctum.ViewModels
             {
                 await LibraryVM.UpdateBookFingerPrintStillNull();
             });
+            UpdateApplicationCommand = new DelegateCommand(() =>
+            {
+                Process.Start(Path.Combine(Directory.GetCurrentDirectory(), "boilersUpdater", "boilersUpdater.exe"));
+            });
         }
 
         #endregion //コマンド登録
@@ -602,6 +610,7 @@ namespace Sunctum.ViewModels
             InitializeWindowComponent();
             ManageVcDB();
             ManageAppDB();
+            InitializeVcGitHubReleasesLatest();
             IncrementNumberOfBoots();
             RecordVersionControlIfFirstLaunch();
 
@@ -649,6 +658,20 @@ namespace Sunctum.ViewModels
             catch (Exception e)
             {
                 Close();
+            }
+        }
+
+        private void InitializeVcGitHubReleasesLatest()
+        {
+            var dao = DataAccessManager.VcDao.Build<GitHubReleasesLatestDao>();
+            var records = dao.FindAll();
+            if (records.Count() == 0)
+            {
+                var newrecord = new GitHubReleasesLatest()
+                {
+                    URL = "https://api.github.com/repos/dhq-boiler/Sunctum/releases/latest",
+                };
+                dao.Insert(newrecord);
             }
         }
 

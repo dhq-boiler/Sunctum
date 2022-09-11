@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>boilersUpdater</id>
+    <authors>dhq_boiler</authors>
+    <owners>dhq_boiler</owners>
+	<projectUrl>https://github.com/dhq-boiler/boilersUpdater</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+	<license type="expression">MIT</license>
+    <description>Software auto updater</description>
+    <releaseNotes></releaseNotes>
+    <copyright>$copyright$</copyright>
+    <tags>auto updater</tags>
+  </metadata>
+  <files>
+	  <file src="bin\Release\net5.0-windows\*.dll" target="lib\net5.0-windows" />
+	  <file src="bin\Release\net5.0-windows\boilersUpdater.pdb" target="lib\net5.0-windows" />
+	  <file src="bin\Release\net6.0-windows\*.dll" target="lib\net6.0-windows" />
+	  <file src="bin\Release\net6.0-windows\boilersUpdater.pdb" target="lib\net6.0-windows" />
+  </files>
+</package>
