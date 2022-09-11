@@ -195,7 +195,7 @@ namespace boilersUpdater.ViewModels
                                         Major = int.Parse(mc.Groups["major"].Value),
                                         Minor = mc.Groups.ContainsKey("minor") ? int.Parse(mc.Groups["minor"].Value) : 0,
                                         Build = mc.Groups.ContainsKey("build") ? int.Parse(mc.Groups["build"].Value) : 0,
-                                        Revision = mc.Groups.ContainsKey("revision  ") ? int.Parse(mc.Groups["revision"].Value) : 0,
+                                        Revision = mc.Groups.ContainsKey("revision") ? int.Parse(mc.Groups["revision"].Value) : 0,
                                         IsValid = true,
                                         InstalledDate = DateTime.Now,
                                         RetiredDate = null,
