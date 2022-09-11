@@ -13,5 +13,8 @@ namespace Sunctum.Managers
 
         [Dependency("WorkingDao")]
         public IDaoBuilder WorkingDao { get; set; }
+
+        [Dependency("VcDao")]
+        public IDaoBuilder VcDao { get; set; }
     }
 }

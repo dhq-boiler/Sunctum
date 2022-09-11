@@ -25,6 +25,7 @@ namespace Sunctum.Domain.Models
         public static readonly string APPCONFIG_FILENAME = "appconfig.yml";
         public static readonly string APP_DB_ID = "AppDB";
         public static readonly string APP_DB_FILENAME = "app.db";
+        public static readonly string VC_DB_FILENAME = "vc.db";
         public static readonly string WORKSPACE_DB_ID = "WorkspaceDB";
         public static readonly string WORKSPACE_DB_FILENAME = "library.db";
         public static readonly string MASTER_DIRECTORY = "data";

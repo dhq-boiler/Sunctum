@@ -790,6 +790,15 @@ namespace Sunctum.Properties {
         }
         
         /// <summary>
+        ///   Update Sunctum... に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MainWindow_Help_UpdateApp {
+            get {
+                return ResourceManager.GetString("MainWindow_Help_UpdateApp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   _SEARCH に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string MainWindow_Search {

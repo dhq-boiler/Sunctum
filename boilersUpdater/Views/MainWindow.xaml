@@ -1,0 +1,146 @@
+﻿<Window
+    x:Class="boilersUpdater.Views.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="clr-namespace:boilersUpdater.Views.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:boilersUpdater"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:viewModels="clr-namespace:boilersUpdater.ViewModels"
+    xmlns:views="clr-namespace:boilersUpdater.Views"
+    Title="MainWindow"
+    Width="800"
+    Height="450"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <converters:StageToVisibilityConverter x:Key="StageToVisibility" />
+    </Window.Resources>
+    <Grid>
+        <DockPanel Visibility="{Binding Stage.Value, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource StageToVisibility}, ConverterParameter={x:Static viewModels:EStage.Stage1}}">
+            <DockPanel DockPanel.Dock="Bottom">
+                <DockPanel DockPanel.Dock="Right">
+                    <DockPanel.Resources>
+                        <Style TargetType="Button">
+                            <Setter Property="Width" Value="75" />
+                            <Setter Property="Height" Value="25" />
+                            <Setter Property="Margin" Value="5" />
+                        </Style>
+                    </DockPanel.Resources>
+                    <Button Command="{Binding StartboilersUpdater}" Content="アップデート" />
+                    <Button Command="{Binding Cancel}" Content="キャンセル" />
+                </DockPanel>
+                <DockPanel />
+            </DockPanel>
+            <StackPanel
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Orientation="Vertical">
+                <ItemsControl ItemsSource="{Binding Contents}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Label Content="{Binding}" FontSize="20" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </DockPanel>
+        <DockPanel Visibility="{Binding Stage.Value, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource StageToVisibility}, ConverterParameter={x:Static viewModels:EStage.Stage2}}">
+            <ProgressBar
+                Height="30"
+                DockPanel.Dock="Top"
+                Maximum="100"
+                Value="{Binding ProgressPercentage.Value}" />
+            <DockPanel DockPanel.Dock="Top">
+                <Label DockPanel.Dock="Right">
+                    <TextBlock>
+                        <Run Text="{Binding ProgressPercentage.Value}" />
+                        <Run Text="%" />
+                    </TextBlock>
+                </Label>
+                <Label DockPanel.Dock="Left" Visibility="Collapsed">
+                    <TextBlock>
+                        <Run Text="{Binding BytesReceived.Value}" />
+                        <Run Text="/" />
+                        <Run Text="{Binding TotalBytesToReceive.Value}" />
+                    </TextBlock>
+                </Label>
+            </DockPanel>
+            <DockPanel DockPanel.Dock="Bottom">
+                <DockPanel DockPanel.Dock="Right">
+                    <DockPanel.Resources>
+                        <Style TargetType="Button">
+                            <Setter Property="Width" Value="75" />
+                            <Setter Property="Height" Value="25" />
+                            <Setter Property="Margin" Value="5" />
+                        </Style>
+                    </DockPanel.Resources>
+                    <Button Command="{Binding Next}" Content="次へ" />
+                </DockPanel>
+                <DockPanel />
+            </DockPanel>
+            <views:CustomListView ItemsSource="{Binding History}">
+                <views:CustomListView.ItemTemplate>
+                    <DataTemplate>
+                        <Label Content="{Binding}" />
+                    </DataTemplate>
+                </views:CustomListView.ItemTemplate>
+            </views:CustomListView>
+        </DockPanel>
+        <DockPanel Visibility="{Binding Stage.Value, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource StageToVisibility}, ConverterParameter={x:Static viewModels:EStage.Stage3}}">
+            <ProgressBar
+                Height="30"
+                DockPanel.Dock="Top"
+                Maximum="100"
+                Value="{Binding ProgressPercentage.Value}" />
+            <DockPanel DockPanel.Dock="Top">
+                <Label DockPanel.Dock="Right">
+                    <TextBlock>
+                        <Run Text="{Binding ProgressPercentage.Value}" />
+                        <Run Text="%" />
+                    </TextBlock>
+                </Label>
+                <Label DockPanel.Dock="Left" Visibility="Collapsed">
+                    <TextBlock>
+                        <Run Text="{Binding BytesReceived.Value}" />
+                        <Run Text="/" />
+                        <Run Text="{Binding TotalBytesToReceive.Value}" />
+                    </TextBlock>
+                </Label>
+            </DockPanel>
+            <DockPanel DockPanel.Dock="Bottom">
+                <DockPanel DockPanel.Dock="Right">
+                    <DockPanel.Resources>
+                        <Style TargetType="Button">
+                            <Setter Property="Width" Value="75" />
+                            <Setter Property="Height" Value="25" />
+                            <Setter Property="Margin" Value="5" />
+                        </Style>
+                    </DockPanel.Resources>
+                    <Button Command="{Binding Next}" Content="次へ" />
+                </DockPanel>
+                <DockPanel />
+            </DockPanel>
+            <views:CustomListView ItemsSource="{Binding History}">
+                <views:CustomListView.ItemTemplate>
+                    <DataTemplate>
+                        <Label Content="{Binding}" />
+                    </DataTemplate>
+                </views:CustomListView.ItemTemplate>
+            </views:CustomListView>
+        </DockPanel>
+        <DockPanel Visibility="{Binding Stage.Value, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource StageToVisibility}, ConverterParameter={x:Static viewModels:EStage.Stage4}}">
+            <StackPanel
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Orientation="Vertical">
+                <ItemsControl ItemsSource="{Binding Contents}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Label Content="{Binding}" FontSize="20" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </DockPanel>
+    </Grid>
+</Window>

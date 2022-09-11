@@ -9,5 +9,7 @@ namespace Sunctum.Domain.Models.Managers
         IDaoBuilder AppDao { get; set; }
 
         IDaoBuilder WorkingDao { get; set; }
+        
+        IDaoBuilder VcDao { get; set; }
     }
 }

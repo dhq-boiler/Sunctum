@@ -45,6 +45,8 @@ using Unity;
 using Xceed.Wpf.AvalonDock;
 using Xceed.Wpf.AvalonDock.Layout;
 using Xceed.Wpf.AvalonDock.Layout.Serialization;
+using YamlDotNet.Core.Tokens;
+using YamlDotNet.Core;
 
 namespace Sunctum.ViewModels
 {
@@ -167,6 +169,8 @@ namespace Sunctum.ViewModels
         public ICommand UpdateBookFingerPrintAllCommand { get; set; }
 
         public ICommand UpdateBookFingerPrintStillNullCommand { get; set; }
+
+        public ICommand UpdateApplicationCommand { get; set; }
 
         #endregion //コマンド
 
@@ -396,6 +400,10 @@ namespace Sunctum.ViewModels
             {
                 await LibraryVM.UpdateBookFingerPrintStillNull();
             });
+            UpdateApplicationCommand = new DelegateCommand(() =>
+            {
+                Process.Start(Path.Combine(Directory.GetCurrentDirectory(), "boilersUpdater", "boilersUpdater.exe"));
+            });
         }
 
         #endregion //コマンド登録
@@ -600,8 +608,11 @@ namespace Sunctum.ViewModels
             SetMainWindowTitle();
             HomeDocumentViewModel.ClearSearchResult();
             InitializeWindowComponent();
+            ManageVcDB();
             ManageAppDB();
+            InitializeVcGitHubReleasesLatest();
             IncrementNumberOfBoots();
+            RecordVersionControlIfFirstLaunch();
 
             Configuration.ApplicationConfiguration.ConnectionString = Specifications.GenerateConnectionString(Configuration.ApplicationConfiguration.WorkingDirectory);
             ConnectionManager.SetDefaultConnection(Configuration.ApplicationConfiguration.ConnectionString, typeof(SQLiteConnection));
@@ -647,6 +658,46 @@ namespace Sunctum.ViewModels
             catch (Exception e)
             {
                 Close();
+            }
+        }
+
+        private void InitializeVcGitHubReleasesLatest()
+        {
+            var dao = DataAccessManager.VcDao.Build<GitHubReleasesLatestDao>();
+            var records = dao.FindAll();
+            if (records.Count() == 0)
+            {
+                var newrecord = new GitHubReleasesLatest()
+                {
+                    URL = "https://api.github.com/repos/dhq-boiler/Sunctum/releases/latest",
+                };
+                dao.Insert(newrecord);
+            }
+        }
+
+        private void RecordVersionControlIfFirstLaunch()
+        {
+            var assembly = Assembly.GetExecutingAssembly().GetName();
+            var version = assembly.Version;
+
+            var attr = (AssemblyInformationalVersionAttribute)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(AssemblyInformationalVersionAttribute));
+            var key = attr.InformationalVersion;
+            var dao = DataAccessManager.VcDao.Build<VersionControlDao>();
+            var records = dao.FindBy(new Dictionary<string, object>() { { "FullVersion", key } });
+            if (records.Count() == 0)
+            {
+                var newrecord = new VersionControl()
+                {
+                    FullVersion = key,
+                    Major = version.Major,
+                    Minor = version.Minor,
+                    Build = version.Build,
+                    Revision = version.Revision,
+                    IsValid = true,
+                    InstalledDate = DateTime.Now,
+                    RetiredDate = null,
+                };
+                dao.Insert(newrecord);
             }
         }
 
@@ -767,6 +818,27 @@ namespace Sunctum.ViewModels
             dvManager.FinishedToUpgradeTo += DvManager_FinishedToUpgradeTo;
 
             dvManager.UpgradeToTargetVersion();
+        }
+
+        private void ManageVcDB()
+        {
+            DataVersionManager dvManager = new DataVersionManager();
+            dvManager.CurrentConnection = DataAccessManager.VcDao.CurrentConnection;
+            dvManager.Mode = VersioningStrategy.ByTick;
+            dvManager.RegisterChangePlan(new ChangePlan_VC_VersionOrigin());
+            dvManager.FinishedToUpgradeTo += DvManager_FinishedToUpgradeTo_VC;
+
+            dvManager.UpgradeToTargetVersion();
+        }
+
+        private void DvManager_FinishedToUpgradeTo_VC(object sender, ModifiedEventArgs e)
+        {
+            s_logger.Info($"Heavy Modifying AppDB Count : {e.ModifiedCount}");
+
+            if (e.ModifiedCount > 0)
+            {
+                SQLiteBaseDao<Dummy>.Vacuum(DataAccessManager.VcDao.CurrentConnection);
+            }
         }
 
         private void DvManager_FinishedToUpgradeTo(object sender, ModifiedEventArgs e)

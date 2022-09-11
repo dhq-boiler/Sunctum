@@ -285,6 +285,7 @@
                                 </MenuItem>
                             </MenuItem>
                             <MenuItem Header="{Binding MainWindow_Help, Source={StaticResource resources}}">
+                                <MenuItem Command="{Binding UpdateApplicationCommand}" Header="{Binding MainWindow_Help_UpdateApp, Source={StaticResource resources}}" />
                                 <MenuItem Command="{Binding AboutSunctumCommand}" Header="{Binding MainWindow_Help_AboutSunctum, Source={StaticResource resources}}" />
                             </MenuItem>
                         </Menu>
