@@ -1,12 +1,14 @@
 ﻿
 
 using Homura.ORM;
+using Nito.AsyncEx;
 using NUnit.Framework;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.Test.Core;
 using Sunctum.Domain.ViewModels;
+using System;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
@@ -44,8 +46,11 @@ namespace Sunctum.Domain.Test.UnitTest
             ConnectionManager.SetDefaultConnection($"Data Source={_filePath}", typeof(SQLiteConnection));
 
             s_libManager = Container.Resolve<ILibrary>();
-            s_libManager.Initialize().Wait();
-            s_libManager.Load().Wait();
+            AsyncContext.Run(async () =>
+            {
+                await s_libManager.Initialize();
+                await s_libManager.Load();
+            });
         }
 
         [Test, Order(0)]
@@ -138,6 +143,8 @@ namespace Sunctum.Domain.Test.UnitTest
         public void OneTimeTearDown()
         {
             s_libManager.Dispose();
+
+            GC.Collect();
 
             if (File.Exists(_filePath))
             {
