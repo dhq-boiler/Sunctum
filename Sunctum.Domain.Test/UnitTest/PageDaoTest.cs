@@ -138,6 +138,8 @@ namespace Sunctum.Domain.Test.UnitTest
             var mwvm = Container.Resolve<IMainWindowViewModel>();
             mwvm.Close();
 
+            GC.Collect();
+
             if (File.Exists(_filePath))
             {
                 File.Delete(_filePath);

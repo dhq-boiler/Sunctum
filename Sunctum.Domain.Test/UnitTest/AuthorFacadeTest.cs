@@ -178,6 +178,8 @@ namespace Sunctum.Domain.Test.UnitTest
         {
             s_libManager.Dispose();
 
+            GC.Collect();
+
             if (File.Exists(_filePath))
             {
                 File.Delete(_filePath);
