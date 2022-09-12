@@ -43,7 +43,10 @@ namespace Sunctum.Domain.Logic.Async
                 LibraryManager.Value.BookSource.Clear();
             }
 
-            mainWindowViewModel.Value.DockingDocumentViewModels.ToList().ForEach(x => x.SelectedEntries.Clear());
+            if (mainWindowViewModel.Value.DockingDocumentViewModels is not null)
+            {
+                mainWindowViewModel.Value.DockingDocumentViewModels.ToList().ForEach(x => x.SelectedEntries.Clear());
+            }
         }
     }
 }
