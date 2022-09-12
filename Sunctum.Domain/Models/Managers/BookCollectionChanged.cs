@@ -22,6 +22,8 @@ namespace Sunctum.Domain.Models.Managers
         {
             public override void ApplyChange(ICollection<BookViewModel> collection, BookViewModel target)
             {
+                if (collection is null)
+                    return;
                 collection.Add(target);
             }
         }
@@ -30,6 +32,8 @@ namespace Sunctum.Domain.Models.Managers
         {
             public override void ApplyChange(ICollection<BookViewModel> collection, BookViewModel target)
             {
+                if (collection is null)
+                    return;
                 var book = collection.FirstOrDefault(x => x.ID.Equals(target.ID));
                 target.CopyTo(book);
             }
@@ -39,6 +43,8 @@ namespace Sunctum.Domain.Models.Managers
         {
             public override void ApplyChange(ICollection<BookViewModel> collection, BookViewModel target)
             {
+                if (collection is null)
+                    return;
                 var book = collection.FirstOrDefault(x => x.ID.Equals(target.ID));
                 if (book != null)
                 {
