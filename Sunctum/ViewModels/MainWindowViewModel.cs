@@ -1031,8 +1031,14 @@ namespace Sunctum.ViewModels
 
         public void Close()
         {
-            _disposable.Dispose();
-            System.Windows.Application.Current.Shutdown();
+            if (_disposable is not null && !_disposable.IsDisposed)
+            {
+                _disposable.Dispose();
+            }
+            if (System.Windows.Application.Current is not null)
+            {
+                System.Windows.Application.Current.Shutdown();
+            }
         }
 
         public void ChangeActiveContent()

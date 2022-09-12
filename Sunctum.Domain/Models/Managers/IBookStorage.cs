@@ -6,7 +6,7 @@ using System;
 
 namespace Sunctum.Domain.Models.Managers
 {
-    public interface IBookStorage : IObservable<BookCollectionChanged>
+    public interface IBookStorage : IObservable<BookCollectionChanged>, IDisposable
     {
         ReactiveCollection<BookViewModel> BookSource { get; }
         ReactiveCollection<BookViewModel> OnStage { get; }
