@@ -47,6 +47,8 @@ using Xceed.Wpf.AvalonDock.Layout;
 using Xceed.Wpf.AvalonDock.Layout.Serialization;
 using YamlDotNet.Core.Tokens;
 using YamlDotNet.Core;
+using System.Windows.Threading;
+using Sunctum.Domain.Util;
 
 namespace Sunctum.ViewModels
 {
@@ -573,8 +575,15 @@ namespace Sunctum.ViewModels
             if (starting)
             {
                 LibraryVM.ProgressManager.PropertyChanged += ProgressManager_PropertyChanged;
-                TagPaneViewModel.BuildContextMenus_Tags();
-                AuthorPaneViewModel.BuildContextMenus_Authors();
+
+                if (App.Current is not null)
+                {
+                    App.Current.Dispatcher.Invoke(() =>
+                    {
+                        TagPaneViewModel.BuildContextMenus_Tags();
+                        AuthorPaneViewModel.BuildContextMenus_Authors();
+                    });
+                }
             }
 
             WindowLeft = Configuration.ApplicationConfiguration.WindowRect.X;
@@ -606,7 +615,6 @@ namespace Sunctum.ViewModels
             }
 
             SetMainWindowTitle();
-            HomeDocumentViewModel.ClearSearchResult();
             InitializeWindowComponent();
             ManageVcDB();
             ManageAppDB();
@@ -626,6 +634,7 @@ namespace Sunctum.ViewModels
                     .ContinueWith(_ =>
                     {
                         HomeDocumentViewModel.BookCabinet = LibraryVM.CreateBookStorage();
+                        HomeDocumentViewModel.BookCabinet.ClearSearchResult();
 
                         (LibraryVM as IObservable<BookCollectionChanged>)
                             .Subscribe(HomeDocumentViewModel.BookCabinet as IObserver<BookCollectionChanged>)
@@ -788,10 +797,13 @@ namespace Sunctum.ViewModels
         {
             if (DockingDocumentViewModels == null) return;
 
-            App.Current.Dispatcher.Invoke(() =>
+            if (App.Current is not null)
             {
-                DockingDocumentViewModels.Clear();
-            });
+                App.Current.Dispatcher.Invoke(() =>
+                {
+                    DockingDocumentViewModels.Clear();
+                });
+            }
         }
 
         private void NotifyActiveTabChanged()
@@ -808,7 +820,7 @@ namespace Sunctum.ViewModels
             }
         }
 
-        private void ManageAppDB()
+        public void ManageAppDB()
         {
             DataVersionManager dvManager = new DataVersionManager();
             dvManager.CurrentConnection = DataAccessManager.AppDao.CurrentConnection;
@@ -820,7 +832,7 @@ namespace Sunctum.ViewModels
             dvManager.UpgradeToTargetVersion();
         }
 
-        private void ManageVcDB()
+        public void ManageVcDB()
         {
             DataVersionManager dvManager = new DataVersionManager();
             dvManager.CurrentConnection = DataAccessManager.VcDao.CurrentConnection;
@@ -857,7 +869,7 @@ namespace Sunctum.ViewModels
             HomeDocumentViewModel.BookCabinet.Searched += LibraryVM_Searched;
         }
 
-        private void InitializeWindowComponent()
+        public void InitializeWindowComponent()
         {
             DisplayAuthorPane = Configuration.ApplicationConfiguration.DisplayAuthorPane;
             DisplayTagPane = Configuration.ApplicationConfiguration.DisplayTagPane;

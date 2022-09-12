@@ -14,6 +14,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Sunctum.Managers
 {
@@ -23,6 +24,7 @@ namespace Sunctum.Managers
         private ReactiveCollection<BookViewModel> _SearchedBooks;
         private IBookSorting _BookSorting;
         private IDisplayType _DisplayType;
+        private string _SearchText;
 
         public ArrangedBookStorage()
             : base()
@@ -108,6 +110,32 @@ namespace Sunctum.Managers
             }
         }
 
+        public string SearchText
+        {
+            [DebuggerStepThrough]
+            get
+            { return _SearchText; }
+            set
+            {
+                SetProperty(ref _SearchText, value);
+                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => SearchStatusText));
+                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => UnescapedSearchText));
+            }
+        }
+
+        public string UnescapedSearchText
+        {
+            [DebuggerStepThrough]
+            get
+            { return HttpUtility.HtmlDecode(SearchText); }
+            set { SearchText = HttpUtility.HtmlEncode(value); }
+        }
+
+        public string SearchStatusText
+        {
+            get { return $"Searched by '{UnescapedSearchText}'"; }
+        }
+
         protected override void Internal_UpdateInMemory(BookViewModel book)
         {
             BookFacade.Update(book);
@@ -138,8 +166,14 @@ namespace Sunctum.Managers
             Searched?.Invoke(this, e);
         }
 
+        public void Search()
+        {
+            Search(SearchText);
+        }
+
         public void Search(string searchingText)
         {
+            _SearchText = searchingText;
             Task.Factory.StartNew(() =>
             {
                 if (string.IsNullOrEmpty(searchingText))
@@ -152,7 +186,7 @@ namespace Sunctum.Managers
                 {
                     s_logger.Debug($"Search Word:{searchingText}");
                     SearchedBooks = new ReactiveCollection<BookViewModel>();
-                    SearchedBooks.AddRange(BookSource.Where(b => AuthorNameContainsSearchText(b, searchingText) || TitleContainsSearchText(b, searchingText)));
+                    SearchedBooks.AddRange(BookSource.Where(b => AuthorNameContainsSearchText(b, searchingText) || TitleContainsSearchText(b, searchingText) || FingerPrintContainsSearchText(b, searchingText)));
 
                     OnSearched(new SearchedEventArgs(searchingText, _previousSearchingText));
                 }
@@ -161,27 +195,36 @@ namespace Sunctum.Managers
             });
         }
 
-        private bool AuthorNameContainsSearchText(BookViewModel target, string searchingText)
+        protected bool AuthorNameContainsSearchText(BookViewModel target, string searchingText)
         {
-            if (target == null || target.Author == null)
+            if (target == null || target.Author is null)
             {
                 return false;
             }
             return target.Author.Name.IndexOf(searchingText) != -1;
         }
 
-        private bool TitleContainsSearchText(BookViewModel target, string searchingText)
+        protected bool TitleContainsSearchText(BookViewModel target, string searchingText)
         {
-            if (target == null)
+            if (target == null || target.Title is null)
             {
                 return false;
             }
             return target.Title.IndexOf(searchingText) != -1;
         }
 
+        protected bool FingerPrintContainsSearchText(BookViewModel target, string searchingText)
+        {
+            if (target == null || target.FingerPrint is null)
+            {
+                return false;
+            }
+            return target.FingerPrint.IndexOf(searchingText) != -1;
+        }
+
         public void ClearSearchResult()
         {
-            SearchedBooks = null;
+            SearchText = "";
         }
 
         #endregion //検索

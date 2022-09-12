@@ -4,7 +4,9 @@ using Sunctum.Domain.Logic.Async;
 using Sunctum.Domain.Models.Managers;
 using System;
 using System.Collections.Concurrent;
+using System.DirectoryServices.ActiveDirectory;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Unity;
 
@@ -14,6 +16,7 @@ namespace Sunctum.Managers
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
         private object _lockObj = new object();
+        private object _lockObj2 = new object();
 
         public ConcurrentQueue<AsyncTaskSequence> Sequences { get; } = new ConcurrentQueue<AsyncTaskSequence>();
 
@@ -82,17 +85,20 @@ namespace Sunctum.Managers
 
         private bool TakeSequence()
         {
-            if (CurrentSequence == null)
+            lock (_lockObj2)
             {
-                AsyncTaskSequence sequence = null;
-                if (Sequences.TryDequeue(out sequence))
+                if (CurrentSequence == null)
                 {
-                    CurrentSequence = sequence;
-                    return true;
+                    AsyncTaskSequence sequence = null;
+                    if (Sequences.TryDequeue(out sequence))
+                    {
+                        CurrentSequence = sequence;
+                        return true;
+                    }
+                    return false;
                 }
-                return false;
+                return true;
             }
-            return true;
         }
 
         private void InnerProcessTask(AsyncTaskSequence sequence)
@@ -109,7 +115,10 @@ namespace Sunctum.Managers
 
                     var t = tasks[i];
 
-                    t.RunSynchronously();
+                    if (t.Status != TaskStatus.Faulted)
+                    {
+                        t.RunSynchronously();
+                    }
 
                     if (t.Exception?.InnerExceptions?.Count > 0)
                     {
@@ -129,6 +138,30 @@ namespace Sunctum.Managers
                 ProgressManager.Abort();
                 s_logger.Error($"TaskManager aborted by:{e}");
                 throw;
+            }
+        }
+
+        public void WaitUntilProcessAll(TimeSpan? waitUnit = null)
+        {
+            AsyncTaskSequence seq = null;
+            lock (_lockObj2)
+            {
+                seq = CurrentSequence;
+            }
+            while (Sequences.TryPeek(out var sequence) || seq is not null)
+            {
+                if (waitUnit is not null)
+                {
+                    Thread.Sleep((int)waitUnit.Value.TotalMilliseconds);
+                }
+                else
+                {
+                    Thread.Sleep(1000);
+                }
+                lock (_lockObj2)
+                {
+                    seq = CurrentSequence;
+                }
             }
         }
     }

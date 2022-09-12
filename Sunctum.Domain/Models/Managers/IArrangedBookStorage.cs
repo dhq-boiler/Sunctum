@@ -13,6 +13,7 @@ namespace Sunctum.Domain.Models.Managers
         bool IsSearching { get; }
         ReactiveCollection<BookViewModel> SearchedBooks { get; set; }
         IBookSorting Sorting { get; set; }
+        string SearchText { get; set; }
 
         IDisplayType DisplayType { get; set; }
 
@@ -20,6 +21,7 @@ namespace Sunctum.Domain.Models.Managers
         event SearchedEventHandler Searched;
 
         void ClearSearchResult();
+        void Search();
         void Search(string searchingText);
         bool SortingSelected(string name);
     }

@@ -1,14 +1,13 @@
 ﻿
 
 using Sunctum.Domain.Models.Managers;
-using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using System.Windows.Controls;
 
-namespace Sunctum.ViewModels
+namespace Sunctum.Domain.ViewModels
 {
     public interface IHomeDocumentViewModel
     {
@@ -23,17 +22,13 @@ namespace Sunctum.ViewModels
         BookViewModel OpenedBook { get; set; }
         PageViewModel OpenedPage { get; set; }
         bool SearchPaneIsVisible { get; set; }
-        string SearchStatusText { get; }
-        string SearchText { get; set; }
         List<EntryViewModel> SelectedEntries { get; }
         string Title { get; }
-        string UnescapedSearchText { get; set; }
 
         void AddToSelectedEntries(IEnumerable<EntryViewModel> add);
         void AddToSelectedEntry(EntryViewModel add);
         void BuildContextMenus_Books();
         void BuildContextMenus_Contents();
-        void ClearSearchResult();
         void ClearSelectedItems();
         void CloseBook();
         void CloseImage();
@@ -54,8 +49,6 @@ namespace Sunctum.ViewModels
         void ResetScrollOffsetPool();
         void RestoreScrollOffset(Guid bookId);
         Task SaveOpenedBookContentsOrder();
-        void Search();
-        void Search(string searchText);
         bool SortingSelected(string name);
         void StoreScrollOffset(Guid bookId);
     }

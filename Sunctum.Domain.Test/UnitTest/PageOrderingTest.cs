@@ -6,6 +6,7 @@ using NUnit.Framework;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.Test.Core;
+using Sunctum.Domain.ViewModels;
 using System;
 using System.Data.SQLite;
 using System.IO;
@@ -41,12 +42,12 @@ namespace Sunctum.Domain.Test.UnitTest
 
             _dataPath = Path.Combine(_dirPath, "data");
 
+            var mwvm = Container.Resolve<IMainWindowViewModel>();
             _libManager = Container.Resolve<ILibrary>();
 
             AsyncContext.Run(async () =>
             {
-                await _libManager.Initialize();
-                await _libManager.Load();
+                await mwvm.Initialize(true, false);
                 await _libManager.ImportAsync(new string[] { Path.Combine(TestContext.CurrentContext.TestDirectory, "TestData", "minecraft_screenshots") });
             });
         }

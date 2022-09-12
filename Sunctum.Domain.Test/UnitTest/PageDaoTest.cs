@@ -1,11 +1,13 @@
 ﻿
 
 using Homura.ORM;
+using Nito.AsyncEx;
 using NUnit.Framework;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.Test.Core;
+using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -40,9 +42,13 @@ namespace Sunctum.Domain.Test.UnitTest
                 Directory.CreateDirectory(_dirPath);
             }
 
+            var mwvm = Container.Resolve<IMainWindowViewModel>();
             _libManager = Container.Resolve<ILibrary>();
-            _libManager.Initialize().Wait();
-            _libManager.Load().Wait();
+
+            AsyncContext.Run(async () =>
+            {
+                await mwvm.Initialize(true, false);
+            });
         }
 
         [Test]

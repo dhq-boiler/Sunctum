@@ -1,6 +1,7 @@
 ﻿using Homura.ORM;
 using NUnit.Framework;
 using Prism.Ioc;
+using Prism.Services.Dialogs;
 using Sunctum.Converters;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Logic.Async;
@@ -30,16 +31,17 @@ namespace Sunctum.Domain.Test.Core
             Configuration.ApplicationConfiguration = config;
 
             Container = new UnityContainer();
-            Container.RegisterType<IMainWindowViewModel, MainWindowViewModel>();
-            Container.RegisterType<IHomeDocumentViewModel, HomeDocumentViewModel>();
-            Container.RegisterType<IAuthorPaneViewModel, AuthorPaneViewModel>();
-            Container.RegisterType<ITagPaneViewModel, TagPaneViewModel>();
-            Container.RegisterType<IInformationPaneViewModel, InformationPaneViewModel>();
+            Container.RegisterInstance<IDialogService>(new DialogService(new Prism.Unity.UnityContainerExtension()));
+            Container.RegisterSingleton<IMainWindowViewModel, MainWindowViewModel>();
+            Container.RegisterSingleton<IHomeDocumentViewModel, HomeDocumentViewModel>();
+            Container.RegisterSingleton<IAuthorPaneViewModel, AuthorPaneViewModel>();
+            Container.RegisterSingleton<ITagPaneViewModel, TagPaneViewModel>();
+            Container.RegisterSingleton<IInformationPaneViewModel, InformationPaneViewModel>();
             Container.RegisterSingleton<ILibrary, Library>();
-            Container.RegisterType<ITagManager, TagManager>();
-            Container.RegisterType<IAuthorManager, AuthorManager>();
-            Container.RegisterType<IProgressManager, ProgressManager>();
-            Container.RegisterType<ITaskManager, TaskManager>();
+            Container.RegisterSingleton<ITagManager, TagManager>();
+            Container.RegisterSingleton<IAuthorManager, AuthorManager>();
+            Container.RegisterSingleton<IProgressManager, ProgressManager>();
+            Container.RegisterSingleton<ITaskManager, TaskManager>();
             Container.RegisterType<IBookExporting, BookExporting>();
             Container.RegisterType<IBookImporting, BookImporting>();
             Container.RegisterType<IBookRemoving, BookRemoving>();
@@ -71,6 +73,7 @@ namespace Sunctum.Domain.Test.Core
             Container.RegisterInstance<IDaoBuilder>("AppDao", new DaoBuilder(new Connection(ConnectionStringBuilder.Build(Specifications.APP_DB_FILENAME), typeof(SQLiteConnection))));
             Container.RegisterInstance<IDaoBuilder>("WorkingDao", new DaoBuilder(new Connection(Specifications.GenerateConnectionString(Configuration.ApplicationConfiguration.WorkingDirectory), typeof(SQLiteConnection))));
             Container.RegisterInstance<IDaoBuilder>("VcDao", new DaoBuilder(new Connection(ConnectionStringBuilder.Build(Specifications.VC_DB_FILENAME), typeof(SQLiteConnection))));
+            Container.RegisterSingleton<ISelectManager, SelectManager>();
         }
     }
 }

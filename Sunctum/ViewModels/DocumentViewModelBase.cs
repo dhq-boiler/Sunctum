@@ -48,7 +48,6 @@ namespace Sunctum.ViewModels
         private bool _SearchPaneIsVisible;
         private BookViewModel _OpenedBook;
         private PageViewModel _OpenedPage;
-        private string _SearchText;
         private ObservableCollection<Control> _BooksContextMenuItems;
         private ObservableCollection<Control> _ContentsContextMenuItems;
         private string _previousSearchingText;
@@ -200,32 +199,6 @@ namespace Sunctum.ViewModels
                     return -1;
                 }
             }
-        }
-
-        public string SearchText
-        {
-            [DebuggerStepThrough]
-            get
-            { return _SearchText; }
-            set
-            {
-                SetProperty(ref _SearchText, value);
-                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => SearchStatusText));
-                RaisePropertyChanged(PropertyNameUtility.GetPropertyName(() => UnescapedSearchText));
-            }
-        }
-
-        public string UnescapedSearchText
-        {
-            [DebuggerStepThrough]
-            get
-            { return HttpUtility.HtmlDecode(SearchText); }
-            set { SearchText = HttpUtility.HtmlEncode(value); }
-        }
-
-        public string SearchStatusText
-        {
-            get { return $"Searched by '{UnescapedSearchText}'"; }
         }
 
         public ObservableCollection<Control> BooksContextMenuItems
@@ -464,7 +437,7 @@ namespace Sunctum.ViewModels
                 {
                     if (BookCabinet.IsSearching)
                     {
-                        ClearSearchResult();
+                        BookCabinet.ClearSearchResult();
                         CloseSearchPane();
                         RestoreScrollOffset(BeforeSearchPosition);
                     }
@@ -839,70 +812,6 @@ namespace Sunctum.ViewModels
         protected virtual void OnSearched(SearchedEventArgs e)
         {
             Searched?.Invoke(this, e);
-        }
-
-        public void Search(string searchingText)
-        {
-            Task.Factory.StartNew(() =>
-            {
-                if (string.IsNullOrEmpty(searchingText))
-                {
-                    BookCabinet.SearchedBooks = null;
-
-                    OnSearchCleared(new EventArgs());
-                }
-                else
-                {
-                    s_logger.Debug($"Search Word:{searchingText}");
-                    BookCabinet.SearchedBooks = new ReactiveCollection<BookViewModel>();
-                    BookCabinet.SearchedBooks.AddRange(BookCabinet.BookSource.Where(b => AuthorNameContainsSearchText(b, searchingText) || TitleContainsSearchText(b, searchingText) || FingerPrintContainsSearchText(b, searchingText)));
-
-                    OnSearched(new SearchedEventArgs(searchingText, _previousSearchingText));
-                }
-
-                _previousSearchingText = searchingText;
-            });
-        }
-
-        private bool AuthorNameContainsSearchText(BookViewModel target, string searchingText)
-        {
-            if (target == null || target.Author is null)
-            {
-                return false;
-            }
-            return target.Author.Name.IndexOf(searchingText) != -1;
-        }
-
-        private bool TitleContainsSearchText(BookViewModel target, string searchingText)
-        {
-            if (target == null || target.Title is null)
-            {
-                return false;
-            }
-            return target.Title.IndexOf(searchingText) != -1;
-        }
-
-        private bool FingerPrintContainsSearchText(BookViewModel target, string searchingText)
-        {
-            if (target == null || target.FingerPrint is null)
-            {
-                return false;
-            }
-            return target.FingerPrint.IndexOf(searchingText) != -1;
-        }
-
-        public void Search()
-        {
-            Search(SearchText);
-        }
-
-        public void ClearSearchResult()
-        {
-            SearchText = "";
-            if (BookCabinet != null)
-            {
-                BookCabinet.ClearSearchResult();
-            }
         }
 
         public void OpenSearchPane()
