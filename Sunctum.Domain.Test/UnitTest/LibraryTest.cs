@@ -5,6 +5,7 @@ using Prism.Ioc;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.Test.Core;
 using Sunctum.Domain.ViewModels;
+using System;
 using System.Collections.ObjectModel;
 using System.Data.SQLite;
 using System.IO;
@@ -65,6 +66,8 @@ namespace Sunctum.Domain.Test.UnitTest
         {
             var mwvm = Container.Resolve<IMainWindowViewModel>();
             mwvm.Close();
+
+            GC.Collect();
 
             if (File.Exists(_filePath))
             {
