@@ -1,10 +1,7 @@
-﻿
-
-using Sunctum.Domain.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace Sunctum.ViewModels
+namespace Sunctum.Domain.ViewModels
 {
     public interface IInformationPaneViewModel
     {

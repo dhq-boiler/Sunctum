@@ -593,7 +593,7 @@ namespace Sunctum.Managers
                      join tg in SelectedItems on ic.TagID equals tg.ID
                      select bk).Distinct();
 
-            activeViewModel.SearchText = $"{ToSearchText(SelectedItems)}";
+            activeViewModel.BookCabinet.SearchText = $"{ToSearchText(SelectedItems)}";
             activeViewModel.BookCabinet.SearchedBooks = new ReactiveCollection<BookViewModel>();
             activeViewModel.BookCabinet.SearchedBooks.AddRange(books.ToList());
         }

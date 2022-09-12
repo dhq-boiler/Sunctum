@@ -59,5 +59,10 @@ namespace Sunctum.Domain.ViewModels
         List<MenuItem> ExtraAuthorContextMenu { get; }
 
         ReactivePropertySlim<TaskbarItemInfo> TaskbarItemInfo { get; }
+        IHomeDocumentViewModel HomeDocumentViewModel { get; set; }
+
+        void InitializeWindowComponent();
+        void ManageAppDB();
+        void ManageVcDB();
     }
 }

@@ -28,7 +28,7 @@ namespace Sunctum.Core
             var author = (hyperlink.DataContext as BookViewModel).Author;
             var viewModel = (DocumentViewModelBase)((App.Current.MainWindow as MainWindow).DataContext as MainWindowViewModel).ActiveDocumentViewModel;
             viewModel.StoreScrollOffset(DocumentViewModelBase.BeforeSearchPosition);
-            viewModel.SearchText = author.Name;
+            viewModel.BookCabinet.SearchText = author.Name;
             viewModel.ResetScrollOffset();
         }
     }

@@ -1,4 +1,4 @@
-﻿using Sunctum.ViewModels;
+﻿using Sunctum.Domain.ViewModels;
 using System;
 using System.Globalization;
 using System.Windows.Data;
