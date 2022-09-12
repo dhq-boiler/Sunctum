@@ -60,6 +60,33 @@ namespace Sunctum.Domain.Test.UnitTest
             Assert.That(home.BookCabinet.OnStage[0], Has.Property("Title").Contains("minecraft"));
         }
 
+        [TearDown]
+        public void TearDown()
+        {
+            var mwvm = Container.Resolve<IMainWindowViewModel>();
+            mwvm.Close();
+
+            if (File.Exists(_filePath))
+            {
+                File.Delete(_filePath);
+            }
+
+            if (Directory.Exists(_dataPath))
+            {
+                Directory.Delete(_dataPath, true);
+            }
+
+            if (Directory.Exists(_dirPath + "\\cache"))
+            {
+                Directory.Delete(_dirPath + "\\cache", true);
+            }
+
+            if (Directory.Exists(_dirPath))
+            {
+                Directory.Delete(_dirPath, true);
+            }
+        }
+
         public override string GetTestDirectory()
         {
             return Path.Combine(TestContext.CurrentContext.TestDirectory, "LibraryTest");

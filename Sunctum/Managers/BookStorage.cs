@@ -25,6 +25,7 @@ namespace Sunctum.Managers
         private ReactiveCollection<BookViewModel> _LoadedBooks;
         protected IObserver<BookCollectionChanged> observer;
         private FillContentsTaskManager _fcTaskManager = new FillContentsTaskManager();
+        private bool disposedValue;
 
         public BookStorage()
         {
@@ -221,6 +222,30 @@ namespace Sunctum.Managers
             {
                 ContentsLoadTask.FillContentsWithImage(this, book);
             }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: マネージド状態を破棄します (マネージド オブジェクト)
+                    _LoadedBooks.Dispose();
+                }
+
+                // TODO: アンマネージド リソース (アンマネージド オブジェクト) を解放し、ファイナライザーをオーバーライドします
+                // TODO: 大きなフィールドを null に設定します
+                _LoadedBooks = null;
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
 
         #endregion //コンテンツ読み込み
