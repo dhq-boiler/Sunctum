@@ -1,5 +1,6 @@
 ﻿using Homura.ORM;
 using NUnit.Framework;
+using Prism.Ioc;
 using Sunctum.Converters;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Logic.Async;
@@ -69,6 +70,7 @@ namespace Sunctum.Domain.Test.Core
             Container.RegisterType<IDataAccessManager, DataAccessManager>();
             Container.RegisterInstance<IDaoBuilder>("AppDao", new DaoBuilder(new Connection(ConnectionStringBuilder.Build(Specifications.APP_DB_FILENAME), typeof(SQLiteConnection))));
             Container.RegisterInstance<IDaoBuilder>("WorkingDao", new DaoBuilder(new Connection(Specifications.GenerateConnectionString(Configuration.ApplicationConfiguration.WorkingDirectory), typeof(SQLiteConnection))));
+            Container.RegisterInstance<IDaoBuilder>("VcDao", new DaoBuilder(new Connection(ConnectionStringBuilder.Build(Specifications.VC_DB_FILENAME), typeof(SQLiteConnection))));
         }
     }
 }
