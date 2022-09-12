@@ -105,6 +105,14 @@ namespace Sunctum.Domain.Test.UnitTest
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
+            _libManager.Dispose();
+
+            var mwvm = Container.Resolve<IMainWindowViewModel>();
+            mwvm.Close();
+            mwvm.Dispose();
+
+            GC.Collect();
+
             if (File.Exists(_filePath))
             {
                 File.Delete(_filePath);

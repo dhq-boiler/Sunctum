@@ -2,6 +2,7 @@
 
 using Reactive.Bindings;
 using Sunctum.Domain.Models.Managers;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ using System.Windows.Shell;
 
 namespace Sunctum.Domain.ViewModels
 {
-    public interface IMainWindowViewModel
+    public interface IMainWindowViewModel : IDisposable
     {
         Task Initialize(bool starting, bool shiftPressed);
 

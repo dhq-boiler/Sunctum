@@ -137,6 +137,8 @@ namespace Sunctum.Domain.Test.UnitTest
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
+            s_libManager.Dispose();
+
             if (File.Exists(_filePath))
             {
                 File.Delete(_filePath);

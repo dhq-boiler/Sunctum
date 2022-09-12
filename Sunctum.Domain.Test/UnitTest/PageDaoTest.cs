@@ -141,6 +141,9 @@ namespace Sunctum.Domain.Test.UnitTest
         [TearDown]
         public void TearDown()
         {
+            var mwvm = Container.Resolve<IMainWindowViewModel>();
+            mwvm.Close();
+
             if (File.Exists(_filePath))
             {
                 File.Delete(_filePath);

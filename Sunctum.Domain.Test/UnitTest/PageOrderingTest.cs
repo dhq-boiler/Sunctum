@@ -118,6 +118,9 @@ namespace Sunctum.Domain.Test.UnitTest
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
+            var mwvm = Container.Resolve<IMainWindowViewModel>();
+            mwvm.Close();
+
             if (File.Exists(_filePath))
             {
                 File.Delete(_filePath);
