@@ -121,21 +121,21 @@ namespace Sunctum.Domain.Logic.Async
             }
         }
 
-        private async void LibraryInitializing_FinishToUpgradeTo_Version_1(object sender, VersionChangeEventArgs e)
+        private void LibraryInitializing_FinishToUpgradeTo_Version_1(object sender, VersionChangeEventArgs e)
         {
             ByteSizeCalculatingService.Range = ByteSizeCalculating.UpdateRange.IsAll;
-            await TaskManager.Enqueue(ByteSizeCalculatingService.GetTaskSequence());
+            TaskManager.Enqueue(ByteSizeCalculatingService.GetTaskSequence()).Wait();
         }
 
-        private async void LibraryInitializing_FinishToUpgradeTo_Version_3(object sender, VersionChangeEventArgs e)
+        private void LibraryInitializing_FinishToUpgradeTo_Version_3(object sender, VersionChangeEventArgs e)
         {
-            await TaskManager.Enqueue(BookTagInitializingService.GetTaskSequence());
+            TaskManager.Enqueue(BookTagInitializingService.GetTaskSequence()).Wait();
         }
 
-        private async void LibraryInitializing_FinishedToUpgradeTo_Version_5(object sender, VersionChangeEventArgs e)
+        private void LibraryInitializing_FinishedToUpgradeTo_Version_5(object sender, VersionChangeEventArgs e)
         {
             BookHashingService.Range = BookHashing.UpdateRange.IsAll;
-            await TaskManager.Enqueue(BookHashingService.GetTaskSequence());
+            TaskManager.Enqueue(BookHashingService.GetTaskSequence()).Wait();
         }
 
         private void LibraryInitializing_FinishedToUpgradeTo_Version_6(object sender, VersionChangeEventArgs e)
