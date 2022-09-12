@@ -68,12 +68,12 @@ namespace Sunctum.Domain.Logic.Async
                 sequence.AddRange(GenerateTasksToCalcBook(LibraryManager.Value, book));
             }
 
-            sequence.Add(new Task(() => s_logger.Info($"Finished to Calculate Book ByteSize.")));
+            sequence.Add(new Task(() => s_logger.Info($"Finished to hash book.")));
         }
 
         public override void ConfigurePostTaskAction(AsyncTaskSequence sequence)
         {
-            sequence.Add(() => s_logger.Info($"Finish ByteSizeCalculating"));
+            sequence.Add(() => s_logger.Info($"Finish BookHashing"));
         }
 
         private IEnumerable<Task> GenerateTasksToCalcBook(ILibrary libVM, BookViewModel book)
