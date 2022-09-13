@@ -17,7 +17,6 @@ namespace Sunctum.Domain.Test.UnitTest
     [TestFixture]
     public class LibraryInitializingTest : TestSession
     {
-        private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
         private static ILibrary s_libManager;
         private string _filePath;
 
@@ -31,43 +30,20 @@ namespace Sunctum.Domain.Test.UnitTest
         }
 
         [Test]
-        public async Task InitializeLibraryTest()
+        public void InitializeLibraryTest()
         {
-            s_logger.Info("BEGIN AsyncContext.Run");
-            //AsyncContext.Run(async () =>
-            //{
-                s_logger.Info("BEGIN s_libManager.Initialize");
-                await s_libManager.Initialize();
-                s_logger.Info("END s_libManager.Initialize");
-            //});
-            s_logger.Info("END AsyncContext.Run");
+            s_libManager.Initialize().Wait();
 
-            //try
-            //{
-            //    using (var fs = File.Open(_filePath, FileMode.CreateNew))
-            //    { }
-            //}
-            //catch (IOException e)
-            //{
-            //    Assert.Pass($"{_filePath} exists");
-            //}
-            //Assert.Fail($"{_filePath} doesn't exist");
+            Assert.That(File.Exists(_filePath), Is.True);
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            s_libManager.Dispose();
-
-            var mwvm = Container.Resolve<IMainWindowViewModel>();
-            mwvm.Close();
-
-            GC.Collect();
-
-            //if (File.Exists(_filePath))
-            //{
-            //    File.Delete(_filePath);
-            //}
+            if (File.Exists(_filePath))
+            {
+                File.Delete(_filePath);
+            }
         }
 
         public override string GetTestDirectory()
