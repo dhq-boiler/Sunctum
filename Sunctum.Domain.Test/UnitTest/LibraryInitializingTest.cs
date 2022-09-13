@@ -4,6 +4,7 @@ using NLog;
 using NUnit.Framework;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.Test.Core;
+using Sunctum.Domain.ViewModels;
 using System;
 using System.Data.SQLite;
 using System.IO;
@@ -56,6 +57,9 @@ namespace Sunctum.Domain.Test.UnitTest
         public void OneTimeTearDown()
         {
             s_libManager.Dispose();
+
+            var mwvm = Container.Resolve<IMainWindowViewModel>();
+            mwvm.Close();
 
             GC.Collect();
 
