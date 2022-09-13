@@ -65,7 +65,7 @@ namespace Sunctum.Domain.Test.UnitTest
 
             if (File.Exists(_filePath))
             {
-                File.Delete(_filePath);
+                //File.Delete(_filePath);
             }
         }
 
