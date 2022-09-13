@@ -16,6 +16,7 @@ using Sunctum.Domain.Models.Managers;
 using System;
 using System.Data.SQLite;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Unity;
 
 namespace Sunctum.Domain.Logic.Async
@@ -138,23 +139,26 @@ namespace Sunctum.Domain.Logic.Async
             TaskManager.Enqueue(BookHashingService.GetTaskSequence()).Wait();
         }
 
-        private void LibraryInitializing_FinishedToUpgradeTo_Version_6(object sender, VersionChangeEventArgs e)
+        private async void LibraryInitializing_FinishedToUpgradeTo_Version_6(object sender, VersionChangeEventArgs e)
         {
-            using (var dataOpUnit = new DataOperationUnit())
+            await Task.Factory.StartNew(() =>
             {
-                dataOpUnit.Open(ConnectionManager.DefaultConnection);
-                dataOpUnit.BeginTransaction();
-
-                var encryptImages = EncryptImageFacade.FindAll(dataOpUnit);
-                foreach (var encryptImage in encryptImages)
+                using (var dataOpUnit = new DataOperationUnit())
                 {
-                    var image = ImageFacade.FindBy(encryptImage.TargetImageID, dataOpUnit);
-                    image.IsEncrypted = true; //EncryptImageテーブルに存在するエントリは暗号化済みとしてマーク
-                    ImageFacade.Update(image, dataOpUnit);
-                }
+                    dataOpUnit.Open(ConnectionManager.DefaultConnection);
+                    dataOpUnit.BeginTransaction();
 
-                dataOpUnit.Commit();
-            }
+                    var encryptImages = EncryptImageFacade.FindAll(dataOpUnit);
+                    foreach (var encryptImage in encryptImages)
+                    {
+                        var image = ImageFacade.FindBy(encryptImage.TargetImageID, dataOpUnit);
+                        image.IsEncrypted = true; //EncryptImageテーブルに存在するエントリは暗号化済みとしてマーク
+                        ImageFacade.Update(image, dataOpUnit);
+                    }
+
+                    dataOpUnit.Commit();
+                }
+            });
         }
     }
 }
