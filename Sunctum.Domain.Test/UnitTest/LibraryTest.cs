@@ -71,6 +71,8 @@ namespace Sunctum.Domain.Test.UnitTest
             var mwvm = Container.Resolve<IMainWindowViewModel>();
             mwvm.Close();
 
+            ConnectionManager.DefaultConnection = null;
+
             GC.Collect();
 
             if (File.Exists(_filePath))
