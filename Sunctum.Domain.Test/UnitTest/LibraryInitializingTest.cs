@@ -41,16 +41,16 @@ namespace Sunctum.Domain.Test.UnitTest
             });
             s_logger.Info("END AsyncContext.Run");
 
-            try
-            {
-                using (var fs = File.Open(_filePath, FileMode.CreateNew))
-                { }
-            }
-            catch (IOException e)
-            {
-                Assert.Pass($"{_filePath} exists");
-            }
-            Assert.Fail($"{_filePath} doesn't exist");
+            //try
+            //{
+            //    using (var fs = File.Open(_filePath, FileMode.CreateNew))
+            //    { }
+            //}
+            //catch (IOException e)
+            //{
+            //    Assert.Pass($"{_filePath} exists");
+            //}
+            //Assert.Fail($"{_filePath} doesn't exist");
         }
 
         [OneTimeTearDown]
@@ -63,10 +63,10 @@ namespace Sunctum.Domain.Test.UnitTest
 
             GC.Collect();
 
-            if (File.Exists(_filePath))
-            {
-                //File.Delete(_filePath);
-            }
+            //if (File.Exists(_filePath))
+            //{
+            //    File.Delete(_filePath);
+            //}
         }
 
         public override string GetTestDirectory()
