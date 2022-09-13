@@ -115,6 +115,8 @@ namespace Sunctum.Domain.Test.UnitTest
             mwvm.Close();
             mwvm.Dispose();
 
+            ConnectionManager.DefaultConnection = null;
+
             GC.Collect();
 
             if (File.Exists(_filePath))

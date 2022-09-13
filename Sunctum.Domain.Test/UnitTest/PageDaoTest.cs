@@ -72,29 +72,34 @@ namespace Sunctum.Domain.Test.UnitTest
             page.Title = title;
 
             PageDao dao = new PageDao();
-            dao.Insert(page);
+            using (var dataOpUnit = new DataOperationUnit())
+            {
+                dataOpUnit.Open(ConnectionManager.DefaultConnection);
 
-            var records = dao.FindBy(new Dictionary<string, object>() { { "ID", id } });
+                dao.Insert(page, dataOpUnit.CurrentConnection);
 
-            Assert.That(records.Count(), Is.EqualTo(1));
-            var record = records.Single();
-            Assert.That(record.ID, Is.EqualTo(id));
-            Assert.That(record.ImageID, Is.EqualTo(imageid));
-            Assert.That(record.BookID, Is.EqualTo(bookid));
-            Assert.That(record.PageIndex, Is.EqualTo(pageindex));
-            Assert.That(record.Title, Is.EqualTo(title));
+                var records = dao.FindBy(new Dictionary<string, object>() { { "ID", id } }, dataOpUnit.CurrentConnection);
 
-            dao.Update(page);
+                Assert.That(records.Count(), Is.EqualTo(1));
+                var record = records.Single();
+                Assert.That(record.ID, Is.EqualTo(id));
+                Assert.That(record.ImageID, Is.EqualTo(imageid));
+                Assert.That(record.BookID, Is.EqualTo(bookid));
+                Assert.That(record.PageIndex, Is.EqualTo(pageindex));
+                Assert.That(record.Title, Is.EqualTo(title));
 
-            records = dao.FindBy(new Dictionary<string, object>() { { "ID", id } });
+                dao.Update(page, dataOpUnit.CurrentConnection);
 
-            Assert.That(records.Count(), Is.EqualTo(1));
-            record = records.Single();
-            Assert.That(record.ID, Is.EqualTo(id));
-            Assert.That(record.ImageID, Is.EqualTo(imageid));
-            Assert.That(record.BookID, Is.EqualTo(bookid));
-            Assert.That(record.PageIndex, Is.EqualTo(pageindex));
-            Assert.That(record.Title, Is.EqualTo(title));
+                records = dao.FindBy(new Dictionary<string, object>() { { "ID", id } }, dataOpUnit.CurrentConnection);
+
+                Assert.That(records.Count(), Is.EqualTo(1));
+                record = records.Single();
+                Assert.That(record.ID, Is.EqualTo(id));
+                Assert.That(record.ImageID, Is.EqualTo(imageid));
+                Assert.That(record.BookID, Is.EqualTo(bookid));
+                Assert.That(record.PageIndex, Is.EqualTo(pageindex));
+                Assert.That(record.Title, Is.EqualTo(title));
+            }
         }
 
         [Test]
@@ -114,32 +119,37 @@ namespace Sunctum.Domain.Test.UnitTest
             page.Title = title;
 
             PageDao dao = new PageDao();
-            dao.Insert(page);
+            using (var dataOpUnit = new DataOperationUnit())
+            {
+                dataOpUnit.Open(ConnectionManager.DefaultConnection);
 
-            var records = dao.FindBy(new Dictionary<string, object>() { { "ID", id } }).ToList();
+                dao.Insert(page, dataOpUnit.CurrentConnection);
 
-            Assert.That(records.Count(), Is.EqualTo(1));
-            var record = records.Single();
-            Assert.That(record.ID, Is.EqualTo(id));
-            Assert.That(record.ImageID, Is.EqualTo(imageid));
-            Assert.That(record.BookID, Is.EqualTo(bookid));
-            Assert.That(record.PageIndex, Is.EqualTo(pageindex));
-            Assert.That(record.Title, Is.EqualTo(title));
+                var records = dao.FindBy(new Dictionary<string, object>() { { "ID", id } }, dataOpUnit.CurrentConnection).ToList();
 
-            //Change
-            page.PageIndex = 1;
+                Assert.That(records.Count(), Is.EqualTo(1));
+                var record = records.Single();
+                Assert.That(record.ID, Is.EqualTo(id));
+                Assert.That(record.ImageID, Is.EqualTo(imageid));
+                Assert.That(record.BookID, Is.EqualTo(bookid));
+                Assert.That(record.PageIndex, Is.EqualTo(pageindex));
+                Assert.That(record.Title, Is.EqualTo(title));
 
-            dao.Update(page);
+                //Change
+                page.PageIndex = 1;
 
-            records = dao.FindBy(new Dictionary<string, object>() { { "ID", id } }).ToList();
+                dao.Update(page, dataOpUnit.CurrentConnection);
 
-            Assert.That(records.Count(), Is.EqualTo(1));
-            record = records.Single();
-            Assert.That(record.ID, Is.EqualTo(id));
-            Assert.That(record.ImageID, Is.EqualTo(imageid));
-            Assert.That(record.BookID, Is.EqualTo(bookid));
-            Assert.That(record.PageIndex, Is.EqualTo(1));
-            Assert.That(record.Title, Is.EqualTo(title));
+                records = dao.FindBy(new Dictionary<string, object>() { { "ID", id } }, dataOpUnit.CurrentConnection).ToList();
+
+                Assert.That(records.Count(), Is.EqualTo(1));
+                record = records.Single();
+                Assert.That(record.ID, Is.EqualTo(id));
+                Assert.That(record.ImageID, Is.EqualTo(imageid));
+                Assert.That(record.BookID, Is.EqualTo(bookid));
+                Assert.That(record.PageIndex, Is.EqualTo(1));
+                Assert.That(record.Title, Is.EqualTo(title));
+            }
         }
 
         [TearDown]
@@ -148,6 +158,8 @@ namespace Sunctum.Domain.Test.UnitTest
             var mwvm = Container.Resolve<IMainWindowViewModel>();
             mwvm.Close();
             mwvm.Dispose();
+
+            ConnectionManager.DefaultConnection = null;
 
             GC.Collect();
 
