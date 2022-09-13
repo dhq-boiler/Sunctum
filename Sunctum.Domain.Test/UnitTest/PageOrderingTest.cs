@@ -126,6 +126,7 @@ namespace Sunctum.Domain.Test.UnitTest
 
             var mwvm = Container.Resolve<IMainWindowViewModel>();
             mwvm.Close();
+            mwvm.Dispose();
 
             GC.Collect();
 
