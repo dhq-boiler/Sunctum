@@ -30,27 +30,27 @@ namespace Sunctum.Domain.Test.UnitTest
         }
 
         [Test]
-        public void InitializeLibraryTest()
+        public async void InitializeLibraryTest()
         {
             s_logger.Info("BEGIN AsyncContext.Run");
-            AsyncContext.Run(async () =>
-            {
+            //AsyncContext.Run(async () =>
+            //{
                 s_logger.Info("BEGIN s_libManager.Initialize");
                 await s_libManager.Initialize();
                 s_logger.Info("END s_libManager.Initialize");
-            });
+            //});
             s_logger.Info("END AsyncContext.Run");
 
-            //try
-            //{
-            //    using (var fs = File.Open(_filePath, FileMode.CreateNew))
-            //    { }
-            //}
-            //catch (IOException e)
-            //{
-            //    Assert.Pass($"{_filePath} exists");
-            //}
-            //Assert.Fail($"{_filePath} doesn't exist");
+            try
+            {
+                using (var fs = File.Open(_filePath, FileMode.CreateNew))
+                { }
+            }
+            catch (IOException e)
+            {
+                Assert.Pass($"{_filePath} exists");
+            }
+            Assert.Fail($"{_filePath} doesn't exist");
         }
 
         [OneTimeTearDown]
