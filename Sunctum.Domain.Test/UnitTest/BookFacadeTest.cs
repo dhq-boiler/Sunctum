@@ -2,6 +2,7 @@
 
 using Homura.ORM;
 using Nito.AsyncEx;
+using NLog;
 using NUnit.Framework;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Models;
@@ -20,6 +21,7 @@ namespace Sunctum.Domain.Test.UnitTest
     [TestFixture]
     public class BookFacadeTest : TestSession
     {
+        private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
         private static ILibrary s_libManager;
 
         private string _filePath;
@@ -48,7 +50,9 @@ namespace Sunctum.Domain.Test.UnitTest
             s_libManager = Container.Resolve<ILibrary>();
             AsyncContext.Run(async () =>
             {
+                s_logger.Info("BEGIN s_libManager.Initialize");
                 await s_libManager.Initialize();
+                s_logger.Info("END s_libManager.Initialize");
                 await s_libManager.Load();
             });
         }

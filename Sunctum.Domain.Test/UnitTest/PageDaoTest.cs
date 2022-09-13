@@ -2,6 +2,7 @@
 
 using Homura.ORM;
 using Nito.AsyncEx;
+using NLog;
 using NUnit.Framework;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Models;
@@ -21,6 +22,7 @@ namespace Sunctum.Domain.Test.UnitTest
     [TestFixture]
     public class PageDaoTest : TestSession
     {
+        private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
         private ILibrary _libManager;
         private string _filePath;
         private string _dirPath;
@@ -47,7 +49,9 @@ namespace Sunctum.Domain.Test.UnitTest
 
             AsyncContext.Run(async () =>
             {
+                s_logger.Info("BEGIN mwvm.Initialize");
                 await mwvm.Initialize(true, false);
+                s_logger.Info("END mwvm.Initialize");
             });
         }
 

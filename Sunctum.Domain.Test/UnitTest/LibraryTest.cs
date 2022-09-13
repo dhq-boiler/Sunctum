@@ -1,5 +1,6 @@
 ﻿using Homura.ORM;
 using Nito.AsyncEx;
+using NLog;
 using NUnit.Framework;
 using Prism.Ioc;
 using Sunctum.Domain.Models.Managers;
@@ -16,6 +17,7 @@ namespace Sunctum.Domain.Test.UnitTest
     [Category("UnitTest")]
     public class LibraryTest : TestSession
     {
+        private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
         private string _filePath;
         private string _dirPath;
         private string _dataPath;
@@ -52,7 +54,9 @@ namespace Sunctum.Domain.Test.UnitTest
 
             AsyncContext.Run(async () =>
             {
+                s_logger.Info("BEGIN mwvm.Initialize");
                 await mwvm.Initialize(true, false);
+                s_logger.Info("END mwvm.Initialize");
                 await _libManager.ImportAsync(new string[] { Path.Combine(TestContext.CurrentContext.TestDirectory, "TestData", "minecraft_screenshots") });
             });
 
