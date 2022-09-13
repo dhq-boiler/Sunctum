@@ -1,5 +1,6 @@
 ﻿
 
+using NLog;
 using NUnit.Framework;
 using Sunctum.Domain.Util;
 
@@ -9,6 +10,7 @@ namespace Sunctum.Domain.Test.UnitTest
     [TestFixture]
     public class FileSizeTest
     {
+        private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
         [Test]
         public void Bytes0()
         {

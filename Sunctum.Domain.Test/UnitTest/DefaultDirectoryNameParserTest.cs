@@ -1,6 +1,7 @@
 ﻿
 
 using System.Linq;
+using NLog;
 using NUnit.Framework;
 using Sunctum.Domain.Logic.Parse;
 
@@ -10,6 +11,7 @@ namespace Sunctum.Domain.Test.UnitTest
     [TestFixture]
     public class DefaultDirectoryNameParserTest
     {
+        private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
         [Test]
         public void タイトルのみ()
         {
