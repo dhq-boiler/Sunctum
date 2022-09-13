@@ -116,7 +116,7 @@ namespace Sunctum.Domain.Test.UnitTest
             PageDao dao = new PageDao();
             dao.Insert(page);
 
-            var records = dao.FindBy(new Dictionary<string, object>() { { "ID", id } });
+            var records = dao.FindBy(new Dictionary<string, object>() { { "ID", id } }).ToList();
 
             Assert.That(records.Count(), Is.EqualTo(1));
             var record = records.Single();
@@ -131,7 +131,7 @@ namespace Sunctum.Domain.Test.UnitTest
 
             dao.Update(page);
 
-            records = dao.FindBy(new Dictionary<string, object>() { { "ID", id } });
+            records = dao.FindBy(new Dictionary<string, object>() { { "ID", id } }).ToList();
 
             Assert.That(records.Count(), Is.EqualTo(1));
             record = records.Single();

@@ -8,6 +8,7 @@ using Sunctum.Domain.ViewModels;
 using System;
 using System.Data.SQLite;
 using System.IO;
+using System.Threading.Tasks;
 using Unity;
 
 namespace Sunctum.Domain.Test.UnitTest
@@ -30,7 +31,7 @@ namespace Sunctum.Domain.Test.UnitTest
         }
 
         [Test]
-        public async void InitializeLibraryTest()
+        public async Task InitializeLibraryTest()
         {
             s_logger.Info("BEGIN AsyncContext.Run");
             //AsyncContext.Run(async () =>
