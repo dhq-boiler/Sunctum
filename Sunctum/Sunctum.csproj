@@ -49,6 +49,7 @@
     <ProjectReference Include="..\Sunctum.UI\Sunctum.UI.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="GitInfo" Version="2.2.0" />
     <PackageReference Include="MdXaml" Version="1.15.0" />
     <PackageReference Include="NLog.Schema" Version="5.0.4" />
     <PackageReference Include="OpenCvSharp4.Windows" Version="4.5.5.20211231" />
