@@ -6,6 +6,7 @@ using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.Test.Core;
+using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
