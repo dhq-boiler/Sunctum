@@ -27,10 +27,7 @@ namespace Sunctum.Domain.ViewModels
         BookViewModel OpenedBook { get; set; }
         PageViewModel OpenedPage { get; set; }
         bool SearchPaneIsVisible { get; set; }
-        string SearchStatusText { get; }
-        string SearchText { get; set; }
         List<EntryViewModel> SelectedEntries { get; }
-        string UnescapedSearchText { get; set; }
 
         event EventHandler SearchCleared;
         event SearchedEventHandler Searched;
@@ -39,7 +36,6 @@ namespace Sunctum.Domain.ViewModels
         void AddToSelectedEntry(EntryViewModel add);
         void BuildContextMenus_Books();
         void BuildContextMenus_Contents();
-        void ClearSearchResult();
         void ClearSelectedItems();
         void CloseBook();
         void CloseImage();
@@ -59,8 +55,6 @@ namespace Sunctum.Domain.ViewModels
         void ResetScrollOffsetPool();
         void RestoreScrollOffset(Guid bookId);
         Task SaveOpenedBookContentsOrder();
-        void Search();
-        void Search(string searchingText);
         bool SortingSelected(string name);
         void StoreScrollOffset(Guid bookId);
     }

@@ -606,7 +606,6 @@ namespace Sunctum.ViewModels
             }
 
             SetMainWindowTitle();
-            HomeDocumentViewModel.ClearSearchResult();
             InitializeWindowComponent();
             ManageVcDB();
             ManageAppDB();
@@ -626,6 +625,7 @@ namespace Sunctum.ViewModels
                     .ContinueWith(_ =>
                     {
                         HomeDocumentViewModel.BookCabinet = LibraryVM.CreateBookStorage();
+                        HomeDocumentViewModel.BookCabinet.ClearSearchResult();
 
                         (LibraryVM as IObservable<BookCollectionChanged>)
                             .Subscribe(HomeDocumentViewModel.BookCabinet as IObserver<BookCollectionChanged>)

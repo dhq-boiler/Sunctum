@@ -2,6 +2,7 @@
 
 using NLog;
 using Prism.Services.Dialogs;
+using Sunctum.Domain.ViewModels;
 
 namespace Sunctum.ViewModels
 {

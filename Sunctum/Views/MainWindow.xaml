@@ -190,7 +190,7 @@
                             </MenuItem>
                             <MenuItem Header="{Binding MainWindow_Search, Source={StaticResource resources}}">
                                 <MenuItem
-                                    Header="{Binding ActiveDocumentViewModel.SearchStatusText}"
+                                    Header="{Binding ActiveDocumentViewModel.BookCabinet.SearchStatusText}"
                                     IsEnabled="False"
                                     Visibility="{Binding LibraryVM.IsSearching, Converter={StaticResource BoolToVisibilityConverter}}" />
                                 <MenuItem Command="{Binding OpenSearchPaneCommand}" Header="{Binding MainWindow_Search_Search, Source={StaticResource resources}}" />

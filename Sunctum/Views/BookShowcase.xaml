@@ -323,7 +323,7 @@
                     x:Name="Search_TextBox"
                     Width="200"
                     Margin="3"
-                    Text="{Binding UnescapedSearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    Text="{Binding BookCabinet.UnescapedSearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                     TextChanged="Search_TextBox_TextChanged" />
                 <Button
                     Height="19"

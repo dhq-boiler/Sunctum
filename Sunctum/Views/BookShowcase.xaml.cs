@@ -247,7 +247,7 @@ namespace Sunctum.Views
             if (!(viewModel is null))
             {
                 viewModel.StoreScrollOffset(DocumentViewModelBase.BeforeSearchPosition);
-                viewModel.Search();
+                viewModel.BookCabinet.Search();
                 viewModel.ResetScrollOffset();
                 e.Handled = true;
             }
@@ -259,7 +259,7 @@ namespace Sunctum.Views
             var author = (hyperlink.DataContext as BookViewModel).Author;
             var viewModel = (DocumentViewModelBase)DataContext;
             viewModel.StoreScrollOffset(DocumentViewModelBase.BeforeSearchPosition);
-            viewModel.SearchText = author.Name;
+            viewModel.BookCabinet.SearchText = author.Name;
             viewModel.ResetScrollOffset();
         }
 
