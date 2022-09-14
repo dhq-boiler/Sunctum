@@ -573,8 +573,15 @@ namespace Sunctum.ViewModels
             if (starting)
             {
                 LibraryVM.ProgressManager.PropertyChanged += ProgressManager_PropertyChanged;
-                TagPaneViewModel.BuildContextMenus_Tags();
-                AuthorPaneViewModel.BuildContextMenus_Authors();
+
+                if (App.Current is not null)
+                {
+                    App.Current.Dispatcher.Invoke(() =>
+                    {
+                        TagPaneViewModel.BuildContextMenus_Tags();
+                        AuthorPaneViewModel.BuildContextMenus_Authors();
+                    });
+                }
             }
 
             WindowLeft = Configuration.ApplicationConfiguration.WindowRect.X;
@@ -788,10 +795,13 @@ namespace Sunctum.ViewModels
         {
             if (DockingDocumentViewModels == null) return;
 
-            App.Current.Dispatcher.Invoke(() =>
+            if (App.Current is not null)
             {
-                DockingDocumentViewModels.Clear();
-            });
+                App.Current.Dispatcher.Invoke(() =>
+                {
+                    DockingDocumentViewModels.Clear();
+                });
+            }
         }
 
         private void NotifyActiveTabChanged()
