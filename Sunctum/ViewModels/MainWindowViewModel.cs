@@ -47,6 +47,8 @@ using Xceed.Wpf.AvalonDock.Layout;
 using Xceed.Wpf.AvalonDock.Layout.Serialization;
 using YamlDotNet.Core.Tokens;
 using YamlDotNet.Core;
+using System.Windows.Threading;
+using Sunctum.Domain.Util;
 
 namespace Sunctum.ViewModels
 {
@@ -818,7 +820,7 @@ namespace Sunctum.ViewModels
             }
         }
 
-        private void ManageAppDB()
+        public void ManageAppDB()
         {
             DataVersionManager dvManager = new DataVersionManager();
             dvManager.CurrentConnection = DataAccessManager.AppDao.CurrentConnection;
@@ -830,7 +832,7 @@ namespace Sunctum.ViewModels
             dvManager.UpgradeToTargetVersion();
         }
 
-        private void ManageVcDB()
+        public void ManageVcDB()
         {
             DataVersionManager dvManager = new DataVersionManager();
             dvManager.CurrentConnection = DataAccessManager.VcDao.CurrentConnection;
@@ -867,7 +869,7 @@ namespace Sunctum.ViewModels
             HomeDocumentViewModel.BookCabinet.Searched += LibraryVM_Searched;
         }
 
-        private void InitializeWindowComponent()
+        public void InitializeWindowComponent()
         {
             DisplayAuthorPane = Configuration.ApplicationConfiguration.DisplayAuthorPane;
             DisplayTagPane = Configuration.ApplicationConfiguration.DisplayTagPane;

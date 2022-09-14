@@ -14,6 +14,8 @@ namespace Sunctum.Domain.Models.Managers
 
         Task Enqueue(AsyncTaskSequence sequence);
 
+        void WaitUntilProcessAll(TimeSpan? waitUnit = null);
+
         IProgressManager ProgressManager { get; }
 
         event ExceptionOccurredEventHandler<Exception> ExceptionOccurred;
