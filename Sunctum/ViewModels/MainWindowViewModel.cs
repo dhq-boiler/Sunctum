@@ -688,9 +688,7 @@ namespace Sunctum.ViewModels
         {
             var assembly = Assembly.GetExecutingAssembly().GetName();
             var version = assembly.Version;
-
-            var attr = (AssemblyInformationalVersionAttribute)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(AssemblyInformationalVersionAttribute));
-            var key = attr.InformationalVersion;
+            string key = GetVersionString(version);
             var dao = DataAccessManager.VcDao.Build<VersionControlDao>();
             var records = dao.FindBy(new Dictionary<string, object>() { { "FullVersion", key } });
             if (records.Count() == 0)
@@ -708,6 +706,25 @@ namespace Sunctum.ViewModels
                 };
                 dao.Insert(newrecord);
             }
+        }
+
+        private static string GetVersionString(System.Version version)
+        {
+            var key = $"v{version.Major}";
+            if (version.Revision > 0)
+            {
+                key += $".{version.Minor}.{version.Build}.{version.Revision}";
+            }
+            else if (version.Build > 0)
+            {
+                key += $".{version.Minor}.{version.Build}";
+            }
+            else if (version.Minor > 0)
+            {
+                key += $".{version.Minor}";
+            }
+
+            return key;
         }
 
         private void IncrementNumberOfBoots()
@@ -939,8 +956,8 @@ namespace Sunctum.ViewModels
         private void SetMainWindowTitle()
         {
             var version = Assembly.GetExecutingAssembly().GetName().Version;
-            var majorMinorBuild = $"{version.Major}.{version.Minor}.{version.Build}";
-            var appnameAndVersion = $"Sunctum {majorMinorBuild}";
+            var versionStr = GetVersionString(version);
+            var appnameAndVersion = $"Sunctum {versionStr}";
 
             if (Configuration.ApplicationConfiguration != null && Configuration.ApplicationConfiguration.WorkingDirectory != null)
             {
