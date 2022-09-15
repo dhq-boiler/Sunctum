@@ -1,5 +1,6 @@
 ﻿
 
+using ChinhDo.Transactions;
 using Homura.ORM;
 using NLog;
 using OpenCvSharp;
@@ -18,6 +19,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Transactions;
 using System.Windows.Media.Imaging;
 
 namespace PickoutCover.Domain.Logic.Async
@@ -102,7 +104,12 @@ namespace PickoutCover.Domain.Logic.Async
             var encryptImage = EncryptImageFacade.FindBy(image.ID);
             if (Configuration.ApplicationConfiguration.LibraryIsEncrypted && encryptImage is not null)
             {
-                Encryptor.Encrypt(page.Image, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{page.Image.ID.ToString().Substring(0, 2)}\\{page.Image.ID}{Path.GetExtension(page.Image.AbsoluteMasterPath)}", Configuration.ApplicationConfiguration.Password);
+                using (var scope = new TransactionScope())
+                {
+                    var fileManager = new TxFileManager();
+                    Encryptor.Encrypt(page.Image, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{page.Image.ID.ToString().Substring(0, 2)}\\{page.Image.ID}{Path.GetExtension(page.Image.AbsoluteMasterPath)}", Configuration.ApplicationConfiguration.Password, fileManager);
+                    scope.Complete();
+                }
             }
 
             var book = _libraryVM.OnStage.Where(b => b.ID.Equals(_page.BookID)).Single();

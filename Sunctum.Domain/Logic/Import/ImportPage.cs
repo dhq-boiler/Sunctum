@@ -1,5 +1,6 @@
 ﻿
 
+using ChinhDo.Transactions;
 using Homura.ORM;
 using NLog;
 using Sunctum.Domain.Data.DaoFacade;
@@ -11,6 +12,7 @@ using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Transactions;
 
 namespace Sunctum.Domain.Logic.Import
 {
@@ -55,6 +57,8 @@ namespace Sunctum.Domain.Logic.Import
             var filename = entryName + System.IO.Path.GetExtension(Path);
             var source = Path;
             Destination = copyTo + "\\" + filename;
+            TransactionScope scope = null;
+            TxFileManager fileManager = null;
 
             ret.Add(new System.Threading.Tasks.Task(() => CreateTaskToCopyImage(Path, source, Destination)));
             ret.Add(new System.Threading.Tasks.Task(() => CreateTaskToInsertImage(entryName, Destination, dataOpUnit)));
@@ -66,8 +70,12 @@ namespace Sunctum.Domain.Logic.Import
 
             if (_isContent && Configuration.ApplicationConfiguration.LibraryIsEncrypted)
             {
-                ret.Add(new System.Threading.Tasks.Task(() => Encryptor.Encrypt(InsertedImage, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{InsertedImage.ID}{System.IO.Path.GetExtension(InsertedImage.AbsoluteMasterPath)}", Configuration.ApplicationConfiguration.Password)));
-                ret.Add(new System.Threading.Tasks.Task(() => Encryptor.DeleteOriginal(GeneratedPage)));
+                ret.Add(new System.Threading.Tasks.Task(() => scope = new TransactionScope()));
+                ret.Add(new System.Threading.Tasks.Task(() => fileManager = new TxFileManager()));
+                ret.Add(new System.Threading.Tasks.Task(() => Encryptor.Encrypt(InsertedImage, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{InsertedImage.ID}{System.IO.Path.GetExtension(InsertedImage.AbsoluteMasterPath)}", Configuration.ApplicationConfiguration.Password, fileManager)));
+                ret.Add(new System.Threading.Tasks.Task(() => Encryptor.DeleteOriginal(GeneratedPage, fileManager)));
+                ret.Add(new System.Threading.Tasks.Task(() => scope.Complete()));
+                ret.Add(new System.Threading.Tasks.Task(() => scope.Dispose()));
             }
 
             return ret;

@@ -1,4 +1,6 @@
-﻿using NLog;
+﻿using ChinhDo.Transactions;
+using Homura.ORM;
+using NLog;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Encrypt;
 using Sunctum.Domain.Logic.Load;
@@ -8,6 +10,7 @@ using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Transactions;
 using Unity;
 
 namespace Sunctum.Domain.Logic.Async
@@ -46,6 +49,7 @@ namespace Sunctum.Domain.Logic.Async
             sequence.Add(() => PasswordManager.SetPassword(Password, Environment.UserName));
 
             var books = LibraryManager.Value.BookSource;
+            var dataOpUnit = new DataOperationUnit();
 
             foreach (var book in books)
             {
@@ -54,16 +58,32 @@ namespace Sunctum.Domain.Logic.Async
                 {
                     sequence.Add(() =>
                     {
-                        var dirPath = $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{page.Image.ID.ToString().Substring(0, 2)}";
-                        if (!Directory.Exists(dirPath))
+                        dataOpUnit = new DataOperationUnit();
+                        dataOpUnit.Open(ConnectionManager.DefaultConnection);
+                        dataOpUnit.BeginTransaction();
+                        try
                         {
-                            Directory.CreateDirectory(dirPath);
+                            using (var scope = new TransactionScope())
+                            {
+                                var fileMgr = new TxFileManager();
+                                var dirPath = $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{page.Image.ID.ToString().Substring(0, 2)}";
+                                if (!fileMgr.DirectoryExists(dirPath))
+                                {
+                                    fileMgr.CreateDirectory(dirPath);
+                                }
+                                Encryptor.Encrypt(page.Image, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{page.Image.ID.ToString().Substring(0, 2)}\\{page.Image.ID}{Path.GetExtension(page.Image.AbsoluteMasterPath)}", Password, fileMgr);
+                                Encryptor.DeleteOriginal(page, fileMgr);
+                                page.Image.IsEncrypted = true;
+                                ImageFacade.Update(page.Image, dataOpUnit);
+                                scope.Complete();
+                            }
+                            dataOpUnit.Commit();
+                        }
+                        catch (Exception)
+                        {
+                            dataOpUnit.Rollback();
                         }
                     });
-                    sequence.Add(() => Encryptor.Encrypt(page.Image, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{page.Image.ID.ToString().Substring(0, 2)}\\{page.Image.ID}{Path.GetExtension(page.Image.AbsoluteMasterPath)}", Password));
-                    sequence.Add(() => Encryptor.DeleteOriginal(page));
-                    sequence.Add(() => page.Image.IsEncrypted = true);
-                    sequence.Add(() => ImageFacade.Update(page.Image));
                 }
             }
             sequence.Add(() => mainWindowViewModel.Value.Terminate());
