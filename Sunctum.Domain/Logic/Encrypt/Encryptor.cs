@@ -22,12 +22,14 @@ namespace Sunctum.Domain.Logic.Encrypt
 {
     public static class Encryptor
     {
-        public static void Encrypt(ImageViewModel image, string OutFilePath, string password)
+        public static void Encrypt(ImageViewModel image, string OutFilePath, string password, TxFileManager txFileManager)
         {
             int len;
             byte[] buffer = new byte[4096];
 
             string originalImagePath = image.AbsoluteMasterPath;
+
+            txFileManager.Snapshot(OutFilePath);
 
             using (FileStream outfs = new FileStream(OutFilePath, FileMode.Create, FileAccess.Write))
             {
@@ -83,13 +85,13 @@ namespace Sunctum.Domain.Logic.Encrypt
             }
         }
 
-        public static void DeleteOriginal(PageViewModel page)
+        public static void DeleteOriginal(PageViewModel page, TxFileManager fileMgr)
         {
             if (page.Image == null)
             {
                 ContentsLoadTask.SetImageToPage(page);
             }
-            File.Delete(page.Image.AbsoluteMasterPath);
+            fileMgr.Delete(page.Image.AbsoluteMasterPath);
         }
 
         public static void Decrypt(string encryptedFilePath, string password, bool isThumbnail)
