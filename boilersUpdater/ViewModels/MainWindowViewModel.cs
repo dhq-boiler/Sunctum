@@ -358,6 +358,8 @@ namespace boilersUpdater.ViewModels
 
                     scope.Complete();
 
+                    ProgressPercentage.Value = 100;
+
                     History.Add($"アップデート完了");
                     s_logger.Info($"アップデート完了");
 
