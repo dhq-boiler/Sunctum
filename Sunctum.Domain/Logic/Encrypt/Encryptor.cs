@@ -79,7 +79,7 @@ namespace Sunctum.Domain.Logic.Encrypt
                 dataOpUnit.Open(ConnectionManager.DefaultConnection);
                 dataOpUnit.BeginTransaction();
 
-                dao.InsertOrReplace(encryptImage);
+                dao.InsertOrReplace(encryptImage, dataOpUnit.CurrentConnection);
 
                 dataOpUnit.Commit();
             }
