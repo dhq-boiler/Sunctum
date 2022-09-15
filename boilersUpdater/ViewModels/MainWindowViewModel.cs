@@ -136,7 +136,7 @@ namespace boilersUpdater.ViewModels
             if (FromVersion.Value.Equals(ToVersion.Value))
             {
                 Stage.Value = EStage.Stage5;
-                Contents.Add($"{ProductName.Value} は最新版({ToVersion.Value})になっています。");
+                Contents.Add($"{ProductName.Value} は最新版({ToVersion.Value})です。");
                 Contents.Add($"アップデートする必要はありません。");
                 s_logger.Info(string.Join('\n', Contents));
             }
