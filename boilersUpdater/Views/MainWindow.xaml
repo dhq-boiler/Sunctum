@@ -142,5 +142,32 @@
                 </ItemsControl>
             </StackPanel>
         </DockPanel>
+        <DockPanel Visibility="{Binding Stage.Value, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource StageToVisibility}, ConverterParameter={x:Static viewModels:EStage.Stage5}}">
+            <DockPanel DockPanel.Dock="Bottom">
+                <DockPanel DockPanel.Dock="Right">
+                    <DockPanel.Resources>
+                        <Style TargetType="Button">
+                            <Setter Property="Width" Value="75" />
+                            <Setter Property="Height" Value="25" />
+                            <Setter Property="Margin" Value="5" />
+                        </Style>
+                    </DockPanel.Resources>
+                    <Button Command="{Binding Cancel}" Content="閉じる" />
+                </DockPanel>
+                <DockPanel />
+            </DockPanel>
+            <StackPanel
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Orientation="Vertical">
+                <ItemsControl ItemsSource="{Binding Contents}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Label Content="{Binding}" FontSize="20" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </DockPanel>
     </Grid>
 </Window>
