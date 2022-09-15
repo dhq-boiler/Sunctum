@@ -187,7 +187,7 @@ namespace Sunctum.Managers
                     s_logger.Debug($"Search Word:{searchingText}");
                     SearchedBooks = new ReactiveCollection<BookViewModel>();
                     SearchedBooks.AddRange(BookSource.Where(b => AuthorNameContainsSearchText(b, searchingText) || TitleContainsSearchText(b, searchingText) || FingerPrintContainsSearchText(b, searchingText)));
-
+                    RaisePropertyChanged(nameof(OnStage));
                     OnSearched(new SearchedEventArgs(searchingText, _previousSearchingText));
                 }
 
