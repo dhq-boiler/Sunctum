@@ -56,6 +56,11 @@ namespace boilersUpdater.ViewModels
         /// アップデート完了
         /// </summary>
         Stage4,
+
+        /// <summary>
+        /// 最新版でアップデート必要なし
+        /// </summary>
+        Stage5,
     }
 
     public class MainWindowViewModel : BindableBase, IDisposable
@@ -99,146 +104,172 @@ namespace boilersUpdater.ViewModels
             var target = records.LastOrDefault();
             if (target is not null)
             {
-                FromVersion.Value = $"v{target.Major}.{target.Minor}.{target.Build}.{target.Revision}";
+                if (target.Revision > 0)
+                {
+                    FromVersion.Value = $"v{target.Major}.{target.Minor}.{target.Build}.{target.Revision}";
+                }
+                else if (target.Build > 0)
+                {
+                    FromVersion.Value = $"v{target.Major}.{target.Minor}.{target.Build}";
+                }
+                else if (target.Minor > 0)
+                {
+                    FromVersion.Value = $"v{target.Major}.{target.Minor}";
+                }
+                else
+                {
+                    FromVersion.Value = $"v{target.Major}";
+                }
                 s_logger.Info($"FromVersion の値を v{target.Major}.{target.Minor}.{target.Build}.{target.Revision} にセット");
             }
             var toVersion = RetrieveToVersionFromGithub().Result;
             ToVersion.Value = toVersion;
             s_logger.Info($"ToVersion の値を {toVersion} にセット");
 
-            Contents.Add($"{ProductName.Value} {FromVersion.Value} から");
-            Contents.Add($"{ProductName.Value} {ToVersion.Value} にアップデートします。");
-            Contents.Add("");
-            Contents.Add("よろしければアップデートボタンを押してください。");
-            Contents.Add("");
-            s_logger.Info(string.Join('\n', Contents));
-
-            Stage.Value = EStage.Stage1;
-            s_logger.Info("ステージ１をセット");
-
-            StartboilersUpdater = new ReactiveCommand();
-            StartboilersUpdater.Subscribe(() =>
-            {
-                browser_download_url = Latest.assets.Where(x => x.name.EndsWith(".zip"))
-                                                    .Select(x => x.browser_download_url)
-                                                    .First();
-                var curDirPath = Directory.GetCurrentDirectory();
-                var up1DirPath = curDirPath.Substring(0, curDirPath.LastIndexOf(@"\") + 1);
-                var up1Dir = new DirectoryInfo(up1DirPath);
-                ClearFilesAndDirectories();
-                s_logger.Info($"ディレクトリとファイルの列挙：{up1Dir.FullName}");
-                FullDirList(up1Dir, "*");
-                var exceptedList = ExceptedList($"{curDirPath}\\boilersUpdater");
-                s_logger.Info($"除外：{string.Join('\n', exceptedList)}");
-                files = files.Where(x => !x.FullName.StartsWith(curDirPath)).Where(x => !exceptedList.Contains(x.FullName) && !x.FullName.StartsWith("boilersUpdater")).ToList();
-                s_logger.Info("更新対象ファイルの絞り込み");
-                s_logger.Info(string.Join('\n', files));
-                while (!files.All(file => !IsFileLocked(file)))
-                {
-                    var str = "アップデート対象のファイルが別のプロセスに開かれています。\n"
-                            + "別のプロセスを終了してください。\n"
-                            + "\n";
-                    files.Select(file => new { File = file, IsLocked = IsFileLocked(file) })
-                         .Where(x => x.IsLocked)
-                         .ToList()
-                         .ForEach(x => str += $"{x.File}\n");
-                    s_logger.Warn(str);
-                    var result = System.Windows.Forms.MessageBox.Show(str, "別のプロセスに開かれています", MessageBoxButtons.AbortRetryIgnore);
-                    if (result == DialogResult.Abort)
-                    {
-                        s_logger.Info("アップデートは中止されました");
-                        Cancel.Execute();
-                        return;
-                    }
-                    else if (result == DialogResult.Retry)
-                    {
-                        s_logger.Info("再試行します");
-                        continue;
-                    }
-                    else if (result == DialogResult.Ignore)
-                    {
-                        s_logger.Warn("強制アップデートします");
-                        break;
-                    }
-                }
-
-                Stage.Value = EStage.Stage2;
-                s_logger.Info("ステージ２をセット");
-
-                var guid = Guid.NewGuid();
-                downloadFileName = $"C:\\Temp\\{guid.ToString("N")}.dat";
-                using (var client = new WebClient())
-                {
-                    WebClient = client;
-                    client.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
-                    client.DownloadProgressChanged += Client_DownloadProgressChanged;
-                    client.DownloadFileCompleted += Client_DownloadFileCompleted;
-                    client.DownloadFileAsync(browser_download_url, downloadFileName);
-                    History.Add($"ダウンロード中：{browser_download_url}");
-                    s_logger.Info($"ダウンロード中：{browser_download_url}");
-                }
-            }).AddTo(disposables);
             Cancel = new ReactiveCommand();
             Cancel.Subscribe(() =>
             {
                 s_logger.Info($"アプリケーションを終了しました");
                 App.Current.Shutdown();
             }).AddTo(disposables);
-            Next = Stage.Select(x => x.Equals(EStage.Stage3))
-                        .ToReadOnlyReactivePropertySlim()
-                        .ToReactiveCommand()
-                        .WithSubscribe(() =>
+
+            if (FromVersion.Value.Equals(ToVersion.Value))
+            {
+                Stage.Value = EStage.Stage5;
+                Contents.Add($"{ProductName.Value} は最新版({ToVersion.Value})になっています。");
+                Contents.Add($"アップデートする必要はありません。");
+                s_logger.Info(string.Join('\n', Contents));
+            }
+            else
+            {
+                Contents.Add($"{ProductName.Value} {FromVersion.Value} から");
+                Contents.Add($"{ProductName.Value} {ToVersion.Value} にアップデートします。");
+                Contents.Add("");
+                Contents.Add("よろしければアップデートボタンを押してください。");
+                Contents.Add("");
+                s_logger.Info(string.Join('\n', Contents));
+
+                Stage.Value = EStage.Stage1;
+                s_logger.Info("ステージ１をセット");
+
+                StartboilersUpdater = new ReactiveCommand();
+                StartboilersUpdater.Subscribe(() =>
+                {
+                    browser_download_url = Latest.assets.Where(x => x.name.EndsWith(".zip"))
+                                                        .Select(x => x.browser_download_url)
+                                                        .First();
+                    var curDirPath = Directory.GetCurrentDirectory();
+                    var up1DirPath = curDirPath.Substring(0, curDirPath.LastIndexOf(@"\") + 1);
+                    var up1Dir = new DirectoryInfo(up1DirPath);
+                    ClearFilesAndDirectories();
+                    s_logger.Info($"ディレクトリとファイルの列挙：{up1Dir.FullName}");
+                    FullDirList(up1Dir, "*");
+                    var exceptedList = ExceptedList($"{curDirPath}\\boilersUpdater");
+                    s_logger.Info($"除外：{string.Join('\n', exceptedList)}");
+                    files = files.Where(x => !x.FullName.StartsWith(curDirPath)).Where(x => !exceptedList.Contains(x.FullName) && !x.FullName.StartsWith("boilersUpdater")).ToList();
+                    s_logger.Info("更新対象ファイルの絞り込み");
+                    s_logger.Info(string.Join('\n', files));
+                    while (!files.All(file => !IsFileLocked(file)))
+                    {
+                        var str = "アップデート対象のファイルが別のプロセスに開かれています。\n"
+                                + "別のプロセスを終了してください。\n"
+                                + "\n";
+                        files.Select(file => new { File = file, IsLocked = IsFileLocked(file) })
+                             .Where(x => x.IsLocked)
+                             .ToList()
+                             .ForEach(x => str += $"{x.File}\n");
+                        s_logger.Warn(str);
+                        var result = System.Windows.Forms.MessageBox.Show(str, "別のプロセスに開かれています", MessageBoxButtons.AbortRetryIgnore);
+                        if (result == DialogResult.Abort)
                         {
-                            Stage.Value = EStage.Stage4;
-                            s_logger.Info("ステージ４をセット");
+                            s_logger.Info("アップデートは中止されました");
+                            Cancel.Execute();
+                            return;
+                        }
+                        else if (result == DialogResult.Retry)
+                        {
+                            s_logger.Info("再試行します");
+                            continue;
+                        }
+                        else if (result == DialogResult.Ignore)
+                        {
+                            s_logger.Warn("強制アップデートします");
+                            break;
+                        }
+                    }
 
-                            var dao = new VersionControlDao();
+                    Stage.Value = EStage.Stage2;
+                    s_logger.Info("ステージ２をセット");
 
-                            using (DataOperationUnit dataOpUnit = new DataOperationUnit())
+                    var guid = Guid.NewGuid();
+                    downloadFileName = $"C:\\Temp\\{guid.ToString("N")}.dat";
+                    using (var client = new WebClient())
+                    {
+                        WebClient = client;
+                        client.Headers.Add("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36");
+                        client.DownloadProgressChanged += Client_DownloadProgressChanged;
+                        client.DownloadFileCompleted += Client_DownloadFileCompleted;
+                        client.DownloadFileAsync(browser_download_url, downloadFileName);
+                        History.Add($"ダウンロード中：{browser_download_url}");
+                        s_logger.Info($"ダウンロード中：{browser_download_url}");
+                    }
+                }).AddTo(disposables);
+                Next = Stage.Select(x => x.Equals(EStage.Stage3))
+                            .ToReadOnlyReactivePropertySlim()
+                            .ToReactiveCommand()
+                            .WithSubscribe(() =>
                             {
-                                try
-                                {
-                                    dataOpUnit.Open(ConnectionManager.DefaultConnection);
-                                    dataOpUnit.BeginTransaction();
+                                Stage.Value = EStage.Stage4;
+                                s_logger.Info("ステージ４をセット");
 
-                                    var records = dao.FindAll();
-                                    if (records.Any())
+                                var dao = new VersionControlDao();
+
+                                using (DataOperationUnit dataOpUnit = new DataOperationUnit())
+                                {
+                                    try
                                     {
-                                        var oldrecord = records.Last();
-                                        oldrecord.RetiredDate = DateTime.Now;
-                                        dao.Update(oldrecord, dataOpUnit.CurrentConnection);
-                                        s_logger.Info("VersionControlテーブルの最新の１行のレコードをUpdateしました");
+                                        dataOpUnit.Open(ConnectionManager.DefaultConnection);
+                                        dataOpUnit.BeginTransaction();
+
+                                        var records = dao.FindAll();
+                                        if (records.Any())
+                                        {
+                                            var oldrecord = records.Last();
+                                            oldrecord.RetiredDate = DateTime.Now;
+                                            dao.Update(oldrecord, dataOpUnit.CurrentConnection);
+                                            s_logger.Info("VersionControlテーブルの最新の１行のレコードをUpdateしました");
+                                        }
+
+                                        var regex = new Regex("v(?<major>.+?)(.(?<minor>.+?)(.(?<build>.+?)(.(?<revision>.+?))?)?)?");
+                                        var mc = regex.Match(Latest.tag_name);
+                                        var newrecord = new VersionControl()
+                                        {
+                                            FullVersion = Latest.tag_name,
+                                            Major = int.Parse(mc.Groups["major"].Value),
+                                            Minor = mc.Groups.ContainsKey("minor") ? int.Parse(mc.Groups["minor"].Value) : 0,
+                                            Build = mc.Groups.ContainsKey("build") ? int.Parse(mc.Groups["build"].Value) : 0,
+                                            Revision = mc.Groups.ContainsKey("revision") ? int.Parse(mc.Groups["revision"].Value) : 0,
+                                            IsValid = true,
+                                            InstalledDate = DateTime.Now,
+                                            RetiredDate = null,
+                                        };
+                                        dao.Insert(newrecord, dataOpUnit.CurrentConnection);
+                                        s_logger.Info("VersionControlレコードをINSERTしました");
+
+                                        dataOpUnit.Commit();
+                                        s_logger.Info("コミットしました");
                                     }
-
-                                    var regex = new Regex("v(?<major>.+?)(.(?<minor>.+?)(.(?<build>.+?)(.(?<revision>.+?))?)?)?");
-                                    var mc = regex.Match(Latest.tag_name);
-                                    var newrecord = new VersionControl()
+                                    catch (Exception e)
                                     {
-                                        FullVersion = Latest.tag_name,
-                                        Major = int.Parse(mc.Groups["major"].Value),
-                                        Minor = mc.Groups.ContainsKey("minor") ? int.Parse(mc.Groups["minor"].Value) : 0,
-                                        Build = mc.Groups.ContainsKey("build") ? int.Parse(mc.Groups["build"].Value) : 0,
-                                        Revision = mc.Groups.ContainsKey("revision") ? int.Parse(mc.Groups["revision"].Value) : 0,
-                                        IsValid = true,
-                                        InstalledDate = DateTime.Now,
-                                        RetiredDate = null,
-                                    };
-                                    dao.Insert(newrecord, dataOpUnit.CurrentConnection);
-                                    s_logger.Info("VersionControlレコードをINSERTしました");
-
-                                    dataOpUnit.Commit();
-                                    s_logger.Info("コミットしました");
+                                        s_logger.Error("問題が発生しました");
+                                        s_logger.Error(e);
+                                        dataOpUnit.Rollback();
+                                        s_logger.Info("ロールバックしました");
+                                    }
                                 }
-                                catch (Exception e)
-                                {
-                                    s_logger.Error("問題が発生しました");
-                                    s_logger.Error(e);
-                                    dataOpUnit.Rollback();
-                                    s_logger.Info("ロールバックしました");
-                                }
-                            }
-                        })
-                        .AddTo(disposables);
+                            })
+                            .AddTo(disposables);
+            }
         }
 
         private void ClearFilesAndDirectories()

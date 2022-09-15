@@ -65,6 +65,9 @@
         <trigger:MouseWheelEventTrigger EventName="MouseWheel">
             <helper:EventToCommand Command="{Binding ActiveDocumentViewModel.MouseWheelCommand}" PassEventArgsToCommand="True" />
         </trigger:MouseWheelEventTrigger>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding LoadedCommand}" />
+        </i:EventTrigger>
     </i:Interaction.Triggers>
     <Window.InputBindings>
         <KeyBinding

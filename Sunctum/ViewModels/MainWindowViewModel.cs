@@ -104,6 +104,8 @@ namespace Sunctum.ViewModels
 
         public ICommand ImportLibraryCommand { get; set; }
 
+        public ICommand LoadedCommand { get; set; }
+
         public ICommand OpenAuthorManagementDialogCommand { get; set; }
 
         public ICommand OpenMetadataImportSettingDialogCommand { get; set; }
@@ -219,6 +221,10 @@ namespace Sunctum.ViewModels
             ImportLibraryCommand = new DelegateCommand(async () =>
             {
                 await OpenImportLibraryDialog();
+            });
+            LoadedCommand = new DelegateCommand(() =>
+            {
+                LoadLayout();
             });
             OpenAuthorManagementDialogCommand = new DelegateCommand(() =>
             {
@@ -1060,6 +1066,7 @@ namespace Sunctum.ViewModels
 
         public void Close()
         {
+            SaveLayout();
             if (_disposable is not null && !_disposable.IsDisposed)
             {
                 _disposable.Dispose();
