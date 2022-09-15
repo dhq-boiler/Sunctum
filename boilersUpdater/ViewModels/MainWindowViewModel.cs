@@ -91,21 +91,30 @@ namespace boilersUpdater.ViewModels
             dvManager.Mode = VersioningStrategy.ByTick;
             dvManager.RegisterChangePlan(new ChangePlan_VC_VersionOrigin());
             dvManager.UpgradeToTargetVersion();
+            s_logger.Info($"dvManager.UpgradeToTargetVersion() 完了");
 
             var dao = new VersionControlDao();
             var records = dao.FindAll();
 
-            var target = records.Last();
-            FromVersion.Value = $"v{target.Major}.{target.Minor}.{target.Build}.{target.Revision}";
-            ToVersion.Value = RetrieveToVersionFromGithub().Result;
+            var target = records.LastOrDefault();
+            if (target is not null)
+            {
+                FromVersion.Value = $"v{target.Major}.{target.Minor}.{target.Build}.{target.Revision}";
+                s_logger.Info($"FromVersion の値を v{target.Major}.{target.Minor}.{target.Build}.{target.Revision} にセット");
+            }
+            var toVersion = RetrieveToVersionFromGithub().Result;
+            ToVersion.Value = toVersion;
+            s_logger.Info($"ToVersion の値を {toVersion} にセット");
 
             Contents.Add($"{ProductName.Value} {FromVersion.Value} から");
             Contents.Add($"{ProductName.Value} {ToVersion.Value} にアップデートします。");
             Contents.Add("");
             Contents.Add("よろしければアップデートボタンを押してください。");
             Contents.Add("");
+            s_logger.Info(string.Join('\n', Contents));
 
             Stage.Value = EStage.Stage1;
+            s_logger.Info("ステージ１をセット");
 
             StartboilersUpdater = new ReactiveCommand();
             StartboilersUpdater.Subscribe(() =>
@@ -117,8 +126,13 @@ namespace boilersUpdater.ViewModels
                 var up1DirPath = curDirPath.Substring(0, curDirPath.LastIndexOf(@"\") + 1);
                 var up1Dir = new DirectoryInfo(up1DirPath);
                 ClearFilesAndDirectories();
+                s_logger.Info($"ディレクトリとファイルの列挙：{up1Dir.FullName}");
                 FullDirList(up1Dir, "*");
-                files = files.Where(x => !x.FullName.StartsWith(curDirPath)).Where(x => !ExceptedList().Contains(x.FullName)).ToList();
+                var exceptedList = ExceptedList($"{curDirPath}\\boilersUpdater");
+                s_logger.Info($"除外：{string.Join('\n', exceptedList)}");
+                files = files.Where(x => !x.FullName.StartsWith(curDirPath)).Where(x => !exceptedList.Contains(x.FullName) && !x.FullName.StartsWith("boilersUpdater")).ToList();
+                s_logger.Info("更新対象ファイルの絞り込み");
+                s_logger.Info(string.Join('\n', files));
                 while (!files.All(file => !IsFileLocked(file)))
                 {
                     var str = "アップデート対象のファイルが別のプロセスに開かれています。\n"
@@ -128,23 +142,28 @@ namespace boilersUpdater.ViewModels
                          .Where(x => x.IsLocked)
                          .ToList()
                          .ForEach(x => str += $"{x.File}\n");
+                    s_logger.Warn(str);
                     var result = System.Windows.Forms.MessageBox.Show(str, "別のプロセスに開かれています", MessageBoxButtons.AbortRetryIgnore);
                     if (result == DialogResult.Abort)
                     {
+                        s_logger.Info("アップデートは中止されました");
                         Cancel.Execute();
                         return;
                     }
                     else if (result == DialogResult.Retry)
                     {
+                        s_logger.Info("再試行します");
                         continue;
                     }
                     else if (result == DialogResult.Ignore)
                     {
+                        s_logger.Warn("強制アップデートします");
                         break;
                     }
                 }
 
                 Stage.Value = EStage.Stage2;
+                s_logger.Info("ステージ２をセット");
 
                 var guid = Guid.NewGuid();
                 downloadFileName = $"C:\\Temp\\{guid.ToString("N")}.dat";
@@ -156,11 +175,13 @@ namespace boilersUpdater.ViewModels
                     client.DownloadFileCompleted += Client_DownloadFileCompleted;
                     client.DownloadFileAsync(browser_download_url, downloadFileName);
                     History.Add($"ダウンロード中：{browser_download_url}");
+                    s_logger.Info($"ダウンロード中：{browser_download_url}");
                 }
             }).AddTo(disposables);
             Cancel = new ReactiveCommand();
             Cancel.Subscribe(() =>
             {
+                s_logger.Info($"アプリケーションを終了しました");
                 App.Current.Shutdown();
             }).AddTo(disposables);
             Next = Stage.Select(x => x.Equals(EStage.Stage3))
@@ -169,7 +190,8 @@ namespace boilersUpdater.ViewModels
                         .WithSubscribe(() =>
                         {
                             Stage.Value = EStage.Stage4;
-                            
+                            s_logger.Info("ステージ４をセット");
+
                             var dao = new VersionControlDao();
 
                             using (DataOperationUnit dataOpUnit = new DataOperationUnit())
@@ -185,6 +207,7 @@ namespace boilersUpdater.ViewModels
                                         var oldrecord = records.Last();
                                         oldrecord.RetiredDate = DateTime.Now;
                                         dao.Update(oldrecord, dataOpUnit.CurrentConnection);
+                                        s_logger.Info("VersionControlテーブルの最新の１行のレコードをUpdateしました");
                                     }
 
                                     var regex = new Regex("v(?<major>.+?)(.(?<minor>.+?)(.(?<build>.+?)(.(?<revision>.+?))?)?)?");
@@ -201,12 +224,17 @@ namespace boilersUpdater.ViewModels
                                         RetiredDate = null,
                                     };
                                     dao.Insert(newrecord, dataOpUnit.CurrentConnection);
+                                    s_logger.Info("VersionControlレコードをINSERTしました");
 
                                     dataOpUnit.Commit();
+                                    s_logger.Info("コミットしました");
                                 }
-                                catch (Exception)
+                                catch (Exception e)
                                 {
+                                    s_logger.Error("問題が発生しました");
+                                    s_logger.Error(e);
                                     dataOpUnit.Rollback();
+                                    s_logger.Info("ロールバックしました");
                                 }
                             }
                         })
@@ -219,9 +247,8 @@ namespace boilersUpdater.ViewModels
             folders.Clear();
         }
 
-        private IEnumerable<string> ExceptedList()
+        private IEnumerable<string> ExceptedList(string curdir)
         {
-            var curdir = Directory.GetCurrentDirectory();
             yield return Path.Combine(curdir, "Homura.dll");
             yield return Path.Combine(curdir, "Newtonsoft.Json.dll");
             yield return Path.Combine(curdir, "NLog.dll");
@@ -242,6 +269,7 @@ namespace boilersUpdater.ViewModels
         private void Client_DownloadFileCompleted(object? sender, System.ComponentModel.AsyncCompletedEventArgs e)
         {
             History.Add($"ダウンロード完了");
+            s_logger.Info($"ダウンロード完了");
 
             var zipFile = ZipFile.Open(downloadFileName, ZipArchiveMode.Read);
 
@@ -254,16 +282,22 @@ namespace boilersUpdater.ViewModels
             {
                 using (var scope = new TransactionScope())
                 {
+                    var curDirPath = Directory.GetCurrentDirectory();
+                    s_logger.Info($"カレントディレクトリ：{curDirPath}");
                     var txFileManager = new TxFileManager();
-                    foreach (var entry in zipFile.Entries)
+                    var exceptedList = ExceptedList($"{curDirPath}\\boilersUpdater");
+                    s_logger.Info($"除外：{string.Join('\n', exceptedList)}");
+                    var updating = zipFile.Entries.Where(x => !x.FullName.StartsWith(curDirPath)).Where(x => !exceptedList.Contains(x.FullName) && !x.FullName.StartsWith("boilersUpdater")).ToList();
+                    updating.ForEach(x => s_logger.Info($"更新予約：{x}"));
+                    foreach (var entry in updating)
                     {
                         var isDirectory = entry.FullName.EndsWith("/") && entry.Name.Equals(string.Empty);
                         var entryFullName = entry.FullName.Replace("/", "\\");
-                        var curDirPath = Directory.GetCurrentDirectory();
                         if (isDirectory)
                         {
                             var targetDirPath = Path.Combine(curDirPath, entryFullName);
                             History.Add($"ディレクトリ作成：{targetDirPath}");
+                            s_logger.Info($"ディレクトリ作成：{targetDirPath}");
                             txFileManager.CreateDirectory(targetDirPath);
                         }
                         else
@@ -271,6 +305,7 @@ namespace boilersUpdater.ViewModels
                             var filename = Path.Combine(curDirPath, entryFullName);
                             txFileManager.Snapshot(filename);
                             History.Add($"ファイルコピー：{filename}");
+                            s_logger.Info($"ファイルコピー：{filename}");
                             entry.ExtractToFile(filename, true);
                         }
 
@@ -280,17 +315,21 @@ namespace boilersUpdater.ViewModels
                     scope.Complete();
 
                     History.Add($"アップデート完了");
+                    s_logger.Info($"アップデート完了");
 
                     Stage.Value = EStage.Stage3;
+                    s_logger.Info("ステージ３をセット");
 
                     Contents.Clear();
                     Contents.Add($"{ProductName.Value} {FromVersion.Value} から");
                     Contents.Add($"{ProductName.Value} {ToVersion.Value} にアップデート完了しました。");
+                    s_logger.Info(string.Join('\n', Contents));
                 }
             }
             catch (Exception ex)
             {
                 History.Add($"{History.Last()} でエラーが発生しました。{ex.ToString()}");
+                s_logger.Error($"{History.Last()} でエラーが発生しました。{ex.ToString()}");
             }
             finally
             {
@@ -299,6 +338,7 @@ namespace boilersUpdater.ViewModels
                 if (File.Exists(downloadFileName))
                 {
                     File.Delete(downloadFileName);
+                    s_logger.Info($"ファイル削除 {downloadFileName}");
                 }
             }
         }
