@@ -166,7 +166,7 @@ namespace boilersUpdater.ViewModels
                     FullDirList(up1Dir, "*");
                     var exceptedList = ExceptedList($"{curDirPath}\\boilersUpdater");
                     s_logger.Info($"除外：{string.Join('\n', exceptedList)}");
-                    files = files.Where(x => !x.FullName.StartsWith(curDirPath)).Where(x => !exceptedList.Contains(x.FullName) && !x.FullName.StartsWith("boilersUpdater")).ToList();
+                    files = files.Where(x => !exceptedList.Contains(x.FullName) && x.FullName.IndexOf("boilersUpdater") == -1).ToList();
                     s_logger.Info("更新対象ファイルの絞り込み");
                     s_logger.Info(string.Join('\n', files));
                     while (!files.All(file => !IsFileLocked(file)))
@@ -197,6 +197,19 @@ namespace boilersUpdater.ViewModels
                             break;
                         }
                     }
+
+                    files.ForEach(file =>
+                    {
+                        var isLocked = IsFileLocked(file);
+                        if (!isLocked)
+                        {
+                            s_logger.Info($"{file} isLocked:{isLocked}");
+                        }
+                        else
+                        {
+                            s_logger.Warn($"{file} isLocked:{isLocked}");
+                        }
+                    });
 
                     Stage.Value = EStage.Stage2;
                     s_logger.Info("ステージ２をセット");
