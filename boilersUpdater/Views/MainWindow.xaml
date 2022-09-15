@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewModels="clr-namespace:boilersUpdater.ViewModels"
     xmlns:views="clr-namespace:boilersUpdater.Views"
-    Title="MainWindow"
+    Title="Sunctumアップデーター"
     Width="800"
     Height="450"
     mc:Ignorable="d">
