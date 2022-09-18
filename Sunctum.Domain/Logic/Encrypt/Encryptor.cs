@@ -76,12 +76,19 @@ namespace Sunctum.Domain.Logic.Encrypt
             EncryptImageDao dao = new EncryptImageDao();
             using (var dataOpUnit = new DataOperationUnit())
             {
-                dataOpUnit.Open(ConnectionManager.DefaultConnection);
-                dataOpUnit.BeginTransaction();
+                try
+                {
+                    dataOpUnit.Open(ConnectionManager.DefaultConnection);
+                    dataOpUnit.BeginTransaction();
 
-                dao.InsertOrReplace(encryptImage, dataOpUnit.CurrentConnection);
+                    dao.InsertOrReplace(encryptImage, dataOpUnit.CurrentConnection);
 
-                dataOpUnit.Commit();
+                    dataOpUnit.Commit();
+                }
+                catch (Exception)
+                {
+                    dataOpUnit.Rollback();
+                }
             }
         }
 
