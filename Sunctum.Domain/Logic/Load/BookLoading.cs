@@ -74,9 +74,12 @@ namespace Sunctum.Domain.Logic.Load
                     || firstPageImage.Thumbnail?.RelativeMasterPath == null
                     || !firstPageImage.ThumbnailGenerated)
                 {
-                    var tg = new Async.ThumbnailGenerating();
-                    tg.Target = firstPageImage;
-                    await (Application.Current.MainWindow.DataContext as IMainWindowViewModel).LibraryVM.TaskManager.Enqueue(tg.GetTaskSequence());
+                    await Application.Current.Dispatcher.InvokeAsync(async () =>
+                    {
+                        var tg = new Async.ThumbnailGenerating();
+                        tg.Target = firstPageImage;
+                        await (Application.Current.MainWindow.DataContext as IMainWindowViewModel).LibraryVM.TaskManager.Enqueue(tg.GetTaskSequence());
+                    });
                 }
             }
         }

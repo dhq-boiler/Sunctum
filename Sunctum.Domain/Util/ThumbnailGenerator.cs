@@ -156,14 +156,9 @@ namespace Sunctum.Domain.Util
 
         private static void SaveBitmap(Bitmap bmp, EncoderParameters eps, ImageCodecInfo ici, string newFileName)
         {
-            Bitmap s;
-            using (Bitmap t = new Bitmap(bmp))
+            using (var mat = bmp.ToMat())
             {
-                s = (Bitmap)t.Clone();
-            }
-            using (s)
-            {
-                s.Save(newFileName, ici, eps);
+                mat.SaveImage(newFileName);
             }
         }
 
@@ -190,6 +185,7 @@ namespace Sunctum.Domain.Util
 
                         string newFileName = GetAbsoluteCacheFilePath(destFilename);
                         CreateCacheDirectoryIfDoesntExist();
+                        CreateCacheBranchDirectoryIfDoesntExist(Path.GetDirectoryName(newFileName));
                         SaveBitmap(bmp, eps, ici, newFileName);
 
                         return GetRelativeCacheFilePath(destFilename);
@@ -216,6 +212,7 @@ namespace Sunctum.Domain.Util
 
                         string newFileName = GetAbsoluteCacheFilePath(destFilename);
                         CreateCacheDirectoryIfDoesntExist();
+                        CreateCacheBranchDirectoryIfDoesntExist(Path.GetDirectoryName(newFileName));
                         SaveBitmap(bmp, eps, ici, newFileName);
 
                         return GetRelativeCacheFilePath(destFilename);
@@ -250,7 +247,7 @@ namespace Sunctum.Domain.Util
 
         internal static string GetAbsoluteCacheFilePath(string path)
         {
-            return $"{AbsoluteCacheDirectory}\\{Guid.Parse(Path.GetFileName(path)).ToString("N").Substring(0, 2)}\\{Path.GetFileName(path)}";
+            return $"{AbsoluteCacheDirectory}\\{Guid.Parse(Path.GetFileNameWithoutExtension(path)).ToString("N").Substring(0, 2)}\\{Path.GetFileName(path)}";
         }
 
         internal static string AbsoluteCacheDirectory
@@ -260,7 +257,7 @@ namespace Sunctum.Domain.Util
 
         internal static string GetRelativeCacheFilePath(string path)
         {
-            return $"{Specifications.CACHE_DIRECTORY}\\{Path.GetFileName(path)}";
+            return $"{Specifications.CACHE_DIRECTORY}\\{Guid.Parse(Path.GetFileNameWithoutExtension(path)).ToString("N").Substring(0, 2)}\\{Path.GetFileName(path)}";
         }
     }
 }

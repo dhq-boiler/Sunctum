@@ -45,7 +45,8 @@ namespace Sunctum.Converters
                     var th = ThumbnailFacade.FindByImageID(image.ID);
                     if (th is not null)
                     {
-                        thumbnail = th;
+                        image.Thumbnail = thumbnail = th;
+                        return LoadBitmap(thumbnail.AbsoluteMasterPath, image.IsEncrypted);
                     }
                 }
                 if (image is not null && image.IsEncrypted)
@@ -58,6 +59,16 @@ namespace Sunctum.Converters
                     {
                         return LoadBitmap($"{Configuration.ApplicationConfiguration.ExecutingDirectory}\\{Specifications.LOCK_ICON_FILE}", image.IsEncrypted);
                     }
+                }
+                if (!File.Exists(thumbnail.RelativeMasterPath))
+                {
+                    Application.Current.Dispatcher.Invoke(async () =>
+                    {
+                        var tg = new Domain.Logic.Async.ThumbnailGenerating();
+                        tg.Target = image;
+                        await (Application.Current.MainWindow.DataContext as IMainWindowViewModel).LibraryVM.TaskManager.Enqueue(tg.GetTaskSequence());
+                    });
+                    return LoadBitmap(thumbnail.AbsoluteMasterPath, image.IsEncrypted);
                 }
                 if (Guid.TryParse(Path.GetFileNameWithoutExtension(thumbnail.AbsoluteMasterPath), out var guid))
                 {
@@ -72,7 +83,22 @@ namespace Sunctum.Converters
             }
             else if (image is not null)
             {
-                return LoadBitmap(image);
+                var th = ThumbnailFacade.FindByImageID(image.ID);
+                if (th is not null)
+                {
+                    image.Thumbnail = thumbnail = th;
+                    return LoadBitmap(thumbnail.AbsoluteMasterPath, image.IsEncrypted);
+                }
+                else
+                {
+                    return Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        var tg = new Domain.Logic.Async.ThumbnailGenerating();
+                        tg.Target = image;
+                        (Application.Current.MainWindow.DataContext as IMainWindowViewModel).LibraryVM.TaskManager.RunSync(tg.GetTaskSequence());
+                        return LoadBitmap(image.Thumbnail.AbsoluteMasterPath, image.IsEncrypted);
+                    });
+                }
             }
             else
             {
@@ -153,7 +179,6 @@ namespace Sunctum.Converters
             catch (FileNotFoundException e)
             {
                 s_logger.Error(e);
-                GC.WaitForPendingFinalizers();
                 GC.Collect();
                 if (IsEncrypted)
                 {
