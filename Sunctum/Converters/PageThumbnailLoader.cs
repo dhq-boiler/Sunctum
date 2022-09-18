@@ -15,9 +15,9 @@ namespace Sunctum.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var page = value as PageViewModel;
-            var task = Task.Run(() =>
+            var task = Task.Run(async () =>
             {
-                ContentsLoadTask.Load(page);
+                await ContentsLoadTask.Load(page);
             });
             return new TaskCompletionSource<object>(task);
         }

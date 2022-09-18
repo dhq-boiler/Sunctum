@@ -1,12 +1,11 @@
 ﻿
 
 using Sunctum.Domain.Data.DaoFacade;
-using Sunctum.Domain.Logic.Generate;
-using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Sunctum.Domain.Logic.Load
 {
@@ -27,23 +26,23 @@ namespace Sunctum.Domain.Logic.Load
             });
         }
 
-        public static void FillContentsWithImage(IBookStorage bookStorage, BookViewModel book)
+        public static async Task FillContentsWithImage(IBookStorage bookStorage, BookViewModel book)
         {
             var pages = PageFacade.FindByBookId(book.ID).OrderBy(p => p.PageIndex);
 
             bookStorage.AccessDispatcherObject(() => book.ClearContents());
 
-            bookStorage.AccessDispatcherObject(() =>
+            bookStorage.AccessDispatcherObject(async () =>
             {
                 foreach (var page in pages)
                 {
-                    Load(page);
+                    await Load(page);
                     book.AddPage(page);
                 }
             });
         }
 
-        public static void Load(PageViewModel page)
+        public static async Task Load(PageViewModel page)
         {
             if (!page.IsLoaded)
             {
@@ -59,15 +58,6 @@ namespace Sunctum.Domain.Logic.Load
                     page.IsLoaded = true;
                 }
             }
-
-            if (Configuration.ApplicationConfiguration.ThumbnailParallelGeneration)
-            {
-                Task.Factory.StartNew(() => GenerateThumbnailIf(page));
-            }
-            else
-            {
-                GenerateThumbnailIf(page);
-            }
         }
 
         private static void LoadPage(PageViewModel pageViewModel)
@@ -75,13 +65,18 @@ namespace Sunctum.Domain.Logic.Load
             PageFacade.GetProperty(ref pageViewModel);
         }
 
-        private static void GenerateThumbnailIf(PageViewModel page)
+        private static async void GenerateThumbnailIf(PageViewModel page)
         {
             if (page.Image != null)
             {
                 if (!page.Image.ThumbnailLoaded || !page.Image.ThumbnailGenerated)
                 {
-                    ThumbnailGenerating.GenerateThumbnail(page.Image);
+                    await Application.Current.Dispatcher.InvokeAsync(async () =>
+                    {
+                        var tg = new Async.ThumbnailGenerating();
+                        tg.Target = page.Image;
+                        await (Application.Current.MainWindow.DataContext as IMainWindowViewModel).LibraryVM.TaskManager.Enqueue(tg.GetTaskSequence());
+                    });
                 }
             }
         }

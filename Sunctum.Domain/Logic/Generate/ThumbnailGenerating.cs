@@ -9,12 +9,12 @@ using Sunctum.Domain.Util;
 using Sunctum.Domain.ViewModels;
 using System;
 using System.IO;
-using System.Security.Cryptography.Xml;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Sunctum.Domain.Logic.Generate
 {
+    [Obsolete]
     public static class ThumbnailGenerating
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
@@ -77,11 +77,11 @@ namespace Sunctum.Domain.Logic.Generate
             }
         }
 
-        private static void RecordThumbnail(ThumbnailViewModel thumbnail)
+        public static void RecordThumbnail(ThumbnailViewModel thumbnail, DataOperationUnit dataOpUnit = null)
         {
             try
             {
-                ThumbnailFacade.InsertOrReplace(thumbnail);
+                ThumbnailFacade.InsertOrReplace(thumbnail, dataOpUnit);
                 s_logger.Debug($"Recorded Thumbnail into database. {thumbnail.ToString()}");
             }
             catch (Exception e)

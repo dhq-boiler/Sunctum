@@ -2,7 +2,6 @@
 
 using NLog;
 using Sunctum.Domain.Extensions;
-using Sunctum.Domain.Logic.Generate;
 using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -28,7 +27,9 @@ namespace Sunctum.Domain.Logic.Async
             {
                 ImageViewModel image = page.Image;
                 sequence.Add(new Task(() => Delete.ThumbnailDeleting.DeleteThumbnail(image)));
-                sequence.Add(new Task(() => ThumbnailGenerating.GenerateThumbnail(image)));
+                var tg = new Async.ThumbnailGenerating();
+                tg.Target = image;
+                sequence.AddRange(tg.GetTaskSequence().Tasks);
                 sequence.Add(new Task(() => s_logger.Info($"Remade Thumbnail imageId:{image.ID}")));
             }
         }
@@ -47,7 +48,7 @@ namespace Sunctum.Domain.Logic.Async
             {
                 ImageViewModel image = page.Image;
                 tasks.Add(new Task(() => Delete.ThumbnailDeleting.DeleteThumbnail(image)));
-                tasks.Add(new Task(() => ThumbnailGenerating.GenerateThumbnail(image)));
+                tasks.Add(new Task(() => Generate.ThumbnailGenerating.GenerateThumbnail(image)));
                 tasks.Add(new Task(() => s_logger.Info($"Remade Thumbnail imageId:{image.ID}")));
             }
 
