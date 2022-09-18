@@ -60,7 +60,7 @@ namespace Sunctum.Converters
                         return LoadBitmap($"{Configuration.ApplicationConfiguration.ExecutingDirectory}\\{Specifications.LOCK_ICON_FILE}", image.IsEncrypted);
                     }
                 }
-                if (!File.Exists(thumbnail.AbsoluteMasterPath))
+                if (!image.IsEncrypted && !File.Exists(thumbnail.AbsoluteMasterPath))
                 {
                     return Application.Current.Dispatcher.Invoke(() =>
                     {
