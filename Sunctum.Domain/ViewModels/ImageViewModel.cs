@@ -141,17 +141,8 @@ namespace Sunctum.Domain.ViewModels
             { return _Thumbnail; }
             set
             {
-                if (value != null && !Configuration.ApplicationConfiguration.LibraryIsEncrypted && !System.IO.Path.GetFileNameWithoutExtension(value.AbsoluteMasterPath).Equals(value.ImageID.ToString("N")))
-                {
-                    var tg = new Logic.Async.ThumbnailGenerating();
-                    tg.Target = this;
-                    (Application.Current.MainWindow.DataContext as IMainWindowViewModel).LibraryVM.TaskManager.Enqueue(tg.GetTaskSequence());
-                }
-                else
-                {
-                    SetProperty(ref _Thumbnail, value);
-                    OnPropertyChanged(PropertyNameUtility.GetPropertyName(() => Path));
-                }
+                SetProperty(ref _Thumbnail, value);
+                OnPropertyChanged(PropertyNameUtility.GetPropertyName(() => Path));
             }
         }
 

@@ -46,6 +46,26 @@ namespace Sunctum.Managers
             await Task.Run(() => ProcessTaskLoop());
         }
 
+        public void RunSync(AsyncTaskSequence sequence)
+        {
+            lock (_lockObj)
+            {
+                IsRunning = true;
+            }
+
+            try
+            {
+                InnerProcessTask(sequence);
+            }
+            finally
+            {
+                lock (_lockObj)
+                {
+                    IsRunning = false;
+                }
+            }
+        }
+
         private void ProcessTaskLoop()
         {
             lock (_lockObj)
@@ -63,7 +83,7 @@ namespace Sunctum.Managers
                 while (TakeSequence())
                 {
                     InnerProcessTask(CurrentSequence);
-                    CurrentSequence.Dispose();
+                    CurrentSequence?.Dispose();
                     CurrentSequence = null;
                 }
             }
@@ -115,7 +135,7 @@ namespace Sunctum.Managers
 
                     var t = tasks[i];
 
-                    if (t.Status != TaskStatus.Faulted)
+                    if (t.Status != TaskStatus.Faulted && t.Status != TaskStatus.RanToCompletion && t.Status != TaskStatus.Running)
                     {
                         t.RunSynchronously();
                     }
