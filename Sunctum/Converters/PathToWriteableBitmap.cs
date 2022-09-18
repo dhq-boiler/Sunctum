@@ -60,15 +60,15 @@ namespace Sunctum.Converters
                         return LoadBitmap($"{Configuration.ApplicationConfiguration.ExecutingDirectory}\\{Specifications.LOCK_ICON_FILE}", image.IsEncrypted);
                     }
                 }
-                if (!File.Exists(thumbnail.RelativeMasterPath))
+                if (!File.Exists(thumbnail.AbsoluteMasterPath))
                 {
-                    Application.Current.Dispatcher.Invoke(async () =>
+                    return Application.Current.Dispatcher.Invoke(() =>
                     {
                         var tg = new Domain.Logic.Async.ThumbnailGenerating();
                         tg.Target = image;
-                        await (Application.Current.MainWindow.DataContext as IMainWindowViewModel).LibraryVM.TaskManager.Enqueue(tg.GetTaskSequence());
+                        (Application.Current.MainWindow.DataContext as IMainWindowViewModel).LibraryVM.TaskManager.RunSync(tg.GetTaskSequence());
+                        return LoadBitmap(image.Thumbnail.AbsoluteMasterPath, image.IsEncrypted);
                     });
-                    return LoadBitmap(thumbnail.AbsoluteMasterPath, image.IsEncrypted);
                 }
                 if (Guid.TryParse(Path.GetFileNameWithoutExtension(thumbnail.AbsoluteMasterPath), out var guid))
                 {
