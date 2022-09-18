@@ -131,6 +131,7 @@ namespace Sunctum.Domain.Util
 
                         string newFileName = GetAbsoluteCacheFilePath(destFilename);
                         CreateCacheDirectoryIfDoesntExist();
+                        CreateCacheBranchDirectoryIfDoesntExist(Path.GetDirectoryName(newFileName));
 
                         SaveBitmap(bmp, eps, ici, newFileName);
 
@@ -141,6 +142,15 @@ namespace Sunctum.Domain.Util
             catch (Exception)
             {
                 throw;
+            }
+        }
+
+        private static void CreateCacheBranchDirectoryIfDoesntExist(string directoryName)
+        {
+            if (!Directory.Exists(directoryName))
+            {
+                Directory.CreateDirectory(directoryName);
+                s_logger.Debug($"Create directory:{directoryName}");
             }
         }
 
@@ -240,7 +250,7 @@ namespace Sunctum.Domain.Util
 
         internal static string GetAbsoluteCacheFilePath(string path)
         {
-            return $"{AbsoluteCacheDirectory}\\{Path.GetFileName(path)}";
+            return $"{AbsoluteCacheDirectory}\\{Guid.Parse(Path.GetFileName(path)).ToString("N").Substring(0, 2)}\\{Path.GetFileName(path)}";
         }
 
         internal static string AbsoluteCacheDirectory
