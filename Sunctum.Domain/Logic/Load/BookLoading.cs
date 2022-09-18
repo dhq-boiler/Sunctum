@@ -1,16 +1,12 @@
 ﻿
 using Homura.ORM;
 using NLog;
-using Reactive.Bindings;
 using Sunctum.Domain.Data.DaoFacade;
-using Sunctum.Domain.Logic.Generate;
 using Sunctum.Domain.Models;
-using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using System;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Sunctum.Domain.Logic.Load
 {
@@ -62,7 +58,7 @@ namespace Sunctum.Domain.Logic.Load
             }
         }
 
-        public static void GenerateThumbnailIf(BookViewModel book, DataOperationUnit dataOpUnit = null)
+        public static async void GenerateThumbnailIf(BookViewModel book, DataOperationUnit dataOpUnit = null)
         {
             var firstPage = book.FirstPage;
             if (firstPage != null)
@@ -78,7 +74,9 @@ namespace Sunctum.Domain.Logic.Load
                     || firstPageImage.Thumbnail?.RelativeMasterPath == null
                     || !firstPageImage.ThumbnailGenerated)
                 {
-                    ThumbnailGenerating.GenerateThumbnail(firstPageImage, dataOpUnit);
+                    var tg = new Async.ThumbnailGenerating();
+                    tg.Target = firstPageImage;
+                    await (Application.Current.MainWindow.DataContext as IMainWindowViewModel).LibraryVM.TaskManager.Enqueue(tg.GetTaskSequence());
                 }
             }
         }

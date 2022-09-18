@@ -6,7 +6,6 @@ using Sunctum.Domain.Bridge;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Data.Dao.Migration;
 using Sunctum.Domain.Data.Rdbms;
-using Sunctum.Domain.Logic.Generate;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
@@ -262,7 +261,7 @@ namespace Sunctum.Domain.Logic.Async
         {
             if (page.PageIndex == Specifications.PAGEINDEX_FIRSTPAGE)
             {
-                ThumbnailGenerating.GenerateThumbnail(page.Image, _dataOpUnit);
+                Generate.ThumbnailGenerating.GenerateThumbnail(page.Image, _dataOpUnit);
                 libManager.AccessDispatcherObject(() => parent.FirstPage = page);
                 libManager.AccessDispatcherObject(() => parent.IsLoaded = true);
             }

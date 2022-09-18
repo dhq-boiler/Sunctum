@@ -4,13 +4,13 @@ using Homura.Core;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Encrypt;
-using Sunctum.Domain.Logic.Generate;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Windows;
 
 namespace Sunctum.Domain.ViewModels
 {
@@ -143,7 +143,9 @@ namespace Sunctum.Domain.ViewModels
             {
                 if (value != null && !Configuration.ApplicationConfiguration.LibraryIsEncrypted && !System.IO.Path.GetFileNameWithoutExtension(value.AbsoluteMasterPath).Equals(value.ImageID.ToString("N")))
                 {
-                    ThumbnailGenerating.GenerateThumbnail(this);
+                    var tg = new Logic.Async.ThumbnailGenerating();
+                    tg.Target = this;
+                    (Application.Current.MainWindow.DataContext as IMainWindowViewModel).LibraryVM.TaskManager.Enqueue(tg.GetTaskSequence());
                 }
                 else
                 {
@@ -168,7 +170,9 @@ namespace Sunctum.Domain.ViewModels
 
                 if (ThumbnailLoaded && !ThumbnailGenerated && MasterFileSize > Configuration.LowerLimitFileSizeThatImageMustBeDisplayAsThumbnail)
                 {
-                    ThumbnailGenerating.GenerateThumbnail(this);
+                    var tg = new Logic.Async.ThumbnailGenerating();
+                    tg.Target = this;
+                    (Application.Current.MainWindow.DataContext as IMainWindowViewModel).LibraryVM.TaskManager.Enqueue(tg.GetTaskSequence());
                     return Thumbnail.AbsoluteMasterPath;
                 }
 

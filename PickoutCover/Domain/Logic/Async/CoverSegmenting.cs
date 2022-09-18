@@ -9,18 +9,18 @@ using PickoutCover.Domain.Logic.CoverSegment;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Async;
 using Sunctum.Domain.Logic.Encrypt;
-using Sunctum.Domain.Logic.Generate;
 using Sunctum.Domain.Logic.Query;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Transactions;
+using System.Windows;
 using System.Windows.Media.Imaging;
+using ThumbnailGenerating = Sunctum.Domain.Logic.Async.ThumbnailGenerating;
 
 namespace PickoutCover.Domain.Logic.Async
 {
@@ -73,7 +73,7 @@ namespace PickoutCover.Domain.Logic.Async
             PageFacade.IncrementPageIndex(bookID, dataOpUnit);
         }
 
-        private static void CreateEntities(ILibrary _libraryVM, PageViewModel _page, CoverSegmenting cs, DataOperationUnit dataOpUnit)
+        private static async void CreateEntities(ILibrary _libraryVM, PageViewModel _page, CoverSegmenting cs, DataOperationUnit dataOpUnit)
         {
             Guid imageID = Guid.NewGuid();
             var image = new ImageViewModel(imageID, "cover", cs._masterPath, Configuration.ApplicationConfiguration.LibraryIsEncrypted, Configuration.ApplicationConfiguration);
@@ -121,7 +121,12 @@ namespace PickoutCover.Domain.Logic.Async
 
             if (!book.FirstPage.Image.ThumbnailLoaded || !book.FirstPage.Image.ThumbnailGenerated)
             {
-                ThumbnailGenerating.GenerateThumbnail(book.FirstPage.Image, dataOpUnit);
+                await Application.Current.Dispatcher.InvokeAsync(async () =>
+                {
+                    var tg = new ThumbnailGenerating();
+                    tg.Target = page.Image;
+                    await (Application.Current.MainWindow.DataContext as IMainWindowViewModel).LibraryVM.TaskManager.Enqueue(tg.GetTaskSequence());
+                });
             }
 
             cs._book = book;

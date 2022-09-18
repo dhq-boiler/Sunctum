@@ -15,6 +15,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Sunctum.Domain.Logic.Import
 {
@@ -190,13 +191,18 @@ namespace Sunctum.Domain.Logic.Import
             library.AddToMemory(_book);
         }
 
-        protected void GenerateDeliverables(DataOperationUnit dataOpUnit)
+        protected async void GenerateDeliverables(DataOperationUnit dataOpUnit)
         {
             BookFacade.GetProeprty(ref _book, dataOpUnit);
 
             if (_book.FirstPage != null && !_book.FirstPage.Image.ThumbnailLoaded || !_book.FirstPage.Image.ThumbnailGenerated)
             {
-                ThumbnailGenerating.GenerateThumbnail(_book.FirstPage.Image);
+                await Application.Current.Dispatcher.InvokeAsync(async () =>
+                {
+                    var tg = new Async.ThumbnailGenerating();
+                    tg.Target = _book.FirstPage.Image;
+                    await (Application.Current.MainWindow.DataContext as IMainWindowViewModel).LibraryVM.TaskManager.Enqueue(tg.GetTaskSequence());
+                });
             }
         }
 
