@@ -40,7 +40,7 @@ namespace Sunctum.Domain.Models
 
         public static string GenerateConnectionString(string workingDirectory)
         {
-            return $"Data Source={GenerateAbsoluteLibraryDbFilename(workingDirectory)}";
+            return $"Data Source={GenerateAbsoluteLibraryDbFilename(workingDirectory)};Enlist=N";
         }
 
         public static readonly int VERTICAL_SEGMENT_COUNT = 3;

@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Transactions;
+using System.Windows.Forms;
 
 namespace Sunctum.Domain.Logic.Import
 {
@@ -74,6 +75,8 @@ namespace Sunctum.Domain.Logic.Import
                 ret.Add(new System.Threading.Tasks.Task(() => fileManager = new TxFileManager()));
                 ret.Add(new System.Threading.Tasks.Task(() => Encryptor.Encrypt(InsertedImage, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{InsertedImage.ID}{System.IO.Path.GetExtension(InsertedImage.AbsoluteMasterPath)}", Configuration.ApplicationConfiguration.Password, fileManager)));
                 ret.Add(new System.Threading.Tasks.Task(() => Encryptor.DeleteOriginal(GeneratedPage, fileManager)));
+                ret.Add(new System.Threading.Tasks.Task(() => InsertedImage.IsEncrypted = true));
+                ret.Add(new System.Threading.Tasks.Task(() => ImageFacade.Update(InsertedImage)));
                 ret.Add(new System.Threading.Tasks.Task(() => scope.Complete()));
                 ret.Add(new System.Threading.Tasks.Task(() => scope.Dispose()));
             }
