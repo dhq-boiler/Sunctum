@@ -4,6 +4,7 @@ using NLog;
 using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;
 using Sunctum.Domain.Data.DaoFacade;
+using Sunctum.Domain.Logic.Encrypt;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
@@ -16,6 +17,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Xps.Packaging;
 
 namespace Sunctum.Converters
 {
@@ -112,9 +114,20 @@ namespace Sunctum.Converters
                     });
                 }
             }
+            else if (!Configuration.ApplicationConfiguration.LibraryIsEncrypted && File.Exists(value as string))
+            {
+                return LoadBitmap(value as string, false);
+            }
             else
             {
-                return DependencyProperty.UnsetValue;
+                Encryptor.Decrypt(value as string, Configuration.ApplicationConfiguration.Password, false);
+                var guid = Guid.Parse(Path.GetFileNameWithoutExtension(value as string));
+                var bitmap = OnmemoryImageManager.Instance.PullAsWriteableBitmap(guid, false);
+                if (bitmap is null)
+                {
+                    return DependencyProperty.UnsetValue;
+                }
+                return bitmap;
             }
         }
 

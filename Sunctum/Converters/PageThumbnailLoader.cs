@@ -10,6 +10,7 @@ using System.Windows.Data;
 
 namespace Sunctum.Converters
 {
+    [Obsolete]
     internal class PageThumbnailLoader : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

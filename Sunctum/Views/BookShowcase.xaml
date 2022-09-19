@@ -25,7 +25,6 @@
         <cvt:MarginConverter x:Key="MarginConverter" />
         <cvt:BookCoverThumbnailLoader x:Key="BookCoverThumbnailLoader" />
         <cvt:PathToWriteableBitmap x:Key="ImageConverter" />
-        <cvt:PageThumbnailLoader x:Key="PageThumbnailLoader" />
         <cvt:DisplayTypeToViewConverter x:Key="DisplayType2ViewConverter" />
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <ItemsPanelTemplate x:Key="Contents_ItemPanelTemplate">
@@ -79,7 +78,6 @@
                     <RowDefinition Height="{Binding Configuration.ContentListViewItemImageHeight}" />
                     <RowDefinition Height="{Binding Configuration.ContentListViewItemTitleHeight}" />
                 </Grid.RowDefinitions>
-                <ContentPresenter Content="{Binding Converter={StaticResource PageThumbnailLoader}}" Visibility="Collapsed" />
                 <Image
                     Grid.Row="0"
                     Width="{Binding Configuration.ContentListViewItemWidth}"
@@ -129,7 +127,6 @@
                     <ColumnDefinition />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
-                <ContentPresenter Content="{Binding Converter={StaticResource PageThumbnailLoader}}" Visibility="Collapsed" />
                 <Image
                     Grid.Row="0"
                     Grid.Column="0"

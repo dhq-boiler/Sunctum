@@ -175,9 +175,9 @@ namespace Sunctum.Managers
 
         #region コンテンツ読み込み
 
-        public void FireFillContents(BookViewModel book)
+        public async void FireFillContents(BookViewModel book)
         {
-            _fcTaskManager.RunAsync((b) => Internal_FillContents(b), book);
+            await _fcTaskManager.RunAsync((b) => Internal_FillContents(b), book);
         }
 
         public void RunFillContents(BookViewModel book)

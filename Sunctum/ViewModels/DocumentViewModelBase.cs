@@ -9,6 +9,7 @@ using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using Sunctum.Converters;
 using Sunctum.Core.Extensions;
+using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Extensions;
 using Sunctum.Domain.Logic.DisplayType;
 using Sunctum.Domain.Logic.Load;
@@ -760,6 +761,7 @@ namespace Sunctum.ViewModels
         private void OpenBookPropertyDialog(BookViewModel book)
         {
             IDialogParameters parameter = new DialogParameters();
+            BookFacade.FillContents(ref book);
             parameter.Add("Book", book);
             IDialogResult result = new DialogResult();
             dialogService.ShowDialog(nameof(BookProperty), parameter, ret => result = ret);
@@ -848,10 +850,10 @@ namespace Sunctum.ViewModels
 
             CloseSearchPane();
             StoreScrollOffset(Guid.Empty);
+            BookFacade.FillContents(ref book);
             OpenedBook = book;
             RestoreScrollOffset(OpenedBook.ID);
             LibraryManager.Value.TagManager.ClearSelectedEntries();
-            Task.Factory.StartNew(() => LibraryManager.Value.FireFillContents(book));
             BookListIsVisible = false;
             ContentListIsVisible = true;
         }
