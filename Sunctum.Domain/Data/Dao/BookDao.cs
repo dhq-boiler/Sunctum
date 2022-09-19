@@ -474,7 +474,8 @@ namespace Sunctum.Domain.Data.Dao
                                                    .Inner.Join(new Table<Image>().Name, "i").On.Column("i", "ID").EqualTo.Column("pImageId")
                                                    .Left.Join(new Table<Thumbnail>().Name, "t").On.Column("i", "ID").EqualTo.Column("tImageId")
                                                    .Left.Join(new Table<Star>().Name, "s").On.Column("s", "TypeId").EqualTo.Value(0).And().Column("s", "ID").EqualTo.Column("bId")
-                                                   .Where.Column("bId").EqualTo.Value(book.ID))
+                                                   .Where.Column("bId").EqualTo.Value(book.ID)
+                                                   .OrderBy.Column("pIndex").Asc)
                     {
                         string sql = query.ToSql();
                         command.CommandText = sql;
