@@ -24,11 +24,14 @@ namespace Sunctum.Domain.Logic.Async
 
         public override void ConfigureTaskImplementation(AsyncTaskSequence sequence)
         {
-            //暗号化しておらず、ファイルが存在しない場合
-            if (!Target.IsEncrypted && !File.Exists(Target.AbsoluteMasterPath))
+            sequence.Add(() =>
             {
-                throw new FileNotFoundException(Target.AbsoluteMasterPath);
-            }
+                //暗号化しておらず、ファイルが存在しない場合
+                if (!Target.IsEncrypted && !File.Exists(Target.AbsoluteMasterPath))
+                {
+                    throw new FileNotFoundException(Target.AbsoluteMasterPath);
+                }
+            });
             sequence.Add(() =>
             {
                 thumbnail = new ThumbnailViewModel();
