@@ -84,7 +84,7 @@ namespace Sunctum.Converters
             else if (image is not null)
             {
                 var th = ThumbnailFacade.FindByImageID(image.ID);
-                if (th is not null)
+                if (th is not null && !image.IsEncrypted)
                 {
                     image.Thumbnail = thumbnail = th;
                     return LoadBitmap(thumbnail.AbsoluteMasterPath, image.IsEncrypted);
@@ -96,7 +96,19 @@ namespace Sunctum.Converters
                         var tg = new Domain.Logic.Async.ThumbnailGenerating();
                         tg.Target = image;
                         (Application.Current.MainWindow.DataContext as IMainWindowViewModel).LibraryVM.TaskManager.RunSync(tg.GetTaskSequence());
-                        return LoadBitmap(image.Thumbnail.AbsoluteMasterPath, image.IsEncrypted);
+                        if (image.IsEncrypted)
+                        {
+                            var bitmap = OnmemoryImageManager.Instance.PullAsWriteableBitmap(image.ID, true);
+                            if (bitmap is null)
+                            {
+                                return LoadBitmap(image.AbsoluteMasterPath, image.IsEncrypted);
+                            }
+                            return bitmap;
+                        }
+                        else
+                        {
+                            return LoadBitmap(image.Thumbnail.AbsoluteMasterPath, image.IsEncrypted);
+                        }
                     });
                 }
             }
