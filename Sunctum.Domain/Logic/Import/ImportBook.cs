@@ -106,6 +106,11 @@ namespace Sunctum.Domain.Logic.Import
 
         protected void WriteMetadata()
         {
+            if (_book is null)
+            {
+                throw new UnexpectedException($"expected:_book is not null but actual:_book is null");
+            }
+
             _book.ByteSize = 0;
             _children.ForEach(c => _book.ByteSize += ((ImportPage)c).Size);
             _book.FingerPrint = Hash.Generate(_children);
@@ -159,6 +164,11 @@ namespace Sunctum.Domain.Logic.Import
 
         protected void SwitchContentsRegisteredToTrue()
         {
+            if (_book is null)
+            {
+                throw new UnexpectedException($"expected:_book is not null but actual:_book is null");
+            }
+
             _book.ContentsRegistered = true;
         }
 
@@ -195,24 +205,36 @@ namespace Sunctum.Domain.Logic.Import
             library.AddToMemory(_book);
         }
 
-        protected async void GenerateDeliverables(DataOperationUnit dataOpUnit)
+        protected void GenerateDeliverables(DataOperationUnit dataOpUnit)
         {
-            BookFacade.GetProeprty(ref _book, dataOpUnit);
-
             if (_book is null)
             {
                 throw new UnexpectedException($"expected:_book is not null but actual:_book is null");
             }
 
-            if (_book.FirstPage != null && !_book.FirstPage.Image.ThumbnailLoaded || !_book.FirstPage.Image.ThumbnailGenerated)
+            BookFacade.GetProeprty(ref _book, dataOpUnit);
+
+            if (_book.FirstPage is null)
             {
-                await Application.Current.Dispatcher.InvokeAsync(async () =>
-                {
-                    var tg = new Async.ThumbnailGenerating();
-                    tg.Target = _book.FirstPage.Image;
-                    await (Application.Current.MainWindow.DataContext as IMainWindowViewModel).LibraryVM.TaskManager.Enqueue(tg.GetTaskSequence());
-                });
+                throw new UnexpectedException($"expected:_book.FirstPage is not null but actual:_book.FirstPage is null");
             }
+
+            if (_book.FirstPage.Image is null)
+            {
+                throw new UnexpectedException($"expected:_book.FirstPage.Image is not null but actual:_book.FirstPage.Image is null");
+            }
+
+            if (_book.FirstPage.Image.ThumbnailLoaded && _book.FirstPage.Image.ThumbnailGenerated)
+            {
+                return;
+            }
+
+            Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                var tg = new Async.ThumbnailGenerating();
+                tg.Target = _book.FirstPage.Image;
+                (Application.Current.MainWindow.DataContext as IMainWindowViewModel).LibraryVM.TaskManager.RunSync(tg.GetTaskSequence());
+            });
         }
 
         private void Log()
