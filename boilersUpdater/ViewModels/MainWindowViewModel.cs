@@ -167,8 +167,8 @@ namespace boilersUpdater.ViewModels
                     var exceptedList = ExceptedList($"{curDirPath}\\boilersUpdater");
                     s_logger.Info($"除外：{string.Join('\n', exceptedList)}");
                     files = files.Where(x => !exceptedList.Contains(x.FullName) && x.FullName.IndexOf("boilersUpdater") == -1).ToList();
-                    s_logger.Info("更新対象ファイルの絞り込み");
-                    s_logger.Info(string.Join('\n', files));
+                    //s_logger.Info("更新対象ファイルの絞り込み");
+                    //s_logger.Info(string.Join('\n', files));
                     while (!files.All(file => !IsFileLocked(file)))
                     {
                         var str = "アップデート対象のファイルが別のプロセスに開かれています。\n"
