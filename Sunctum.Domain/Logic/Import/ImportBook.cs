@@ -3,8 +3,7 @@
 using Homura.ORM;
 using NLog;
 using Sunctum.Domain.Data.DaoFacade;
-using Sunctum.Domain.Logic.Generate;
-using Sunctum.Domain.Logic.Load;
+using Sunctum.Domain.Exceptions;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.Util;
@@ -188,12 +187,22 @@ namespace Sunctum.Domain.Logic.Import
 
         protected void SetDeliverables(ILibrary library)
         {
+            if (_book is null)
+            {
+                throw new UnexpectedException($"expected:_book is not null but actual:_book is null");
+            }
+
             library.AddToMemory(_book);
         }
 
         protected async void GenerateDeliverables(DataOperationUnit dataOpUnit)
         {
             BookFacade.GetProeprty(ref _book, dataOpUnit);
+
+            if (_book is null)
+            {
+                throw new UnexpectedException($"expected:_book is not null but actual:_book is null");
+            }
 
             if (_book.FirstPage != null && !_book.FirstPage.Image.ThumbnailLoaded || !_book.FirstPage.Image.ThumbnailGenerated)
             {
