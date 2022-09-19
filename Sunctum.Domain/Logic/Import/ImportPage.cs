@@ -58,8 +58,6 @@ namespace Sunctum.Domain.Logic.Import
             var filename = entryName + System.IO.Path.GetExtension(Path);
             var source = Path;
             Destination = copyTo + "\\" + filename;
-            TransactionScope scope = null;
-            TxFileManager fileManager = null;
 
             ret.Add(new System.Threading.Tasks.Task(() => CreateTaskToCopyImage(Path, source, Destination)));
             ret.Add(new System.Threading.Tasks.Task(() => CreateTaskToInsertImage(entryName, Destination, dataOpUnit)));
@@ -71,14 +69,25 @@ namespace Sunctum.Domain.Logic.Import
 
             if (_isContent && Configuration.ApplicationConfiguration.LibraryIsEncrypted)
             {
-                ret.Add(new System.Threading.Tasks.Task(() => scope = new TransactionScope()));
-                ret.Add(new System.Threading.Tasks.Task(() => fileManager = new TxFileManager()));
-                ret.Add(new System.Threading.Tasks.Task(() => Encryptor.Encrypt(InsertedImage, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{InsertedImage.ID.ToString().Substring(0, 2)}\\{InsertedImage.ID}{System.IO.Path.GetExtension(InsertedImage.AbsoluteMasterPath)}", Configuration.ApplicationConfiguration.Password, fileManager)));
-                ret.Add(new System.Threading.Tasks.Task(() => Encryptor.DeleteOriginal(GeneratedPage, fileManager)));
-                ret.Add(new System.Threading.Tasks.Task(() => InsertedImage.IsEncrypted = true));
-                ret.Add(new System.Threading.Tasks.Task(() => ImageFacade.Update(InsertedImage)));
-                ret.Add(new System.Threading.Tasks.Task(() => scope.Complete()));
-                ret.Add(new System.Threading.Tasks.Task(() => scope.Dispose()));
+                ret.Add(new System.Threading.Tasks.Task(() =>
+                {
+                    try
+                    {
+                        using (var scope = new TransactionScope())
+                        {
+                            var fileManager = new TxFileManager();
+                            Encryptor.Encrypt(InsertedImage, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{InsertedImage.ID.ToString().Substring(0, 2)}\\{InsertedImage.ID}{System.IO.Path.GetExtension(InsertedImage.AbsoluteMasterPath)}", Configuration.ApplicationConfiguration.Password, fileManager);
+                            Encryptor.DeleteOriginal(GeneratedPage, fileManager);
+                            InsertedImage.IsEncrypted = true;
+                            ImageFacade.Update(InsertedImage);
+                            scope.Complete();
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        throw;
+                    }
+                }));
             }
 
             return ret;

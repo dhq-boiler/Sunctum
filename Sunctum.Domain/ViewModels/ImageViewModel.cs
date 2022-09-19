@@ -150,7 +150,7 @@ namespace Sunctum.Domain.ViewModels
         {
             get
             {
-                if (EncryptImageFacade.AnyEncrypted())
+                if (IsEncrypted)
                 {
                     if (string.IsNullOrEmpty(Configuration.Password))
                     {
@@ -163,7 +163,7 @@ namespace Sunctum.Domain.ViewModels
                 {
                     var tg = new Logic.Async.ThumbnailGenerating();
                     tg.Target = this;
-                    (Application.Current.MainWindow.DataContext as IMainWindowViewModel).LibraryVM.TaskManager.Enqueue(tg.GetTaskSequence());
+                    (Application.Current.MainWindow.DataContext as IMainWindowViewModel).LibraryVM.TaskManager.RunSync(tg.GetTaskSequence());
                     return Thumbnail.AbsoluteMasterPath;
                 }
 

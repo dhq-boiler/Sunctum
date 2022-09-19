@@ -3,6 +3,7 @@
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -65,6 +66,7 @@ namespace Sunctum.Domain.Logic.Load
             PageFacade.GetProperty(ref pageViewModel);
         }
 
+        [Obsolete]
         private static async void GenerateThumbnailIf(PageViewModel page)
         {
             if (page.Image != null)

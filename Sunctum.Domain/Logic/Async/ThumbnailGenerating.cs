@@ -7,6 +7,7 @@ using Sunctum.Domain.Util;
 using Sunctum.Domain.ViewModels;
 using System;
 using System.IO;
+using System.Windows;
 
 namespace Sunctum.Domain.Logic.Async
 {
@@ -32,7 +33,7 @@ namespace Sunctum.Domain.Logic.Async
                     throw new FileNotFoundException(Target.AbsoluteMasterPath);
                 }
             });
-            sequence.Add(() =>
+            sequence.Add(async () =>
             {
                 thumbnail = new ThumbnailViewModel();
                 thumbnail.ID = Target.ID;
@@ -56,27 +57,19 @@ namespace Sunctum.Domain.Logic.Async
                         throw;
                     }
                 }
-                RecordThumbnail(thumbnail);
                 Target.Thumbnail = thumbnail;
+                await Application.Current.Dispatcher.InvokeAsync(async () =>
+                {
+                    var tr = new Async.ThumbnailRecording();
+                    tr.Target = thumbnail;
+                    await (Application.Current.MainWindow.DataContext as IMainWindowViewModel).LibraryVM.TaskManager.Enqueue(tr.GetTaskSequence());
+                });
             });
         }
 
         public override void ConfigurePostTaskAction(AsyncTaskSequence sequence)
         {
             sequence.Add(() => s_logger.Info($"Finish ThumbnailGenerating"));
-        }
-
-        private static void RecordThumbnail(ThumbnailViewModel thumbnail, DataOperationUnit dataOpUnit = null)
-        {
-            try
-            {
-                ThumbnailFacade.InsertOrReplace(thumbnail, dataOpUnit);
-                s_logger.Debug($"Recorded Thumbnail into database. {thumbnail.ToString()}");
-            }
-            catch (Exception e)
-            {
-                s_logger.Error(e);
-            }
         }
     }
 }
