@@ -6,7 +6,6 @@ using OpenCvSharp.Extensions;
 using Sunctum.Domain.Models;
 using System;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
 
@@ -69,6 +68,10 @@ namespace Sunctum.Domain.Util
                         return BitmapConverter.ToBitmap(small);
                     }
                 }
+            }
+            catch (OpenCVException)
+            {
+                throw;
             }
             catch (IOException)
             {
