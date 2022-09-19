@@ -4,6 +4,7 @@ using NLog;
 using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Concurrent;
+using System.Threading.Tasks;
 
 namespace Sunctum.Managers
 {
@@ -18,7 +19,7 @@ namespace Sunctum.Managers
             _dic = new ConcurrentDictionary<Guid, byte>();
         }
 
-        internal void RunAsync(Action<BookViewModel> act, BookViewModel book)
+        internal async Task RunAsync(Action<BookViewModel> act, BookViewModel book)
         {
             if (_dic.ContainsKey(book.ID))
             {
@@ -27,7 +28,7 @@ namespace Sunctum.Managers
             }
             else
             {
-                System.Threading.Tasks.Task.Factory.StartNew(() => RunInternal(act, book));
+                await System.Threading.Tasks.Task.Factory.StartNew(() => RunInternal(act, book));
             }
         }
 

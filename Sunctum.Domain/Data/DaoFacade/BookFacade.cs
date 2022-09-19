@@ -77,10 +77,16 @@ namespace Sunctum.Domain.Data.DaoFacade
             return dao.FindDuplicateFingerPrint();
         }
 
-        public static IEnumerable<BookViewModel> FindAllWithFillContents(DataOperationUnit dataOpUnit)
+        public static IEnumerable<BookViewModel> FindAllWithFillContents(DataOperationUnit dataOpUnit = null)
         {
             var dao = new BookDao();
             return dao.FindAllWithFillContents(dataOpUnit?.CurrentConnection);
+        }
+
+        public static void FillContents(ref BookViewModel book, DataOperationUnit dataOpUnit = null)
+        {
+            var dao = new BookDao();
+            dao.FillContents(ref book, dataOpUnit?.CurrentConnection);
         }
     }
 }

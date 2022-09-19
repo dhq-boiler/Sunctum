@@ -434,5 +434,133 @@ namespace Sunctum.Domain.Data.Dao
                 }
             }
         }
+
+        public void FillContents(ref BookViewModel book, DbConnection conn = null)
+        {
+            bool isTransaction = conn != null;
+
+            try
+            {
+                if (!isTransaction)
+                {
+                    conn = GetConnection();
+                }
+
+                using (var command = conn.CreateCommand())
+                {
+                    using (var query = new Select().Column("b", "ID").As("bId")
+                                                   .Column("b", "Title").As("bTitle")
+                                                   .Column("b", "AuthorID").As("bAuthorId")
+                                                   .Column("b", "ByteSize").As("bByteSize")
+                                                   .Column("b", "PublishDate").As("bPublishDate")
+                                                   .Column("b", "FingerPrint").As("bFingerPrint")
+                                                   .Column("a", "ID").As("aId")
+                                                   .Column("a", "Name").As("aName")
+                                                   .Column("p", "ID").As("pId")
+                                                   .Column("p", "Title").As("pTitle")
+                                                   .Column("p", "ImageId").As("pImageId")
+                                                   .Column("p", "PageIndex").As("pIndex")
+                                                   .Column("i", "ID").As("iId")
+                                                   .Column("i", "Title").As("iTitle")
+                                                   .Column("i", "MasterPath").As("iMasterPath")
+                                                   .Column("i", "IsEncrypted").As("iIsEncrypted")
+                                                   .Column("t", "ID").As("tId")
+                                                   .Column("t", "ImageID").As("tImageId")
+                                                   .Column("t", "Path").As("tPath")
+                                                   .Column("s", "Level").As("sLevel")
+                                                   .From.Table(new Table<Book>().Name, "b")
+                                                   .Left.Join(new Table<Author>().Name, "a").On.Column("a", "ID").EqualTo.Column("bAuthorId")
+                                                   .Cross.Join(new Table<Page>().Name, "p").On.Column("p", "BookID").EqualTo.Column("b", "ID")
+                                                   .Inner.Join(new Table<Image>().Name, "i").On.Column("i", "ID").EqualTo.Column("pImageId")
+                                                   .Left.Join(new Table<Thumbnail>().Name, "t").On.Column("i", "ID").EqualTo.Column("tImageId")
+                                                   .Left.Join(new Table<Star>().Name, "s").On.Column("s", "TypeId").EqualTo.Value(0).And().Column("s", "ID").EqualTo.Column("bId")
+                                                   .Where.Column("bId").EqualTo.Value(book.ID))
+                    {
+                        string sql = query.ToSql();
+                        command.CommandText = sql;
+                        query.SetParameters(command);
+
+                        using (var rdr = command.ExecuteReader())
+                        {
+                            var prevId = Guid.Empty;
+                            book.Contents.Clear();
+
+                            int i = 0;
+
+                            while (rdr.Read())
+                            {
+                                var id = rdr.SafeGetGuid("bId", null);
+
+                                if (i == 0)
+                                {
+                                    book = new BookViewModel();
+                                    book.Configuration = Configuration.ApplicationConfiguration;
+                                    book.ID = id;
+                                    prevId = id;
+                                    book.Title = rdr.SafeGetString("bTitle", null);
+                                    book.AuthorID = rdr.SafeGetGuid("bAuthorId", null);
+                                    book.ByteSize = rdr.SafeNullableGetLong("bByteSize", null);
+                                    book.PublishDate = rdr.SafeGetNullableDateTime("bPublishDate", null);
+                                    book.FingerPrint = rdr.SafeGetString("bFingerPrint", null);
+                                    book.StarLevel = rdr.SafeGetNullableInt("sLevel", null);
+
+                                    if (!rdr.IsDBNull("aId") && !rdr.IsDBNull("aName"))
+                                    {
+                                        var author = new AuthorViewModel();
+                                        author.ID = rdr.SafeGetGuid("aId", null);
+                                        author.Name = rdr.SafeGetString("aName", null);
+                                        book.Author = author;
+                                    }
+                                }
+
+                                var page = new PageViewModel();
+                                page.Configuration = Configuration.ApplicationConfiguration;
+                                page.ID = rdr.SafeGetGuid("pId", null);
+                                page.Title = rdr.SafeGetString("pTitle", null);
+                                page.BookID = rdr.SafeGetGuid("bId", null);
+                                page.ImageID = rdr.SafeGetGuid("pImageId", null);
+                                page.PageIndex = rdr.SafeGetInt("pIndex", null);
+                                if (i == 0)
+                                {
+                                    book.FirstPage = page;
+                                }
+
+                                var image = new ImageViewModel();
+                                image.Configuration = Configuration.ApplicationConfiguration;
+                                image.ID = rdr.SafeGetGuid("iId", null);
+                                image.Title = rdr.SafeGetString("iTitle", null);
+                                image.RelativeMasterPath = rdr.SafeGetString("iMasterPath", null);
+                                image.IsEncrypted = rdr.SafeGetBoolean("iIsEncrypted", null);
+                                page.Image = image;
+                                page.IsLoaded = true;
+
+                                if (!rdr.IsDBNull("tId") && !rdr.IsDBNull("tImageId") && !rdr.IsDBNull("tPath"))
+                                {
+                                    var thumbnail = new ThumbnailViewModel();
+                                    thumbnail.ID = rdr.SafeGetGuid("tId", null);
+                                    thumbnail.ImageID = rdr.SafeGetGuid("tImageId", null);
+                                    thumbnail.RelativeMasterPath = rdr.SafeGetString("tPath", null);
+                                    image.Thumbnail = thumbnail;
+                                }
+
+                                book.Contents.Add(page);
+                                book.Contents = book.Contents;
+                                i++;
+                            }
+
+                            book.IsLoaded = true;
+                            book.ContentsRegistered = true;
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                if (!isTransaction)
+                {
+                    conn.Dispose();
+                }
+            }
+        }
     }
 }

@@ -75,7 +75,7 @@ namespace Sunctum.Domain.ViewModels
                     {
                         return $"{Configuration.ApplicationConfiguration.ExecutingDirectory}\\{Specifications.LOCK_ICON_FILE}";
                     }
-                    return this.ID.ToString("D");
+                    return encryptImage.EncryptFilePath;
                 }
 
                 return AbsoluteMasterPath;
