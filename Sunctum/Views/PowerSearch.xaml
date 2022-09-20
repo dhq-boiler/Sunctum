@@ -54,7 +54,7 @@
             </DockPanel>
             <DockPanel>
                 <Label DockPanel.Dock="Left">タイトル</Label>
-                <ui:EasyEnterTextBox Text="{Binding Title.Value}" />
+                <ui:EasyEnterTextBox Text="{Binding BookTitle.Value}" />
             </DockPanel>
             <DockPanel>
                 <Label DockPanel.Dock="Left">スター</Label>

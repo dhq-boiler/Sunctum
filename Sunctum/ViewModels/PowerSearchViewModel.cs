@@ -1,8 +1,10 @@
 ﻿
 
 using Prism.Commands;
+using Prism.Mvvm;
 using Prism.Services.Dialogs;
 using Reactive.Bindings;
+using Reactive.Bindings.Extensions;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using System;
@@ -13,9 +15,10 @@ using System.Windows.Input;
 
 namespace Sunctum.ViewModels
 {
-    internal class PowerSearchViewModel : IDialogAware
+    internal class PowerSearchViewModel : BindableBase, IDisposable, IDialogAware
     {
         private IArrangedBookStorage _bookStorage;
+        private bool disposedValue;
 
         public event Action<IDialogResult> RequestClose;
 
@@ -28,7 +31,7 @@ namespace Sunctum.ViewModels
 
         public ReactiveProperty<string> Author { get; } = new ReactiveProperty<string>();
 
-        public ReactiveProperty<string> Title { get; } = new ReactiveProperty<string>();
+        public ReactiveProperty<string> BookTitle { get; } = new ReactiveProperty<string>();
 
         public ReactiveProperty<int> ConditionStar { get; } = new ReactiveProperty<int>();
 
@@ -36,7 +39,7 @@ namespace Sunctum.ViewModels
 
         public ICommand CloseCommand { get; set; }
 
-        string IDialogAware.Title => "Power search";
+        public string Title => "パワーサーチ";
 
         private void RegisterCommands()
         {
@@ -65,10 +68,10 @@ namespace Sunctum.ViewModels
                            select book;
             }
 
-            if (!string.IsNullOrWhiteSpace(Title.Value))
+            if (!string.IsNullOrWhiteSpace(BookTitle.Value))
             {
                 filtered = from book in filtered
-                           where book.Title.IndexOf(Title.Value) != -1
+                           where book.Title.IndexOf(BookTitle.Value) != -1
                            select book;
             }
 
@@ -97,6 +100,7 @@ namespace Sunctum.ViewModels
 
             _bookStorage.SearchedBooks = new ReactiveCollection<BookViewModel>();
             _bookStorage.SearchedBooks.AddRange(filtered.ToList());
+            _bookStorage.SearchedBooks = _bookStorage.SearchedBooks;
 
             RequestClose.Invoke(new DialogResult(ButtonResult.OK));
         }
@@ -113,6 +117,29 @@ namespace Sunctum.ViewModels
         public void OnDialogOpened(IDialogParameters parameters)
         {
             _bookStorage = parameters.GetValue<IArrangedBookStorage>("Storage");
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    BookId.Dispose();
+                    Author.Dispose();
+                    BookTitle.Dispose();
+                    ConditionStar.Dispose();
+                }
+
+                disposedValue = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            // このコードを変更しないでください。クリーンアップ コードを 'Dispose(bool disposing)' メソッドに記述します
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
         }
     }
 }
