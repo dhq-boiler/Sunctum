@@ -369,6 +369,9 @@
   <data name="MainWindow_Search_ClearSearchResult" xml:space="preserve">
     <value>Clear Search Result</value>
   </data>
+  <data name="MainWindow_Search_FilterDuplicateBooks" xml:space="preserve">
+    <value>Filter duplicate books</value>
+  </data>
   <data name="MainWindow_Search_PowerSearch" xml:space="preserve">
     <value>Power search...</value>
   </data>
