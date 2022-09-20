@@ -210,6 +210,7 @@ namespace Sunctum.Domain.Data.Dao
                 PublishDate = reader.SafeGetNullableDateTime("PublishDate", Table),
                 ByteSize = reader.SafeNullableGetLong("ByteSize", Table),
                 FingerPrint = reader.SafeGetString("FingerPrint", Table),
+                TitleIsEncrypted = CatchThrow(() => reader.SafeGetBoolean("TitleIsEncrypted", Table)),
             };
         }
 

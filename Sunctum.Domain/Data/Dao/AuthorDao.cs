@@ -255,6 +255,7 @@ namespace Sunctum.Domain.Data.Dao
             {
                 ID = reader.SafeGetGuid("ID", Table),
                 Name = reader.SafeGetString("Name", Table),
+                NameIsEncrypted = CatchThrow(() => reader.SafeGetBoolean("NameIsEncrypted", Table)),
             };
         }
     }
