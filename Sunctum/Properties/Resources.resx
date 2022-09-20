@@ -258,6 +258,12 @@
   <data name="MainWindow_Data_UnencryptionStart" xml:space="preserve">
     <value>Unencryption start...</value>
   </data>
+  <data name="MainWindow_Data_UpdateBookFingerPrintAll" xml:space="preserve">
+    <value>Update fingerprint of all books</value>
+  </data>
+  <data name="MainWindow_Data_UpdateBookFingerPrintQuickly" xml:space="preserve">
+    <value>Update fingerprint of books quickly</value>
+  </data>
   <data name="MainWindow_Display" xml:space="preserve">
     <value>_DISPLAY</value>
   </data>
