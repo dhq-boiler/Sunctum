@@ -58,7 +58,7 @@ namespace Sunctum.Managers
             [DebuggerStepThrough]
             get
             {
-                if (SearchedBooks != null)
+                if (SearchedBooks is not null)
                 {
                     return SearchedBooks;
                 }
@@ -225,6 +225,7 @@ namespace Sunctum.Managers
         public void ClearSearchResult()
         {
             SearchText = "";
+            SearchedBooks = null;
         }
 
         #endregion //検索

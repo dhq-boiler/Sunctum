@@ -817,6 +817,15 @@ namespace Sunctum.Properties {
         }
         
         /// <summary>
+        ///   Power search... に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MainWindow_Search_PowerSearch {
+            get {
+                return ResourceManager.GetString("MainWindow_Search_PowerSearch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Search... に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string MainWindow_Search_Search {
