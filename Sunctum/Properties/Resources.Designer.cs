@@ -484,6 +484,24 @@ namespace Sunctum.Properties {
         }
         
         /// <summary>
+        ///   Update fingerprint of all books に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MainWindow_Data_UpdateBookFingerPrintAll {
+            get {
+                return ResourceManager.GetString("MainWindow_Data_UpdateBookFingerPrintAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Update fingerprint of books quickly に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MainWindow_Data_UpdateBookFingerPrintQuickly {
+            get {
+                return ResourceManager.GetString("MainWindow_Data_UpdateBookFingerPrintQuickly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   _DISPLAY に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string MainWindow_Display {
@@ -813,6 +831,15 @@ namespace Sunctum.Properties {
         public static string MainWindow_Search_ClearSearchResult {
             get {
                 return ResourceManager.GetString("MainWindow_Search_ClearSearchResult", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Filter duplicate books に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MainWindow_Search_FilterDuplicateBooks {
+            get {
+                return ResourceManager.GetString("MainWindow_Search_FilterDuplicateBooks", resourceCulture);
             }
         }
         

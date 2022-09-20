@@ -151,8 +151,8 @@
                                     <MenuItem Command="{Binding UpdateBookTagCommand}" Header="{Binding MainWindow_Data_BookTag_UpdateBookTagAll, Source={StaticResource resources}}" />
                                 </MenuItem>
                                 <MenuItem Header="指紋">
-                                    <MenuItem Command="{Binding UpdateBookFingerPrintAllCommand}" Header="すべてのブックの指紋を更新する" />
-                                    <MenuItem Command="{Binding UpdateBookFingerPrintStillNullCommand}" Header="すばやくブックの指紋を更新する" />
+                                    <MenuItem Command="{Binding UpdateBookFingerPrintAllCommand}" Header="{Binding MainWindow_Data_UpdateBookFingerPrintAll, Source={StaticResource resources}}" />
+                                    <MenuItem Command="{Binding UpdateBookFingerPrintStillNullCommand}" Header="{Binding MainWindow_Data_UpdateBookFingerPrintQuickly, Source={StaticResource resources}}" />
                                 </MenuItem>
                                 <Separator />
                                 <MenuItem Command="{Binding EncryptionStartingCommand}" Header="{Binding MainWindow_Data_EncryptionStart, Source={StaticResource resources}}">

@@ -258,6 +258,12 @@
   <data name="MainWindow_Data_UnencryptionStart" xml:space="preserve">
     <value>暗号化解除...</value>
   </data>
+  <data name="MainWindow_Data_UpdateBookFingerPrintAll" xml:space="preserve">
+    <value>すべてのブックの指紋を更新する</value>
+  </data>
+  <data name="MainWindow_Data_UpdateBookFingerPrintQuickly" xml:space="preserve">
+    <value>すばやくブックの指紋を更新する</value>
+  </data>
   <data name="MainWindow_Display" xml:space="preserve">
     <value>表示(_I)</value>
   </data>
