@@ -212,7 +212,7 @@ namespace Sunctum.Domain.Logic.Import
                 throw new UnexpectedException($"expected:_book is not null but actual:_book is null");
             }
 
-            BookFacade.GetProeprty(ref _book, dataOpUnit);
+            BookFacade.FillContents(ref _book, dataOpUnit);
 
             if (_book.FirstPage is null)
             {
