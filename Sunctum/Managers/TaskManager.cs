@@ -47,22 +47,7 @@ namespace Sunctum.Managers
 
         public void RunSync(AsyncTaskSequence sequence)
         {
-            lock (_lockObj)
-            {
-                IsRunning = true;
-            }
-
-            try
-            {
-                InnerProcessTask(sequence);
-            }
-            finally
-            {
-                lock (_lockObj)
-                {
-                    IsRunning = false;
-                }
-            }
+            InnerProcessTask(sequence);
         }
 
         private void ProcessTaskLoop()
