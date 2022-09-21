@@ -429,6 +429,7 @@ namespace boilersUpdater.ViewModels
 
         protected virtual bool IsFileLocked(FileInfo file)
         {
+            Stopwatch sw = Stopwatch.StartNew();
             FileStream stream = null;
 
             try
@@ -447,6 +448,8 @@ namespace boilersUpdater.ViewModels
             {
                 if (stream != null)
                     stream.Close();
+                sw.Stop();
+                s_logger.Info($"{file.FullName} {sw.ElapsedMilliseconds}ms");
             }
 
             //file is not locked
