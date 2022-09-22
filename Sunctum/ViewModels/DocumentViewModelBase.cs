@@ -762,6 +762,8 @@ namespace Sunctum.ViewModels
         {
             IDialogParameters parameter = new DialogParameters();
             BookFacade.FillContents(ref book);
+            book.IsLoaded = true;
+            book.ContentsRegistered = true;
             parameter.Add("Book", book);
             IDialogResult result = new DialogResult();
             dialogService.ShowDialog(nameof(BookProperty), parameter, ret => result = ret);
@@ -851,6 +853,8 @@ namespace Sunctum.ViewModels
             CloseSearchPane();
             StoreScrollOffset(Guid.Empty);
             BookFacade.FillContents(ref book);
+            book.IsLoaded = true;
+            book.ContentsRegistered = true;
             OpenedBook = book;
             RestoreScrollOffset(OpenedBook.ID);
             LibraryManager.Value.TagManager.ClearSelectedEntries();

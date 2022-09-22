@@ -548,9 +548,6 @@ namespace Sunctum.Domain.Data.Dao
                                 book.Contents = book.Contents;
                                 i++;
                             }
-
-                            book.IsLoaded = true;
-                            book.ContentsRegistered = true;
                         }
                     }
                 }
