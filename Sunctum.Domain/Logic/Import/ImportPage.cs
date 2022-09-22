@@ -12,6 +12,7 @@ using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading.Tasks;
 using System.Transactions;
 using System.Windows.Forms;
 
@@ -144,6 +145,7 @@ namespace Sunctum.Domain.Logic.Import
         public string PageTitle { get; set; }
 
         public string Destination { get; private set; }
+        public BookViewModel Book { get; internal set; }
 
         #region IDisposable Support
         private bool _disposedValue = false;

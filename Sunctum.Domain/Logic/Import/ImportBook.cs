@@ -259,7 +259,13 @@ namespace Sunctum.Domain.Logic.Import
 
             BookFacade.Insert(_book, dataOpUnit);
 
-            _children.ForEach(c => ((ImportPage)c).BookID = _book.ID);
+            _children.ForEach(c =>
+            {
+                var p = c as ImportPage;
+                p.BookID = _book.ID;
+                p.Book = _book;
+                p.Count = _children.Count;
+            });
             _BookID = _book.ID;
         }
 

@@ -11,7 +11,7 @@ namespace Sunctum.Domain.Logic.Import
 {
     public abstract class Importer
     {
-        public int Count { get; protected set; }
+        public int Count { get; internal set; }
         public int Processed { get; protected set; }
         public string Name { get; protected set; }
         public string Path { get; private set; }
