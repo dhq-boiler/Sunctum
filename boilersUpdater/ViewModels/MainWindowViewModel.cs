@@ -159,16 +159,16 @@ namespace boilersUpdater.ViewModels
                                                         .Select(x => x.browser_download_url)
                                                         .First();
                     var curDirPath = Directory.GetCurrentDirectory();
-                    var up1DirPath = curDirPath.Substring(0, curDirPath.LastIndexOf(@"\") + 1);
-                    var up1Dir = new DirectoryInfo(up1DirPath);
+                    var curDir = new DirectoryInfo(curDirPath);
                     ClearFilesAndDirectories();
-                    s_logger.Info($"ディレクトリとファイルの列挙：{up1Dir.FullName}");
-                    FullDirList(up1Dir, "*");
+                    s_logger.Info($"ディレクトリとファイルの列挙：{curDir.FullName}");
+                    FullDirList(curDir, "*");
                     var exceptedList = ExceptedList($"{curDirPath}\\boilersUpdater");
-                    s_logger.Info($"除外：{string.Join('\n', exceptedList)}");
+                    foreach (var excepted in exceptedList)
+                    {
+                        s_logger.Info($"除外：{excepted}");
+                    }
                     files = files.Where(x => !exceptedList.Contains(x.FullName) && x.FullName.IndexOf("boilersUpdater") == -1).ToList();
-                    //s_logger.Info("更新対象ファイルの絞り込み");
-                    //s_logger.Info(string.Join('\n', files));
                     while (!files.All(file => !IsFileLocked(file)))
                     {
                         var str = "アップデート対象のファイルが別のプロセスに開かれています。\n"
