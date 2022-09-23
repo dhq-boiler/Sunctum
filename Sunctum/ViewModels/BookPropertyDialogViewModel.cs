@@ -243,7 +243,7 @@ namespace Sunctum.ViewModels
                 {
                     BookLoading.Load(Book);
                 }
-                return Path.GetDirectoryName(Book.FirstPage.Image.AbsoluteMasterPath);
+                return Path.GetDirectoryName(Book.FirstPage.Value.Image.AbsoluteMasterPath);
             }
         }
 

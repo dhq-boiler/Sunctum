@@ -2,10 +2,13 @@
 
 using NLog;
 using Sunctum.Domain.Extensions;
+using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Windows;
+using Unity;
 
 namespace Sunctum.Domain.Logic.Async
 {
@@ -14,6 +17,9 @@ namespace Sunctum.Domain.Logic.Async
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
         public IEnumerable<BookViewModel> TargetBooks { get; set; }
+
+        [Dependency]
+        public ITaskManager TaskManager { get; set; }
 
         public override void ConfigurePreTaskAction(AsyncTaskSequence sequence)
         {
@@ -27,11 +33,11 @@ namespace Sunctum.Domain.Logic.Async
             {
                 if (book.FirstPage == null) continue;
 
-                ImageViewModel image = book.FirstPage.Image;
+                ImageViewModel image = book.FirstPage.Value.Image;
                 sequence.Add(new Task(() => Delete.ThumbnailDeleting.DeleteThumbnail(image)));
                 var tg = new Async.ThumbnailGenerating();
                 tg.Target = image;
-                sequence.AddRange(tg.GetTaskSequence().Tasks);
+                sequence.Add(new Task(() => TaskManager.RunSync(tg.GetTaskSequence())));
                 sequence.Add(new Task(() => s_logger.Info($"Remade Thumbnail imageId:{image.ID}")));
             }
         }
@@ -50,7 +56,7 @@ namespace Sunctum.Domain.Logic.Async
             {
                 if (book.FirstPage == null) continue;
 
-                ImageViewModel image = book.FirstPage.Image;
+                ImageViewModel image = book.FirstPage.Value.Image;
                 tasks.Add(new Task(() => Delete.ThumbnailDeleting.DeleteThumbnail(image)));
                 tasks.Add(new Task(() => Generate.ThumbnailGenerating.GenerateThumbnail(image)));
                 tasks.Add(new Task(() => s_logger.Info($"Remade Thumbnail imageId:{image.ID}")));

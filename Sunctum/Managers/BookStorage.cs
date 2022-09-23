@@ -1,10 +1,6 @@
-﻿
-
-using Homura.Core;
-using NLog;
+﻿using NLog;
 using Prism.Mvvm;
 using Reactive.Bindings;
-using Reactive.Bindings.Extensions;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Load;
 using Sunctum.Domain.Logic.Query;
@@ -12,10 +8,10 @@ using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
 using System.Windows;
+using System.Windows.Data;
 
 namespace Sunctum.Managers
 {
@@ -212,6 +208,7 @@ namespace Sunctum.Managers
             if (book.Contents == null)
             {
                 book.Contents = new ObservableCollection<PageViewModel>();
+                BindingOperations.EnableCollectionSynchronization(book.Contents, new object());
             }
         }
 

@@ -224,5 +224,20 @@ namespace Sunctum.Domain.ViewModels
         {
             return "{RelativeMasterPath=" + RelativeMasterPath + ", ThumbnailGenerated=" + ThumbnailGenerated + ", Thumbnail=" + Thumbnail + "}";
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is ImageViewModel i)
+            {
+                return ID.Equals(i.ID);
+            }
+            else
+                return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return ID.GetHashCode();
+        }
     }
 }
