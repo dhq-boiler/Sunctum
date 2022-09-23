@@ -223,7 +223,7 @@ namespace Sunctum.Domain.Logic.Async
             var page = PageFacade.FindByBookIdTop1(NewBook.ID);
             page.Image = ImageFacade.FindBy(page.ImageID);
 
-            NewBook.FirstPage = page;
+            NewBook.FirstPage.Value = page;
             s_logger.Debug($"Set FirstPage : {page.Image}");
 
             Load.BookLoading.GenerateThumbnailIf(NewBook);

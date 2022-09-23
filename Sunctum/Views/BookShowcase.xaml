@@ -187,7 +187,7 @@
                     Height="{Binding Configuration.BookListViewItemImageHeight}"
                     MaxWidth="{Binding Configuration.BookListViewItemWidth}"
                     MaxHeight="{Binding Configuration.BookListViewItemImageHeight}"
-                    Source="{Binding FirstPage.Image, Converter={StaticResource ImageConverter}}">
+                    Source="{Binding FirstPage.Value.Image, Converter={StaticResource ImageConverter}, UpdateSourceTrigger=PropertyChanged}">
                     <Image.Style>
                         <Style TargetType="{x:Type Image}">
                             <Style.Triggers>
@@ -210,7 +210,7 @@
                     MaxWidth="{Binding Configuration.BookListViewItemWidth}"
                     MaxHeight="{Binding Configuration.BookListViewItemImageHeight}"
                     Clip="{Binding Path=CurrentProcessProgress.Value.Rate.Value, Converter={StaticResource PathGeometryConverter}, UpdateSourceTrigger=PropertyChanged}"
-                    Source="{Binding FirstPage.Image, Converter={StaticResource ImageConverter}}" />
+                    Source="{Binding FirstPage.Value.Image, Converter={StaticResource ImageConverter}, UpdateSourceTrigger=PropertyChanged}" />
 
                 <ui.ctrl:AutoScrollingHyperlink
                     Grid.Row="1"

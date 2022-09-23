@@ -113,13 +113,13 @@ namespace PickoutCover.Domain.Logic.Async
             }
 
             var book = _libraryVM.OnStage.Where(b => b.ID.Equals(_page.BookID)).Single();
-            book.FirstPage = page;
-            if (book.FirstPage.Image.ThumbnailRecorded)
+            book.FirstPage.Value = page;
+            if (book.FirstPage.Value.Image.ThumbnailRecorded)
             {
-                book.FirstPage.Image.Thumbnail = ThumbnailFacade.FindByImageID(book.FirstPage.ImageID, dataOpUnit);
+                book.FirstPage.Value.Image.Thumbnail = ThumbnailFacade.FindByImageID(book.FirstPage.Value.ImageID, dataOpUnit);
             }
 
-            if (!book.FirstPage.Image.ThumbnailLoaded || !book.FirstPage.Image.ThumbnailGenerated)
+            if (!book.FirstPage.Value.Image.ThumbnailLoaded || !book.FirstPage.Value.Image.ThumbnailGenerated)
             {
                 await Application.Current.Dispatcher.InvokeAsync(async () =>
                 {

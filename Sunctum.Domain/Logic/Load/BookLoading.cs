@@ -18,15 +18,15 @@ namespace Sunctum.Domain.Logic.Load
         {
             if (!book.IsLoaded)
             {
-                if (book.FirstPage?.Image == null || book.FirstPage?.Image?.Thumbnail == null)
+                if (book.FirstPage.Value?.Image == null || book.FirstPage.Value?.Image?.Thumbnail == null)
                 {
                     LoadFirstPageAndThumbnail(book, dataOpUnit);
-                    if (book.FirstPage?.Image != null && (book.FirstPage.Image.IsEncrypted || book.FirstPage.Image.ThumbnailLoaded))
+                    if (book.FirstPage.Value?.Image != null && (book.FirstPage.Value.Image.IsEncrypted || book.FirstPage.Value.Image.ThumbnailLoaded))
                     {
                         book.IsLoaded = true;
                     }
-                    var firstPageIsNotNull = book.FirstPage is not null && book.FirstPage.Image is not null;
-                    if (firstPageIsNotNull && !book.FirstPage.Image.IsEncrypted && !book.FirstPage.Image.ThumbnailGenerated)
+                    var firstPageIsNotNull = book.FirstPage is not null && book.FirstPage.Value.Image is not null;
+                    if (firstPageIsNotNull && !book.FirstPage.Value.Image.IsEncrypted && !book.FirstPage.Value.Image.ThumbnailGenerated)
                     {
                         GenerateThumbnailCondition(book, dataOpUnit);
                     }
@@ -63,7 +63,7 @@ namespace Sunctum.Domain.Logic.Load
             var firstPage = book.FirstPage;
             if (firstPage != null)
             {
-                var firstPageImage = firstPage.Image;
+                var firstPageImage = firstPage.Value.Image;
 
                 if (!firstPageImage.ThumbnailLoaded)
                 {

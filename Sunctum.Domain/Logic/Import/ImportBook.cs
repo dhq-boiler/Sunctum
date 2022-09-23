@@ -15,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace Sunctum.Domain.Logic.Import
 {
@@ -219,20 +220,21 @@ namespace Sunctum.Domain.Logic.Import
                 throw new UnexpectedException($"expected:_book.FirstPage is not null but actual:_book.FirstPage is null");
             }
 
-            if (_book.FirstPage.Image is null)
+            if (_book.FirstPage.Value.Image is null)
             {
                 throw new UnexpectedException($"expected:_book.FirstPage.Image is not null but actual:_book.FirstPage.Image is null");
             }
 
-            if (_book.FirstPage.Image.ThumbnailLoaded && _book.FirstPage.Image.ThumbnailGenerated)
+            if (_book.FirstPage.Value.Image.ThumbnailLoaded && _book.FirstPage.Value.Image.ThumbnailGenerated)
             {
                 return;
             }
 
-            Application.Current.Dispatcher.InvokeAsync(() =>
+            //Application.Current.Dispatcher.InvokeAsync(() =>
+            Dispatcher.CurrentDispatcher.InvokeAsync(() =>
             {
                 var tg = new Async.ThumbnailGenerating();
-                tg.Target = _book.FirstPage.Image;
+                tg.Target = _book.FirstPage.Value.Image;
                 (Application.Current.MainWindow.DataContext as IMainWindowViewModel).LibraryVM.TaskManager.RunSync(tg.GetTaskSequence());
             });
         }

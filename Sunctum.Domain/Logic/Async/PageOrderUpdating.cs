@@ -2,7 +2,11 @@
 
 using NLog;
 using Sunctum.Domain.Data.DaoFacade;
+using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
+using System;
+using System.Linq;
+using Unity;
 
 namespace Sunctum.Domain.Logic.Async
 {
@@ -13,6 +17,12 @@ namespace Sunctum.Domain.Logic.Async
         private int _index;
 
         public BookViewModel Target { get; set; }
+
+        [Dependency]
+        public Lazy<ILibrary> Library { get; set; }
+
+        [Dependency]
+        public Lazy<IMainWindowViewModel> MainWindowViewModel { get; set; }
 
         public override void ConfigurePreTaskAction(AsyncTaskSequence sequence)
         {
@@ -32,8 +42,14 @@ namespace Sunctum.Domain.Logic.Async
             {
                 if (Target.Contents.Count > 0)
                 {
-                    Target.FirstPage = Target.Contents[0];
+                    Target.FirstPage.Value = Target.Contents.First();
                 }
+            });
+
+            sequence.Add(() =>
+            {
+                MainWindowViewModel.Value.ActiveDocumentViewModel.BookCabinet.UpdateInMemory(Target);
+                Library.Value.UpdateInMemory(Target);
             });
         }
 

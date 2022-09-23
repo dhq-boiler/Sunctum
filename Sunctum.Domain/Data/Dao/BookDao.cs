@@ -273,7 +273,7 @@ namespace Sunctum.Domain.Data.Dao
                                 page.BookID = rdr.SafeGetGuid("bId", null);
                                 page.ImageID = rdr.SafeGetGuid("pImageId", null);
                                 page.PageIndex = rdr.SafeGetInt("pIndex", null);
-                                book.FirstPage = page;
+                                book.FirstPage.Value = page;
 
                                 var image = new ImageViewModel();
                                 image.Configuration = Configuration.ApplicationConfiguration;
@@ -393,7 +393,7 @@ namespace Sunctum.Domain.Data.Dao
                                 page.PageIndex = rdr.SafeGetInt("pIndex", null);
                                 if (id != prevId)
                                 {
-                                    book.FirstPage = page;
+                                    book.FirstPage.Value = page;
                                 }
 
                                 var image = new ImageViewModel();
@@ -523,7 +523,7 @@ namespace Sunctum.Domain.Data.Dao
                                 page.PageIndex = rdr.SafeGetInt("pIndex", null);
                                 if (i == 0)
                                 {
-                                    book.FirstPage = page;
+                                    book.FirstPage.Value = page;
                                 }
 
                                 var image = new ImageViewModel();

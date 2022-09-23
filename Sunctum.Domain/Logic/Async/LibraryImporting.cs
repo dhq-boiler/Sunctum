@@ -262,7 +262,7 @@ namespace Sunctum.Domain.Logic.Async
             if (page.PageIndex == Specifications.PAGEINDEX_FIRSTPAGE)
             {
                 Generate.ThumbnailGenerating.GenerateThumbnail(page.Image, _dataOpUnit);
-                libManager.AccessDispatcherObject(() => parent.FirstPage = page);
+                libManager.AccessDispatcherObject(() => parent.FirstPage.Value = page);
                 libManager.AccessDispatcherObject(() => parent.IsLoaded = true);
             }
         }

@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Windows.Data;
 using YamlDotNet.Serialization;
 
 namespace Sunctum.Domain.ViewModels
@@ -17,7 +18,7 @@ namespace Sunctum.Domain.ViewModels
     public class BookViewModel : EntryViewModel, ICloneable, IDisposable
     {
         private Configuration _Configuration;
-        private PageViewModel _FirstPage;
+        //private PageViewModel _FirstPage;
         private bool _ContentsRegistered;
         private ObservableCollection<PageViewModel> _Contents;
         private Guid _AuthorID;
@@ -28,6 +29,7 @@ namespace Sunctum.Domain.ViewModels
         public BookViewModel()
         {
             Contents = new ObservableCollection<PageViewModel>();
+            BindingOperations.EnableCollectionSynchronization(Contents, new object());
             NumberOfPages = Contents
                 .PropertyChangedAsObservable()
                 .Select(x => Contents.Count())
@@ -38,6 +40,7 @@ namespace Sunctum.Domain.ViewModels
             : base(id, title)
         {
             Contents = new ObservableCollection<PageViewModel>();
+            BindingOperations.EnableCollectionSynchronization(Contents, new object());
             NumberOfPages = Contents
                 .PropertyChangedAsObservable()
                 .Select(x => Contents.Count())
@@ -81,13 +84,15 @@ namespace Sunctum.Domain.ViewModels
             set { SetProperty(ref _ByteSize, value); }
         }
 
-        public PageViewModel FirstPage
-        {
-            [DebuggerStepThrough]
-            get
-            { return _FirstPage; }
-            set { SetProperty(ref _FirstPage, value); }
-        }
+        //public PageViewModel FirstPage
+        //{
+        //    [DebuggerStepThrough]
+        //    get
+        //    { return _FirstPage; }
+        //    set { SetProperty(ref _FirstPage, value); }
+        //}
+
+        public ReactivePropertySlim<PageViewModel> FirstPage { get; } = new ReactivePropertySlim<PageViewModel>();
 
         public AuthorViewModel Author
         {
@@ -159,15 +164,15 @@ namespace Sunctum.Domain.ViewModels
         public void RemovePage(PageViewModel page)
         {
             Contents.Remove(page);
-            if (FirstPage.ID == page.ID)
+            if (FirstPage.Value.ID == page.ID)
             {
                 if (Contents.Count > 0)
                 {
-                    FirstPage = Contents.First();
+                    FirstPage.Value = Contents.First();
                 }
                 else
                 {
-                    FirstPage = null;
+                    FirstPage.Value = null;
                 }
             }
         }
@@ -175,6 +180,7 @@ namespace Sunctum.Domain.ViewModels
         public void ResetContents(IEnumerable<PageViewModel> pages)
         {
             Contents = new ObservableCollection<PageViewModel>(pages);
+            BindingOperations.EnableCollectionSynchronization(Contents, new object());
         }
 
         public void ClearContents()
@@ -210,13 +216,12 @@ namespace Sunctum.Domain.ViewModels
 
         public object Clone()
         {
-            return new BookViewModel()
+            var book =  new BookViewModel()
             {
                 Configuration = Configuration.ApplicationConfiguration,
                 ID = this.ID,
                 Author = this.Author,
                 AuthorID = this.AuthorID,
-                FirstPage = this.FirstPage,
                 PublishDate = this.PublishDate,
                 ByteSize = this.ByteSize,
                 Title = this.Title,
@@ -224,6 +229,8 @@ namespace Sunctum.Domain.ViewModels
                 ContentsRegistered = this.ContentsRegistered,
                 IsLoaded = this.IsLoaded
             };
+            book.FirstPage.Value = this.FirstPage.Value;
+            return book;
         }
 
         public override bool Equals(object obj)
@@ -257,10 +264,10 @@ namespace Sunctum.Domain.ViewModels
                 if (disposing)
                 {
                     NumberOfPages.Dispose();
+                    FirstPage.Dispose();
                 }
 
                 Contents = null;
-                FirstPage = null;
                 NumberOfPages = null;
 
                 _disposedValue = true;
