@@ -120,10 +120,10 @@ namespace Sunctum.Domain.Data.DaoFacade
             return dao.CountBy(new Dictionary<string, object>() { { "Name", name } }, dataOpUnit?.CurrentConnection) > 0;
         }
 
-        public static void Update(AuthorViewModel target)
+        public static void Update(AuthorViewModel target, DataOperationUnit dataOpUnit = null)
         {
             AuthorDao dao = new AuthorDao();
-            dao.Update(target.ToEntity());
+            dao.Update(target.ToEntity(), dataOpUnit?.CurrentConnection);
             s_logger.Debug($"UPDATE Author:{target}");
         }
     }

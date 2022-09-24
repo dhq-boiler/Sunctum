@@ -48,7 +48,7 @@ namespace Sunctum.Domain.Models
             set { SetProperty(ref _FingerPrint, value); }
         }
 
-        [Column("TitleIsEncrypted", "INTEGER", 6, Homura.ORM.HandlingDefaultValue.AsValue, 0), NotNull]
+        [Column("TitleIsEncrypted", "INTEGER", 6, Homura.ORM.HandlingDefaultValue.AsValue, false), NotNull]
         [Since(typeof(Version_3))]
         public override bool TitleIsEncrypted
         {

@@ -110,7 +110,6 @@ namespace Sunctum.Domain.Logic.Async
 
         private void LibraryInitializing_FinishedToUpgradeTo_Version_7(object sender, VersionChangeEventArgs e)
         {
-            throw new NotImplementedException();
         }
 
         public override void ConfigurePostTaskAction(AsyncTaskSequence sequence)

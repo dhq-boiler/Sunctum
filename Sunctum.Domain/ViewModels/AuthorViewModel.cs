@@ -2,6 +2,7 @@
 
 using Homura.Core;
 using Homura.ORM;
+using Reactive.Bindings;
 using Sunctum.Domain.Models;
 using System;
 using System.Diagnostics;
@@ -44,6 +45,10 @@ namespace Sunctum.Domain.ViewModels
             get { return Name != null ? HttpUtility.HtmlDecode(Name) : null; }
             set { Name = HttpUtility.HtmlEncode(value); }
         }
+
+        public ReactivePropertySlim<bool> NameIsEncrypted { get; } = new ReactivePropertySlim<bool>();
+
+        public ReactivePropertySlim<bool> NameIsDecrypted { get; } = new ReactivePropertySlim<bool>();
 
         public object Clone()
         {

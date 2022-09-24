@@ -14,6 +14,8 @@ namespace Sunctum.Domain.Data.Dao.Migration.Plan
             {
                 yield return new ChangePlan_Author_Version_1();
                 yield return new ChangePlan_Book_Version_3();
+                yield return new ChangePlan_Page_Version_1();
+                yield return new ChangePlan_Image_Version_3();
             }
         }
     }

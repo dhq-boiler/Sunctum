@@ -35,7 +35,7 @@ namespace Sunctum.Domain.Models
             }
         }
 
-        [Column("NameIsEncrypted", "INTEGER", 2, Homura.ORM.HandlingDefaultValue.AsValue, 0), NotNull]
+        [Column("NameIsEncrypted", "INTEGER", 2, Homura.ORM.HandlingDefaultValue.AsValue, false), NotNull]
         [Since(typeof(Version_1))]
         public bool NameIsEncrypted
         {

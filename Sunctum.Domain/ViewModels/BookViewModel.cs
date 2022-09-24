@@ -1,5 +1,6 @@
 ﻿
 
+using NLog.LayoutRenderers.Wrappers;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using Sunctum.Domain.Logic.Async;
@@ -84,15 +85,11 @@ namespace Sunctum.Domain.ViewModels
             set { SetProperty(ref _ByteSize, value); }
         }
 
-        //public PageViewModel FirstPage
-        //{
-        //    [DebuggerStepThrough]
-        //    get
-        //    { return _FirstPage; }
-        //    set { SetProperty(ref _FirstPage, value); }
-        //}
-
         public ReactivePropertySlim<PageViewModel> FirstPage { get; } = new ReactivePropertySlim<PageViewModel>();
+
+        public ReactivePropertySlim<bool> TitleIsEncrypted { get; } = new ReactivePropertySlim<bool>();
+
+        public ReactivePropertySlim<bool> TitleIsDecrypted { get; } = new ReactivePropertySlim<bool>();
 
         public AuthorViewModel Author
         {

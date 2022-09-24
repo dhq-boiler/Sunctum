@@ -82,10 +82,10 @@ namespace Sunctum.Domain.Data.DaoFacade
             s_logger.Debug($"UPDATE Page bookId:{bookID}");
         }
 
-        public static void Update(PageViewModel target)
+        public static void Update(PageViewModel target, DataOperationUnit dataOpUnit = null)
         {
             PageDao dao = new PageDao();
-            dao.Update(target.ToEntity());
+            dao.Update(target.ToEntity(), dataOpUnit?.CurrentConnection);
             s_logger.Debug($"UPDATE Page:{target}");
         }
 

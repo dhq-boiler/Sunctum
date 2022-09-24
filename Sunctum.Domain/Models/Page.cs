@@ -1,12 +1,13 @@
 ﻿
 
 using Homura.ORM.Mapping;
+using Sunctum.Domain.Models.Conversion;
 using System;
 using System.Diagnostics;
 
 namespace Sunctum.Domain.Models
 {
-    [DefaultVersion(typeof(VersionOrigin))]
+    [DefaultVersion(typeof(Version_1))]
     public class Page : Entry
     {
         private Guid _BookID;
@@ -41,6 +42,18 @@ namespace Sunctum.Domain.Models
             get
             { return _PageIndex; }
             set { SetProperty(ref _PageIndex, value); }
+        }
+
+        [Column("TitleIsEncrypted", "INTEGER", 5, Homura.ORM.HandlingDefaultValue.AsValue, false), NotNull]
+        [Since(typeof(Version_1))]
+        public override bool TitleIsEncrypted
+        {
+            [DebuggerStepThrough]
+            get
+            {
+                return _TitleIsEncrypted;
+            }
+            set { SetProperty(ref _TitleIsEncrypted, value); }
         }
     }
 }

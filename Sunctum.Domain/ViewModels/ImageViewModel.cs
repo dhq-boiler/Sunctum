@@ -1,6 +1,7 @@
 ﻿
 
 using Homura.Core;
+using Reactive.Bindings;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Encrypt;
@@ -133,6 +134,10 @@ namespace Sunctum.Domain.ViewModels
             { return _IsEncrypted; }
             set { SetProperty(ref _IsEncrypted, value); }
         }
+
+        public ReactivePropertySlim<bool> TitleIsEncrypted { get; } = new ReactivePropertySlim<bool>();
+
+        public ReactivePropertySlim<bool> TitleIsDecrypted { get; } = new ReactivePropertySlim<bool>();
 
         public ThumbnailViewModel Thumbnail
         {

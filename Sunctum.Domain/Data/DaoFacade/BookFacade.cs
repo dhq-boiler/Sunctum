@@ -46,10 +46,10 @@ namespace Sunctum.Domain.Data.DaoFacade
             return dao.FindAll(dataOpUnit?.CurrentConnection).ToViewModel();
         }
 
-        public static void Update(BookViewModel book)
+        public static void Update(BookViewModel book, DataOperationUnit dataOpUnit = null)
         {
             BookDao dao = new BookDao();
-            dao.Update(book.ToEntity());
+            dao.Update(book.ToEntity(), dataOpUnit?.CurrentConnection);
             s_logger.Debug($"UPDATE Book:{book}");
         }
 
