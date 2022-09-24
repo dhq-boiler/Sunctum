@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 /* https://uhimaniavwp.codeplex.com/ */
 
@@ -310,8 +311,11 @@ namespace Sunctum.UI.Controls
             /// </summary>
             public void Dispose()
             {
-                if (_generatorTracker != null)
-                    _generatorTracker.Dispose();
+                Dispatcher.CurrentDispatcher.Invoke(() =>
+                {
+                    if (_generatorTracker != null)
+                        _generatorTracker.Dispose();
+                });
             }
 
             #endregion
