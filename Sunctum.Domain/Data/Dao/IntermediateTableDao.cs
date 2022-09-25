@@ -31,7 +31,7 @@ namespace Sunctum.Domain.Data.Dao
                                                    .Column("b", "ID").As("bId")
                                                    .Column("it", "TagID").As("itTagId")
                                                    .From.Table(new Table<Book>(typeof(VersionOrigin)).Name, "b")
-                                                   .Inner.Join(new Table<Page>().Name, "p").On.Column("p", "BookID").EqualTo.Column("b", "ID")
+                                                   .Inner.Join(new Table<Page>(typeof(VersionOrigin)).Name, "p").On.Column("p", "BookID").EqualTo.Column("b", "ID")
                                                    .Inner.Join(new Table<Image>(typeof(VersionOrigin)).Name, "i").On.Column("i", "ID").EqualTo.Column("p", "ImageID")
                                                    .Inner.Join(new Table<ImageTag>().Name, "it").On.Column("it", "ImageID").EqualTo.Column("i", "ID"))
                     {

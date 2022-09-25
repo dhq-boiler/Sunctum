@@ -25,46 +25,46 @@ namespace Sunctum.Domain.Logic.Async
 
         public override void ConfigureTaskImplementation(AsyncTaskSequence sequence)
         {
-            sequence.Add(() =>
+            //暗号化しておらず、ファイルが存在しない場合
+            if (!Target.IsEncrypted && !File.Exists(Target.AbsoluteMasterPath))
             {
-                //暗号化しておらず、ファイルが存在しない場合
-                if (!Target.IsEncrypted && !File.Exists(Target.AbsoluteMasterPath))
-                {
-                    throw new FileNotFoundException(Target.AbsoluteMasterPath);
-                }
-            });
-            sequence.Add(async () =>
+                //Do nothing
+            }
+            else
             {
-                thumbnail = new ThumbnailViewModel();
-                thumbnail.ID = Target.ID;
-                thumbnail.ImageID = Target.ID;
-                var encryptImage = EncryptImageFacade.FindBy(Target.ID);
-                if (encryptImage != null && !string.IsNullOrWhiteSpace(Configuration.ApplicationConfiguration.Password))
+                sequence.Add(async () =>
                 {
-                    Encryptor.Decrypt(encryptImage.EncryptFilePath, Configuration.ApplicationConfiguration.Password, true);
-                    thumbnail.RelativeMasterPath = $"{Path.GetDirectoryName(Target.RelativeMasterPath)}\\{Target.ID.ToString("N")}{Path.GetExtension(Target.RelativeMasterPath)}";
-                }
-                else
-                {
-                    try
+                    thumbnail = new ThumbnailViewModel();
+                    thumbnail.ID = Target.ID;
+                    thumbnail.ImageID = Target.ID;
+                    var encryptImage = EncryptImageFacade.FindBy(Target.ID);
+                    if (encryptImage != null && !string.IsNullOrWhiteSpace(Configuration.ApplicationConfiguration.Password))
                     {
-                        thumbnail.RelativeMasterPath = ThumbnailGenerator.SaveThumbnail(Target.AbsoluteMasterPath, Target.ID.ToString("N") + System.IO.Path.GetExtension(Target.AbsoluteMasterPath));
-                        s_logger.Debug($"Generate thumbnail ImageID={Target.ID}");
+                        Encryptor.Decrypt(encryptImage.EncryptFilePath, Configuration.ApplicationConfiguration.Password, true);
+                        thumbnail.RelativeMasterPath = $"{Path.GetDirectoryName(Target.RelativeMasterPath)}\\{Target.ID.ToString("N")}{Path.GetExtension(Target.RelativeMasterPath)}";
                     }
-                    catch (Exception e)
+                    else
                     {
-                        s_logger.Warn(e);
-                        throw;
+                        try
+                        {
+                            thumbnail.RelativeMasterPath = ThumbnailGenerator.SaveThumbnail(Target.AbsoluteMasterPath, Target.ID.ToString("N") + System.IO.Path.GetExtension(Target.AbsoluteMasterPath));
+                            s_logger.Debug($"Generate thumbnail ImageID={Target.ID}");
+                        }
+                        catch (Exception e)
+                        {
+                            s_logger.Warn(e);
+                            throw;
+                        }
                     }
-                }
-                Target.Thumbnail = thumbnail;
-                await Application.Current.Dispatcher.InvokeAsync(async () =>
-                {
-                    var tr = new Async.ThumbnailRecording();
-                    tr.Target = thumbnail;
-                    await (Application.Current.MainWindow.DataContext as IMainWindowViewModel).LibraryVM.TaskManager.Enqueue(tr.GetTaskSequence());
+                    Target.Thumbnail = thumbnail;
+                    await Application.Current.Dispatcher.InvokeAsync(async () =>
+                    {
+                        var tr = new Async.ThumbnailRecording();
+                        tr.Target = thumbnail;
+                        await (Application.Current.MainWindow.DataContext as IMainWindowViewModel).LibraryVM.TaskManager.Enqueue(tr.GetTaskSequence());
+                    });
                 });
-            });
+            }
         }
 
         public override void ConfigurePostTaskAction(AsyncTaskSequence sequence)

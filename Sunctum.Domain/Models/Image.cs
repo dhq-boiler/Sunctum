@@ -6,7 +6,7 @@ using System.Diagnostics;
 
 namespace Sunctum.Domain.Models
 {
-    [DefaultVersion(typeof(Version_2))]
+    [DefaultVersion(typeof(Version_3))]
     public class Image : Entry
     {
         private string _RelativeMasterPath;
@@ -41,6 +41,18 @@ namespace Sunctum.Domain.Models
             [DebuggerStepThrough]
             get { return _IsEncrypted; }
             set { SetProperty(ref _IsEncrypted, value); }
+        }
+
+        [Column("TitleIsEncrypted", "INTEGER", 5, Homura.ORM.HandlingDefaultValue.AsValue, false), NotNull]
+        [Since(typeof(Version_3))]
+        public override bool TitleIsEncrypted
+        {
+            [DebuggerStepThrough]
+            get
+            {
+                return _TitleIsEncrypted;
+            }
+            set { SetProperty(ref _TitleIsEncrypted, value); }
         }
     }
 }

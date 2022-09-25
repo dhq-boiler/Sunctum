@@ -249,6 +249,14 @@ namespace Sunctum.Domain.Logic.Import
             var author = new AuthorViewModel(Guid.NewGuid(), name);
             author = AuthorFacade.InsertIfNotExists(author, dataOpUnit);
             _AuthorID = author.ID;
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                var authorManager = (Application.Current.MainWindow.DataContext as IMainWindowViewModel).LibraryVM.AuthorManager;
+                if (!authorManager.Authors.Contains(author))
+                {
+                    authorManager.Authors.Add(author);
+                }
+            });
         }
 
         protected void CreateTaskToInsertBook(string entryName, string title, DataOperationUnit dataOpUnit)

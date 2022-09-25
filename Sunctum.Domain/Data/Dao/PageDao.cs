@@ -287,6 +287,7 @@ namespace Sunctum.Domain.Data.Dao
                 BookID = bookid,
                 ImageID = imageid,
                 PageIndex = pageindex,
+                TitleIsEncrypted = CatchThrow(() => reader.SafeGetBoolean("TitleIsEncrypted", Table)),
             };
         }
     }

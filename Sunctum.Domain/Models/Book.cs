@@ -7,7 +7,7 @@ using System.Diagnostics;
 
 namespace Sunctum.Domain.Models
 {
-    [DefaultVersion(typeof(Version_2))]
+    [DefaultVersion(typeof(Version_3))]
     public class Book : Entry
     {
         private Guid _AuthorID;
@@ -46,6 +46,18 @@ namespace Sunctum.Domain.Models
             get
             { return _FingerPrint; }
             set { SetProperty(ref _FingerPrint, value); }
+        }
+
+        [Column("TitleIsEncrypted", "INTEGER", 6, Homura.ORM.HandlingDefaultValue.AsValue, false), NotNull]
+        [Since(typeof(Version_3))]
+        public override bool TitleIsEncrypted
+        {
+            [DebuggerStepThrough]
+            get
+            {
+                return _TitleIsEncrypted;
+            }
+            set { SetProperty(ref _TitleIsEncrypted, value); }
         }
     }
 }

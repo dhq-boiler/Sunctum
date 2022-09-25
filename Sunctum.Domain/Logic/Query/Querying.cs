@@ -7,7 +7,6 @@ using Sunctum.Domain.Logic.AuthorSorting;
 using Sunctum.Domain.Logic.BookSorting;
 using Sunctum.Domain.Logic.DisplayType;
 using Sunctum.Domain.Logic.ImageTagCountSorting;
-using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -17,7 +16,7 @@ namespace Sunctum.Domain.Logic.Query
 {
     public class Querying
     {
-        public static bool IsDirty(ILibrary libVM, BookViewModel book)
+        public static bool IsDirty(BookViewModel book)
         {
             var dao = new BookDao();
             BookViewModel refBook = dao.FindBy(new Dictionary<string, object>() { { "ID", book.ID } }).Single().ToViewModel();

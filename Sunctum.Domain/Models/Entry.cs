@@ -19,6 +19,7 @@ namespace Sunctum.Domain.Models
         }
 
         private string _Title;
+        protected bool _TitleIsEncrypted;
 
         [Column("Title", "TEXT", 1), NotNull]
         [Since(typeof(VersionOrigin))]
@@ -32,5 +33,7 @@ namespace Sunctum.Domain.Models
                 SetProperty(ref _Title, value);
             }
         }
+
+        public abstract bool TitleIsEncrypted { get; set; }
     }
 }

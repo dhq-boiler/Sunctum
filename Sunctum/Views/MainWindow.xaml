@@ -170,6 +170,43 @@
                                         </Style>
                                     </MenuItem.Style>
                                 </MenuItem>
+                                <MenuItem Command="{Binding EncryptionContinuingCommand}" Header="{Binding MainWindow_Data_EncryptionContinuing, Source={StaticResource resources}}">
+                                    <MenuItem.Style>
+                                        <Style TargetType="{x:Type MenuItem}">
+                                            <Setter Property="Background" Value="White" />
+                                            <Style.Triggers>
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding Configuration.LibraryIsEncrypted}" Value="True" />
+                                                        <Condition Binding="{Binding Configuration.LibraryEncryptionIsContinuing}" Value="True" />
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </MultiDataTrigger>
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding Configuration.LibraryIsEncrypted}" Value="False" />
+                                                        <Condition Binding="{Binding Configuration.LibraryEncryptionIsContinuing}" Value="True" />
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </MultiDataTrigger>
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding Configuration.LibraryIsEncrypted}" Value="True" />
+                                                        <Condition Binding="{Binding Configuration.LibraryEncryptionIsContinuing}" Value="False" />
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </MultiDataTrigger>
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding Configuration.LibraryIsEncrypted}" Value="False" />
+                                                        <Condition Binding="{Binding Configuration.LibraryEncryptionIsContinuing}" Value="False" />
+                                                    </MultiDataTrigger.Conditions>
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </MultiDataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </MenuItem.Style>
+                                </MenuItem>
                                 <MenuItem Command="{Binding UnencryptionStartingCommand}" Header="{Binding MainWindow_Data_UnencryptionStart, Source={StaticResource resources}}">
                                     <MenuItem.Style>
                                         <Style TargetType="{x:Type MenuItem}">

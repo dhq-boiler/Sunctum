@@ -5,6 +5,7 @@ using Homura.ORM;
 using Homura.QueryBuilder.Iso.Dml;
 using Homura.QueryBuilder.Vendor.SQLite.Dml;
 using NLog;
+using Sunctum.Domain.Logic.Encrypt;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.ViewModels;
 using System;
@@ -210,6 +211,7 @@ namespace Sunctum.Domain.Data.Dao
                 PublishDate = reader.SafeGetNullableDateTime("PublishDate", Table),
                 ByteSize = reader.SafeNullableGetLong("ByteSize", Table),
                 FingerPrint = reader.SafeGetString("FingerPrint", Table),
+                TitleIsEncrypted = CatchThrow(() => reader.SafeGetBoolean("TitleIsEncrypted", Table)),
             };
         }
 
@@ -227,25 +229,35 @@ namespace Sunctum.Domain.Data.Dao
                 using (var command = conn.CreateCommand())
                 {
                     using (var query = new Select().Column("b", "ID").As("bId")
+                                                   .Column("b", "Title").As("bTitle")
                                                    .Column("b", "AuthorID").As("bAuthorId")
+                                                   .Column("b", "ByteSize").As("bByteSize")
+                                                   .Column("b", "PublishDate").As("bPublishDate")
+                                                   .Column("b", "FingerPrint").As("bFingerPrint")
+                                                   .Column("b", "TitleIsEncrypted").As("bTitleIsEncrypted")
                                                    .Column("a", "ID").As("aId")
                                                    .Column("a", "Name").As("aName")
+                                                   .Column("a", "NameIsEncrypted").As("aNameIsEncrypted")
                                                    .Column("p", "ID").As("pId")
                                                    .Column("p", "Title").As("pTitle")
                                                    .Column("p", "ImageId").As("pImageId")
                                                    .Column("p", "PageIndex").As("pIndex")
+                                                   .Column("p", "TitleIsEncrypted").As("pTitleIsEncrypted")
                                                    .Column("i", "ID").As("iId")
                                                    .Column("i", "Title").As("iTitle")
                                                    .Column("i", "MasterPath").As("iMasterPath")
+                                                   .Column("i", "TitleIsEncrypted").As("iTitleIsEncrypted")
                                                    .Column("i", "IsEncrypted").As("iIsEncrypted")
                                                    .Column("t", "ID").As("tId")
                                                    .Column("t", "ImageID").As("tImageId")
                                                    .Column("t", "Path").As("tPath")
+                                                   .Column("s", "Level").As("sLevel")
                                                    .From.Table(new Table<Book>().Name, "b")
                                                    .Left.Join(new Table<Author>().Name, "a").On.Column("a", "ID").EqualTo.Column("bAuthorId")
-                                                   .Inner.Join(new Table<Page>().Name, "p").On.Column("p", "BookID").EqualTo.Column("b", "ID")
+                                                   .Cross.Join(new Table<Page>().Name, "p").On.Column("p", "BookID").EqualTo.Column("b", "ID")
                                                    .Inner.Join(new Table<Image>().Name, "i").On.Column("i", "ID").EqualTo.Column("pImageId")
                                                    .Left.Join(new Table<Thumbnail>().Name, "t").On.Column("i", "ID").EqualTo.Column("tImageId")
+                                                   .Left.Join(new Table<Star>().Name, "s").On.Column("s", "TypeId").EqualTo.Value(0).And().Column("s", "ID").EqualTo.Column("bId")
                                                    .Where.Column("bId").EqualTo.Value(book.ID)
                                                    .OrderBy.Column("pIndex")
                                                    .Limit(1))
@@ -258,11 +270,23 @@ namespace Sunctum.Domain.Data.Dao
                         {
                             if (rdr.Read())
                             {
+                                book.TitleIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("bTitleIsEncrypted", null));
+                                if (book.TitleIsEncrypted.Value && !book.TitleIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                                {
+                                    book.Title= Encryptor.DecryptString(book.Title, Configuration.ApplicationConfiguration.Password).Result;
+                                    book.TitleIsDecrypted.Value = true;
+                                }
                                 if (!rdr.IsDBNull("aId") && !rdr.IsDBNull("aName"))
                                 {
                                     var author = new AuthorViewModel();
                                     author.ID = rdr.SafeGetGuid("aId", null);
                                     author.Name = rdr.SafeGetString("aName", null);
+                                    author.NameIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("aNameIsEncrypted", null));
+                                    if (author.NameIsEncrypted.Value && !author.NameIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                                    {
+                                        author.Name = Encryptor.DecryptString(author.Name, Configuration.ApplicationConfiguration.Password).Result;
+                                        author.NameIsDecrypted.Value = true;
+                                    }
                                     book.Author = author;
                                 }
 
@@ -273,6 +297,12 @@ namespace Sunctum.Domain.Data.Dao
                                 page.BookID = rdr.SafeGetGuid("bId", null);
                                 page.ImageID = rdr.SafeGetGuid("pImageId", null);
                                 page.PageIndex = rdr.SafeGetInt("pIndex", null);
+                                page.TitleIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("pTitleIsEncrypted", null));
+                                if (page.TitleIsEncrypted.Value && !page.TitleIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                                {
+                                    page.Title = Encryptor.DecryptString(page.Title, Configuration.ApplicationConfiguration.Password).Result;
+                                    page.TitleIsDecrypted.Value = true;
+                                }
                                 book.FirstPage.Value = page;
 
                                 var image = new ImageViewModel();
@@ -281,6 +311,12 @@ namespace Sunctum.Domain.Data.Dao
                                 image.Title = rdr.SafeGetString("iTitle", null);
                                 image.RelativeMasterPath = rdr.SafeGetString("iMasterPath", null);
                                 image.IsEncrypted = rdr.SafeGetBoolean("iIsEncrypted", null);
+                                image.TitleIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("iTitleIsEncrypted", null));
+                                if (image.TitleIsEncrypted.Value && !image.TitleIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                                {
+                                    image.Title = Encryptor.DecryptString(image.Title, Configuration.ApplicationConfiguration.Password).Result;
+                                    image.TitleIsDecrypted.Value = true;
+                                }
                                 page.Image = image;
 
                                 if (!rdr.IsDBNull("tId") && !rdr.IsDBNull("tImageId") && !rdr.IsDBNull("tPath"))
@@ -324,15 +360,19 @@ namespace Sunctum.Domain.Data.Dao
                                                    .Column("b", "ByteSize").As("bByteSize")
                                                    .Column("b", "PublishDate").As("bPublishDate")
                                                    .Column("b", "FingerPrint").As("bFingerPrint")
+                                                   .Column("b", "TitleIsEncrypted").As("bTitleIsEncrypted")
                                                    .Column("a", "ID").As("aId")
                                                    .Column("a", "Name").As("aName")
+                                                   .Column("a", "NameIsEncrypted").As("aNameIsEncrypted")
                                                    .Column("p", "ID").As("pId")
                                                    .Column("p", "Title").As("pTitle")
                                                    .Column("p", "ImageId").As("pImageId")
                                                    .Column("p", "PageIndex").As("pIndex")
+                                                   .Column("p", "TitleIsEncrypted").As("pTitleIsEncrypted")
                                                    .Column("i", "ID").As("iId")
                                                    .Column("i", "Title").As("iTitle")
                                                    .Column("i", "MasterPath").As("iMasterPath")
+                                                   .Column("i", "TitleIsEncrypted").As("iTitleIsEncrypted")
                                                    .Column("i", "IsEncrypted").As("iIsEncrypted")
                                                    .Column("t", "ID").As("tId")
                                                    .Column("t", "ImageID").As("tImageId")
@@ -369,6 +409,12 @@ namespace Sunctum.Domain.Data.Dao
                                     book.ID = id;
                                     prevId = id;
                                     book.Title = rdr.SafeGetString("bTitle", null);
+                                    book.TitleIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("bTitleIsEncrypted", null));
+                                    if (book.TitleIsEncrypted.Value && !book.TitleIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                                    {
+                                        book.Title = Encryptor.DecryptString(book.Title, Configuration.ApplicationConfiguration.Password).Result;
+                                        book.TitleIsDecrypted.Value = true;
+                                    }
                                     book.AuthorID = rdr.SafeGetGuid("bAuthorId", null);
                                     book.ByteSize = rdr.SafeNullableGetLong("bByteSize", null);
                                     book.PublishDate = rdr.SafeGetNullableDateTime("bPublishDate", null);
@@ -380,6 +426,12 @@ namespace Sunctum.Domain.Data.Dao
                                         var author = new AuthorViewModel();
                                         author.ID = rdr.SafeGetGuid("aId", null);
                                         author.Name = rdr.SafeGetString("aName", null);
+                                        author.NameIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("aNameIsEncrypted", null));
+                                        if (author.NameIsEncrypted.Value && !author.NameIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                                        {
+                                            author.Name = Encryptor.DecryptString(author.Name, Configuration.ApplicationConfiguration.Password).Result;
+                                            author.NameIsDecrypted.Value = true;
+                                        }
                                         book.Author = author;
                                     }
                                 }
@@ -391,6 +443,12 @@ namespace Sunctum.Domain.Data.Dao
                                 page.BookID = rdr.SafeGetGuid("bId", null);
                                 page.ImageID = rdr.SafeGetGuid("pImageId", null);
                                 page.PageIndex = rdr.SafeGetInt("pIndex", null);
+                                page.TitleIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("pTitleIsEncrypted", null));
+                                if (page.TitleIsEncrypted.Value && !page.TitleIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                                {
+                                    page.Title = Encryptor.DecryptString(page.Title, Configuration.ApplicationConfiguration.Password).Result;
+                                    page.TitleIsDecrypted.Value = true;
+                                }
                                 if (id != prevId)
                                 {
                                     book.FirstPage.Value = page;
@@ -402,6 +460,12 @@ namespace Sunctum.Domain.Data.Dao
                                 image.Title = rdr.SafeGetString("iTitle", null);
                                 image.RelativeMasterPath = rdr.SafeGetString("iMasterPath", null);
                                 image.IsEncrypted = rdr.SafeGetBoolean("iIsEncrypted", null);
+                                image.TitleIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("iTitleIsEncrypted", null));
+                                if (image.TitleIsEncrypted.Value && !image.TitleIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                                {
+                                    image.Title = Encryptor.DecryptString(image.Title, Configuration.ApplicationConfiguration.Password).Result;
+                                    image.TitleIsDecrypted.Value = true;
+                                }
                                 page.Image = image;
 
                                 if (!rdr.IsDBNull("tId") && !rdr.IsDBNull("tImageId") && !rdr.IsDBNull("tPath"))
@@ -454,16 +518,20 @@ namespace Sunctum.Domain.Data.Dao
                                                    .Column("b", "ByteSize").As("bByteSize")
                                                    .Column("b", "PublishDate").As("bPublishDate")
                                                    .Column("b", "FingerPrint").As("bFingerPrint")
+                                                   .Column("b", "TitleIsEncrypted").As("bTitleIsEncrypted")
                                                    .Column("a", "ID").As("aId")
                                                    .Column("a", "Name").As("aName")
+                                                   .Column("a", "NameIsEncrypted").As("aNameIsEncrypted")
                                                    .Column("p", "ID").As("pId")
                                                    .Column("p", "Title").As("pTitle")
                                                    .Column("p", "ImageId").As("pImageId")
                                                    .Column("p", "PageIndex").As("pIndex")
+                                                   .Column("p", "TitleIsEncrypted").As("pTitleIsEncrypted")
                                                    .Column("i", "ID").As("iId")
                                                    .Column("i", "Title").As("iTitle")
                                                    .Column("i", "MasterPath").As("iMasterPath")
                                                    .Column("i", "IsEncrypted").As("iIsEncrypted")
+                                                   .Column("i", "TitleIsEncrypted").As("iTitleIsEncrypted")
                                                    .Column("t", "ID").As("tId")
                                                    .Column("t", "ImageID").As("tImageId")
                                                    .Column("t", "Path").As("tPath")
@@ -499,6 +567,12 @@ namespace Sunctum.Domain.Data.Dao
                                     book.ID = id;
                                     prevId = id;
                                     book.Title = rdr.SafeGetString("bTitle", null);
+                                    book.TitleIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("bTitleIsEncrypted", null));
+                                    if (book.TitleIsEncrypted.Value && !book.TitleIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                                    {
+                                        book.Title = Encryptor.DecryptString(book.Title, Configuration.ApplicationConfiguration.Password).Result;
+                                        book.TitleIsDecrypted.Value = true;
+                                    }
                                     book.AuthorID = rdr.SafeGetGuid("bAuthorId", null);
                                     book.ByteSize = rdr.SafeNullableGetLong("bByteSize", null);
                                     book.PublishDate = rdr.SafeGetNullableDateTime("bPublishDate", null);
@@ -510,6 +584,12 @@ namespace Sunctum.Domain.Data.Dao
                                         var author = new AuthorViewModel();
                                         author.ID = rdr.SafeGetGuid("aId", null);
                                         author.Name = rdr.SafeGetString("aName", null);
+                                        author.NameIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("aNameIsEncrypted", null));
+                                        if (author.NameIsEncrypted.Value && !author.NameIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                                        {
+                                            author.Name = Encryptor.DecryptString(author.Name, Configuration.ApplicationConfiguration.Password).Result;
+                                            author.NameIsDecrypted.Value = true;
+                                        }
                                         book.Author = author;
                                     }
                                 }
@@ -521,6 +601,12 @@ namespace Sunctum.Domain.Data.Dao
                                 page.BookID = rdr.SafeGetGuid("bId", null);
                                 page.ImageID = rdr.SafeGetGuid("pImageId", null);
                                 page.PageIndex = rdr.SafeGetInt("pIndex", null);
+                                page.TitleIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("pTitleIsEncrypted", null));
+                                if (page.TitleIsEncrypted.Value && !page.TitleIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                                {
+                                    page.Title = Encryptor.DecryptString(page.Title, Configuration.ApplicationConfiguration.Password).Result;
+                                    page.TitleIsDecrypted.Value = true;
+                                }
                                 if (i == 0)
                                 {
                                     book.FirstPage.Value = page;
@@ -532,6 +618,12 @@ namespace Sunctum.Domain.Data.Dao
                                 image.Title = rdr.SafeGetString("iTitle", null);
                                 image.RelativeMasterPath = rdr.SafeGetString("iMasterPath", null);
                                 image.IsEncrypted = rdr.SafeGetBoolean("iIsEncrypted", null);
+                                image.TitleIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("iTitleIsEncrypted", null));
+                                if (image.TitleIsEncrypted.Value && !image.TitleIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                                {
+                                    image.Title = Encryptor.DecryptString(image.Title, Configuration.ApplicationConfiguration.Password).Result;
+                                    image.TitleIsDecrypted.Value = true;
+                                }
                                 page.Image = image;
                                 page.IsLoaded = true;
 
