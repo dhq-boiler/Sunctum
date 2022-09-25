@@ -1,10 +1,13 @@
 ﻿
 
 using Homura.Core;
+using Homura.ORM;
 using NLog;
+using Sunctum.Domain.Data.Dao;
 using Sunctum.Infrastructure.Data.Yaml;
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Windows;
 using YamlDotNet.Serialization;
@@ -288,6 +291,36 @@ namespace Sunctum.Domain.Models
             get
             { return _LibraryIsEncrypted; }
             set { SetProperty(ref _LibraryIsEncrypted, value); }
+        }
+
+        [YamlIgnore]
+        public bool LibraryEncryptionIsContinuing
+        {
+            get
+            {
+                if (ConnectionManager.DefaultConnection is null)
+                    return false;
+                var authorDao = new AuthorDao();
+                var authors = authorDao.FindBy(new System.Collections.Generic.Dictionary<string, object>() { { "NameIsEncrypted", false } });
+                if (authors.Count() > 0)
+                    return true;
+                var bookDao = new BookDao();
+                var books = bookDao.FindBy(new System.Collections.Generic.Dictionary<string, object>() { { "TitleIsEncrypted", false } });
+                if (books.Count() > 0)
+                    return true;
+                var pageDao = new PageDao();
+                var pages = pageDao.FindBy(new System.Collections.Generic.Dictionary<string, object>() { { "TitleIsEncrypted", false } });
+                if (pages.Count() > 0)
+                    return true;
+                var imageDao = new ImageDao();
+                var images = imageDao.FindBy(new System.Collections.Generic.Dictionary<string, object>() { { "TitleIsEncrypted", false } });
+                if (images.Count() > 0)
+                    return true;
+                images = imageDao.FindBy(new System.Collections.Generic.Dictionary<string, object>() { { "IsEncrypted", false } });
+                if (images.Count() > 0)
+                    return true;
+                return false;
+            }
         }
 
         [YamlIgnore]

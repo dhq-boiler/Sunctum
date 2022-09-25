@@ -44,10 +44,14 @@ namespace Sunctum.Domain.Logic.Async
 
             sequence.Add(() => Configuration.ApplicationConfiguration.LibraryIsEncrypted = true);
             sequence.Add(() => Configuration.ApplicationConfiguration.Password = Password);
-            sequence.Add(() => Directory.Delete($"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.CACHE_DIRECTORY}", true));
+            sequence.Add(() =>
+            {
+                var path = $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.CACHE_DIRECTORY}";
+                if (Directory.Exists(path))
+                    Directory.Delete(path, true);
+            });
             sequence.Add(() => PasswordManager.SetPassword(Password, Environment.UserName));
 
-            var dataOpUnit = new DataOperationUnit();
             var authors = LibraryManager.Value.AuthorManager.Authors;
 
             foreach (var author in authors)
@@ -56,22 +60,24 @@ namespace Sunctum.Domain.Logic.Async
                 {
                     sequence.Add(async () =>
                     {
-                        dataOpUnit = new DataOperationUnit();
-                        dataOpUnit.Open(ConnectionManager.DefaultConnection);
-                        dataOpUnit.BeginTransaction();
-                        try
+                        using (var dataOpUnit = new DataOperationUnit())
                         {
-                            var plainText = author.Name;
-                            author.Name = await Encryptor.EncryptString(author.Name, Configuration.ApplicationConfiguration.Password);
-                            author.NameIsEncrypted.Value = true;
-                            AuthorFacade.Update(author, dataOpUnit);
-                            dataOpUnit.Commit();
-                            author.Name = plainText;
-                            author.NameIsDecrypted.Value = true;
-                        }
-                        catch (Exception)
-                        {
-                            dataOpUnit.Rollback();
+                            dataOpUnit.Open(ConnectionManager.DefaultConnection);
+                            dataOpUnit.BeginTransaction();
+                            try
+                            {
+                                var plainText = author.Name;
+                                author.Name = await Encryptor.EncryptString(author.Name, Configuration.ApplicationConfiguration.Password);
+                                author.NameIsEncrypted.Value = true;
+                                AuthorFacade.Update(author, dataOpUnit);
+                                dataOpUnit.Commit();
+                                author.Name = plainText;
+                                author.NameIsDecrypted.Value = true;
+                            }
+                            catch (Exception)
+                            {
+                                dataOpUnit.Rollback();
+                            }
                         }
                     });
                 }
@@ -85,22 +91,24 @@ namespace Sunctum.Domain.Logic.Async
                 {
                     sequence.Add(async () =>
                     {
-                        dataOpUnit = new DataOperationUnit();
-                        dataOpUnit.Open(ConnectionManager.DefaultConnection);
-                        dataOpUnit.BeginTransaction();
-                        try
+                        using (var dataOpUnit = new DataOperationUnit())
                         {
-                            var plainText = book.Title;
-                            book.Title = await Encryptor.EncryptString(book.Title, Configuration.ApplicationConfiguration.Password);
-                            book.TitleIsEncrypted.Value = true;
-                            BookFacade.Update(book, dataOpUnit);
-                            dataOpUnit.Commit();
-                            book.Title = plainText;
-                            book.TitleIsDecrypted.Value = true;
-                        }
-                        catch (Exception)
-                        {
-                            dataOpUnit.Rollback();
+                            dataOpUnit.Open(ConnectionManager.DefaultConnection);
+                            dataOpUnit.BeginTransaction();
+                            try
+                            {
+                                var plainText = book.Title;
+                                book.Title = await Encryptor.EncryptString(book.Title, Configuration.ApplicationConfiguration.Password);
+                                book.TitleIsEncrypted.Value = true;
+                                BookFacade.Update(book, dataOpUnit);
+                                dataOpUnit.Commit();
+                                book.Title = plainText;
+                                book.TitleIsDecrypted.Value = true;
+                            }
+                            catch (Exception)
+                            {
+                                dataOpUnit.Rollback();
+                            }
                         }
                     });
                 }
@@ -112,30 +120,32 @@ namespace Sunctum.Domain.Logic.Async
                     {
                         sequence.Add(() =>
                         {
-                            dataOpUnit = new DataOperationUnit();
-                            dataOpUnit.Open(ConnectionManager.DefaultConnection);
-                            dataOpUnit.BeginTransaction();
-                            try
+                            using (var dataOpUnit = new DataOperationUnit())
                             {
-                                using (var scope = new TransactionScope())
+                                dataOpUnit.Open(ConnectionManager.DefaultConnection);
+                                dataOpUnit.BeginTransaction();
+                                try
                                 {
-                                    var fileMgr = new TxFileManager();
-                                    var dirPath = $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{page.Image.ID.ToString().Substring(0, 2)}";
-                                    if (!fileMgr.DirectoryExists(dirPath))
+                                    using (var scope = new TransactionScope())
                                     {
-                                        fileMgr.CreateDirectory(dirPath);
+                                        var fileMgr = new TxFileManager();
+                                        var dirPath = $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{page.Image.ID.ToString().Substring(0, 2)}";
+                                        if (!fileMgr.DirectoryExists(dirPath))
+                                        {
+                                            fileMgr.CreateDirectory(dirPath);
+                                        }
+                                        Encryptor.Encrypt(page.Image, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{page.Image.ID.ToString().Substring(0, 2)}\\{page.Image.ID}{Path.GetExtension(page.Image.AbsoluteMasterPath)}", Password, fileMgr);
+                                        Encryptor.DeleteOriginal(page, fileMgr);
+                                        page.Image.IsEncrypted = true;
+                                        ImageFacade.Update(page.Image, dataOpUnit);
+                                        scope.Complete();
                                     }
-                                    Encryptor.Encrypt(page.Image, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{page.Image.ID.ToString().Substring(0, 2)}\\{page.Image.ID}{Path.GetExtension(page.Image.AbsoluteMasterPath)}", Password, fileMgr);
-                                    Encryptor.DeleteOriginal(page, fileMgr);
-                                    page.Image.IsEncrypted = true;
-                                    ImageFacade.Update(page.Image, dataOpUnit);
-                                    scope.Complete();
+                                    dataOpUnit.Commit();
                                 }
-                                dataOpUnit.Commit();
-                            }
-                            catch (Exception)
-                            {
-                                dataOpUnit.Rollback();
+                                catch (Exception)
+                                {
+                                    dataOpUnit.Rollback();
+                                }
                             }
                         });
                     }
@@ -144,22 +154,24 @@ namespace Sunctum.Domain.Logic.Async
                     {
                         sequence.Add(async () =>
                         {
-                            dataOpUnit = new DataOperationUnit();
-                            dataOpUnit.Open(ConnectionManager.DefaultConnection);
-                            dataOpUnit.BeginTransaction();
-                            try
+                            using (var dataOpUnit = new DataOperationUnit())
                             {
-                                var plainText = page.Title;
-                                page.Title = await Encryptor.EncryptString(page.Title, Configuration.ApplicationConfiguration.Password);
-                                page.TitleIsEncrypted.Value = true;
-                                PageFacade.Update(page, dataOpUnit);
-                                dataOpUnit.Commit();
-                                page.Title = plainText;
-                                page.TitleIsDecrypted.Value = true;
-                            }
-                            catch (Exception)
-                            {
-                                dataOpUnit.Rollback();
+                                dataOpUnit.Open(ConnectionManager.DefaultConnection);
+                                dataOpUnit.BeginTransaction();
+                                try
+                                {
+                                    var plainText = page.Title;
+                                    page.Title = await Encryptor.EncryptString(page.Title, Configuration.ApplicationConfiguration.Password);
+                                    page.TitleIsEncrypted.Value = true;
+                                    PageFacade.Update(page, dataOpUnit);
+                                    dataOpUnit.Commit();
+                                    page.Title = plainText;
+                                    page.TitleIsDecrypted.Value = true;
+                                }
+                                catch (Exception)
+                                {
+                                    dataOpUnit.Rollback();
+                                }
                             }
                         });
                     }
@@ -169,22 +181,24 @@ namespace Sunctum.Domain.Logic.Async
                     {
                         sequence.Add(async () =>
                         {
-                            dataOpUnit = new DataOperationUnit();
-                            dataOpUnit.Open(ConnectionManager.DefaultConnection);
-                            dataOpUnit.BeginTransaction();
-                            try
+                            using (var dataOpUnit = new DataOperationUnit())
                             {
-                                var plainText = image.Title;
-                                image.Title = await Encryptor.EncryptString(image.Title, Configuration.ApplicationConfiguration.Password);
-                                image.TitleIsEncrypted.Value = true;
-                                ImageFacade.Update(image, dataOpUnit);
-                                dataOpUnit.Commit();
-                                image.Title = plainText;
-                                image.TitleIsDecrypted.Value = true;
-                            }
-                            catch (Exception)
-                            {
-                                dataOpUnit.Rollback();
+                                dataOpUnit.Open(ConnectionManager.DefaultConnection);
+                                dataOpUnit.BeginTransaction();
+                                try
+                                {
+                                    var plainText = image.Title;
+                                    image.Title = await Encryptor.EncryptString(image.Title, Configuration.ApplicationConfiguration.Password);
+                                    image.TitleIsEncrypted.Value = true;
+                                    ImageFacade.Update(image, dataOpUnit);
+                                    dataOpUnit.Commit();
+                                    image.Title = plainText;
+                                    image.TitleIsDecrypted.Value = true;
+                                }
+                                catch (Exception)
+                                {
+                                    dataOpUnit.Rollback();
+                                }
                             }
                         });
                     }

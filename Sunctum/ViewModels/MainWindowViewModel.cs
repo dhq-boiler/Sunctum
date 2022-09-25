@@ -90,6 +90,8 @@ namespace Sunctum.ViewModels
 
         public ICommand EncryptionStartingCommand { get; set; }
 
+        public ICommand EncryptionContinuingCommand { get; set; }
+
         public ICommand ExitApplicationCommand { get; set; }
 
         public ICommand GeneralCancelCommand { get; set; }
@@ -197,6 +199,10 @@ namespace Sunctum.ViewModels
             EncryptionStartingCommand = new DelegateCommand(async () =>
             {
                 await OpenEncryptionStartingDialog();
+            });
+            EncryptionContinuingCommand = new DelegateCommand(async () =>
+            {
+                await LibraryVM.StartEncryption(Configuration.ApplicationConfiguration.Password);
             });
             ExitApplicationCommand = new DelegateCommand(() =>
             {

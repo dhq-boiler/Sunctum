@@ -1,7 +1,4 @@
-﻿
-
-using NLog.LayoutRenderers.Wrappers;
-using Reactive.Bindings;
+﻿using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using Sunctum.Domain.Logic.Async;
 using Sunctum.Domain.Models;
