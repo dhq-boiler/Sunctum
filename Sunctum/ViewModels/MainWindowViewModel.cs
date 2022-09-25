@@ -45,10 +45,6 @@ using Unity;
 using Xceed.Wpf.AvalonDock;
 using Xceed.Wpf.AvalonDock.Layout;
 using Xceed.Wpf.AvalonDock.Layout.Serialization;
-using YamlDotNet.Core.Tokens;
-using YamlDotNet.Core;
-using System.Windows.Threading;
-using Sunctum.Domain.Util;
 
 namespace Sunctum.ViewModels
 {
@@ -93,6 +89,8 @@ namespace Sunctum.ViewModels
         public ICommand DetailsCommand { get; set; }
 
         public ICommand EncryptionStartingCommand { get; set; }
+
+        public ICommand EncryptionContinuingCommand { get; set; }
 
         public ICommand ExitApplicationCommand { get; set; }
 
@@ -201,6 +199,10 @@ namespace Sunctum.ViewModels
             EncryptionStartingCommand = new DelegateCommand(async () =>
             {
                 await OpenEncryptionStartingDialog();
+            });
+            EncryptionContinuingCommand = new DelegateCommand(async () =>
+            {
+                await LibraryVM.StartEncryption(Configuration.ApplicationConfiguration.Password);
             });
             ExitApplicationCommand = new DelegateCommand(() =>
             {
@@ -1044,6 +1046,8 @@ namespace Sunctum.ViewModels
 
         public void Terminate()
         {
+            OnmemoryImageManager.Instance.Clear();
+
             var config = Configuration.ApplicationConfiguration;
             if (HomeDocumentViewModel.BookCabinet != null)
                 config.BookSorting = BookSorting.GetPropertyName(HomeDocumentViewModel.BookCabinet.Sorting);
@@ -1059,6 +1063,7 @@ namespace Sunctum.ViewModels
             {
                 config.WindowRect = new Domain.Models.Rect(WindowLeft, WindowTop, WindowWidth, WindowHeight);
             }
+            Configuration.ApplicationConfiguration.Password = null;
             Configuration.Save(config);
 
             _disposable.Clear();

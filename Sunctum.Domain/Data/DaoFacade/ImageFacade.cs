@@ -5,6 +5,8 @@ using NLog;
 using Sunctum.Domain.Bridge;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Data.Rdbms.SQLite;
+using Sunctum.Domain.Logic.Encrypt;
+using Sunctum.Domain.Models;
 using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -115,10 +117,28 @@ namespace Sunctum.Domain.Data.DaoFacade
             return ret;
         }
 
-        public static void Update(ImageViewModel image, DataOperationUnit dataOpUnit = null)
+        public static async void Update(ImageViewModel image, DataOperationUnit dataOpUnit = null)
         {
+            string plainText = null;
+            if (image.TitleIsEncrypted.Value && image.TitleIsDecrypted.Value)
+            {
+                plainText = image.Title;
+                image.Title = await Encryptor.EncryptString(image.Title, Configuration.ApplicationConfiguration.Password);
+                image.TitleIsDecrypted.Value = false;
+            }
             ImageDao dao = new ImageDao();
             dao.Update(image.ToEntity(), dataOpUnit?.CurrentConnection);
+            if (image.TitleIsEncrypted.Value)
+            {
+                image.Title = await Encryptor.DecryptString(image.Title, Configuration.ApplicationConfiguration.Password);
+                image.TitleIsDecrypted.Value = true;
+            }
+        }
+
+        public static void GetProperty(ref ImageViewModel image, DataOperationUnit dataOpUnit = null)
+        {
+            var dao = new ImageDao();
+            dao.GetProperty(ref image, dataOpUnit?.CurrentConnection);
         }
     }
 }

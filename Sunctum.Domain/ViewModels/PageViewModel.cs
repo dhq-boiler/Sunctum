@@ -1,5 +1,6 @@
 ﻿
 
+using Reactive.Bindings;
 using Sunctum.Domain.Models;
 using System;
 using System.Diagnostics;

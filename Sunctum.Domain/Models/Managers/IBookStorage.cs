@@ -19,5 +19,6 @@ namespace Sunctum.Domain.Models.Managers
         void RunFillContents(BookViewModel book);
         void FireFillContentsWithImage(BookViewModel book);
         void RunFillContentsWithImage(BookViewModel book);
+        bool IsDirty(BookViewModel book);
     }
 }

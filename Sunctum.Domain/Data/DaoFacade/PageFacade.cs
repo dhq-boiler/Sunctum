@@ -4,6 +4,8 @@ using Homura.ORM;
 using NLog;
 using Sunctum.Domain.Bridge;
 using Sunctum.Domain.Data.Dao;
+using Sunctum.Domain.Logic.Encrypt;
+using Sunctum.Domain.Models;
 using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -82,11 +84,23 @@ namespace Sunctum.Domain.Data.DaoFacade
             s_logger.Debug($"UPDATE Page bookId:{bookID}");
         }
 
-        public static void Update(PageViewModel target)
+        public static async void Update(PageViewModel target, DataOperationUnit dataOpUnit = null)
         {
+            string plainText = null;
+            if (target.TitleIsEncrypted.Value && target.TitleIsDecrypted.Value)
+            {
+                plainText = target.Title;
+                target.Title = await Encryptor.EncryptString(target.Title, Configuration.ApplicationConfiguration.Password);
+                target.TitleIsDecrypted.Value = false;
+            }
             PageDao dao = new PageDao();
-            dao.Update(target.ToEntity());
+            dao.Update(target.ToEntity(), dataOpUnit?.CurrentConnection);
             s_logger.Debug($"UPDATE Page:{target}");
+            if (target.TitleIsEncrypted.Value)
+            {
+                target.Title = await Encryptor.DecryptString(target.Title, Configuration.ApplicationConfiguration.Password);
+                target.TitleIsDecrypted.Value = true;
+            }
         }
 
         public static void GetProperty(ref PageViewModel page, DataOperationUnit dataOpUnit = null)

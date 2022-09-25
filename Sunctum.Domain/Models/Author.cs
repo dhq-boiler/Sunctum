@@ -1,15 +1,17 @@
 ﻿
 
 using Homura.ORM.Mapping;
+using Sunctum.Domain.Models.Conversion;
 using System;
 using System.Diagnostics;
 
 namespace Sunctum.Domain.Models
 {
-    [DefaultVersion(typeof(VersionOrigin))]
+    [DefaultVersion(typeof(Version_1))]
     public class Author : PkIdEntity
     {
         private string _Name;
+        private bool _NameIsEncrypted;
 
         public Author()
         { }
@@ -30,6 +32,19 @@ namespace Sunctum.Domain.Models
             set
             {
                 SetProperty(ref _Name, value);
+            }
+        }
+
+        [Column("NameIsEncrypted", "INTEGER", 2, Homura.ORM.HandlingDefaultValue.AsValue, false), NotNull]
+        [Since(typeof(Version_1))]
+        public bool NameIsEncrypted
+        {
+            [DebuggerStepThrough]
+            get
+            { return _NameIsEncrypted; }
+            set
+            {
+                SetProperty(ref _NameIsEncrypted, value);
             }
         }
     }

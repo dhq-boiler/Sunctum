@@ -1,6 +1,4 @@
-﻿
-
-using Reactive.Bindings;
+﻿using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using Sunctum.Domain.Logic.Async;
 using Sunctum.Domain.Models;
@@ -83,14 +81,6 @@ namespace Sunctum.Domain.ViewModels
             { return _ByteSize; }
             set { SetProperty(ref _ByteSize, value); }
         }
-
-        //public PageViewModel FirstPage
-        //{
-        //    [DebuggerStepThrough]
-        //    get
-        //    { return _FirstPage; }
-        //    set { SetProperty(ref _FirstPage, value); }
-        //}
 
         public ReactivePropertySlim<PageViewModel> FirstPage { get; } = new ReactivePropertySlim<PageViewModel>();
 

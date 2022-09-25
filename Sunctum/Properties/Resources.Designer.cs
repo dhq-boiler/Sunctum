@@ -448,6 +448,15 @@ namespace Sunctum.Properties {
         }
         
         /// <summary>
+        ///   Encryption continue に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MainWindow_Data_EncryptionContinuing {
+            get {
+                return ResourceManager.GetString("MainWindow_Data_EncryptionContinuing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Encryption start... に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string MainWindow_Data_EncryptionStart {

@@ -18,6 +18,7 @@ namespace Sunctum.Domain.Bridge
                 PublishDate = obj.PublishDate,
                 Title = obj.Title,
                 FingerPrint = obj.FingerPrint,
+                TitleIsEncrypted = obj.TitleIsEncrypted.Value
             };
         }
 
@@ -29,7 +30,8 @@ namespace Sunctum.Domain.Bridge
                 ID = obj.ID,
                 ImageID = obj.ImageID,
                 PageIndex = obj.PageIndex,
-                Title = obj.Title
+                Title = obj.Title,
+                TitleIsEncrypted = obj.TitleIsEncrypted.Value
             };
         }
 
@@ -42,6 +44,7 @@ namespace Sunctum.Domain.Bridge
                 RelativeMasterPath = obj.RelativeMasterPath,
                 Title = obj.Title,
                 IsEncrypted = obj.IsEncrypted,
+                TitleIsEncrypted = obj.TitleIsEncrypted.Value
             };
         }
 
@@ -50,7 +53,8 @@ namespace Sunctum.Domain.Bridge
             return new Author()
             {
                 ID = obj.ID,
-                Name = obj.Name
+                Name = obj.Name,
+                NameIsEncrypted = obj.NameIsEncrypted.Value
             };
         }
 
@@ -112,20 +116,22 @@ namespace Sunctum.Domain.Bridge
 
         public static BookViewModel ToViewModel(this Book obj)
         {
-            return new BookViewModel()
+            var book =  new BookViewModel()
             {
                 Configuration = Configuration.ApplicationConfiguration,
                 AuthorID = obj.AuthorID,
                 ByteSize = obj.ByteSize,
                 ID = obj.ID,
                 PublishDate = obj.PublishDate,
-                Title = obj.Title
+                Title = obj.Title,
             };
+            book.TitleIsEncrypted.Value = obj.TitleIsEncrypted;
+            return book;
         }
 
         public static PageViewModel ToViewModel(this Page obj)
         {
-            return new PageViewModel()
+            var page = new PageViewModel()
             {
                 Configuration = Configuration.ApplicationConfiguration,
                 BookID = obj.BookID,
@@ -134,11 +140,13 @@ namespace Sunctum.Domain.Bridge
                 PageIndex = obj.PageIndex,
                 Title = obj.Title
             };
+            page.TitleIsEncrypted.Value = obj.TitleIsEncrypted;
+            return page;
         }
 
         public static ImageViewModel ToViewModel(this Image obj)
         {
-            return new ImageViewModel()
+            var image = new ImageViewModel()
             {
                 Configuration = Configuration.ApplicationConfiguration,
                 ByteSize = obj.ByteSize,
@@ -146,15 +154,19 @@ namespace Sunctum.Domain.Bridge
                 RelativeMasterPath = obj.RelativeMasterPath,
                 Title = obj.Title
             };
+            image.TitleIsEncrypted.Value = obj.TitleIsEncrypted;
+            return image;
         }
 
         public static AuthorViewModel ToViewModel(this Author obj)
         {
-            return new AuthorViewModel()
+            var author =  new AuthorViewModel()
             {
                 ID = obj.ID,
                 Name = obj.Name
             };
+            author.NameIsEncrypted.Value = obj.NameIsEncrypted;
+            return author;
         }
 
         public static AuthorCountViewModel ToViewModel(this AuthorCount obj)

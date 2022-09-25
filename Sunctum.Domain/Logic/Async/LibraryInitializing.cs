@@ -73,6 +73,8 @@ namespace Sunctum.Domain.Logic.Async
                     dvManager.GetPlan(new Version_5()).FinishedToUpgradeTo += LibraryInitializing_FinishedToUpgradeTo_Version_5;
                     dvManager.RegisterChangePlan(new ChangePlan_Version_6());
                     dvManager.GetPlan(new Version_6()).FinishedToUpgradeTo += LibraryInitializing_FinishedToUpgradeTo_Version_6;
+                    dvManager.RegisterChangePlan(new ChangePlan_Version_7());
+                    dvManager.GetPlan(new Version_7()).FinishedToUpgradeTo += LibraryInitializing_FinishedToUpgradeTo_Version_7;
                     dvManager.FinishedToUpgradeTo += DvManager_FinishedToUpgradeTo;
 
                     dvManager.UpgradeToTargetVersion();
@@ -104,6 +106,10 @@ namespace Sunctum.Domain.Logic.Async
             {
                 DirectoryNameParserManager.Load();
             });
+        }
+
+        private void LibraryInitializing_FinishedToUpgradeTo_Version_7(object sender, VersionChangeEventArgs e)
+        {
         }
 
         public override void ConfigurePostTaskAction(AsyncTaskSequence sequence)
