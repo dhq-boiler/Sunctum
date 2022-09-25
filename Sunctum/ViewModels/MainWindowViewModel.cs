@@ -1059,6 +1059,7 @@ namespace Sunctum.ViewModels
             {
                 config.WindowRect = new Domain.Models.Rect(WindowLeft, WindowTop, WindowWidth, WindowHeight);
             }
+            Configuration.ApplicationConfiguration.Password = null;
             Configuration.Save(config);
 
             _disposable.Clear();

@@ -1,6 +1,7 @@
 ﻿
 
 using Homura.Core;
+using NLog;
 using Reactive.Bindings;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Data.DaoFacade;
@@ -17,6 +18,8 @@ namespace Sunctum.Domain.ViewModels
 {
     public class ImageViewModel : EntryViewModel
     {
+        private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
+
         public ImageViewModel()
         { }
 
@@ -107,7 +110,14 @@ namespace Sunctum.Domain.ViewModels
                 var image = EncryptImageFacade.FindBy(this.ID);
                 if (image is null)
                     return;
-                Encryptor.Decrypt(image.EncryptFilePath, Configuration.Password, isThumbnail);
+                try
+                {
+                    Encryptor.Decrypt(image.EncryptFilePath, Configuration.Password, isThumbnail);
+                }
+                catch (ArgumentException e)
+                {
+                    s_logger.Warn(e);
+                }
             }
         }
 

@@ -3,7 +3,6 @@ using Homura.ORM;
 using NLog;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Encrypt;
-using Sunctum.Domain.Logic.Load;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
@@ -66,9 +65,9 @@ namespace Sunctum.Domain.Logic.Async
                             author.Name = await Encryptor.EncryptString(author.Name, Configuration.ApplicationConfiguration.Password);
                             author.NameIsEncrypted.Value = true;
                             AuthorFacade.Update(author, dataOpUnit);
+                            dataOpUnit.Commit();
                             author.Name = plainText;
                             author.NameIsDecrypted.Value = true;
-                            dataOpUnit.Commit();
                         }
                         catch (Exception)
                         {
@@ -109,6 +108,38 @@ namespace Sunctum.Domain.Logic.Async
                 var images = book.Contents;
                 foreach (var page in images)
                 {
+                    if (!page.Image.IsEncrypted)
+                    {
+                        sequence.Add(() =>
+                        {
+                            dataOpUnit = new DataOperationUnit();
+                            dataOpUnit.Open(ConnectionManager.DefaultConnection);
+                            dataOpUnit.BeginTransaction();
+                            try
+                            {
+                                using (var scope = new TransactionScope())
+                                {
+                                    var fileMgr = new TxFileManager();
+                                    var dirPath = $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{page.Image.ID.ToString().Substring(0, 2)}";
+                                    if (!fileMgr.DirectoryExists(dirPath))
+                                    {
+                                        fileMgr.CreateDirectory(dirPath);
+                                    }
+                                    Encryptor.Encrypt(page.Image, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{page.Image.ID.ToString().Substring(0, 2)}\\{page.Image.ID}{Path.GetExtension(page.Image.AbsoluteMasterPath)}", Password, fileMgr);
+                                    Encryptor.DeleteOriginal(page, fileMgr);
+                                    page.Image.IsEncrypted = true;
+                                    ImageFacade.Update(page.Image, dataOpUnit);
+                                    scope.Complete();
+                                }
+                                dataOpUnit.Commit();
+                            }
+                            catch (Exception)
+                            {
+                                dataOpUnit.Rollback();
+                            }
+                        });
+                    }
+
                     if (!page.TitleIsEncrypted.Value)
                     {
                         sequence.Add(async () =>
@@ -150,38 +181,6 @@ namespace Sunctum.Domain.Logic.Async
                                 dataOpUnit.Commit();
                                 image.Title = plainText;
                                 image.TitleIsDecrypted.Value = true;
-                            }
-                            catch (Exception)
-                            {
-                                dataOpUnit.Rollback();
-                            }
-                        });
-                    }
-
-                    if (!page.Image.IsEncrypted)
-                    {
-                        sequence.Add(() =>
-                        {
-                            dataOpUnit = new DataOperationUnit();
-                            dataOpUnit.Open(ConnectionManager.DefaultConnection);
-                            dataOpUnit.BeginTransaction();
-                            try
-                            {
-                                using (var scope = new TransactionScope())
-                                {
-                                    var fileMgr = new TxFileManager();
-                                    var dirPath = $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{page.Image.ID.ToString().Substring(0, 2)}";
-                                    if (!fileMgr.DirectoryExists(dirPath))
-                                    {
-                                        fileMgr.CreateDirectory(dirPath);
-                                    }
-                                    Encryptor.Encrypt(page.Image, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{page.Image.ID.ToString().Substring(0, 2)}\\{page.Image.ID}{Path.GetExtension(page.Image.AbsoluteMasterPath)}", Password, fileMgr);
-                                    Encryptor.DeleteOriginal(page, fileMgr);
-                                    page.Image.IsEncrypted = true;
-                                    ImageFacade.Update(page.Image, dataOpUnit);
-                                    scope.Complete();
-                                }
-                                dataOpUnit.Commit();
                             }
                             catch (Exception)
                             {
