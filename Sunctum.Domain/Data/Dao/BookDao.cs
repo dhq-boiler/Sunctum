@@ -273,7 +273,7 @@ namespace Sunctum.Domain.Data.Dao
                                 book.TitleIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("bTitleIsEncrypted", null));
                                 if (book.TitleIsEncrypted.Value && !book.TitleIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
                                 {
-                                    book.Title = Encryptor.DecryptString(book.Title, Configuration.ApplicationConfiguration.Password).Result;
+                                    book.Title= Encryptor.DecryptString(book.Title, Configuration.ApplicationConfiguration.Password).Result;
                                     book.TitleIsDecrypted.Value = true;
                                 }
                                 if (!rdr.IsDBNull("aId") && !rdr.IsDBNull("aName"))

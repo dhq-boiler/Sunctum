@@ -145,10 +145,6 @@ namespace Sunctum.Domain.ViewModels
             set { SetProperty(ref _IsEncrypted, value); }
         }
 
-        public ReactivePropertySlim<bool> TitleIsEncrypted { get; } = new ReactivePropertySlim<bool>();
-
-        public ReactivePropertySlim<bool> TitleIsDecrypted { get; } = new ReactivePropertySlim<bool>();
-
         public ThumbnailViewModel Thumbnail
         {
             [DebuggerStepThrough]

@@ -117,6 +117,15 @@ namespace Sunctum.Managers
 
         #endregion //オンメモリ
 
+        #region 問い合わせ
+
+        public bool IsDirty(BookViewModel book)
+        {
+            return Querying.IsDirty(book);
+        }
+
+        #endregion //問い合わせ
+
         #region DispatcherObjectアクセス
 
         public void AccessDispatcherObject(Action accessAction)

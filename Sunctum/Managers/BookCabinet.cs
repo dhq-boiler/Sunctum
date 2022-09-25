@@ -4,8 +4,6 @@ using Reactive.Bindings;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using System;
-using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace Sunctum.Managers
 {

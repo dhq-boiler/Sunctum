@@ -47,60 +47,183 @@ namespace Sunctum.Domain.Logic.Async
 
             var books = LibraryManager.Value.BookSource;
             var dataOpUnit = new DataOperationUnit();
+            var authors = LibraryManager.Value.AuthorManager.Authors;
 
-            foreach (var book in books)
+            foreach (var author in authors)
             {
-                var pages = book.Contents;
-                foreach (var page in pages)
+                if (author.NameIsEncrypted.Value)
                 {
-                    sequence.Add(() =>
+                    sequence.Add(async () =>
                     {
                         dataOpUnit = new DataOperationUnit();
                         dataOpUnit.Open(ConnectionManager.DefaultConnection);
                         dataOpUnit.BeginTransaction();
                         try
                         {
-                            using (var scope = new TransactionScope())
-                            {
-                                _TargetEncryptImage = EncryptImageFacade.FindBy(page.Image.ID, dataOpUnit);
-                                if (_TargetEncryptImage is not null)
-                                {
-                                    var fileMgr = new TxFileManager();
-                                    Encryptor.Decrypt(_TargetEncryptImage.EncryptFilePath, page.Image.AbsoluteMasterPath, Password, fileMgr);
-                                    fileMgr.Delete(_TargetEncryptImage.EncryptFilePath);
-                                    EncryptImageFacade.DeleteBy(page.Image.ID, dataOpUnit);
-                                }
-                                if (page.Image.Thumbnail is not null)
-                                {
-                                    ThumbnailFacade.DeleteWhereIDIs(page.Image.Thumbnail.ID, dataOpUnit);
-                                }
-                                page.Image.Thumbnail = null;
-                                page.Image.IsEncrypted = false;
-                                ImageFacade.Update(page.Image, dataOpUnit);
-                                scope.Complete();
-                            }
+                            var plainText = author.Name;
+                            author.Name = await Encryptor.DecryptString(author.Name, Configuration.ApplicationConfiguration.Password);
+                            author.NameIsEncrypted.Value = false;
+                            AuthorFacade.Update(author, dataOpUnit);
                             dataOpUnit.Commit();
                         }
                         catch (Exception)
                         {
-                            if (File.Exists(page.Image.AbsoluteMasterPath))
+                            dataOpUnit.Rollback();
+                        }
+                    });
+                }
+            }
+
+            foreach (var book in books)
+            {
+                if (book.TitleIsEncrypted.Value)
+                {
+                    sequence.Add(async () =>
+                    {
+                        dataOpUnit = new DataOperationUnit();
+                        dataOpUnit.Open(ConnectionManager.DefaultConnection);
+                        dataOpUnit.BeginTransaction();
+                        try
+                        {
+                            var plainText = book.Title;
+                            if (book.TitleIsDecrypted.Value)
                             {
-                                EncryptImageFacade.DeleteBy(page.Image.ID, dataOpUnit);
-                                if (page.Image.Thumbnail is not null)
-                                {
-                                    ThumbnailFacade.DeleteWhereIDIs(page.Image.Thumbnail.ID, dataOpUnit);
-                                }
-                                page.Image.Thumbnail = null;
-                                page.Image.IsEncrypted = false;
-                                ImageFacade.Update(page.Image, dataOpUnit);
-                                dataOpUnit.Commit();
+                                //Do nothing
                             }
                             else
                             {
-                                dataOpUnit.Rollback();
+                                var _book = book;
+                                BookFacade.FillContents(ref _book);
+                                book.Title = await Encryptor.DecryptString(_book.Title, Configuration.ApplicationConfiguration.Password);
                             }
+                            book.TitleIsEncrypted.Value = false;
+                            BookFacade.Update(book, dataOpUnit);
+                            dataOpUnit.Commit();
+                        }
+                        catch (Exception)
+                        {
+                            dataOpUnit.Rollback();
                         }
                     });
+                }
+
+                var pages = book.Contents;
+                foreach (var page in pages)
+                {
+                    if (page.Image.IsEncrypted)
+                    {
+                        sequence.Add(() =>
+                        {
+                            dataOpUnit = new DataOperationUnit();
+                            dataOpUnit.Open(ConnectionManager.DefaultConnection);
+                            dataOpUnit.BeginTransaction();
+                            try
+                            {
+                                using (var scope = new TransactionScope())
+                                {
+                                    _TargetEncryptImage = EncryptImageFacade.FindBy(page.Image.ID, dataOpUnit);
+                                    if (_TargetEncryptImage is not null)
+                                    {
+                                        var fileMgr = new TxFileManager();
+                                        Encryptor.Decrypt(_TargetEncryptImage.EncryptFilePath, page.Image.AbsoluteMasterPath, Password, fileMgr);
+                                        fileMgr.Delete(_TargetEncryptImage.EncryptFilePath);
+                                        EncryptImageFacade.DeleteBy(page.Image.ID, dataOpUnit);
+                                    }
+                                    if (page.Image.Thumbnail is not null)
+                                    {
+                                        ThumbnailFacade.DeleteWhereIDIs(page.Image.Thumbnail.ID, dataOpUnit);
+                                    }
+                                    page.Image.Thumbnail = null;
+                                    page.Image.IsEncrypted = false;
+                                    ImageFacade.Update(page.Image, dataOpUnit);
+                                    scope.Complete();
+                                }
+                                dataOpUnit.Commit();
+                            }
+                            catch (Exception)
+                            {
+                                if (File.Exists(page.Image.AbsoluteMasterPath))
+                                {
+                                    EncryptImageFacade.DeleteBy(page.Image.ID, dataOpUnit);
+                                    if (page.Image.Thumbnail is not null)
+                                    {
+                                        ThumbnailFacade.DeleteWhereIDIs(page.Image.Thumbnail.ID, dataOpUnit);
+                                    }
+                                    page.Image.Thumbnail = null;
+                                    page.Image.IsEncrypted = false;
+                                    ImageFacade.Update(page.Image, dataOpUnit);
+                                    dataOpUnit.Commit();
+                                }
+                                else
+                                {
+                                    dataOpUnit.Rollback();
+                                }
+                            }
+                        });
+                    }
+
+                    if (page.TitleIsEncrypted.Value)
+                    {
+                        sequence.Add(async () =>
+                        {
+                            dataOpUnit = new DataOperationUnit();
+                            dataOpUnit.Open(ConnectionManager.DefaultConnection);
+                            dataOpUnit.BeginTransaction();
+                            try
+                            {
+                                var plainText = page.Title;
+                                if (page.TitleIsDecrypted.Value)
+                                {
+                                    //Do nothing
+                                }
+                                else
+                                {
+                                    var _page = page;
+                                    PageFacade.GetProperty(ref _page);
+                                    page.Title = await Encryptor.DecryptString(_page.Title, Configuration.ApplicationConfiguration.Password);
+                                }
+                                page.TitleIsEncrypted.Value = false;
+                                PageFacade.Update(page, dataOpUnit);
+                                dataOpUnit.Commit();
+                            }
+                            catch (Exception)
+                            {
+                                dataOpUnit.Rollback();
+                            }
+                        });
+                    }
+
+                    var image = page.Image;
+                    if (image.TitleIsEncrypted.Value)
+                    {
+                        sequence.Add(async () =>
+                        {
+                            dataOpUnit = new DataOperationUnit();
+                            dataOpUnit.Open(ConnectionManager.DefaultConnection);
+                            dataOpUnit.BeginTransaction();
+                            try
+                            {
+                                var plainText = image.Title;
+                                if (image.TitleIsDecrypted.Value)
+                                {
+                                    //Do nothing
+                                }
+                                else
+                                {
+                                    var _image = image;
+                                    ImageFacade.GetProperty(ref _image);
+                                    image.Title = await Encryptor.DecryptString(_image.Title, Configuration.ApplicationConfiguration.Password);
+                                }
+                                image.TitleIsEncrypted.Value = false;
+                                ImageFacade.Update(image, dataOpUnit);
+                                dataOpUnit.Commit();
+                            }
+                            catch (Exception)
+                            {
+                                dataOpUnit.Rollback();
+                            }
+                        });
+                    }
                 }
             }
             sequence.Add(() => PasswordManager.RemovePassword(Environment.UserName));

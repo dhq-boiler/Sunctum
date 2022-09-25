@@ -4,6 +4,8 @@ using Homura.ORM;
 using NLog;
 using Sunctum.Domain.Bridge;
 using Sunctum.Domain.Data.Dao;
+using Sunctum.Domain.Logic.Encrypt;
+using Sunctum.Domain.Models;
 using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -46,11 +48,23 @@ namespace Sunctum.Domain.Data.DaoFacade
             return dao.FindAll(dataOpUnit?.CurrentConnection).ToViewModel();
         }
 
-        public static void Update(BookViewModel book, DataOperationUnit dataOpUnit = null)
+        public static async void Update(BookViewModel book, DataOperationUnit dataOpUnit = null)
         {
+            string plainText = null;
+            if (book.TitleIsEncrypted.Value && book.TitleIsDecrypted.Value)
+            {
+                plainText = book.Title;
+                book.Title = await Encryptor.EncryptString(book.Title, Configuration.ApplicationConfiguration.Password);
+                book.TitleIsDecrypted.Value = false;
+            }
             BookDao dao = new BookDao();
             dao.Update(book.ToEntity(), dataOpUnit?.CurrentConnection);
             s_logger.Debug($"UPDATE Book:{book}");
+            if (book.TitleIsEncrypted.Value)
+            {
+                book.TitleIsDecrypted.Value = true;
+                book.Title = await Encryptor.DecryptString(book.Title, Configuration.ApplicationConfiguration.Password);
+            }
         }
 
         internal static IEnumerable<BookViewModel> FindAllWithAuthor(DataOperationUnit dataOpUnit)

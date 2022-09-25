@@ -3,6 +3,7 @@
 using Homura.Core;
 using Homura.ORM;
 using Reactive.Bindings;
+using Sunctum.Domain.Logic.Encrypt;
 using Sunctum.Domain.Models;
 using System;
 using System.Diagnostics;
@@ -42,8 +43,37 @@ namespace Sunctum.Domain.ViewModels
 
         public string UnescapedName
         {
-            get { return Name != null ? HttpUtility.HtmlDecode(Name) : null; }
-            set { Name = HttpUtility.HtmlEncode(value); }
+            get
+            {
+                if (NameIsEncrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                {
+                    if (NameIsDecrypted.Value)
+                    {
+                        return DecodeOrNull(Name);
+                    }
+                    return DecodeOrNull(Encryptor.DecryptString(Name, Configuration.ApplicationConfiguration.Password).Result);
+                }
+                return DecodeOrNull(Name);
+            }
+            set
+            {
+                if (NameIsEncrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                {
+                    if (NameIsDecrypted.Value)
+                    {
+                        Name = HttpUtility.HtmlEncode(value);
+                        return;
+                    }
+                    Name = HttpUtility.HtmlEncode(Encryptor.DecryptString(Name, Configuration.ApplicationConfiguration.Password).Result);
+                    return;
+                }
+                Name = HttpUtility.HtmlEncode(value);
+            }
+        }
+
+        private string DecodeOrNull(string str)
+        {
+            return str != null ? HttpUtility.HtmlDecode(str) : null;
         }
 
         public ReactivePropertySlim<bool> NameIsEncrypted { get; } = new ReactivePropertySlim<bool>();

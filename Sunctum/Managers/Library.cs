@@ -6,7 +6,6 @@ using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Async;
 using Sunctum.Domain.Logic.Encrypt;
 using Sunctum.Domain.Logic.PageSorting;
-using Sunctum.Domain.Logic.Query;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
@@ -263,15 +262,6 @@ namespace Sunctum.Managers
         }
 
         #endregion //サムネイル再作成
-
-        #region 問い合わせ
-
-        public bool IsDirty(BookViewModel book)
-        {
-            return Querying.IsDirty(this, book);
-        }
-
-        #endregion //問い合わせ
 
         #region サイズ更新
 

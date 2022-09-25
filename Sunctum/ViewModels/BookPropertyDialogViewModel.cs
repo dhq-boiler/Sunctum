@@ -43,6 +43,9 @@ namespace Sunctum.ViewModels
         [Dependency]
         public ILibrary LibraryManager { get; set; }
 
+        [Dependency]
+        public IMainWindowViewModel MainWindowViewModel { get; set; }
+
         public ReactiveCommand SelectNextBookCommand { get; set; } = new ReactiveCommand();
 
         public ReactiveCommand SelectPreviousBookCommand { get; set; } = new ReactiveCommand();
@@ -272,6 +275,13 @@ namespace Sunctum.ViewModels
             if (LibraryManager.IsDirty(Book))
             {
                 LibraryManager.UpdateInMemory(Book);
+            }
+            foreach (var documentViewModel in MainWindowViewModel.DockingDocumentViewModels)
+            {
+                if (documentViewModel.BookCabinet.IsDirty(Book))
+                {
+                    documentViewModel.BookCabinet.UpdateInMemory(Book);
+                }
             }
         }
 

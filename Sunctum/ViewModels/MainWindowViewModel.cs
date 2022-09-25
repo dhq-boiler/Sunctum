@@ -45,10 +45,6 @@ using Unity;
 using Xceed.Wpf.AvalonDock;
 using Xceed.Wpf.AvalonDock.Layout;
 using Xceed.Wpf.AvalonDock.Layout.Serialization;
-using YamlDotNet.Core.Tokens;
-using YamlDotNet.Core;
-using System.Windows.Threading;
-using Sunctum.Domain.Util;
 
 namespace Sunctum.ViewModels
 {
@@ -1044,6 +1040,8 @@ namespace Sunctum.ViewModels
 
         public void Terminate()
         {
+            OnmemoryImageManager.Instance.Clear();
+
             var config = Configuration.ApplicationConfiguration;
             if (HomeDocumentViewModel.BookCabinet != null)
                 config.BookSorting = BookSorting.GetPropertyName(HomeDocumentViewModel.BookCabinet.Sorting);

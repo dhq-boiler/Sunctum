@@ -4,6 +4,7 @@ using Homura.ORM;
 using NLog;
 using Sunctum.Domain.Bridge;
 using Sunctum.Domain.Data.Dao;
+using Sunctum.Domain.Logic.Encrypt;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Util;
 using Sunctum.Domain.ViewModels;
@@ -120,11 +121,23 @@ namespace Sunctum.Domain.Data.DaoFacade
             return dao.CountBy(new Dictionary<string, object>() { { "Name", name } }, dataOpUnit?.CurrentConnection) > 0;
         }
 
-        public static void Update(AuthorViewModel target, DataOperationUnit dataOpUnit = null)
+        public static async void Update(AuthorViewModel target, DataOperationUnit dataOpUnit = null)
         {
+            string plainText = null;
+            if (target.NameIsEncrypted.Value && target.NameIsDecrypted.Value)
+            {
+                plainText = target.Name;
+                target.Name = await Encryptor.EncryptString(target.Name, Configuration.ApplicationConfiguration.Password);
+                target.NameIsDecrypted.Value = false;
+            }
             AuthorDao dao = new AuthorDao();
             dao.Update(target.ToEntity(), dataOpUnit?.CurrentConnection);
             s_logger.Debug($"UPDATE Author:{target}");
+            if (target.NameIsEncrypted.Value)
+            {
+                target.Name = await Encryptor.DecryptString(target.Name, Configuration.ApplicationConfiguration.Password);
+                target.NameIsDecrypted.Value = true;
+            }
         }
     }
 }

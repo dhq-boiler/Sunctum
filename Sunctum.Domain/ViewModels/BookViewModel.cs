@@ -87,10 +87,6 @@ namespace Sunctum.Domain.ViewModels
 
         public ReactivePropertySlim<PageViewModel> FirstPage { get; } = new ReactivePropertySlim<PageViewModel>();
 
-        public ReactivePropertySlim<bool> TitleIsEncrypted { get; } = new ReactivePropertySlim<bool>();
-
-        public ReactivePropertySlim<bool> TitleIsDecrypted { get; } = new ReactivePropertySlim<bool>();
-
         public AuthorViewModel Author
         {
             [DebuggerStepThrough]

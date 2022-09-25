@@ -86,7 +86,5 @@ namespace Sunctum.Domain.ViewModels
             { return _ContentsRegistered; }
             set { SetProperty(ref _ContentsRegistered, value); }
         }
-        public ReactivePropertySlim<bool> TitleIsEncrypted { get; } = new ReactivePropertySlim<bool>();
-        public ReactivePropertySlim<bool> TitleIsDecrypted { get; } = new ReactivePropertySlim<bool>();
     }
 }
