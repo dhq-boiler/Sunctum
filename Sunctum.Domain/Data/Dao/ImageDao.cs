@@ -6,7 +6,6 @@ using Homura.QueryBuilder.Iso.Dml;
 using NLog;
 using Sunctum.Domain.Logic.Encrypt;
 using Sunctum.Domain.Models;
-using Sunctum.Domain.Util;
 using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -17,7 +16,7 @@ using System.Linq;
 
 namespace Sunctum.Domain.Data.Dao
 {
-    internal class ImageDao : SQLiteBaseDao<Image>
+    public class ImageDao : SQLiteBaseDao<Image>
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 

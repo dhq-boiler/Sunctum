@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Sunctum.Domain.Models.Conversion
 {
-    internal class Version_7 : Version_6
+    public class Version_7 : Version_6
     {
     }
 }
