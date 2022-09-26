@@ -1,14 +1,13 @@
 ﻿using Homura.ORM;
-using Nito.AsyncEx;
 using NUnit.Framework;
 using Prism.Ioc;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.Test.Core;
 using Sunctum.Domain.ViewModels;
 using System;
-using System.Collections.ObjectModel;
 using System.Data.SQLite;
 using System.IO;
+using System.Threading.Tasks;
 using Unity;
 
 namespace Sunctum.Domain.Test.UnitTest
@@ -22,7 +21,7 @@ namespace Sunctum.Domain.Test.UnitTest
         private ILibrary _libManager;
 
         [Test]
-        public void 検索中インポート()
+        public async Task 検索中インポート()
         {
             _dirPath = Path.Combine(TestContext.CurrentContext.TestDirectory, "PageOrderingTest");
             _filePath = Path.Combine(_dirPath, "library.db");
@@ -50,11 +49,8 @@ namespace Sunctum.Domain.Test.UnitTest
             home.BookCabinet = _libManager.CreateBookStorage();
             home.BookCabinet.Search("minecraft");
 
-            AsyncContext.Run(async () =>
-            {
-                await mwvm.Initialize(true, false).ConfigureAwait(false);
-                await _libManager.ImportAsync(new string[] { Path.Combine(TestContext.CurrentContext.TestDirectory, "TestData", "minecraft_screenshots") }).ConfigureAwait(false);
-            });
+            await mwvm.Initialize(true, false).ConfigureAwait(false);
+            await _libManager.ImportAsync(new string[] { Path.Combine(TestContext.CurrentContext.TestDirectory, "TestData", "minecraft_screenshots") }).ConfigureAwait(false);
 
             _libManager.TaskManager.WaitUntilProcessAll();
 

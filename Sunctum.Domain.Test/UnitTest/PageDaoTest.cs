@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Unity;
 
 namespace Sunctum.Domain.Test.UnitTest
@@ -26,7 +27,7 @@ namespace Sunctum.Domain.Test.UnitTest
         private string _dirPath;
 
         [SetUp]
-        public void SetUp()
+        public async Task SetUp()
         {
             _dirPath = Path.Combine(TestContext.CurrentContext.TestDirectory, "PageDaoTest");
             _filePath = Path.Combine(_dirPath, "library.db");
@@ -44,11 +45,8 @@ namespace Sunctum.Domain.Test.UnitTest
 
             _libManager = Container.Resolve<ILibrary>();
 
-            AsyncContext.Run(async () =>
-            {
-                await _libManager.Initialize().ConfigureAwait(false);
-                await _libManager.Load().ConfigureAwait(false);
-            });
+            await _libManager.Initialize().ConfigureAwait(false);
+            await _libManager.Load().ConfigureAwait(false);
         }
 
         [Test]
