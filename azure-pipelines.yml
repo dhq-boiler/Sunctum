@@ -44,10 +44,11 @@ steps:
 #  inputs:
 #    script: 'dotnet test --configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura -- RunConfiguration.DisableAppDomain=true'
 
-- task: VSTest@2
+- task: CmdLine@2
+  displayName: "NUnit Test"
   inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    script: >
+      packages\NUnit.ConsoleRunner.3.15.2\tools\nunit3-console.exe Sunctum.Domain.Test\bin\$(buildConfiguration)\Sunctum.Domain.Test.dll
 
 # Archive files
 # Compress files into .7z, .tar.gz, or .zip
