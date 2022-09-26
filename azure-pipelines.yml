@@ -48,7 +48,7 @@ steps:
   displayName: "NUnit Test"
   inputs:
     script: >
-      packages\NUnit.ConsoleRunner.3.15.2\tools\nunit3-console.exe Sunctum.Domain.Test\bin\$(buildConfiguration)\net6.0-windows10.0.22000.0\Sunctum.Domain.Test.dll
+      nunit.consolerunner\3.15.2\tools\nunit3-console.exe Sunctum.Domain.Test\bin\$(buildConfiguration)\net6.0-windows10.0.22000.0\Sunctum.Domain.Test.dll
 
 # Archive files
 # Compress files into .7z, .tar.gz, or .zip
