@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Unity;
 
 namespace Sunctum.Domain.Test.UnitTest
@@ -27,7 +28,7 @@ namespace Sunctum.Domain.Test.UnitTest
         private ILibrary _libManager;
 
         [OneTimeSetUp]
-        public void OneTimeSetUp()
+        public async Task OneTimeSetUp()
         {
             _dirPath = Path.Combine(TestContext.CurrentContext.TestDirectory, "PageFacadeTest");
             _filePath = Path.Combine(_dirPath, "library.db");
@@ -47,16 +48,13 @@ namespace Sunctum.Domain.Test.UnitTest
 
             _libManager = Container.Resolve<ILibrary>();
 
-            AsyncContext.Run(async () =>
-            {
-                await _libManager.Initialize().ConfigureAwait(false);
-                await _libManager.Load().ConfigureAwait(false);
-                await _libManager.ImportAsync(new string[] { Path.Combine(TestContext.CurrentContext.TestDirectory, "TestData", "minecraft_screenshots") }).ConfigureAwait(false);
-            });
+            await _libManager.Initialize().ConfigureAwait(false);
+            await _libManager.Load().ConfigureAwait(false);
+            await _libManager.ImportAsync(new string[] { Path.Combine(TestContext.CurrentContext.TestDirectory, "TestData", "minecraft_screenshots") }).ConfigureAwait(false);
         }
 
         [Test]
-        public void UpdatePageIndexTest()
+        public async Task UpdatePageIndexTest()
         {
             var book = _libManager.BookSource.First();
 
@@ -77,11 +75,8 @@ namespace Sunctum.Domain.Test.UnitTest
                 PageFacade.Update(page);
             }
 
-            AsyncContext.Run(async () =>
-            {
                 //再読み込み
-                await _libManager.Load().ConfigureAwait(false);
-            });
+            await _libManager.Load().ConfigureAwait(false);
 
             var reload_book = _libManager.BookSource.First();
 

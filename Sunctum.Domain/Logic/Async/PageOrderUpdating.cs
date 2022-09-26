@@ -48,7 +48,10 @@ namespace Sunctum.Domain.Logic.Async
 
             sequence.Add(() =>
             {
-                MainWindowViewModel.Value.ActiveDocumentViewModel.BookCabinet.UpdateInMemory(Target);
+                if (MainWindowViewModel.Value.ActiveDocumentViewModel is not null)
+                {
+                    MainWindowViewModel.Value.ActiveDocumentViewModel.BookCabinet.UpdateInMemory(Target);
+                }
                 Library.Value.UpdateInMemory(Target);
             });
         }

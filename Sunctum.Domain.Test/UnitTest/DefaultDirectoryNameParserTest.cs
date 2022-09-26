@@ -1,8 +1,8 @@
 ﻿
 
-using System.Linq;
 using NUnit.Framework;
 using Sunctum.Domain.Logic.Parse;
+using System.Linq;
 
 namespace Sunctum.Domain.Test.UnitTest
 {

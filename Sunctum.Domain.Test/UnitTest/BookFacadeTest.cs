@@ -1,7 +1,6 @@
 ﻿
 
 using Homura.ORM;
-using Nito.AsyncEx;
 using NUnit.Framework;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Models.Managers;
@@ -11,6 +10,7 @@ using System;
 using System.Data.SQLite;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Unity;
 
 namespace Sunctum.Domain.Test.UnitTest
@@ -39,17 +39,14 @@ namespace Sunctum.Domain.Test.UnitTest
         };
 
         [OneTimeSetUp]
-        public void OneTimeSetUp()
+        public async Task OneTimeSetUp()
         {
             _filePath = Path.Combine(TestContext.CurrentContext.TestDirectory, "BookFacadeTest.db");
             ConnectionManager.SetDefaultConnection($"Data Source={_filePath}", typeof(SQLiteConnection));
 
             s_libManager = Container.Resolve<ILibrary>();
-            AsyncContext.Run(async () =>
-            {
-                await s_libManager.Initialize().ConfigureAwait(false);
-                await s_libManager.Load().ConfigureAwait(false);
-            });
+            await s_libManager.Initialize().ConfigureAwait(false);
+            await s_libManager.Load().ConfigureAwait(false);
         }
 
         [Test, Order(0)]
