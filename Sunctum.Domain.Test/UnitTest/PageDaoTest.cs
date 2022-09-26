@@ -1,6 +1,7 @@
 ﻿
 
 using Homura.ORM;
+using Nito.AsyncEx;
 using NUnit.Framework;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Models;
@@ -42,8 +43,12 @@ namespace Sunctum.Domain.Test.UnitTest
             }
 
             _libManager = Container.Resolve<ILibrary>();
-            _libManager.Initialize().Wait();
-            _libManager.Load().Wait();
+
+            AsyncContext.Run(async () =>
+            {
+                await _libManager.Initialize();
+                await _libManager.Load();
+            });
         }
 
         [Test]

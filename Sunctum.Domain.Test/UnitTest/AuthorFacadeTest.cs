@@ -1,6 +1,7 @@
 ﻿
 
 using Homura.ORM;
+using Nito.AsyncEx;
 using NUnit.Framework;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Models;
@@ -53,8 +54,11 @@ namespace Sunctum.Domain.Test.UnitTest
             ConnectionManager.SetDefaultConnection($"Data Source={_filePath}", typeof(SQLiteConnection));
 
             s_libManager = Container.Resolve<ILibrary>();
-            s_libManager.Initialize().Wait();
-            s_libManager.Load().Wait();
+            AsyncContext.Run(async () =>
+            {
+                await s_libManager.Initialize();
+                await s_libManager.Load();
+            });
         }
 
         [Test, Order(0)]
