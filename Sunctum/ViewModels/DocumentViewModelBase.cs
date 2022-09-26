@@ -389,21 +389,21 @@ namespace Sunctum.ViewModels
             RemakeThumbnailOfBookCommand = new DelegateCommand(async () =>
             {
                 var books = BookListViewSelectedItems;
-                await RemakeThumbnail(books);
+                await RemakeThumbnail(books).ConfigureAwait(false);
             });
             RemakeThumbnailOfPageCommand = new DelegateCommand(async () =>
             {
                 var pages = ContentsListViewSelectedItems;
-                await RemakeThumbnail(pages);
+                await RemakeThumbnail(pages).ConfigureAwait(false);
             });
             RemoveBookCommand = new DelegateCommand(async () =>
             {
                 var books = BookListViewSelectedItems;
-                await RemoveBook(books.ToArray());
+                await RemoveBook(books.ToArray()).ConfigureAwait(false);
             });
             RemovePageCommand = new DelegateCommand<object>(async (p) =>
             {
-                await RemovePage(p as IEnumerable<PageViewModel>);
+                await RemovePage(p as IEnumerable<PageViewModel>).ConfigureAwait(false);
             });
             SearchInNewTabCommand = new DelegateCommand(() =>
             {
@@ -422,7 +422,7 @@ namespace Sunctum.ViewModels
             });
             ScrapPagesCommand = new DelegateCommand<object>(async (p) =>
             {
-                await ScrapPages(p as IEnumerable<PageViewModel>);
+                await ScrapPages(p as IEnumerable<PageViewModel>).ConfigureAwait(false);
             });
             XButton1MouseButtonDownCommand = new DelegateCommand(() =>
             {
@@ -788,17 +788,17 @@ namespace Sunctum.ViewModels
 
         public async Task RemovePage(IEnumerable<PageViewModel> pages)
         {
-            await LibraryManager.Value.RemovePages(pages.ToArray());
+            await LibraryManager.Value.RemovePages(pages.ToArray()).ConfigureAwait(false);
         }
 
         public async Task RemoveBook(BookViewModel[] books)
         {
-            await LibraryManager.Value.RemoveBooks(books);
+            await LibraryManager.Value.RemoveBooks(books).ConfigureAwait(false);
         }
 
         private async Task ScrapPages(IEnumerable<PageViewModel> pages)
         {
-            await LibraryManager.Value.ScrapPages(null, Specifications.SCRAPPED_NEW_BOOK_TITLE, pages.ToArray());
+            await LibraryManager.Value.ScrapPages(null, Specifications.SCRAPPED_NEW_BOOK_TITLE, pages.ToArray()).ConfigureAwait(false);
         }
 
         #endregion //コンテキストメニュー
@@ -834,12 +834,12 @@ namespace Sunctum.ViewModels
 
         private async Task RemakeThumbnail(IEnumerable<BookViewModel> books)
         {
-            await LibraryManager.Value.RemakeThumbnail(books);
+            await LibraryManager.Value.RemakeThumbnail(books).ConfigureAwait(false);
         }
 
         private async Task RemakeThumbnail(IEnumerable<PageViewModel> pages)
         {
-            await LibraryManager.Value.RemakeThumbnail(pages);
+            await LibraryManager.Value.RemakeThumbnail(pages).ConfigureAwait(false);
         }
 
         #endregion //サムネイル再作成
@@ -948,7 +948,7 @@ namespace Sunctum.ViewModels
         public async Task SaveOpenedBookContentsOrder()
         {
             Debug.Assert(OpenedBook is not null);
-            await LibraryManager.Value.SaveBookContentsOrder(OpenedBook);
+            await LibraryManager.Value.SaveBookContentsOrder(OpenedBook).ConfigureAwait(false);
         }
 
         #endregion //ページ単位ソート
@@ -957,7 +957,7 @@ namespace Sunctum.ViewModels
 
         public async Task ImportAsync(string[] objectPaths)
         {
-            await LibraryManager.Value.ImportAsync(objectPaths);
+            await LibraryManager.Value.ImportAsync(objectPaths).ConfigureAwait(false);
         }
 
         #endregion //インポート

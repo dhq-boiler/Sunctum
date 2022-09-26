@@ -229,7 +229,7 @@ namespace Sunctum.Views
             {
                 Contents_ListView.ItemTemplate = (DataTemplate)(this.Resources["Contents_ListViewItem_DataTemplate"]);
                 var viewModel = (DocumentViewModelBase)DataContext;
-                await viewModel.SaveOpenedBookContentsOrder();
+                await viewModel.SaveOpenedBookContentsOrder().ConfigureAwait(false);
                 SwitchSorting_Button.Content = "Sort";
                 SortingBookContents = false;
             }
@@ -284,7 +284,7 @@ namespace Sunctum.Views
 
                 try
                 {
-                    await viewModel.MainWindowViewModel.Value.LibraryVM.TagManager.AddTagTo(entries, imageTagCount.Tag.Name);
+                    await viewModel.MainWindowViewModel.Value.LibraryVM.TagManager.AddTagTo(entries, imageTagCount.Tag.Name).ConfigureAwait(false);
                 }
                 catch (ArgumentException)
                 {

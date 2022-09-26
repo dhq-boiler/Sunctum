@@ -18,7 +18,7 @@ namespace Sunctum.Converters
             var page = value as PageViewModel;
             var task = Task.Run(async () =>
             {
-                await ContentsLoadTask.Load(page);
+                await ContentsLoadTask.Load(page).ConfigureAwait(false);
             });
             return new TaskCompletionSource<object>(task);
         }

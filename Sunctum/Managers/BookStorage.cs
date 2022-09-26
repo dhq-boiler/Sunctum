@@ -182,7 +182,7 @@ namespace Sunctum.Managers
 
         public async void FireFillContents(BookViewModel book)
         {
-            await _fcTaskManager.RunAsync((b) => Internal_FillContents(b), book);
+            await _fcTaskManager.RunAsync((b) => Internal_FillContents(b), book).ConfigureAwait(false);
         }
 
         public void RunFillContents(BookViewModel book)

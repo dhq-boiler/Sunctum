@@ -66,7 +66,7 @@ namespace Sunctum.Managers
 
         public async Task LoadAsync()
         {
-            await Task.Run(() => Load());
+            await Task.Run(() => Load()).ConfigureAwait(false);
         }
 
         private void Filter(ObservableCollection<BookViewModel> bookSource)
