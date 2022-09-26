@@ -75,5 +75,11 @@ namespace Sunctum.Domain.Test.Core
             Container.RegisterInstance<IDaoBuilder>("VcDao", new DaoBuilder(new Connection(ConnectionStringBuilder.Build(Specifications.VC_DB_FILENAME), typeof(SQLiteConnection))));
             Container.RegisterSingleton<ISelectManager, SelectManager>();
         }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            ConnectionManager.DisposeAllDebris();
+        }
     }
 }
