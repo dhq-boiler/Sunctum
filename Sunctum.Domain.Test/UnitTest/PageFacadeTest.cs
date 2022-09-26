@@ -103,7 +103,7 @@ namespace Sunctum.Domain.Test.UnitTest
         }
 
         [OneTimeTearDown]
-        public void OneTimeTearDown()
+        public void _OneTimeTearDown()
         {
             _libManager.Dispose();
 
