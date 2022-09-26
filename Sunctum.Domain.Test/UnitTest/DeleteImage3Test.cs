@@ -4,6 +4,7 @@ using NUnit.Framework;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Data.Dao.Migration.Plan;
 using Sunctum.Domain.Models.Conversion;
+using Sunctum.Domain.Test.Core;
 using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
@@ -15,7 +16,7 @@ using System.Threading.Tasks;
 namespace Sunctum.Domain.Test.UnitTest
 {
     [TestFixture]
-    public class DeleteImage3Test
+    public class DeleteImage3Test : TestSession
     {
         [OneTimeSetUp]
         public void OneTimeSetUp()
@@ -44,10 +45,9 @@ namespace Sunctum.Domain.Test.UnitTest
             dao.Delete(new Dictionary<string, object>());
         }
 
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
+        public override string GetTestDirectory()
         {
-            ConnectionManager.DisposeAllDebris();
+            return TestContext.CurrentContext.TestDirectory;
         }
     }
 }
