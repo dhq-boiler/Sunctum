@@ -32,13 +32,17 @@ steps:
     projects: '$(TargetSolution)'
     arguments: '--configuration $(BuildConfiguration)'  
 
-- task: DotNetCoreCLI@2
-  displayName: 'dotnet test'
+# - task: DotNetCoreCLI@2
+#   displayName: 'dotnet test'
+#   inputs:
+#     command: 'test'
+#     arguments: '--verbosity detailed --configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura -- RunConfiguration.DisableAppDomain=true'
+#     publishTestResults: true
+#     projects: '$(TargetSolution)'
+
+- task: CmdLine@2
   inputs:
-    command: 'test'
-    arguments: '--verbosity detailed --configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura -- RunConfiguration.DisableAppDomain=true'
-    publishTestResults: true
-    projects: '$(TargetSolution)'
+    script: 'dotnet test --configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura -- RunConfiguration.DisableAppDomain=true'
 
 # Archive files
 # Compress files into .7z, .tar.gz, or .zip
