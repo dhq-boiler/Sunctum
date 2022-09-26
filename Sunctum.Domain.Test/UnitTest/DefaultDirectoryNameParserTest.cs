@@ -6,7 +6,6 @@ using Sunctum.Domain.Logic.Parse;
 
 namespace Sunctum.Domain.Test.UnitTest
 {
-    [Ignore("テストが永遠に終わらない")]
     [Category("UnitTest")]
     [TestFixture]
     public class DefaultDirectoryNameParserTest

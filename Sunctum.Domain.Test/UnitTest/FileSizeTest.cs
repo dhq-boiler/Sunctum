@@ -5,7 +5,6 @@ using Sunctum.Domain.Util;
 
 namespace Sunctum.Domain.Test.UnitTest
 {
-    [Ignore("テストが永遠に終わらない")]
     [Category("UnitTest")]
     [TestFixture]
     public class FileSizeTest

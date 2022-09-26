@@ -17,7 +17,6 @@ using Unity;
 
 namespace Sunctum.Domain.Test.UnitTest
 {
-    [Ignore("テストが永遠に終わらない")]
     [Category("UnitTest")]
     [TestFixture]
     public class PageFacadeTest : TestSession
@@ -111,6 +110,8 @@ namespace Sunctum.Domain.Test.UnitTest
             var mwvm = Container.Resolve<IMainWindowViewModel>();
             mwvm.Close();
             mwvm.Dispose();
+
+            ConnectionManager.DisposeAllDebris();
 
             GC.Collect();
 

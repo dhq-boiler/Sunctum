@@ -41,6 +41,7 @@ using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Shell;
+using System.Windows.Threading;
 using Unity;
 using Xceed.Wpf.AvalonDock;
 using Xceed.Wpf.AvalonDock.Layout;
@@ -1033,12 +1034,20 @@ namespace Sunctum.ViewModels
             }
         }
 
+        /// <summary>
+        /// Terminateメソッドから呼び出しても機能しないので注意。
+        /// </summary>
         public void SaveLayout()
         {
-            App.Current.Dispatcher.Invoke(() =>
+            Dispatcher.CurrentDispatcher.Invoke(() =>
             {
-                Debug.Assert(App.Current.MainWindow != null);
+                if (App.Current is null)
+                    return;
+                if (App.Current.MainWindow is null)
+                    return;
                 var dockingManager = App.Current.MainWindow.GetChildOfType<DockingManager>();
+                if (dockingManager is null)
+                    return;
                 var serializer = new XmlLayoutSerializer(dockingManager);
                 serializer.Serialize(Specifications.APP_LAYOUT_CONFIG_FILENAME);
             });
