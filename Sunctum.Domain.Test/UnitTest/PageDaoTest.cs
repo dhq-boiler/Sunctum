@@ -1,7 +1,6 @@
 ﻿
 
 using Homura.ORM;
-using Nito.AsyncEx;
 using NUnit.Framework;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Models;
