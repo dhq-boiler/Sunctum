@@ -199,11 +199,11 @@ namespace Sunctum.ViewModels
             });
             EncryptionStartingCommand = new DelegateCommand(async () =>
             {
-                await OpenEncryptionStartingDialog();
+                await OpenEncryptionStartingDialog().ConfigureAwait(false);
             });
             EncryptionContinuingCommand = new DelegateCommand(async () =>
             {
-                await LibraryVM.StartEncryption(Configuration.ApplicationConfiguration.Password);
+                await LibraryVM.StartEncryption(Configuration.ApplicationConfiguration.Password).ConfigureAwait(false);
             });
             ExitApplicationCommand = new DelegateCommand(() =>
             {
@@ -215,15 +215,15 @@ namespace Sunctum.ViewModels
             });
             ImportFilesCommand = new DelegateCommand(async () =>
             {
-                await OpenImportFileDialogThenImport();
+                await OpenImportFileDialogThenImport().ConfigureAwait(false);
             });
             ImportFoldersCommand = new DelegateCommand(async () =>
             {
-                await OpenImportFolderDialogThenImport();
+                await OpenImportFolderDialogThenImport().ConfigureAwait(false);
             });
             ImportLibraryCommand = new DelegateCommand(async () =>
             {
-                await OpenImportLibraryDialog();
+                await OpenImportLibraryDialog().ConfigureAwait(false);
             });
             LoadedCommand = new DelegateCommand(() =>
             {
@@ -253,7 +253,7 @@ namespace Sunctum.ViewModels
                 {
                     Terminate();
                     CloseAllTab();
-                    await Initialize(false);
+                    await Initialize(false).ConfigureAwait(false);
                 }
             });
             OpenSearchPaneCommand = new DelegateCommand(() =>
@@ -268,7 +268,7 @@ namespace Sunctum.ViewModels
             {
                 Terminate();
                 CloseAllTab();
-                await Initialize(false);
+                await Initialize(false).ConfigureAwait(false);
             });
             ShowPreferenceDialogCommand = new DelegateCommand(() =>
             {
@@ -337,10 +337,10 @@ namespace Sunctum.ViewModels
             SwitchLibraryCommand = new DelegateCommand<RecentOpenedLibrary>(async (p) =>
             {
                 Terminate();
-                await LibraryVM.Reset();
+                await LibraryVM.Reset().ConfigureAwait(false);
                 Configuration.ApplicationConfiguration.WorkingDirectory = p.Path;
                 Configuration.Save(Configuration.ApplicationConfiguration);
-                await Initialize(false);
+                await Initialize(false).ConfigureAwait(false);
             });
             ToggleDisplayAuthorPaneCommand = new DelegateCommand(() =>
             {
@@ -389,27 +389,27 @@ namespace Sunctum.ViewModels
             });
             UnencryptionStartingCommand = new DelegateCommand(async () =>
             {
-                await OpenUnencryptingDialog();
+                await OpenUnencryptingDialog().ConfigureAwait(false);
             });
             UpdateBookByteSizeAllCommand = new DelegateCommand(async () =>
             {
-                await LibraryVM.UpdateBookByteSizeAll();
+                await LibraryVM.UpdateBookByteSizeAll().ConfigureAwait(false);
             });
             UpdateBookByteSizeStillNullCommand = new DelegateCommand(async () =>
             {
-                await LibraryVM.UpdateBookByteSizeStillNull();
+                await LibraryVM.UpdateBookByteSizeStillNull().ConfigureAwait(false);
             });
             UpdateBookTagCommand = new DelegateCommand(async () =>
             {
-                await LibraryVM.UpdateBookTag();
+                await LibraryVM.UpdateBookTag().ConfigureAwait(false);
             });
             UpdateBookFingerPrintAllCommand = new DelegateCommand(async () =>
             {
-                await LibraryVM.UpdateBookFingerPrintAll();
+                await LibraryVM.UpdateBookFingerPrintAll().ConfigureAwait(false);
             });
             UpdateBookFingerPrintStillNullCommand = new DelegateCommand(async () =>
             {
-                await LibraryVM.UpdateBookFingerPrintStillNull();
+                await LibraryVM.UpdateBookFingerPrintStillNull().ConfigureAwait(false);
             });
             UpdateApplicationCommand = new DelegateCommand(() =>
             {
@@ -636,9 +636,9 @@ namespace Sunctum.ViewModels
 
             try
             {
-                await LibraryVM.Initialize();
-                await LibraryVM.UnlockIfLocked();
-                await LibraryVM.Reset();
+                await LibraryVM.Initialize().ConfigureAwait(false);
+                await LibraryVM.UnlockIfLocked().ConfigureAwait(false);
+                await LibraryVM.Reset().ConfigureAwait(false);
                 await LibraryVM.Load()
                     .ContinueWith(_ =>
                     {
@@ -671,7 +671,7 @@ namespace Sunctum.ViewModels
                         SetEvent();
 
                         NotifyActiveTabChanged();
-                    });
+                    }).ConfigureAwait(false);
             }
             catch (Exception e)
             {
@@ -1163,7 +1163,7 @@ namespace Sunctum.ViewModels
 
             if (dialog.ShowDialog() == true)
             {
-                await LibraryVM.ImportLibrary(dialog.FileName);
+                await LibraryVM.ImportLibrary(dialog.FileName).ConfigureAwait(false);
             }
         }
 
@@ -1228,7 +1228,7 @@ namespace Sunctum.ViewModels
 
             if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                await LibraryVM.ImportAsync(dialog.FileNames.ToArray());
+                await LibraryVM.ImportAsync(dialog.FileNames.ToArray()).ConfigureAwait(false);
             }
         }
 
@@ -1238,7 +1238,7 @@ namespace Sunctum.ViewModels
 
             if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                await LibraryVM.ImportAsync(new string[] { dialog.SelectedPath });
+                await LibraryVM.ImportAsync(new string[] { dialog.SelectedPath }).ConfigureAwait(false);
             }
         }
 
@@ -1248,7 +1248,7 @@ namespace Sunctum.ViewModels
 
             if (dialog.ShowDialog() == true)
             {
-                await LibraryVM.StartEncryption(dialog.Password);
+                await LibraryVM.StartEncryption(dialog.Password).ConfigureAwait(false);
             }
         }
 

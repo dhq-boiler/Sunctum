@@ -111,7 +111,7 @@ namespace Sunctum.Managers
 
         public async Task Reset()
         {
-            await TaskManager.Enqueue(LibraryResettingService.GetTaskSequence());
+            await TaskManager.Enqueue(LibraryResettingService.GetTaskSequence()).ConfigureAwait(false);
         }
 
         #region 初期化&ロード
@@ -119,7 +119,7 @@ namespace Sunctum.Managers
         public async Task Initialize()
         {
             TaskManager.ExceptionOccurred += TaskManager_ExceptionOccurred;
-            await TaskManager.Enqueue(LibraryInitializingService.GetTaskSequence());
+            await TaskManager.Enqueue(LibraryInitializingService.GetTaskSequence()).ConfigureAwait(false);
             TaskManager.ExceptionOccurred -= TaskManager_ExceptionOccurred;
         }
 
@@ -134,7 +134,7 @@ namespace Sunctum.Managers
         {
             try
             {
-                await TaskManager.Enqueue(LibraryLoadingService.GetTaskSequence());
+                await TaskManager.Enqueue(LibraryLoadingService.GetTaskSequence()).ConfigureAwait(false);
             }
             catch (FailedOpeningDatabaseException e)
             {
@@ -154,7 +154,7 @@ namespace Sunctum.Managers
             {
                 BookImportingService.MasterDirectory = Specifications.MASTER_DIRECTORY;
                 BookImportingService.ObjectPaths = objectPaths;
-                await TaskManager.Enqueue(BookImportingService.GetTaskSequence());
+                await TaskManager.Enqueue(BookImportingService.GetTaskSequence()).ConfigureAwait(false);
             }
             catch (NullReferenceException e)
             {
@@ -173,7 +173,7 @@ namespace Sunctum.Managers
                 string importLibraryDbFilename = Specifications.GenerateAbsoluteLibraryDbFilename(directory);
 
                 LibraryImportingService.ImportLibraryFilename = importLibraryDbFilename;
-                await TaskManager.Enqueue(LibraryImportingService.GetTaskSequence());
+                await TaskManager.Enqueue(LibraryImportingService.GetTaskSequence()).ConfigureAwait(false);
             }
             catch (Exception e)
             {
@@ -190,13 +190,13 @@ namespace Sunctum.Managers
         public async Task RemoveBooks(BookViewModel[] books)
         {
             BookRemovingService.TargetBooks = books;
-            await TaskManager.Enqueue(BookRemovingService.GetTaskSequence());
+            await TaskManager.Enqueue(BookRemovingService.GetTaskSequence()).ConfigureAwait(false);
         }
 
         public async Task RemovePages(PageViewModel[] pages)
         {
             PageRemovingService.TargetPages = pages;
-            await TaskManager.Enqueue(PageRemovingService.GetTaskSequence());
+            await TaskManager.Enqueue(PageRemovingService.GetTaskSequence()).ConfigureAwait(false);
         }
 
         #endregion //インターフェース
@@ -218,7 +218,7 @@ namespace Sunctum.Managers
         public async Task SaveBookContentsOrder(BookViewModel target)
         {
             PageOrderUpdatingService.Target = target;
-            await TaskManager.Enqueue(PageOrderUpdatingService.GetTaskSequence());
+            await TaskManager.Enqueue(PageOrderUpdatingService.GetTaskSequence()).ConfigureAwait(false);
         }
 
         #endregion //ソート
@@ -230,7 +230,7 @@ namespace Sunctum.Managers
             PageScrappingService.Title = title;
             PageScrappingService.TargetPages = pages;
             PageScrappingService.MasterDirectory = Specifications.MASTER_DIRECTORY;
-            await TaskManager.Enqueue(PageScrappingService.GetTaskSequence());
+            await TaskManager.Enqueue(PageScrappingService.GetTaskSequence()).ConfigureAwait(false);
         }
 
         #endregion //スクラップ
@@ -242,7 +242,7 @@ namespace Sunctum.Managers
             BookExportingService.TargetBooks = books;
             BookExportingService.DestinationDirectory = directory;
             BookExportingService.IncludeTag = tag;
-            await TaskManager.Enqueue(BookExportingService.GetTaskSequence());
+            await TaskManager.Enqueue(BookExportingService.GetTaskSequence()).ConfigureAwait(false);
         }
 
         #endregion //エクスポート
@@ -252,13 +252,13 @@ namespace Sunctum.Managers
         public async Task RemakeThumbnail(IEnumerable<BookViewModel> books)
         {
             BookThumbnailRemakingService.TargetBooks = books;
-            await TaskManager.Enqueue(BookThumbnailRemakingService.GetTaskSequence());
+            await TaskManager.Enqueue(BookThumbnailRemakingService.GetTaskSequence()).ConfigureAwait(false);
         }
 
         public async Task RemakeThumbnail(IEnumerable<PageViewModel> pages)
         {
             PageThumbnailRemakingService.TargetPages = pages;
-            await TaskManager.Enqueue(PageThumbnailRemakingService.GetTaskSequence());
+            await TaskManager.Enqueue(PageThumbnailRemakingService.GetTaskSequence()).ConfigureAwait(false);
         }
 
         #endregion //サムネイル再作成
@@ -268,13 +268,13 @@ namespace Sunctum.Managers
         public async Task UpdateBookByteSizeAll()
         {
             ByteSizeCalculatingService.Range = ByteSizeCalculating.UpdateRange.IsAll;
-            await TaskManager.Enqueue(ByteSizeCalculatingService.GetTaskSequence());
+            await TaskManager.Enqueue(ByteSizeCalculatingService.GetTaskSequence()).ConfigureAwait(false);
         }
 
         public async Task UpdateBookByteSizeStillNull()
         {
             ByteSizeCalculatingService.Range = ByteSizeCalculating.UpdateRange.IsStillNull;
-            await TaskManager.Enqueue(ByteSizeCalculatingService.GetTaskSequence());
+            await TaskManager.Enqueue(ByteSizeCalculatingService.GetTaskSequence()).ConfigureAwait(false);
         }
 
         #endregion //サイズ更新
@@ -284,20 +284,20 @@ namespace Sunctum.Managers
         public async Task UpdateBookFingerPrintAll()
         {
             BookHashingService.Range = BookHashing.UpdateRange.IsAll;
-            await TaskManager.Enqueue(BookHashingService.GetTaskSequence());
+            await TaskManager.Enqueue(BookHashingService.GetTaskSequence()).ConfigureAwait(false);
         }
 
         public async Task UpdateBookFingerPrintStillNull()
         {
             BookHashingService.Range = BookHashing.UpdateRange.IsStillNull;
-            await TaskManager.Enqueue(BookHashingService.GetTaskSequence());
+            await TaskManager.Enqueue(BookHashingService.GetTaskSequence()).ConfigureAwait(false);
         }
 
         #endregion //指紋更新
 
         public async Task UpdateBookTag()
         {
-            await TaskManager.Enqueue(BookTagInitializingService.GetTaskSequence());
+            await TaskManager.Enqueue(BookTagInitializingService.GetTaskSequence()).ConfigureAwait(false);
         }
 
         public IArrangedBookStorage CreateBookStorage()
@@ -308,7 +308,7 @@ namespace Sunctum.Managers
         public async Task StartEncryption(string password)
         {
             EncryptionStartingService.Password = password;
-            await TaskManager.Enqueue(EncryptionStartingService.GetTaskSequence());
+            await TaskManager.Enqueue(EncryptionStartingService.GetTaskSequence()).ConfigureAwait(false);
         }
 
         public async Task<bool> UnlockIfLocked()
@@ -321,7 +321,7 @@ namespace Sunctum.Managers
 
             try
             {
-                var password = await PasswordManager.SignInAsync(Environment.UserName);
+                var password = await PasswordManager.SignInAsync(Environment.UserName).ConfigureAwait(false);
                 if (password is not null)
                 {
                     Configuration.ApplicationConfiguration.Password = password;
@@ -360,7 +360,7 @@ namespace Sunctum.Managers
         public async Task StartUnencryption(string password)
         {
             UnencryptionStartingService.Password = password;
-            await TaskManager.Enqueue(UnencryptionStartingService.GetTaskSequence());
+            await TaskManager.Enqueue(UnencryptionStartingService.GetTaskSequence()).ConfigureAwait(false);
         }
     }
 }

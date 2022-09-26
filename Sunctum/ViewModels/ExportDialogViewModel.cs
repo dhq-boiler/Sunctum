@@ -37,7 +37,7 @@ namespace Sunctum.ViewModels
         {
             OKCommand.Subscribe(async _ =>
             {
-                await RunExport();
+                await RunExport().ConfigureAwait(false);
                 RequestClose.Invoke(new DialogResult(ButtonResult.OK));
             })
             .AddTo(_disposables);
@@ -88,7 +88,7 @@ namespace Sunctum.ViewModels
 
         internal async Task RunExport()
         {
-            await Library.ExportBooks(_willExportBooks, OutputDirectory, IncludeTabIntoFolderName);
+            await Library.ExportBooks(_willExportBooks, OutputDirectory, IncludeTabIntoFolderName).ConfigureAwait(false);
         }
 
         internal void ShowOpenFileDialog()

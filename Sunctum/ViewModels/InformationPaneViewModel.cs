@@ -83,7 +83,7 @@ namespace Sunctum.ViewModels
             });
             TagPlusCommand = new DelegateCommand<string>(async text =>
             {
-                await TagManager.AddImageTagToSelectedObject(text);
+                await TagManager.AddImageTagToSelectedObject(text).ConfigureAwait(false);
             });
             TagMinusCommand = new DelegateCommand(() =>
             {
