@@ -15,7 +15,6 @@ using Unity;
 
 namespace Sunctum.Domain.Test.UnitTest
 {
-    [Ignore("テストが永遠に終わらない")]
     [Category("UnitTest")]
     [TestFixture]
     public class BookFacadeTest : TestSession
@@ -143,6 +142,8 @@ namespace Sunctum.Domain.Test.UnitTest
         public void OneTimeTearDown()
         {
             s_libManager.Dispose();
+
+            ConnectionManager.DisposeAllDebris();
 
             GC.Collect();
 

@@ -14,7 +14,6 @@ using Unity;
 
 namespace Sunctum.Domain.Test.UnitTest
 {
-    [Ignore("テストが永遠に終わらない")]
     [Category("UnitTest")]
     public class PageOrderingTest : TestSession
     {
@@ -122,6 +121,8 @@ namespace Sunctum.Domain.Test.UnitTest
 
             var mwvm = Container.Resolve<IMainWindowViewModel>();
             mwvm.Close();
+
+            ConnectionManager.DisposeAllDebris();
 
             GC.Collect();
 
