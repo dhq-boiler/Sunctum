@@ -52,8 +52,8 @@ namespace Sunctum.Domain.Test.UnitTest
 
             AsyncContext.Run(async () =>
             {
-                await mwvm.Initialize(true, false);
-                await _libManager.ImportAsync(new string[] { Path.Combine(TestContext.CurrentContext.TestDirectory, "TestData", "minecraft_screenshots") });
+                await mwvm.Initialize(true, false).ConfigureAwait(false);
+                await _libManager.ImportAsync(new string[] { Path.Combine(TestContext.CurrentContext.TestDirectory, "TestData", "minecraft_screenshots") }).ConfigureAwait(false);
             });
 
             _libManager.TaskManager.WaitUntilProcessAll();

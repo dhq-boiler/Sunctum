@@ -46,8 +46,8 @@ namespace Sunctum.Domain.Test.UnitTest
 
             AsyncContext.Run(async () =>
             {
-                await _libManager.Initialize();
-                await _libManager.Load();
+                await _libManager.Initialize().ConfigureAwait(false);
+                await _libManager.Load().ConfigureAwait(false);
             });
         }
 

@@ -45,9 +45,9 @@ namespace Sunctum.Domain.Test.UnitTest
 
             AsyncContext.Run(async () =>
             {
-                await _libManager.Initialize();
-                await _libManager.Load();
-                await _libManager.ImportAsync(new string[] { Path.Combine(TestContext.CurrentContext.TestDirectory, "TestData", "minecraft_screenshots") });
+                await _libManager.Initialize().ConfigureAwait(false);
+                await _libManager.Load().ConfigureAwait(false);
+                await _libManager.ImportAsync(new string[] { Path.Combine(TestContext.CurrentContext.TestDirectory, "TestData", "minecraft_screenshots") }).ConfigureAwait(false);
             });
         }
 
@@ -83,10 +83,10 @@ namespace Sunctum.Domain.Test.UnitTest
             AsyncContext.Run(async () =>
             {
                 //入れ替えた結果をDBに書き込み
-                await _libManager.SaveBookContentsOrder(newOrderedBook);
+                await _libManager.SaveBookContentsOrder(newOrderedBook).ConfigureAwait(false);
 
                 //再読み込み
-                await _libManager.Load();
+                await _libManager.Load().ConfigureAwait(false);
             });
 
             book = _libManager.BookSource.First();
