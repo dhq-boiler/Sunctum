@@ -40,9 +40,14 @@ steps:
 #     publishTestResults: true
 #     projects: '$(TargetSolution)'
 
-- task: CmdLine@2
+#- task: CmdLine@2
+#  inputs:
+#    script: 'dotnet test --configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura -- RunConfiguration.DisableAppDomain=true'
+
+- task: VSTest@2
   inputs:
-    script: 'dotnet test --configuration $(BuildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura -- RunConfiguration.DisableAppDomain=true'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
 
 # Archive files
 # Compress files into .7z, .tar.gz, or .zip
