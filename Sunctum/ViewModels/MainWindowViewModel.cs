@@ -87,6 +87,8 @@ namespace Sunctum.ViewModels
 
         public ICommand DisplaySideBySideCommand { get; set; }
 
+        public ICommand RemoveHistoryCommand { get; set; }
+
         public ICommand DetailsCommand { get; set; }
 
         public ICommand EncryptionStartingCommand { get; set; }
@@ -192,6 +194,12 @@ namespace Sunctum.ViewModels
             DisplaySideBySideCommand = new DelegateCommand(() =>
             {
                 ActiveDocumentViewModel.BookCabinet.DisplayType = Domain.Logic.DisplayType.DisplayType.SideBySide;
+            });
+            RemoveHistoryCommand = new DelegateCommand<RecentOpenedLibrary>(p =>
+            {
+                var dao = DataAccessManager.AppDao.Build<RecentOpenedLibraryDao>();
+                dao.Delete(new Dictionary<string, object>() { { "Path", p.Path } });
+                LibraryVM.RecentOpenedLibraryList.Remove(p);
             });
             DetailsCommand = new DelegateCommand(() =>
             {
@@ -1039,7 +1047,7 @@ namespace Sunctum.ViewModels
         /// </summary>
         public void SaveLayout()
         {
-            Dispatcher.CurrentDispatcher.Invoke(() =>
+            Dispatcher.CurrentDispatcher.InvokeAsync(() =>
             {
                 if (App.Current is null)
                     return;
