@@ -3,6 +3,7 @@
 using Homura.Core;
 using Homura.ORM;
 using NLog;
+using Sunctum.Domain.Bridge;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Infrastructure.Data.Yaml;
 using System;
@@ -301,23 +302,19 @@ namespace Sunctum.Domain.Models
                 if (ConnectionManager.DefaultConnection is null)
                     return false;
                 var authorDao = new AuthorDao();
-                var authors = authorDao.FindBy(new System.Collections.Generic.Dictionary<string, object>() { { "NameIsEncrypted", false } });
+                var authors = authorDao.FindBy(new System.Collections.Generic.Dictionary<string, object>() { { "NameIsEncrypted", false } }).ToViewModel();
                 if (authors.Count() > 0)
                     return true;
                 var bookDao = new BookDao();
-                var books = bookDao.FindBy(new System.Collections.Generic.Dictionary<string, object>() { { "TitleIsEncrypted", false } });
+                var books = bookDao.FindBy(new System.Collections.Generic.Dictionary<string, object>() { { "TitleIsEncrypted", false } }).ToViewModel();
                 if (books.Count() > 0)
                     return true;
                 var pageDao = new PageDao();
-                var pages = pageDao.FindBy(new System.Collections.Generic.Dictionary<string, object>() { { "TitleIsEncrypted", false } });
+                var pages = pageDao.FindBy(new System.Collections.Generic.Dictionary<string, object>() { { "TitleIsEncrypted", false } }).ToViewModel();
                 if (pages.Count() > 0)
                     return true;
-                var imageDao = new ImageDao();
-                var images = imageDao.FindBy(new System.Collections.Generic.Dictionary<string, object>() { { "TitleIsEncrypted", false } });
-                if (images.Count() > 0)
-                    return true;
-                images = imageDao.FindBy(new System.Collections.Generic.Dictionary<string, object>() { { "IsEncrypted", false } });
-                if (images.Count() > 0)
+                pages = pageDao.FindAll().ToViewModel();
+                if (pages.Any(x => x.Image is not null && (!x.Image.TitleIsEncrypted.Value || !x.Image.IsEncrypted)))
                     return true;
                 return false;
             }
