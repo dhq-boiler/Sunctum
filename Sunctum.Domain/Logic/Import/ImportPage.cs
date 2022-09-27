@@ -70,7 +70,7 @@ namespace Sunctum.Domain.Logic.Import
 
             if (_isContent && Configuration.ApplicationConfiguration.LibraryIsEncrypted)
             {
-                ret.Add(new System.Threading.Tasks.Task(() =>
+                ret.Add(new System.Threading.Tasks.Task(async () =>
                 {
                     try
                     {
@@ -80,7 +80,12 @@ namespace Sunctum.Domain.Logic.Import
                             Encryptor.Encrypt(InsertedImage, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{InsertedImage.ID.ToString().Substring(0, 2)}\\{InsertedImage.ID}{System.IO.Path.GetExtension(InsertedImage.AbsoluteMasterPath)}", Configuration.ApplicationConfiguration.Password, fileManager);
                             Encryptor.DeleteOriginal(GeneratedPage, fileManager);
                             InsertedImage.IsEncrypted = true;
+                            var titlePlainText = InsertedImage.Title;
+                            InsertedImage.Title = await Encryptor.EncryptString(InsertedImage.Title, Configuration.ApplicationConfiguration.Password);
+                            InsertedImage.TitleIsEncrypted.Value = true;
                             ImageFacade.Update(InsertedImage);
+                            InsertedImage.Title = titlePlainText;
+                            InsertedImage.TitleIsDecrypted.Value = true;
                             scope.Complete();
                         }
                     }
@@ -102,10 +107,16 @@ namespace Sunctum.Domain.Logic.Import
             ImageFacade.Insert(InsertedImage, dataOpUnit);
         }
 
-        private void CreateTaskToInsertPage(string entryName, DataOperationUnit dataOpUnit)
+        private async void CreateTaskToInsertPage(string entryName, DataOperationUnit dataOpUnit)
         {
             Guid pageID = Guid.NewGuid();
+            var plainText = entryName;
             GeneratedPage = new PageViewModel(pageID, entryName);
+            if (Configuration.ApplicationConfiguration.LibraryIsEncrypted)
+            {
+                GeneratedPage.Title = await Encryptor.EncryptString(plainText, Configuration.ApplicationConfiguration.Password);
+                GeneratedPage.TitleIsEncrypted.Value = true;
+            }
             GeneratedPage.Configuration = Configuration.ApplicationConfiguration;
             GeneratedPage.ImageID = InsertedImage.ID;
             GeneratedPage.BookID = BookID;
@@ -113,6 +124,11 @@ namespace Sunctum.Domain.Logic.Import
             GeneratedPage.Image = InsertedImage;
             GeneratedPage.FingerPrint = FingerPrint = Hash.Generate(GeneratedPage);
             PageFacade.Insert(GeneratedPage, dataOpUnit);
+            if (Configuration.ApplicationConfiguration.LibraryIsEncrypted)
+            {
+                GeneratedPage.Title = plainText;
+                GeneratedPage.TitleIsDecrypted.Value = true;
+            }
         }
 
         private void CreateTaskToCopyImage(string Path, string source, string destination)

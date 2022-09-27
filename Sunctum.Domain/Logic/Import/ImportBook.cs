@@ -4,6 +4,7 @@ using Homura.ORM;
 using NLog;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Exceptions;
+using Sunctum.Domain.Logic.Encrypt;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.Util;
@@ -229,8 +230,7 @@ namespace Sunctum.Domain.Logic.Import
             {
                 return;
             }
-
-            //Application.Current.Dispatcher.InvokeAsync(() =>
+            
             Dispatcher.CurrentDispatcher.InvokeAsync(() =>
             {
                 var tg = new Async.ThumbnailGenerating();
@@ -244,10 +244,21 @@ namespace Sunctum.Domain.Logic.Import
             s_logger.Info($"Imported [{AuthorName}]{Title}");
         }
 
-        private void CreateTaskToInsertAuthor(string name, DataOperationUnit dataOpUnit)
+        private async void CreateTaskToInsertAuthor(string name, DataOperationUnit dataOpUnit)
         {
-            var author = new AuthorViewModel(Guid.NewGuid(), name);
+            var plainText = name;
+            var author = new AuthorViewModel(Guid.NewGuid(), plainText);
+            if (Configuration.ApplicationConfiguration.LibraryIsEncrypted)
+            {
+                author.Name = await Encryptor.EncryptString(plainText, Configuration.ApplicationConfiguration.Password);
+                author.NameIsEncrypted.Value = true;
+            }
             author = AuthorFacade.InsertIfNotExists(author, dataOpUnit);
+            if (Configuration.ApplicationConfiguration.LibraryIsEncrypted)
+            {
+                author.Name = plainText;
+                author.NameIsDecrypted.Value = true;
+            }
             _AuthorID = author.ID;
             Application.Current.Dispatcher.Invoke(() =>
             {
@@ -259,15 +270,29 @@ namespace Sunctum.Domain.Logic.Import
             });
         }
 
-        protected void CreateTaskToInsertBook(string entryName, string title, DataOperationUnit dataOpUnit)
+        protected async void CreateTaskToInsertBook(string entryName, string title, DataOperationUnit dataOpUnit)
         {
             _book = new BookViewModel(Guid.Parse(entryName), entryName);
             _book.Configuration = Configuration.ApplicationConfiguration;
             _book.Title = title;
+
+            var plainText = title;
+            if (Configuration.ApplicationConfiguration.LibraryIsEncrypted)
+            {
+                _book.Title = await Encryptor.EncryptString(plainText, Configuration.ApplicationConfiguration.Password);
+                _book.TitleIsEncrypted.Value = true;
+            }
+
             if (_AuthorID != Guid.Empty)
                 _book.AuthorID = _AuthorID;
 
             BookFacade.Insert(_book, dataOpUnit);
+
+            if (Configuration.ApplicationConfiguration.LibraryIsEncrypted)
+            {
+                _book.Title = plainText;
+                _book.TitleIsDecrypted.Value = true;
+            }
 
             _children.ForEach(c =>
             {
