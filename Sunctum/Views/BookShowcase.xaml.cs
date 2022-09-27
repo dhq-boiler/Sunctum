@@ -229,7 +229,7 @@ namespace Sunctum.Views
             {
                 Contents_ListView.ItemTemplate = (DataTemplate)(this.Resources["Contents_ListViewItem_DataTemplate"]);
                 var viewModel = (DocumentViewModelBase)DataContext;
-                await viewModel.SaveOpenedBookContentsOrder().ConfigureAwait(false);
+                await viewModel.SaveOpenedBookContentsOrder(); //ConfigureAwait(false)を付けない
                 SwitchSorting_Button.Content = "Sort";
                 SortingBookContents = false;
             }
