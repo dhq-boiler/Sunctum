@@ -177,29 +177,29 @@
                                             <Style.Triggers>
                                                 <MultiDataTrigger>
                                                     <MultiDataTrigger.Conditions>
-                                                        <Condition Binding="{Binding Configuration.LibraryIsEncrypted}" Value="True" />
-                                                        <Condition Binding="{Binding Configuration.LibraryEncryptionIsContinuing}" Value="True" />
+                                                        <Condition Binding="{Binding Configuration.LibraryIsEncrypted, UpdateSourceTrigger=PropertyChanged}" Value="True" />
+                                                        <Condition Binding="{Binding Configuration.LibraryEncryptionIsContinuing, UpdateSourceTrigger=PropertyChanged}" Value="True" />
                                                     </MultiDataTrigger.Conditions>
                                                     <Setter Property="Visibility" Value="Visible" />
                                                 </MultiDataTrigger>
                                                 <MultiDataTrigger>
                                                     <MultiDataTrigger.Conditions>
-                                                        <Condition Binding="{Binding Configuration.LibraryIsEncrypted}" Value="False" />
-                                                        <Condition Binding="{Binding Configuration.LibraryEncryptionIsContinuing}" Value="True" />
+                                                        <Condition Binding="{Binding Configuration.LibraryIsEncrypted, UpdateSourceTrigger=PropertyChanged}" Value="False" />
+                                                        <Condition Binding="{Binding Configuration.LibraryEncryptionIsContinuing, UpdateSourceTrigger=PropertyChanged}" Value="True" />
                                                     </MultiDataTrigger.Conditions>
                                                     <Setter Property="Visibility" Value="Collapsed" />
                                                 </MultiDataTrigger>
                                                 <MultiDataTrigger>
                                                     <MultiDataTrigger.Conditions>
-                                                        <Condition Binding="{Binding Configuration.LibraryIsEncrypted}" Value="True" />
-                                                        <Condition Binding="{Binding Configuration.LibraryEncryptionIsContinuing}" Value="False" />
+                                                        <Condition Binding="{Binding Configuration.LibraryIsEncrypted, UpdateSourceTrigger=PropertyChanged}" Value="True" />
+                                                        <Condition Binding="{Binding Configuration.LibraryEncryptionIsContinuing, UpdateSourceTrigger=PropertyChanged}" Value="False" />
                                                     </MultiDataTrigger.Conditions>
                                                     <Setter Property="Visibility" Value="Collapsed" />
                                                 </MultiDataTrigger>
                                                 <MultiDataTrigger>
                                                     <MultiDataTrigger.Conditions>
-                                                        <Condition Binding="{Binding Configuration.LibraryIsEncrypted}" Value="False" />
-                                                        <Condition Binding="{Binding Configuration.LibraryEncryptionIsContinuing}" Value="False" />
+                                                        <Condition Binding="{Binding Configuration.LibraryIsEncrypted, UpdateSourceTrigger=PropertyChanged}" Value="False" />
+                                                        <Condition Binding="{Binding Configuration.LibraryEncryptionIsContinuing, UpdateSourceTrigger=PropertyChanged}" Value="False" />
                                                     </MultiDataTrigger.Conditions>
                                                     <Setter Property="Visibility" Value="Collapsed" />
                                                 </MultiDataTrigger>
