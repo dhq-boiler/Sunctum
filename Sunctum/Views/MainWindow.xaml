@@ -134,6 +134,106 @@
                                         <Style TargetType="MenuItem">
                                             <Setter Property="Command" Value="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=DataContext.SwitchLibraryCommand}" />
                                             <Setter Property="CommandParameter" Value="{Binding}" />
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="MenuItem">
+                                                        <ControlTemplate.Resources>
+                                                            <!--  Control colors.  -->
+                                                            <Color x:Key="WindowColor">#FFE8EDF9</Color>
+                                                            <Color x:Key="ContentAreaColorLight">#FFC5CBF9</Color>
+                                                            <Color x:Key="ContentAreaColorDark">#FF7381F9</Color>
+
+                                                            <Color x:Key="DisabledControlLightColor">#FFE8EDF9</Color>
+                                                            <Color x:Key="DisabledControlDarkColor">#FFC5CBF9</Color>
+                                                            <Color x:Key="DisabledForegroundColor">#FF888888</Color>
+
+                                                            <Color x:Key="SelectedBackgroundColor">#FFC5CBF9</Color>
+                                                            <Color x:Key="SelectedUnfocusedColor">#FFDDDDDD</Color>
+
+                                                            <Color x:Key="ControlLightColor">White</Color>
+                                                            <Color x:Key="ControlMediumColor">#FF7381F9</Color>
+                                                            <Color x:Key="ControlDarkColor">#FF211AA9</Color>
+
+                                                            <Color x:Key="ControlMouseOverColor">#FF3843C4</Color>
+                                                            <Color x:Key="ControlPressedColor">#FF211AA9</Color>
+
+
+                                                            <Color x:Key="GlyphColor">#FF444444</Color>
+                                                            <Color x:Key="GlyphMouseOver">sc#1, 0.004391443, 0.002428215, 0.242281124</Color>
+
+                                                            <!--  Border colors  -->
+                                                            <Color x:Key="BorderLightColor">#FFCCCCCC</Color>
+                                                            <Color x:Key="BorderMediumColor">#FF888888</Color>
+                                                            <Color x:Key="BorderDarkColor">#FF444444</Color>
+
+                                                            <Color x:Key="PressedBorderLightColor">#FF888888</Color>
+                                                            <Color x:Key="PressedBorderDarkColor">#FF444444</Color>
+
+                                                            <Color x:Key="DisabledBorderLightColor">#FFAAAAAA</Color>
+                                                            <Color x:Key="DisabledBorderDarkColor">#FF888888</Color>
+
+                                                            <Color x:Key="DefaultBorderBrushDarkColor">Black</Color>
+
+                                                            <!--  Control-specific resources.  -->
+                                                            <Color x:Key="HeaderTopColor">#FFC5CBF9</Color>
+                                                            <Color x:Key="DatagridCurrentCellBorderColor">Black</Color>
+                                                            <Color x:Key="SliderTrackDarkColor">#FFC5CBF9</Color>
+
+                                                            <Color x:Key="NavButtonFrameColor">#FF3843C4</Color>
+                                                        </ControlTemplate.Resources>
+                                                        <DockPanel x:Name="item" Background="Transparent">
+                                                            <DockPanel DockPanel.Dock="Right">
+                                                                <Button
+                                                                    Margin="5"
+                                                                    Command="{Binding DataContext.RemoveHistoryCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:MainWindow}}"
+                                                                    CommandParameter="{Binding}"
+                                                                    Content="Remove">
+                                                                    <Button.Template>
+                                                                        <ControlTemplate TargetType="Button">
+                                                                            <Border x:Name="item"
+                                                                                    CornerRadius="3"
+                                                                                    BorderBrush="Gray"
+                                                                                    BorderThickness="1">
+                                                                                <ContentPresenter Content="{TemplateBinding Content}" />
+                                                                            </Border>
+                                                                            <ControlTemplate.Triggers>
+                                                                                <Trigger Property="IsMouseOver" Value="true">
+                                                                                    <Setter TargetName="item" Property="Background">
+                                                                                        <Setter.Value>
+                                                                                            <SolidColorBrush Color="#85BFEB" />
+                                                                                        </Setter.Value>
+                                                                                    </Setter>
+                                                                                </Trigger>
+                                                                                <Trigger Property="IsEnabled" Value="false">
+                                                                                    <Setter Property="Foreground" Value="{StaticResource DisabledForegroundBrush}" />
+                                                                                </Trigger>
+                                                                            </ControlTemplate.Triggers>
+                                                                        </ControlTemplate>
+                                                                    </Button.Template>
+                                                                </Button>
+                                                            </DockPanel>
+                                                            <TextBlock
+                                                                Margin="40,0,0,0"
+                                                                HorizontalAlignment="Left"
+                                                                VerticalAlignment="Center"
+                                                                Background="Transparent"
+                                                                Text="{Binding Path}" />
+                                                        </DockPanel>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsHighlighted" Value="true">
+                                                                <Setter TargetName="item" Property="Background">
+                                                                    <Setter.Value>
+                                                                        <SolidColorBrush Color="#C0DDEB" />
+                                                                    </Setter.Value>
+                                                                </Setter>
+                                                            </Trigger>
+                                                            <Trigger Property="IsEnabled" Value="false">
+                                                                <Setter Property="Foreground" Value="{StaticResource DisabledForegroundBrush}" />
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
                                         </Style>
                                     </MenuItem.ItemContainerStyle>
                                 </MenuItem>
