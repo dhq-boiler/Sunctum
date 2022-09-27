@@ -13,7 +13,6 @@ using Unity;
 
 namespace Sunctum.Domain.Test.UnitTest
 {
-    [Ignore("テストが終わらない")]
     [Category("UnitTest")]
     public class LibraryTest : TestSession
     {
@@ -41,6 +40,11 @@ namespace Sunctum.Domain.Test.UnitTest
             }
 
             _dataPath = Path.Combine(_dirPath, "data");
+
+            if (!Directory.Exists(_dataPath))
+            {
+                Directory.CreateDirectory(_dataPath);
+            }
 
             var mwvm = Container.Resolve<IMainWindowViewModel>();
             mwvm.ManageAppDB();
