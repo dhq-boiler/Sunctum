@@ -20,6 +20,7 @@ namespace Sunctum.Domain.Test.UnitTest
     public class BookFacadeTest : TestSession
     {
         private static ILibrary s_libManager;
+        private static Guid _instanceId = Guid.NewGuid();
 
         private string _filePath;
         private readonly BookViewModel[] _books =
@@ -42,7 +43,7 @@ namespace Sunctum.Domain.Test.UnitTest
         public async Task OneTimeSetUp()
         {
             _filePath = Path.Combine(TestContext.CurrentContext.TestDirectory, "BookFacadeTest.db");
-            ConnectionManager.SetDefaultConnection($"Data Source={_filePath}", typeof(SQLiteConnection));
+            ConnectionManager.SetDefaultConnection(_instanceId, $"Data Source={_filePath}", typeof(SQLiteConnection));
 
             s_libManager = Container.Resolve<ILibrary>();
             await s_libManager.Initialize().ConfigureAwait(false);
@@ -140,7 +141,7 @@ namespace Sunctum.Domain.Test.UnitTest
         {
             s_libManager.Dispose();
 
-            ConnectionManager.DisposeAllDebris();
+            ConnectionManager.DisposeDebris(_instanceId);
 
             GC.Collect();
 

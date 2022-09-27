@@ -96,9 +96,9 @@ namespace Sunctum
             containerRegistry.RegisterSingleton<IValueConverter, TagSortingToBool>("TagSortingToBool");
             containerRegistry.RegisterSingleton<IValueConverter, AuthorSortingToBool>("AuthorSortingToBool");
             containerRegistry.RegisterSingleton<IDataAccessManager, DataAccessManager>();
-            containerRegistry.RegisterInstance<IDaoBuilder>(new DaoBuilder(new Connection(ConnectionStringBuilder.Build(Specifications.APP_DB_FILENAME), typeof(SQLiteConnection))), "AppDao");
-            containerRegistry.RegisterInstance<IDaoBuilder>(new DaoBuilder(new Connection(Specifications.GenerateConnectionString(Configuration.ApplicationConfiguration.WorkingDirectory), typeof(SQLiteConnection))), "WorkingDao");
-            containerRegistry.RegisterInstance<IDaoBuilder>(new DaoBuilder(new Connection(ConnectionStringBuilder.Build(Specifications.VC_DB_FILENAME), typeof(SQLiteConnection))), "VcDao");
+            containerRegistry.RegisterInstance<IDaoBuilder>(new DaoBuilder(new Connection(Guid.Parse("9056E8CF-745D-4BCC-AEB9-14B1D1B40F37"), ConnectionStringBuilder.Build(Specifications.APP_DB_FILENAME), typeof(SQLiteConnection))), "AppDao");
+            containerRegistry.RegisterInstance<IDaoBuilder>(new DaoBuilder(new Connection(Guid.Parse("9056E8CF-745D-4BCC-AEB9-14B1D1B40F37"), Specifications.GenerateConnectionString(Configuration.ApplicationConfiguration.WorkingDirectory), typeof(SQLiteConnection))), "WorkingDao");
+            containerRegistry.RegisterInstance<IDaoBuilder>(new DaoBuilder(new Connection(Guid.Parse("9056E8CF-745D-4BCC-AEB9-14B1D1B40F37"), ConnectionStringBuilder.Build(Specifications.VC_DB_FILENAME), typeof(SQLiteConnection))), "VcDao");
 
             containerRegistry.RegisterDialog<ChangeStar, ChangeStarViewModel>();
             containerRegistry.RegisterDialog<BookProperty, BookPropertyDialogViewModel>();

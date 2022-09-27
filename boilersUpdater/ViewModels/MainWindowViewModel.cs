@@ -89,7 +89,7 @@ namespace boilersUpdater.ViewModels
 
         public MainWindowViewModel()
         {
-            ConnectionManager.SetDefaultConnection($"Data Source={Path.Combine(Directory.GetCurrentDirectory(), "vc.db")}", typeof(SQLiteConnection));
+            ConnectionManager.SetDefaultConnection(Guid.Parse("9056E8CF-745D-4BCC-AEB9-14B1D1B40F37"), $"Data Source={Path.Combine(Directory.GetCurrentDirectory(), "vc.db")}", typeof(SQLiteConnection));
 
             DataVersionManager dvManager = new DataVersionManager();
             dvManager.CurrentConnection = ConnectionManager.DefaultConnection;

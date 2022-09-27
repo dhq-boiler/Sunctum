@@ -21,6 +21,7 @@ namespace Sunctum.Domain.Test.UnitTest
     {
         private static ILibrary s_libManager;
         private string _filePath;
+        private static Guid _instanceId = Guid.NewGuid();
 
         private readonly AuthorViewModel[] _authors =
         {
@@ -50,7 +51,7 @@ namespace Sunctum.Domain.Test.UnitTest
         public async Task OneTimeSetUp()
         {
             _filePath = Path.Combine(TestContext.CurrentContext.TestDirectory, "AuthorFacadeTest.db");
-            ConnectionManager.SetDefaultConnection($"Data Source={_filePath}", typeof(SQLiteConnection));
+            ConnectionManager.SetDefaultConnection(_instanceId, $"Data Source={_filePath}", typeof(SQLiteConnection));
 
             s_libManager = Container.Resolve<ILibrary>();
             await s_libManager.Initialize().ConfigureAwait(false);
@@ -178,7 +179,7 @@ namespace Sunctum.Domain.Test.UnitTest
         {
             s_libManager.Dispose();
 
-            ConnectionManager.DisposeAllDebris();
+            ConnectionManager.DisposeDebris(_instanceId);
 
             GC.Collect();
 
