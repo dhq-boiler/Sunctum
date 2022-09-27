@@ -12,7 +12,6 @@ using Unity;
 
 namespace Sunctum.Domain.Test.UnitTest
 {
-    [Ignore("テストが終わらない")]
     [Category("UnitTest")]
     public class LibraryTest : TestSession
     {
@@ -53,8 +52,6 @@ namespace Sunctum.Domain.Test.UnitTest
 
             await mwvm.Initialize(true, false).ConfigureAwait(false);
             await _libManager.ImportAsync(new string[] { Path.Combine(TestContext.CurrentContext.TestDirectory, "TestData", "minecraft_screenshots") }).ConfigureAwait(false);
-
-            //_libManager.TaskManager.WaitUntilProcessAll();
 
             Assert.That(home.BookCabinet.OnStage[0], Has.Property("Title").Contains("minecraft"));
         }
