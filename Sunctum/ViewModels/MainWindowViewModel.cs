@@ -632,7 +632,7 @@ namespace Sunctum.ViewModels
             RecordVersionControlIfFirstLaunch();
 
             Configuration.ApplicationConfiguration.ConnectionString = Specifications.GenerateConnectionString(Configuration.ApplicationConfiguration.WorkingDirectory);
-            ConnectionManager.SetDefaultConnection(Configuration.ApplicationConfiguration.ConnectionString, typeof(SQLiteConnection));
+            ConnectionManager.SetDefaultConnection(Guid.Parse("9056E8CF-745D-4BCC-AEB9-14B1D1B40F37"), Configuration.ApplicationConfiguration.ConnectionString, typeof(SQLiteConnection));
 
             try
             {
@@ -1081,6 +1081,7 @@ namespace Sunctum.ViewModels
         public void Close()
         {
             SaveLayout();
+            ConnectionManager.DisposeDebris(Guid.Parse("9056E8CF-745D-4BCC-AEB9-14B1D1B40F37"));
             if (_disposable is not null && !_disposable.IsDisposed)
             {
                 _disposable.Dispose();

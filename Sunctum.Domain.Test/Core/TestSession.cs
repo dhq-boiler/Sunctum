@@ -11,6 +11,7 @@ using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using Sunctum.Managers;
 using Sunctum.ViewModels;
+using System;
 using System.Data.SQLite;
 using System.Windows.Data;
 using Unity;
@@ -19,12 +20,13 @@ namespace Sunctum.Domain.Test.Core
 {
     public abstract class TestSession
     {
+        private static Guid _instanceId = Guid.NewGuid();
         public UnityContainer Container { get; private set; }
 
         public abstract string GetTestDirectory();
 
         [OneTimeSetUp]
-        public void OneTimeSetup()
+        public void OneTimeSetUp()
         {
             var config = new Configuration();
             config.WorkingDirectory = GetTestDirectory();
@@ -70,16 +72,17 @@ namespace Sunctum.Domain.Test.Core
             Container.RegisterType<IValueConverter, TagSortingToBool>("TagSortingToBool");
             Container.RegisterType<IValueConverter, AuthorSortingToBool>("AuthorSortingToBool");
             Container.RegisterType<IDataAccessManager, DataAccessManager>();
-            Container.RegisterInstance<IDaoBuilder>("AppDao", new DaoBuilder(new Connection(ConnectionStringBuilder.Build(Specifications.APP_DB_FILENAME), typeof(SQLiteConnection))));
-            Container.RegisterInstance<IDaoBuilder>("WorkingDao", new DaoBuilder(new Connection(Specifications.GenerateConnectionString(Configuration.ApplicationConfiguration.WorkingDirectory), typeof(SQLiteConnection))));
-            Container.RegisterInstance<IDaoBuilder>("VcDao", new DaoBuilder(new Connection(ConnectionStringBuilder.Build(Specifications.VC_DB_FILENAME), typeof(SQLiteConnection))));
+            Container.RegisterInstance<IDaoBuilder>("AppDao", new DaoBuilder(new Connection(_instanceId, ConnectionStringBuilder.Build(Specifications.APP_DB_FILENAME), typeof(SQLiteConnection))));
+            Container.RegisterInstance<IDaoBuilder>("WorkingDao", new DaoBuilder(new Connection(_instanceId, Specifications.GenerateConnectionString(Configuration.ApplicationConfiguration.WorkingDirectory), typeof(SQLiteConnection))));
+            Container.RegisterInstance<IDaoBuilder>("VcDao", new DaoBuilder(new Connection(_instanceId, ConnectionStringBuilder.Build(Specifications.VC_DB_FILENAME), typeof(SQLiteConnection))));
             Container.RegisterSingleton<ISelectManager, SelectManager>();
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            ConnectionManager.DisposeAllDebris();
+            ConnectionManager.DisposeDebris(_instanceId);
+            Container.Dispose();
         }
     }
 }

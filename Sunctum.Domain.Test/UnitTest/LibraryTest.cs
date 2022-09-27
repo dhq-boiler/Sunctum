@@ -19,13 +19,14 @@ namespace Sunctum.Domain.Test.UnitTest
         private string _dirPath;
         private string _dataPath;
         private ILibrary _libManager;
+        private static Guid _instanceId = Guid.NewGuid();
 
         [Test]
         public async Task 検索中インポート()
         {
             _dirPath = Path.Combine(TestContext.CurrentContext.TestDirectory, "PageOrderingTest");
             _filePath = Path.Combine(_dirPath, "library.db");
-            ConnectionManager.SetDefaultConnection($"Data Source={_filePath}", typeof(SQLiteConnection));
+            ConnectionManager.SetDefaultConnection(_instanceId, $"Data Source={_filePath}", typeof(SQLiteConnection));
 
             if (Directory.Exists(_dirPath))
             {
@@ -63,7 +64,7 @@ namespace Sunctum.Domain.Test.UnitTest
             var mwvm = Container.Resolve<IMainWindowViewModel>();
             mwvm.Close();
 
-            ConnectionManager.DisposeAllDebris();
+            ConnectionManager.DisposeDebris(_instanceId);
 
             GC.Collect();
 

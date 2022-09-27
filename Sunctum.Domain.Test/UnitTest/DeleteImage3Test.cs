@@ -5,6 +5,7 @@ using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Data.Dao.Migration.Plan;
 using Sunctum.Domain.Models.Conversion;
 using Sunctum.Domain.Test.Core;
+using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
@@ -14,11 +15,13 @@ namespace Sunctum.Domain.Test.UnitTest
     [TestFixture]
     public class DeleteImage3Test : TestSession
     {
+        private static Guid _instanceId = Guid.NewGuid();
+
         [OneTimeSetUp]
-        public void OneTimeSetUp()
+        public void _OneTimeSetUp()
         {
             var _filePath = Path.Combine(TestContext.CurrentContext.TestDirectory, "BookFacadeTest.db");
-            ConnectionManager.SetDefaultConnection($"Data Source={_filePath}", typeof(SQLiteConnection));
+            ConnectionManager.SetDefaultConnection(_instanceId, $"Data Source={_filePath}", typeof(SQLiteConnection));
 
             DataVersionManager dvManager = new DataVersionManager();
             dvManager.CurrentConnection = ConnectionManager.DefaultConnection;
@@ -39,6 +42,12 @@ namespace Sunctum.Domain.Test.UnitTest
         {
             var dao = new ImageDao(typeof(Version_3));
             dao.Delete(new Dictionary<string, object>());
+        }
+
+        [OneTimeTearDown]
+        public void _OneTimeTearDown()
+        {
+            ConnectionManager.DisposeDebris(_instanceId);
         }
 
         public override string GetTestDirectory()

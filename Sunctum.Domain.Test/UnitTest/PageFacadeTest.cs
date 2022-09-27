@@ -24,13 +24,14 @@ namespace Sunctum.Domain.Test.UnitTest
         private string _dirPath;
         private string _dataPath;
         private ILibrary _libManager;
+        private static Guid _instanceId = Guid.NewGuid();
 
         [OneTimeSetUp]
         public async Task OneTimeSetUp()
         {
             _dirPath = Path.Combine(TestContext.CurrentContext.TestDirectory, "PageFacadeTest");
             _filePath = Path.Combine(_dirPath, "library.db");
-            ConnectionManager.SetDefaultConnection($"Data Source={_filePath}", typeof(SQLiteConnection));
+            ConnectionManager.SetDefaultConnection(_instanceId, $"Data Source={_filePath}", typeof(SQLiteConnection));
 
             if (Directory.Exists(_dirPath))
             {
@@ -104,7 +105,7 @@ namespace Sunctum.Domain.Test.UnitTest
             mwvm.Close();
             mwvm.Dispose();
 
-            ConnectionManager.DisposeAllDebris();
+            ConnectionManager.DisposeDebris(_instanceId);
 
             GC.Collect();
 
