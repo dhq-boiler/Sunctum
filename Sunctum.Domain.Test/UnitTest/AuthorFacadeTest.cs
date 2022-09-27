@@ -53,6 +53,10 @@ namespace Sunctum.Domain.Test.UnitTest
             _filePath = Path.Combine(TestContext.CurrentContext.TestDirectory, "AuthorFacadeTest.db");
             ConnectionManager.SetDefaultConnection(_instanceId, $"Data Source={_filePath}", typeof(SQLiteConnection));
 
+            var mwvm = Container.Resolve<IMainWindowViewModel>();
+            mwvm.ManageAppDB();
+            mwvm.ManageVcDB();
+
             s_libManager = Container.Resolve<ILibrary>();
             await s_libManager.Initialize().ConfigureAwait(false);
             await s_libManager.Load().ConfigureAwait(false);

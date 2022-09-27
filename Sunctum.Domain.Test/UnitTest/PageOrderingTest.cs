@@ -42,6 +42,10 @@ namespace Sunctum.Domain.Test.UnitTest
 
             _dataPath = Path.Combine(_dirPath, "data");
 
+            var mwvm = Container.Resolve<IMainWindowViewModel>();
+            mwvm.ManageAppDB();
+            mwvm.ManageVcDB();
+
             _libManager = Container.Resolve<ILibrary>();
 
             await _libManager.Initialize().ConfigureAwait(false);

@@ -43,6 +43,10 @@ namespace Sunctum.Domain.Test.UnitTest
                 Directory.CreateDirectory(_dirPath);
             }
 
+            var mwvm = Container.Resolve<IMainWindowViewModel>();
+            mwvm.ManageAppDB();
+            mwvm.ManageVcDB();
+
             _libManager = Container.Resolve<ILibrary>();
 
             await _libManager.Initialize().ConfigureAwait(false);
