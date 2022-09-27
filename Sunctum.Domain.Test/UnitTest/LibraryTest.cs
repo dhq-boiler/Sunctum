@@ -40,12 +40,12 @@ namespace Sunctum.Domain.Test.UnitTest
 
             _dataPath = Path.Combine(_dirPath, "data");
 
-            _libManager = Container.Resolve<ILibrary>();
-
             var mwvm = Container.Resolve<IMainWindowViewModel>();
             mwvm.ManageAppDB();
             mwvm.ManageVcDB();
             mwvm.InitializeWindowComponent();
+
+            _libManager = Container.Resolve<ILibrary>();
             var home = mwvm.HomeDocumentViewModel;
             home.BookCabinet = _libManager.CreateBookStorage();
             home.BookCabinet.Search("minecraft");
