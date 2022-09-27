@@ -1039,7 +1039,7 @@ namespace Sunctum.ViewModels
         /// </summary>
         public void SaveLayout()
         {
-            Dispatcher.CurrentDispatcher.Invoke(() =>
+            Dispatcher.CurrentDispatcher.InvokeAsync(() =>
             {
                 if (App.Current is null)
                     return;
