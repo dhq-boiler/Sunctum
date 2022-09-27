@@ -14,7 +14,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Transactions;
-using System.Windows.Forms;
 
 namespace Sunctum.Domain.Logic.Import
 {
@@ -61,7 +60,7 @@ namespace Sunctum.Domain.Logic.Import
             Destination = copyTo + "\\" + filename;
 
             ret.Add(new System.Threading.Tasks.Task(() => CreateTaskToCopyImage(Path, source, Destination)));
-            ret.Add(new System.Threading.Tasks.Task(() => CreateTaskToInsertImage(entryName, Destination, dataOpUnit)));
+            ret.Add(new System.Threading.Tasks.Task(() => CreateTaskToInsertImageAsync(entryName, Destination, dataOpUnit)));
             if (_isContent)
             {
                 ret.Add(new System.Threading.Tasks.Task(() => CreateTaskToInsertPage(entryName, dataOpUnit)));
@@ -99,12 +98,23 @@ namespace Sunctum.Domain.Logic.Import
             return ret;
         }
 
-        private void CreateTaskToInsertImage(string entryName, string destination, DataOperationUnit dataOpUnit)
+        private async Task CreateTaskToInsertImageAsync(string entryName, string destination, DataOperationUnit dataOpUnit)
         {
             Guid imageID = Guid.NewGuid();
-            InsertedImage = new ImageViewModel(imageID, entryName, destination, Configuration.ApplicationConfiguration.LibraryIsEncrypted, Configuration.ApplicationConfiguration);
+            var plainText = entryName;
+            InsertedImage = new ImageViewModel(imageID, plainText, destination, Configuration.ApplicationConfiguration.LibraryIsEncrypted, Configuration.ApplicationConfiguration);
+            if (Configuration.ApplicationConfiguration.LibraryIsEncrypted)
+            {
+                InsertedImage.Title = await Encryptor.EncryptString(plainText, Configuration.ApplicationConfiguration.Password);
+                InsertedImage.TitleIsEncrypted.Value = true;
+            }
             InsertedImage.ByteSize = Size;
             ImageFacade.Insert(InsertedImage, dataOpUnit);
+            if (Configuration.ApplicationConfiguration.LibraryIsEncrypted)
+            {
+                InsertedImage.Title = plainText;
+                InsertedImage.TitleIsDecrypted.Value = true;
+            }
         }
 
         private async void CreateTaskToInsertPage(string entryName, DataOperationUnit dataOpUnit)
