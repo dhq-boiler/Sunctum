@@ -171,6 +171,7 @@ namespace Sunctum.Domain.Logic.Import
                 throw new UnexpectedException($"expected:_book is not null but actual:_book is null");
             }
 
+            _book.IsLoaded = true;
             _book.ContentsRegistered = true;
         }
 
