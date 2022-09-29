@@ -105,8 +105,26 @@
                     Height="{Binding Configuration.ContentListViewItemTitleHeight}"
                     Margin="0"
                     HorizontalAlignment="Center"
-                    HorizontalContentAlignment="Center"
-                    Content="{Binding UnescapedTitle}" />
+                    HorizontalContentAlignment="Center">
+                    <Label.Content>
+                        <DockPanel>
+                            <local:LockIcon
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                DockPanel.Dock="Left">
+                                <local:LockIcon.LockState>
+                                    <MultiBinding Converter="{StaticResource Entity2LockState}" ConverterParameter="1">
+                                        <Binding Path="TitleIsEncrypted.Value" />
+                                        <Binding Path="TitleIsDecrypted.Value" />
+                                    </MultiBinding>
+                                </local:LockIcon.LockState>
+                            </local:LockIcon>
+                            <TextBlock Foreground="Black">
+                                <Run Text="{Binding UnescapedTitle}" />
+                            </TextBlock>
+                        </DockPanel>
+                    </Label.Content>
+                </Label>
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="Contents_ListViewItem_Sorting_DataTemplate">
@@ -224,9 +242,12 @@
                     Width="{Binding Configuration.BookListViewItemWidth}">
                     <ui.ctrl:AutoScrollingLabel.Content>
                         <DockPanel>
-                            <local:LockIcon DockPanel.Dock="Left">
+                            <local:LockIcon
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                DockPanel.Dock="Left">
                                 <local:LockIcon.LockState>
-                                    <MultiBinding Converter="{StaticResource Entity2LockState}">
+                                    <MultiBinding Converter="{StaticResource Entity2LockState}" ConverterParameter="1">
                                         <Binding Path="TitleIsEncrypted.Value" />
                                         <Binding Path="TitleIsDecrypted.Value" />
                                     </MultiBinding>
@@ -473,8 +494,46 @@
                                 <Setter Property="HorizontalAlignment" Value="Center" />
                             </Style>
                         </StackPanel.Resources>
-                        <ui.ctrl:SelectableLabel HorizontalAlignment="Center" Text="{Binding OpenedBook.Author.UnescapedName}" />
-                        <ui.ctrl:SelectableLabel HorizontalAlignment="Center" Text="{Binding OpenedBook.UnescapedTitle}" />
+                        <ui.ctrl:SelectableLabel HorizontalAlignment="Center">
+                            <ui.ctrl:SelectableLabel.Content>
+                                <DockPanel>
+                                    <local:LockIcon
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        DockPanel.Dock="Left">
+                                        <local:LockIcon.LockState>
+                                            <MultiBinding Converter="{StaticResource Entity2LockState}" ConverterParameter="2">
+                                                <Binding Path="OpenedBook.Author" />
+                                                <Binding Path="OpenedBook.Author.NameIsDecrypted.Value" />
+                                            </MultiBinding>
+                                        </local:LockIcon.LockState>
+                                    </local:LockIcon>
+                                    <TextBlock Foreground="Black">
+                                        <Run Text="{Binding OpenedBook.Author.UnescapedName}" />
+                                    </TextBlock>
+                                </DockPanel>
+                            </ui.ctrl:SelectableLabel.Content>
+                        </ui.ctrl:SelectableLabel>
+                        <ui.ctrl:SelectableLabel HorizontalAlignment="Center">
+                            <ui.ctrl:SelectableLabel.Content>
+                                <DockPanel>
+                                    <local:LockIcon
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        DockPanel.Dock="Left">
+                                        <local:LockIcon.LockState>
+                                            <MultiBinding Converter="{StaticResource Entity2LockState}" ConverterParameter="3">
+                                                <Binding Path="OpenedBook.TitleIsEncrypted.Value" />
+                                                <Binding Path="OpenedBook.TitleIsDecrypted.Value" />
+                                            </MultiBinding>
+                                        </local:LockIcon.LockState>
+                                    </local:LockIcon>
+                                    <TextBlock Foreground="Black">
+                                        <Run Text="{Binding OpenedBook.UnescapedTitle}" />
+                                    </TextBlock>
+                                </DockPanel>
+                            </ui.ctrl:SelectableLabel.Content>
+                        </ui.ctrl:SelectableLabel>
                     </StackPanel>
                 </Grid>
                 <ListView
@@ -527,9 +586,66 @@
                                 <Setter Property="HorizontalAlignment" Value="Center" />
                             </Style>
                         </StackPanel.Resources>
-                        <ui.ctrl:SelectableLabel Margin="0,14,0,0" Text="{Binding OpenedBook.Author.UnescapedName}" />
-                        <ui.ctrl:SelectableLabel Text="{Binding OpenedBook.UnescapedTitle}" />
-                        <ui.ctrl:SelectableLabel Text="{Binding OpenedPage.UnescapedTitle}" />
+                        <ui.ctrl:SelectableLabel Margin="0,14,0,0">
+                            <ui.ctrl:SelectableLabel.Content>
+                                <DockPanel>
+                                    <local:LockIcon
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        DockPanel.Dock="Left">
+                                        <local:LockIcon.LockState>
+                                            <MultiBinding Converter="{StaticResource Entity2LockState}" ConverterParameter="4">
+                                                <Binding Path="OpenedBook.Author.NameIsEncrypted.Value" />
+                                                <Binding Path="OpenedBook.Author.NameIsDecrypted.Value" />
+                                            </MultiBinding>
+                                        </local:LockIcon.LockState>
+                                    </local:LockIcon>
+                                    <TextBlock Foreground="Black">
+                                        <Run Text="{Binding OpenedBook.Author.UnescapedName}" />
+                                    </TextBlock>
+                                </DockPanel>
+                            </ui.ctrl:SelectableLabel.Content>
+                        </ui.ctrl:SelectableLabel>
+                        <ui.ctrl:SelectableLabel>
+                            <ui.ctrl:SelectableLabel.Content>
+                                <DockPanel>
+                                    <local:LockIcon
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        DockPanel.Dock="Left">
+                                        <local:LockIcon.LockState>
+                                            <MultiBinding Converter="{StaticResource Entity2LockState}" ConverterParameter="5">
+                                                <Binding Path="OpenedBook.TitleIsEncrypted.Value" />
+                                                <Binding Path="OpenedBook.TitleIsDecrypted.Value" />
+                                            </MultiBinding>
+                                        </local:LockIcon.LockState>
+                                    </local:LockIcon>
+                                    <TextBlock Foreground="Black">
+                                        <Run Text="{Binding OpenedBook.UnescapedTitle}" />
+                                    </TextBlock>
+                                </DockPanel>
+                            </ui.ctrl:SelectableLabel.Content>
+                        </ui.ctrl:SelectableLabel>
+                        <ui.ctrl:SelectableLabel>
+                            <ui.ctrl:SelectableLabel.Content>
+                                <DockPanel>
+                                    <local:LockIcon
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        DockPanel.Dock="Left">
+                                        <local:LockIcon.LockState>
+                                            <MultiBinding Converter="{StaticResource Entity2LockState}" ConverterParameter="6">
+                                                <Binding Path="OpenedPage.TitleIsEncrypted.Value" />
+                                                <Binding Path="OpenedPage.TitleIsDecrypted.Value" />
+                                            </MultiBinding>
+                                        </local:LockIcon.LockState>
+                                    </local:LockIcon>
+                                    <TextBlock Foreground="Black">
+                                        <Run Text="{Binding OpenedPage.UnescapedTitle}" />
+                                    </TextBlock>
+                                </DockPanel>
+                            </ui.ctrl:SelectableLabel.Content>
+                        </ui.ctrl:SelectableLabel>
                     </StackPanel>
                 </Grid>
                 <Grid>
