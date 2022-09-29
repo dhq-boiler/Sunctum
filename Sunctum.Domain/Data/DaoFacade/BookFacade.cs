@@ -60,7 +60,7 @@ namespace Sunctum.Domain.Data.DaoFacade
             BookDao dao = new BookDao();
             dao.Update(book.ToEntity(), dataOpUnit?.CurrentConnection);
             s_logger.Debug($"UPDATE Book:{book}");
-            if (book.TitleIsEncrypted.Value)
+            if (book.TitleIsEncrypted.Value && !book.TitleIsDecrypted.Value)
             {
                 book.TitleIsDecrypted.Value = true;
                 book.Title = await Encryptor.DecryptString(book.Title, Configuration.ApplicationConfiguration.Password);
