@@ -82,6 +82,7 @@ namespace Sunctum.Domain.Data.Dao
                                                    .Column("b", "AuthorID").As("bAuthorId")
                                                    .Column("b", "ByteSize").As("bByteSize")
                                                    .Column("b", "PublishDate").As("bPublishDate")
+                                                   .Column("b", "TitleIsEncrypted").As("bTitleIsEncrypted")
                                                    .Column("a", "ID").As("aId")
                                                    .Column("a", "Name").As("aName")
                                                    .Column("s", "Level").As("sLevel")
@@ -104,6 +105,12 @@ namespace Sunctum.Domain.Data.Dao
                                 book.Title = rdr.SafeGetString("bTitle", null);
                                 book.ByteSize = rdr.SafeNullableGetLong("bByteSize", null);
                                 book.PublishDate = rdr.SafeGetNullableDateTime("bPublishDate", null);
+                                book.TitleIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("bTitleIsEncrypted", null));
+                                if (book.TitleIsEncrypted.Value && !book.TitleIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                                {
+                                    book.Title = Encryptor.DecryptString(book.Title, Configuration.ApplicationConfiguration.Password).Result;
+                                    book.TitleIsDecrypted.Value = true;
+                                }
                                 if (!rdr.IsDBNull("aId") && !rdr.IsDBNull("aName"))
                                 {
                                     var author = new AuthorViewModel();
@@ -273,7 +280,7 @@ namespace Sunctum.Domain.Data.Dao
                                 book.TitleIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("bTitleIsEncrypted", null));
                                 if (book.TitleIsEncrypted.Value && !book.TitleIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
                                 {
-                                    book.Title= Encryptor.DecryptString(book.Title, Configuration.ApplicationConfiguration.Password).Result;
+                                    book.Title = Encryptor.DecryptString(book.Title, Configuration.ApplicationConfiguration.Password).Result;
                                     book.TitleIsDecrypted.Value = true;
                                 }
                                 if (!rdr.IsDBNull("aId") && !rdr.IsDBNull("aName"))

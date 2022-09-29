@@ -26,6 +26,7 @@
         <cvt:BookCoverThumbnailLoader x:Key="BookCoverThumbnailLoader" />
         <cvt:PathToWriteableBitmap x:Key="ImageConverter" />
         <cvt:DisplayTypeToViewConverter x:Key="DisplayType2ViewConverter" />
+        <cvt:EntityToLockStateConverter x:Key="Entity2LockState" />
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter" />
         <ItemsPanelTemplate x:Key="Contents_ItemPanelTemplate">
             <WrapPanel />
@@ -220,8 +221,23 @@
                 <ui.ctrl:AutoScrollingLabel
                     x:Name="Book_Title_AutoScrollingLabel"
                     Grid.Row="2"
-                    Width="{Binding Configuration.BookListViewItemWidth}"
-                    Text="{Binding UnescapedTitle}" />
+                    Width="{Binding Configuration.BookListViewItemWidth}">
+                    <ui.ctrl:AutoScrollingLabel.Content>
+                        <DockPanel>
+                            <local:LockIcon DockPanel.Dock="Left">
+                                <local:LockIcon.LockState>
+                                    <MultiBinding Converter="{StaticResource Entity2LockState}">
+                                        <Binding Path="TitleIsEncrypted.Value" />
+                                        <Binding Path="TitleIsDecrypted.Value" />
+                                    </MultiBinding>
+                                </local:LockIcon.LockState>
+                            </local:LockIcon>
+                            <TextBlock Foreground="Black">
+                                <Run Text="{Binding UnescapedTitle}" />
+                            </TextBlock>
+                        </DockPanel>
+                    </ui.ctrl:AutoScrollingLabel.Content>
+                </ui.ctrl:AutoScrollingLabel>
             </Grid>
         </DataTemplate>
         <Style x:Key="Contents_ListView_Style" TargetType="{x:Type ListView}">
