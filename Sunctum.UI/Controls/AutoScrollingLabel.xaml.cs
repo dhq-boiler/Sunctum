@@ -13,7 +13,7 @@ namespace Sunctum.UI.Controls
     /// </summary>
     public partial class AutoScrollingLabel : UserControl
     {
-        public static readonly DependencyProperty ContentProperty = DependencyProperty.Register("Content",
+        public new static readonly DependencyProperty ContentProperty = DependencyProperty.Register("Content",
             typeof(object),
             typeof(AutoScrollingLabel),
             new FrameworkPropertyMetadata(null, new PropertyChangedCallback(AutoScrollingLabel.OnContentChanged)));

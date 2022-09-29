@@ -13,28 +13,28 @@ namespace Sunctum.UI.Controls
     /// </summary>
     public partial class AutoScrollingHyperlink : UserControl
     {
-        public static readonly DependencyProperty TextProperty = DependencyProperty.Register("Text",
-            typeof(string),
+        public new static readonly DependencyProperty ContentProperty = DependencyProperty.Register("Content",
+            typeof(object),
             typeof(AutoScrollingHyperlink),
-            new FrameworkPropertyMetadata(null, new PropertyChangedCallback(AutoScrollingHyperlink.OnTextChanged)));
+            new FrameworkPropertyMetadata(null, new PropertyChangedCallback(AutoScrollingHyperlink.OnContentChanged)));
 
-        public static readonly RoutedEvent HyperlinkClickedEvent = EventManager.RegisterRoutedEvent(
-            "HyperlinkClicked", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(AutoScrollingHyperlink));
-
-        private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnContentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             AutoScrollingHyperlink ctrl = d as AutoScrollingHyperlink;
             if (ctrl != null)
             {
-                ctrl.Button_Hyperlink.Content = ctrl.Text;
+                ctrl.Button_Hyperlink.Content = ctrl.Content;
             }
         }
 
-        public string Text
+        public new object Content
         {
-            get { return (string)GetValue(TextProperty); }
-            set { SetValue(TextProperty, value); }
+            get { return GetValue(ContentProperty); }
+            set { SetValue(ContentProperty, value); }
         }
+
+        public static readonly RoutedEvent HyperlinkClickedEvent = EventManager.RegisterRoutedEvent(
+            "HyperlinkClicked", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(AutoScrollingHyperlink));
 
         public event RoutedEventHandler HyperlinkClicked
         {

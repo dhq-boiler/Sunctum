@@ -234,8 +234,40 @@
                 <ui.ctrl:AutoScrollingHyperlink
                     Grid.Row="1"
                     Width="{Binding Configuration.BookListViewItemWidth}"
-                    HyperlinkClicked="AutoScrollingHyperlink_HyperlinkClicked"
-                    Text="{Binding Author.UnescapedName}" />
+                    HyperlinkClicked="AutoScrollingHyperlink_HyperlinkClicked">
+                    <ui.ctrl:AutoScrollingHyperlink.Content>
+                        <DockPanel>
+                            <local:LockIcon
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                DockPanel.Dock="Left">
+                                <local:LockIcon.LockState>
+                                    <MultiBinding Converter="{StaticResource Entity2LockState}" ConverterParameter="2">
+                                        <Binding Path="Author.NameIsEncrypted.Value" />
+                                        <Binding Path="Author.NameIsDecrypted.Value" />
+                                    </MultiBinding>
+                                </local:LockIcon.LockState>
+                            </local:LockIcon>
+                            <Label>
+                                <Label.Style>
+                                    <Style TargetType="Label">
+                                        <Setter Property="Foreground" Value="#60A0E0" />
+                                        <Setter Property="TextBlock.TextDecorations" Value="Underline" />
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Foreground" Value="#E15457" />
+                                                <Setter Property="TextBlock.TextDecorations" Value="Underline" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Label.Style>
+                                <TextBlock TextDecorations="Underline">
+                                    <Run Text="{Binding Author.UnescapedName}" />
+                                </TextBlock>
+                            </Label>
+                        </DockPanel>
+                    </ui.ctrl:AutoScrollingHyperlink.Content>
+                </ui.ctrl:AutoScrollingHyperlink>
                 <ui.ctrl:AutoScrollingLabel
                     x:Name="Book_Title_AutoScrollingLabel"
                     Grid.Row="2"
@@ -247,7 +279,7 @@
                                 VerticalAlignment="Center"
                                 DockPanel.Dock="Left">
                                 <local:LockIcon.LockState>
-                                    <MultiBinding Converter="{StaticResource Entity2LockState}" ConverterParameter="1">
+                                    <MultiBinding Converter="{StaticResource Entity2LockState}" ConverterParameter="3">
                                         <Binding Path="TitleIsEncrypted.Value" />
                                         <Binding Path="TitleIsDecrypted.Value" />
                                     </MultiBinding>
@@ -502,8 +534,8 @@
                                         VerticalAlignment="Center"
                                         DockPanel.Dock="Left">
                                         <local:LockIcon.LockState>
-                                            <MultiBinding Converter="{StaticResource Entity2LockState}" ConverterParameter="2">
-                                                <Binding Path="OpenedBook.Author" />
+                                            <MultiBinding Converter="{StaticResource Entity2LockState}" ConverterParameter="4">
+                                                <Binding Path="OpenedBook.Author.NameIsEncrypted.Value" />
                                                 <Binding Path="OpenedBook.Author.NameIsDecrypted.Value" />
                                             </MultiBinding>
                                         </local:LockIcon.LockState>
@@ -522,7 +554,7 @@
                                         VerticalAlignment="Center"
                                         DockPanel.Dock="Left">
                                         <local:LockIcon.LockState>
-                                            <MultiBinding Converter="{StaticResource Entity2LockState}" ConverterParameter="3">
+                                            <MultiBinding Converter="{StaticResource Entity2LockState}" ConverterParameter="5">
                                                 <Binding Path="OpenedBook.TitleIsEncrypted.Value" />
                                                 <Binding Path="OpenedBook.TitleIsDecrypted.Value" />
                                             </MultiBinding>
@@ -594,7 +626,7 @@
                                         VerticalAlignment="Center"
                                         DockPanel.Dock="Left">
                                         <local:LockIcon.LockState>
-                                            <MultiBinding Converter="{StaticResource Entity2LockState}" ConverterParameter="4">
+                                            <MultiBinding Converter="{StaticResource Entity2LockState}" ConverterParameter="6">
                                                 <Binding Path="OpenedBook.Author.NameIsEncrypted.Value" />
                                                 <Binding Path="OpenedBook.Author.NameIsDecrypted.Value" />
                                             </MultiBinding>
@@ -614,7 +646,7 @@
                                         VerticalAlignment="Center"
                                         DockPanel.Dock="Left">
                                         <local:LockIcon.LockState>
-                                            <MultiBinding Converter="{StaticResource Entity2LockState}" ConverterParameter="5">
+                                            <MultiBinding Converter="{StaticResource Entity2LockState}" ConverterParameter="7">
                                                 <Binding Path="OpenedBook.TitleIsEncrypted.Value" />
                                                 <Binding Path="OpenedBook.TitleIsDecrypted.Value" />
                                             </MultiBinding>
@@ -634,7 +666,7 @@
                                         VerticalAlignment="Center"
                                         DockPanel.Dock="Left">
                                         <local:LockIcon.LockState>
-                                            <MultiBinding Converter="{StaticResource Entity2LockState}" ConverterParameter="6">
+                                            <MultiBinding Converter="{StaticResource Entity2LockState}" ConverterParameter="8">
                                                 <Binding Path="OpenedPage.TitleIsEncrypted.Value" />
                                                 <Binding Path="OpenedPage.TitleIsDecrypted.Value" />
                                             </MultiBinding>
