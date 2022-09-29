@@ -186,19 +186,21 @@
                                                                 <Button
                                                                     Margin="5"
                                                                     Command="{Binding DataContext.RemoveHistoryCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:MainWindow}}"
-                                                                    CommandParameter="{Binding}"
-                                                                    Content="Remove">
+                                                                    CommandParameter="{Binding}">
+                                                                    <Button.Content>
+                                                                        <Image Source="pack://application:,,,/Sunctum;component/Assets/trash.png"
+                                                                               Width="20"
+                                                                               Height="20" />
+                                                                    </Button.Content>
                                                                     <Button.Template>
                                                                         <ControlTemplate TargetType="Button">
-                                                                            <Border x:Name="item"
-                                                                                    CornerRadius="3"
-                                                                                    BorderBrush="Gray"
-                                                                                    BorderThickness="1">
+                                                                            <Grid>
+                                                                                <Ellipse x:Name="ellipse" Fill="Transparent" />
                                                                                 <ContentPresenter Content="{TemplateBinding Content}" />
-                                                                            </Border>
+                                                                            </Grid>
                                                                             <ControlTemplate.Triggers>
                                                                                 <Trigger Property="IsMouseOver" Value="true">
-                                                                                    <Setter TargetName="item" Property="Background">
+                                                                                    <Setter TargetName="ellipse" Property="Fill">
                                                                                         <Setter.Value>
                                                                                             <SolidColorBrush Color="#85BFEB" />
                                                                                         </Setter.Value>

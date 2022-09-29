@@ -31,7 +31,7 @@ namespace Sunctum.Domain.Models
         public static readonly string MASTER_DIRECTORY = "data";
         public static readonly string CACHE_DIRECTORY = "cache";
         public static readonly string APP_LAYOUT_CONFIG_FILENAME = "app.layout.config";
-        public static readonly string LOCK_ICON_FILE = "lock.png";
+        public static readonly string LOCK_ICON_FILE = "Assets\\lock.png";
 
         public static string GenerateAbsoluteLibraryDbFilename(string workingDirectory)
         {

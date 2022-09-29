@@ -12,6 +12,9 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Assets\trash.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="Microsoft.Expression.Interactions, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Data.Linq" />
     <Reference Include="System.IO.Compression, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
@@ -20,16 +23,16 @@
     <Reference Include="System.Windows" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="icon_lock.png">
+    <None Update="Assets\icon_lock.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="icon_lock_open.png">
+    <None Update="Assets\icon_lock_open.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="LICENSE">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="lock.png">
+    <None Update="Assets\lock.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="NLog.config">
@@ -78,6 +81,11 @@ xcopy /s /Y "$(SolutionDir)boilersUpdater\bin\$(Configuration)\net6.0-windows" "
   <PropertyGroup />
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\trash.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
