@@ -189,6 +189,7 @@
                                                                     CommandParameter="{Binding}">
                                                                     <Button.Content>
                                                                         <Image Source="pack://application:,,,/Sunctum;component/Assets/trash.png"
+                                                                               RenderOptions.BitmapScalingMode="HighQuality"
                                                                                Width="20"
                                                                                Height="20" />
                                                                     </Button.Content>
