@@ -1,13 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace Sunctum.Converters
@@ -17,7 +11,7 @@ namespace Sunctum.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             BitmapImage bmpImage = new BitmapImage();
-            using (FileStream stream = File.OpenRead(@"icon_lock.png"))
+            using (FileStream stream = File.OpenRead(@"Assets\icon_lock.png"))
             {
                 bmpImage.BeginInit();
                 bmpImage.StreamSource = stream;
