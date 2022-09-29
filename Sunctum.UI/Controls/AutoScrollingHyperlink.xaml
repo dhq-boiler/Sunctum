@@ -19,9 +19,7 @@
                 <Canvas ClipToBounds="True">
                     <TextBlock Canvas.Left="0">
                         <Hyperlink>
-                            <InlineUIContainer>
-                                <TextBlock x:Name="Hyperlink_Text" Text="{TemplateBinding Content}" />
-                            </InlineUIContainer>
+                            <ContentPresenter />
                         </Hyperlink>
                     </TextBlock>
                 </Canvas>

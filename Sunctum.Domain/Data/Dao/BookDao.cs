@@ -82,8 +82,10 @@ namespace Sunctum.Domain.Data.Dao
                                                    .Column("b", "AuthorID").As("bAuthorId")
                                                    .Column("b", "ByteSize").As("bByteSize")
                                                    .Column("b", "PublishDate").As("bPublishDate")
+                                                   .Column("b", "TitleIsEncrypted").As("bTitleIsEncrypted")
                                                    .Column("a", "ID").As("aId")
                                                    .Column("a", "Name").As("aName")
+                                                   .Column("a", "NameIsEncrypted").As("aNameIsEncrypted")
                                                    .Column("s", "Level").As("sLevel")
                                                    .Column("b", "FingerPrint").As("bFingerPrint")
                                                    .From.Table(new Table<Book>().Name, "b")
@@ -104,11 +106,13 @@ namespace Sunctum.Domain.Data.Dao
                                 book.Title = rdr.SafeGetString("bTitle", null);
                                 book.ByteSize = rdr.SafeNullableGetLong("bByteSize", null);
                                 book.PublishDate = rdr.SafeGetNullableDateTime("bPublishDate", null);
+                                book.TitleIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("bTitleIsEncrypted", null));
                                 if (!rdr.IsDBNull("aId") && !rdr.IsDBNull("aName"))
                                 {
                                     var author = new AuthorViewModel();
                                     author.ID = rdr.SafeGetGuid("aId", null);
                                     author.Name = rdr.SafeGetString("aName", null);
+                                    author.NameIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("aNameIsEncrypted", null));
                                     book.Author = author;
                                 }
                                 book.StarLevel = rdr.SafeGetNullableInt("sLevel", null);
@@ -273,7 +277,7 @@ namespace Sunctum.Domain.Data.Dao
                                 book.TitleIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("bTitleIsEncrypted", null));
                                 if (book.TitleIsEncrypted.Value && !book.TitleIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
                                 {
-                                    book.Title= Encryptor.DecryptString(book.Title, Configuration.ApplicationConfiguration.Password).Result;
+                                    book.Title = Encryptor.DecryptString(book.Title, Configuration.ApplicationConfiguration.Password).Result;
                                     book.TitleIsDecrypted.Value = true;
                                 }
                                 if (!rdr.IsDBNull("aId") && !rdr.IsDBNull("aName"))

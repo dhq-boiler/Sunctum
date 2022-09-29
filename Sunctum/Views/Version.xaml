@@ -18,12 +18,20 @@
     <DockPanel>
         <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
             <StackPanel Orientation="Horizontal">
-                <uicontrols:SelectableLabel FontSize="30" Text="Sunctum"
-                                            VerticalContentAlignment="Center" />
+                <uicontrols:SelectableLabel FontSize="30"
+                                            VerticalContentAlignment="Center">
+                    <uicontrols:SelectableLabel.Content>
+                        <TextBlock Text="Sunctum" />
+                    </uicontrols:SelectableLabel.Content>
+                </uicontrols:SelectableLabel>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
                 <Label Content="バージョン" />
-                <uicontrols:SelectableLabel FontSize="20" Text="{Binding Version.Value}" />
+                <uicontrols:SelectableLabel FontSize="20">
+                    <uicontrols:SelectableLabel.Content>
+                        <TextBlock Text="{Binding Version.Value}" />
+                    </uicontrols:SelectableLabel.Content>
+                </uicontrols:SelectableLabel>
             </StackPanel>
             <Label Content="ライセンス" />
             <mdxam:MarkdownScrollViewer xml:space="preserve"

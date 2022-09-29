@@ -11,24 +11,24 @@ namespace Sunctum.UI.Controls
     /// </summary>
     public partial class SelectableLabel : UserControl
     {
-        public static readonly DependencyProperty TextProperty = DependencyProperty.Register("Text",
-            typeof(string),
+        public new static readonly DependencyProperty ContentProperty = DependencyProperty.Register("Content",
+            typeof(object),
             typeof(SelectableLabel),
-            new FrameworkPropertyMetadata(null, new PropertyChangedCallback(SelectableLabel.OnTextChanged)));
+            new FrameworkPropertyMetadata(null, new PropertyChangedCallback(SelectableLabel.OnContentChanged)));
 
-        private static void OnTextChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void OnContentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            SelectableLabel ctrl = d as SelectableLabel;
+            AutoScrollingLabel ctrl = d as AutoScrollingLabel;
             if (ctrl != null)
             {
-                ctrl.Button_Label.Content = ctrl.Text;
+                ctrl.Control_Label.Content = ctrl.Content;
             }
         }
 
-        public string Text
+        public new object Content
         {
-            get { return (string)GetValue(TextProperty); }
-            set { SetValue(TextProperty, value); }
+            get { return GetValue(ContentProperty); }
+            set { SetValue(ContentProperty, value); }
         }
 
         public SelectableLabel()

@@ -55,14 +55,6 @@ namespace Sunctum.Domain.ViewModels
         {
             get
             {
-                if (TitleIsEncrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
-                {
-                    if (TitleIsDecrypted.Value)
-                    {
-                        return DecodeOrNull(Title);
-                    }
-                    return DecodeOrNull(Encryptor.DecryptString(Title, Configuration.ApplicationConfiguration.Password).Result);
-                }
                 return DecodeOrNull(Title);
             }
             set
