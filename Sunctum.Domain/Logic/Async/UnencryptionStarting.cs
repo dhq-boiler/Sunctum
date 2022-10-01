@@ -1,6 +1,7 @@
 ﻿using ChinhDo.Transactions;
 using Homura.ORM;
 using NLog;
+using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Encrypt;
 using Sunctum.Domain.Models;
@@ -9,6 +10,7 @@ using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Transactions;
 using Unity;
 
@@ -234,7 +236,13 @@ namespace Sunctum.Domain.Logic.Async
                     }
                 }
             }
-            sequence.Add(() => PasswordManager.RemovePassword(Environment.UserName));
+            sequence.Add(() =>
+            {
+                var dao = new KeyValueDao();
+                var record = dao.FindBy(new System.Collections.Generic.Dictionary<string, object>() { { "Key", "LibraryID" } }).SingleOrDefault();
+                var libraryId = record?.Value;
+                PasswordManager.RemovePassword(libraryId, Environment.UserName);
+            });
             sequence.Add(() => OnmemoryImageManager.Instance.Clear());
             sequence.Add(() => Configuration.ApplicationConfiguration.Password = null);
             sequence.Add(() => Configuration.ApplicationConfiguration.LibraryIsEncrypted = false);

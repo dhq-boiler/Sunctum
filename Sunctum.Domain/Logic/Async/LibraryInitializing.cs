@@ -16,6 +16,7 @@ using Sunctum.Domain.Models.Managers;
 using System;
 using System.Data.SQLite;
 using System.Diagnostics;
+using System.Linq;
 using Unity;
 
 namespace Sunctum.Domain.Logic.Async
@@ -75,6 +76,7 @@ namespace Sunctum.Domain.Logic.Async
                     dvManager.GetPlan(new Version_6()).FinishedToUpgradeTo += LibraryInitializing_FinishedToUpgradeTo_Version_6;
                     dvManager.RegisterChangePlan(new ChangePlan_Version_7());
                     dvManager.GetPlan(new Version_7()).FinishedToUpgradeTo += LibraryInitializing_FinishedToUpgradeTo_Version_7;
+                    dvManager.RegisterChangePlan(new ChangePlan_Version_8());
                     dvManager.FinishedToUpgradeTo += DvManager_FinishedToUpgradeTo;
 
                     dvManager.UpgradeToTargetVersion();
@@ -99,6 +101,21 @@ namespace Sunctum.Domain.Logic.Async
                     {
                         Stopwatch.Stop();
                     }
+                }
+            });
+
+            sequence.Add(() =>
+            {
+                var dao = new KeyValueDao();
+                var record = dao.FindBy(new System.Collections.Generic.Dictionary<string, object>() { { "Key", "LibraryID" } }).SingleOrDefault();
+                var libraryId = record?.Value;
+                if (libraryId is null)
+                {
+                    dao.Insert(new KeyValue()
+                    {
+                        Key = "LibraryID",
+                        Value = Guid.NewGuid().ToString(),
+                    });
                 }
             });
 

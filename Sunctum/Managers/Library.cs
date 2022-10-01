@@ -2,6 +2,7 @@
 
 using Homura.ORM;
 using NLog;
+using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.Async;
 using Sunctum.Domain.Logic.Encrypt;
@@ -321,7 +322,10 @@ namespace Sunctum.Managers
 
             try
             {
-                var password = await PasswordManager.SignInAsync(Environment.UserName).ConfigureAwait(false);
+                var dao = new KeyValueDao();
+                var record = dao.FindBy(new System.Collections.Generic.Dictionary<string, object>() { { "Key", "LibraryID" } }).SingleOrDefault();
+                var libraryId = record?.Value;
+                var password = await PasswordManager.SignInAsync(libraryId, Environment.UserName).ConfigureAwait(false);
                 if (password is not null)
                 {
                     Configuration.ApplicationConfiguration.Password = password;
@@ -346,8 +350,11 @@ namespace Sunctum.Managers
 
                 if (dialog.ShowDialog() == true)
                 {
+                    var dao = new KeyValueDao();
+                    var record = dao.FindBy(new System.Collections.Generic.Dictionary<string, object>() { { "Key", "LibraryID" } }).SingleOrDefault();
+                    var libraryId = record?.Value;
                     Configuration.ApplicationConfiguration.Password = dialog.Password;
-                    PasswordManager.SetPassword(dialog.Password, Environment.UserName);
+                    PasswordManager.SetPassword(libraryId, dialog.Password, Environment.UserName);
                     return true;
                 }
                 else
