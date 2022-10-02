@@ -38,7 +38,10 @@ namespace Sunctum.ViewModels
             OKCommand.Subscribe(async _ =>
             {
                 await RunExport().ConfigureAwait(false);
-                RequestClose.Invoke(new DialogResult(ButtonResult.OK));
+                App.Current.Dispatcher.Invoke(() =>
+                {
+                    RequestClose.Invoke(new DialogResult(ButtonResult.OK));
+                });
             })
             .AddTo(_disposables);
             CancelCommand.Subscribe(_ =>
