@@ -62,7 +62,7 @@ namespace Sunctum.Domain.Logic.Async
 
                     DataVersionManager dvManager = new DataVersionManager();
                     dvManager.CurrentConnection = ConnectionManager.DefaultConnection;
-                    dvManager.Mode = VersioningStrategy.ByTick;
+                    dvManager.Mode = VersioningMode.ByTick;
                     dvManager.RegisterChangePlan(new ChangePlan_VersionOrigin());
                     dvManager.RegisterChangePlan(new ChangePlan_Version_1());
                     dvManager.GetPlan(new Version_1()).FinishedToUpgradeTo += LibraryInitializing_FinishToUpgradeTo_Version_1;

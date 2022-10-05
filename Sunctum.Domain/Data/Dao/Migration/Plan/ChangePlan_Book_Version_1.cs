@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace Sunctum.Domain.Data.Dao.Migration.Plan
 {
-    internal class ChangePlan_Book_Version_1 : ChangePlanByTable<Book, Version_1>
+    internal class ChangePlan_Book_Version_1 : ChangePlan<Book, Version_1>
     {
         public override void CreateTable(IConnection connection)
         {
@@ -44,7 +44,7 @@ namespace Sunctum.Domain.Data.Dao.Migration.Plan
                 ++ModifiedCount;
             }
 
-            dao.UpgradeTable(new VersionChangeUnit(typeof(VersionOrigin), TargetVersion.GetType()));
+            dao.UpgradeTable(new VersionChangeUnit(typeof(VersionOrigin), TargetVersion.GetType()), Mode);
             ++ModifiedCount;
         }
     }

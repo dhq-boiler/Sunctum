@@ -5,7 +5,7 @@ using Sunctum.Domain.Models;
 
 namespace Sunctum.Domain.Data.Dao.Migration.Plan
 {
-    internal class ChangePlan_VC_GitHubReleasesLatest_VersionOrigin : ChangePlanByTable<GitHubReleasesLatest, VersionOrigin>
+    internal class ChangePlan_VC_GitHubReleasesLatest_VersionOrigin : ChangePlan<GitHubReleasesLatest, VersionOrigin>
     {
         public override void CreateTable(IConnection connection)
         {

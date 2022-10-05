@@ -7,7 +7,7 @@ using Sunctum.Domain.Models;
 
 namespace Sunctum.Domain.Data.Dao.Migration.Plan
 {
-    internal class ChangePlan_ImageTag_VersionOrigin : ChangePlanByTable<ImageTag, VersionOrigin>
+    internal class ChangePlan_ImageTag_VersionOrigin : ChangePlan<ImageTag, VersionOrigin>
     {
         public override void CreateTable(IConnection connection)
         {

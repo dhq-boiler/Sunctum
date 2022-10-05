@@ -7,7 +7,7 @@ using Sunctum.Domain.Models;
 
 namespace Sunctum.Domain.Data.Dao.Migration.Plan
 {
-    internal class ChangePlan_ColorMap_VersionOrigin : ChangePlanByTable<ColorMap, VersionOrigin>
+    internal class ChangePlan_ColorMap_VersionOrigin : ChangePlan<ColorMap, VersionOrigin>
     {
         public override void CreateTable(IConnection connection)
         {

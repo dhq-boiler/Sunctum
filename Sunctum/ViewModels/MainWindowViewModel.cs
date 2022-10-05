@@ -858,7 +858,7 @@ namespace Sunctum.ViewModels
         {
             DataVersionManager dvManager = new DataVersionManager();
             dvManager.CurrentConnection = DataAccessManager.AppDao.CurrentConnection;
-            dvManager.Mode = VersioningStrategy.ByTick;
+            dvManager.Mode = VersioningMode.ByTick;
             dvManager.RegisterChangePlan(new ChangePlan_AppDb_VersionOrigin());
             dvManager.RegisterChangePlan(new ChangePlan_AppDb_Version_1());
             dvManager.FinishedToUpgradeTo += DvManager_FinishedToUpgradeTo;
@@ -870,7 +870,7 @@ namespace Sunctum.ViewModels
         {
             DataVersionManager dvManager = new DataVersionManager();
             dvManager.CurrentConnection = DataAccessManager.VcDao.CurrentConnection;
-            dvManager.Mode = VersioningStrategy.ByTick;
+            dvManager.Mode = VersioningMode.ByTick;
             dvManager.RegisterChangePlan(new ChangePlan_VC_VersionOrigin());
             dvManager.FinishedToUpgradeTo += DvManager_FinishedToUpgradeTo_VC;
 
