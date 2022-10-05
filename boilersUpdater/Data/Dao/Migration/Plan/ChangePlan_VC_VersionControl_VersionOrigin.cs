@@ -6,7 +6,7 @@ using boilersUpdater.Models;
 
 namespace boilersUpdater.Data.Dao.Migration.Plan
 {
-    internal class ChangePlan_VC_VersionControl_VersionOrigin : ChangePlanByTable<VersionControl, VersionOrigin>
+    internal class ChangePlan_VC_VersionControl_VersionOrigin : ChangePlan<VersionControl, VersionOrigin>
     {
         public override void CreateTable(IConnection connection)
         {

@@ -7,7 +7,7 @@ using Sunctum.Domain.Models;
 
 namespace Sunctum.Domain.Data.Dao.Migration.Plan
 {
-    internal class ChangePlan_DirectoryNameParser_VersionOrigin : ChangePlanByTable<DirectoryNameParser, VersionOrigin>
+    internal class ChangePlan_DirectoryNameParser_VersionOrigin : ChangePlan<DirectoryNameParser, VersionOrigin>
     {
         public override void CreateTable(IConnection connection)
         {

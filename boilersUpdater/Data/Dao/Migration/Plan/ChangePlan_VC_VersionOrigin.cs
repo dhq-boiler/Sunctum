@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace boilersUpdater.Data.Dao.Migration.Plan
 {
-    public class ChangePlan_VC_VersionOrigin : ChangePlanByVersion<VersionOrigin>
+    public class ChangePlan_VC_VersionOrigin : ChangePlan<VersionOrigin>
     {
         public override IEnumerable<IEntityVersionChangePlan> VersionChangePlanList
         {

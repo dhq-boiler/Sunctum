@@ -25,7 +25,7 @@ namespace Sunctum.Domain.Test.UnitTest
 
             DataVersionManager dvManager = new DataVersionManager();
             dvManager.CurrentConnection = ConnectionManager.DefaultConnection;
-            dvManager.Mode = VersioningStrategy.ByTick;
+            dvManager.Mode = VersioningMode.ByTick;
             dvManager.RegisterChangePlan(new ChangePlan_VersionOrigin());
             dvManager.RegisterChangePlan(new ChangePlan_Version_1());
             dvManager.RegisterChangePlan(new ChangePlan_Version_2());

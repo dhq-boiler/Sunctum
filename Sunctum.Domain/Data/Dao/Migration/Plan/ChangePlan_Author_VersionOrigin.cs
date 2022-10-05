@@ -7,7 +7,7 @@ using Sunctum.Domain.Models;
 
 namespace Sunctum.Domain.Data.Dao.Migration.Plan
 {
-    internal class ChangePlan_Author_VersionOrigin : ChangePlanByTable<Author, VersionOrigin>
+    internal class ChangePlan_Author_VersionOrigin : ChangePlan<Author, VersionOrigin>
     {
         public override void CreateTable(IConnection connection)
         {

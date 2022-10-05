@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Sunctum.Domain.Data.Dao.Migration.Plan
 {
-    public class ChangePlan_Version_8 : ChangePlanByVersion<Version_8>
+    public class ChangePlan_Version_8 : ChangePlan<Version_8>
     {
         public override IEnumerable<IEntityVersionChangePlan> VersionChangePlanList
         {

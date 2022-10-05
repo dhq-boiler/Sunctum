@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Sunctum.Domain.Data.Dao.Migration.Plan
 {
-    internal class ChangePlan_EncryptImage_VersionOrigin : ChangePlanByTable<EncryptImage, VersionOrigin>
+    internal class ChangePlan_EncryptImage_VersionOrigin : ChangePlan<EncryptImage, VersionOrigin>
     {
         public override void CreateTable(IConnection connection)
         {

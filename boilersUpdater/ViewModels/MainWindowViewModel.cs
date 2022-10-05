@@ -93,7 +93,7 @@ namespace boilersUpdater.ViewModels
 
             DataVersionManager dvManager = new DataVersionManager();
             dvManager.CurrentConnection = ConnectionManager.DefaultConnection;
-            dvManager.Mode = VersioningStrategy.ByTick;
+            dvManager.Mode = VersioningMode.ByTick;
             dvManager.RegisterChangePlan(new ChangePlan_VC_VersionOrigin());
             dvManager.UpgradeToTargetVersion();
             s_logger.Info($"dvManager.UpgradeToTargetVersion() 完了");

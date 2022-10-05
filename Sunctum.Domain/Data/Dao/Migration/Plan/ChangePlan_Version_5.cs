@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Sunctum.Domain.Data.Dao.Migration.Plan
 {
-    public class ChangePlan_Version_5 : ChangePlanByVersion<Version_5>
+    public class ChangePlan_Version_5 : ChangePlan<Version_5>
     {
         public override IEnumerable<IEntityVersionChangePlan> VersionChangePlanList
         {
