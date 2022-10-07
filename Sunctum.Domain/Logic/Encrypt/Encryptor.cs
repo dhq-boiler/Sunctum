@@ -25,7 +25,7 @@ namespace Sunctum.Domain.Logic.Encrypt
 {
     public static class Encryptor
     {
-        public static void Encrypt(ImageViewModel image, string OutFilePath, string password, TxFileManager txFileManager)
+        public static void Encrypt(ImageViewModel image, string OutFilePath, string password, DataOperationUnit dataOpUnit, TxFileManager txFileManager)
         {
             int len;
             byte[] buffer = new byte[4096];
@@ -74,22 +74,7 @@ namespace Sunctum.Domain.Logic.Encrypt
             encryptImage.EncryptFilePath = OutFilePath;
 
             EncryptImageDao dao = new EncryptImageDao();
-            using (var dataOpUnit = new DataOperationUnit())
-            {
-                try
-                {
-                    dataOpUnit.Open(ConnectionManager.DefaultConnection);
-                    dataOpUnit.BeginTransaction();
-
-                    dao.InsertOrReplace(encryptImage, dataOpUnit.CurrentConnection);
-
-                    dataOpUnit.Commit();
-                }
-                catch (Exception)
-                {
-                    dataOpUnit.Rollback();
-                }
-            }
+            dao.InsertOrReplace(encryptImage, dataOpUnit.CurrentConnection);
         }
 
         public static async Task<string> EncryptString(string plainText, string password)

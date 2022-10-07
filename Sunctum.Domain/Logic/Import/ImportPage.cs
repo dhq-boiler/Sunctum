@@ -76,7 +76,7 @@ namespace Sunctum.Domain.Logic.Import
                         using (var scope = new TransactionScope())
                         {
                             var fileManager = new TxFileManager();
-                            Encryptor.Encrypt(InsertedImage, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{InsertedImage.ID.ToString().Substring(0, 2)}\\{InsertedImage.ID}{System.IO.Path.GetExtension(InsertedImage.AbsoluteMasterPath)}", Configuration.ApplicationConfiguration.Password, fileManager);
+                            Encryptor.Encrypt(InsertedImage, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{InsertedImage.ID.ToString().Substring(0, 2)}\\{InsertedImage.ID}{System.IO.Path.GetExtension(InsertedImage.AbsoluteMasterPath)}", Configuration.ApplicationConfiguration.Password, dataOpUnit, fileManager);
                             Encryptor.DeleteOriginal(GeneratedPage, fileManager);
                             InsertedImage.IsEncrypted = true;
                             var titlePlainText = InsertedImage.Title;

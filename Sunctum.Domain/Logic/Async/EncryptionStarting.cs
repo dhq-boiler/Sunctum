@@ -95,122 +95,73 @@ namespace Sunctum.Domain.Logic.Async
 
             foreach (var book in books)
             {
-                if (!book.TitleIsEncrypted.Value)
+                sequence.Add(async () =>
                 {
-                    sequence.Add(async () =>
+                    using (var dataOpUnit = new DataOperationUnit())
+                    using (var scope = new TransactionScope())
                     {
-                        using (var dataOpUnit = new DataOperationUnit())
+                        dataOpUnit.Open(ConnectionManager.DefaultConnection);
+                        dataOpUnit.BeginTransaction();
+
+                        try
                         {
-                            dataOpUnit.Open(ConnectionManager.DefaultConnection);
-                            dataOpUnit.BeginTransaction();
-                            try
+                            if (!book.TitleIsEncrypted.Value)
                             {
                                 var plainText = book.Title;
                                 book.Title = await Encryptor.EncryptString(book.Title, Configuration.ApplicationConfiguration.Password);
                                 book.TitleIsEncrypted.Value = true;
                                 BookFacade.Update(book, dataOpUnit);
-                                dataOpUnit.Commit();
                                 book.Title = plainText;
                                 book.TitleIsDecrypted.Value = true;
                             }
-                            catch (Exception)
-                            {
-                                dataOpUnit.Rollback();
-                            }
-                        }
-                    });
-                }
 
-                var images = book.Contents;
-                foreach (var page in images)
-                {
-                    if (!page.Image.IsEncrypted)
-                    {
-                        sequence.Add(() =>
-                        {
-                            using (var dataOpUnit = new DataOperationUnit())
+                            var images = book.Contents;
+                            foreach (var page in images)
                             {
-                                dataOpUnit.Open(ConnectionManager.DefaultConnection);
-                                dataOpUnit.BeginTransaction();
-                                try
+                                if (!page.Image.IsEncrypted)
                                 {
-                                    using (var scope = new TransactionScope())
+                                    var fileMgr = new TxFileManager();
+                                    var dirPath = $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{page.Image.ID.ToString().Substring(0, 2)}";
+                                    if (!fileMgr.DirectoryExists(dirPath))
                                     {
-                                        var fileMgr = new TxFileManager();
-                                        var dirPath = $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{page.Image.ID.ToString().Substring(0, 2)}";
-                                        if (!fileMgr.DirectoryExists(dirPath))
-                                        {
-                                            fileMgr.CreateDirectory(dirPath);
-                                        }
-                                        Encryptor.Encrypt(page.Image, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{page.Image.ID.ToString().Substring(0, 2)}\\{page.Image.ID}{Path.GetExtension(page.Image.AbsoluteMasterPath)}", Password, fileMgr);
-                                        Encryptor.DeleteOriginal(page, fileMgr);
-                                        page.Image.IsEncrypted = true;
-                                        ImageFacade.Update(page.Image, dataOpUnit);
-                                        scope.Complete();
+                                        fileMgr.CreateDirectory(dirPath);
                                     }
-                                    dataOpUnit.Commit();
+                                    Encryptor.Encrypt(page.Image, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{page.Image.ID.ToString().Substring(0, 2)}\\{page.Image.ID}{Path.GetExtension(page.Image.AbsoluteMasterPath)}", Password, dataOpUnit, fileMgr);
+                                    Encryptor.DeleteOriginal(page, fileMgr);
+                                    page.Image.IsEncrypted = true;
+                                    ImageFacade.Update(page.Image, dataOpUnit);
                                 }
-                                catch (Exception)
-                                {
-                                    dataOpUnit.Rollback();
-                                }
-                            }
-                        });
-                    }
 
-                    if (!page.TitleIsEncrypted.Value)
-                    {
-                        sequence.Add(async () =>
-                        {
-                            using (var dataOpUnit = new DataOperationUnit())
-                            {
-                                dataOpUnit.Open(ConnectionManager.DefaultConnection);
-                                dataOpUnit.BeginTransaction();
-                                try
+                                if (!page.TitleIsEncrypted.Value)
                                 {
                                     var plainText = page.Title;
                                     page.Title = await Encryptor.EncryptString(page.Title, Configuration.ApplicationConfiguration.Password);
                                     page.TitleIsEncrypted.Value = true;
                                     PageFacade.Update(page, dataOpUnit);
-                                    dataOpUnit.Commit();
                                     page.Title = plainText;
                                     page.TitleIsDecrypted.Value = true;
                                 }
-                                catch (Exception)
-                                {
-                                    dataOpUnit.Rollback();
-                                }
-                            }
-                        });
-                    }
 
-                    var image = page.Image;
-                    if (!image.TitleIsEncrypted.Value)
-                    {
-                        sequence.Add(async () =>
-                        {
-                            using (var dataOpUnit = new DataOperationUnit())
-                            {
-                                dataOpUnit.Open(ConnectionManager.DefaultConnection);
-                                dataOpUnit.BeginTransaction();
-                                try
+                                var image = page.Image;
+                                if (!image.TitleIsEncrypted.Value)
                                 {
                                     var plainText = image.Title;
                                     image.Title = await Encryptor.EncryptString(image.Title, Configuration.ApplicationConfiguration.Password);
                                     image.TitleIsEncrypted.Value = true;
                                     ImageFacade.Update(image, dataOpUnit);
-                                    dataOpUnit.Commit();
                                     image.Title = plainText;
                                     image.TitleIsDecrypted.Value = true;
                                 }
-                                catch (Exception)
-                                {
-                                    dataOpUnit.Rollback();
-                                }
                             }
-                        });
+                            dataOpUnit.Commit();
+                            scope.Complete();
+                        }
+                        catch (Exception e)
+                        {
+                            dataOpUnit.Rollback();
+                        }
                     }
-                }
+                });
             }
             sequence.Add(() => mainWindowViewModel.Value.Terminate());
             sequence.Add(() => mainWindowViewModel.Value.Initialize(false, false));
