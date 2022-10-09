@@ -267,6 +267,7 @@ namespace Sunctum.ViewModels
             OpenSearchPaneCommand = new DelegateCommand(() =>
             {
                 this.ActiveDocumentViewModel.SearchPaneIsVisible = true;
+                LibraryVM.VisualizeAuthorAndTitleIfLocked();
             });
             OpenTagManagementDialogCommand = new DelegateCommand(() =>
             {
