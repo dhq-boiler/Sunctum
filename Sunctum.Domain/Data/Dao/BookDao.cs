@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Threading.Tasks;
 
 namespace Sunctum.Domain.Data.Dao
 {
@@ -345,7 +346,7 @@ namespace Sunctum.Domain.Data.Dao
             }
         }
 
-        public IEnumerable<BookViewModel> FindAllWithFillContents(DbConnection conn = null)
+        public async IAsyncEnumerable<BookViewModel> FindAllWithFillContents(DbConnection conn = null)
         {
             bool isTransaction = conn != null;
 
@@ -414,11 +415,14 @@ namespace Sunctum.Domain.Data.Dao
                                     prevId = id;
                                     book.Title = rdr.SafeGetString("bTitle", null);
                                     book.TitleIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("bTitleIsEncrypted", null));
-                                    if (book.TitleIsEncrypted.Value && !book.TitleIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                                    await Task.Run(() =>
                                     {
-                                        book.Title = Encryptor.DecryptString(book.Title, Configuration.ApplicationConfiguration.Password).Result;
-                                        book.TitleIsDecrypted.Value = true;
-                                    }
+                                        if (book.TitleIsEncrypted.Value && !book.TitleIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                                        {
+                                            book.Title = Encryptor.DecryptString(book.Title, Configuration.ApplicationConfiguration.Password).Result;
+                                            book.TitleIsDecrypted.Value = true;
+                                        }
+                                    });
                                     book.AuthorID = rdr.SafeGetGuid("bAuthorId", null);
                                     book.ByteSize = rdr.SafeNullableGetLong("bByteSize", null);
                                     book.PublishDate = rdr.SafeGetNullableDateTime("bPublishDate", null);
@@ -431,11 +435,14 @@ namespace Sunctum.Domain.Data.Dao
                                         author.ID = rdr.SafeGetGuid("aId", null);
                                         author.Name = rdr.SafeGetString("aName", null);
                                         author.NameIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("aNameIsEncrypted", null));
-                                        if (author.NameIsEncrypted.Value && !author.NameIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                                        await Task.Run(() =>
                                         {
-                                            author.Name = Encryptor.DecryptString(author.Name, Configuration.ApplicationConfiguration.Password).Result;
-                                            author.NameIsDecrypted.Value = true;
-                                        }
+                                            if (author.NameIsEncrypted.Value && !author.NameIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                                            {
+                                                author.Name = Encryptor.DecryptString(author.Name, Configuration.ApplicationConfiguration.Password).Result;
+                                                author.NameIsDecrypted.Value = true;
+                                            }
+                                        });
                                         book.Author = author;
                                     }
                                 }
@@ -448,11 +455,14 @@ namespace Sunctum.Domain.Data.Dao
                                 page.ImageID = rdr.SafeGetGuid("pImageId", null);
                                 page.PageIndex = rdr.SafeGetInt("pIndex", null);
                                 page.TitleIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("pTitleIsEncrypted", null));
-                                if (page.TitleIsEncrypted.Value && !page.TitleIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                                await Task.Run(() =>
                                 {
-                                    page.Title = Encryptor.DecryptString(page.Title, Configuration.ApplicationConfiguration.Password).Result;
-                                    page.TitleIsDecrypted.Value = true;
-                                }
+                                    if (page.TitleIsEncrypted.Value && !page.TitleIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                                    {
+                                        page.Title = Encryptor.DecryptString(page.Title, Configuration.ApplicationConfiguration.Password).Result;
+                                        page.TitleIsDecrypted.Value = true;
+                                    }
+                                });
                                 if (id != prevId)
                                 {
                                     book.FirstPage.Value = page;
@@ -465,11 +475,14 @@ namespace Sunctum.Domain.Data.Dao
                                 image.RelativeMasterPath = rdr.SafeGetString("iMasterPath", null);
                                 image.IsEncrypted = rdr.SafeGetBoolean("iIsEncrypted", null);
                                 image.TitleIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("iTitleIsEncrypted", null));
-                                if (image.TitleIsEncrypted.Value && !image.TitleIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                                await Task.Run(() =>
                                 {
-                                    image.Title = Encryptor.DecryptString(image.Title, Configuration.ApplicationConfiguration.Password).Result;
-                                    image.TitleIsDecrypted.Value = true;
-                                }
+                                    if (image.TitleIsEncrypted.Value && !image.TitleIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                                    {
+                                        image.Title = Encryptor.DecryptString(image.Title, Configuration.ApplicationConfiguration.Password).Result;
+                                        image.TitleIsDecrypted.Value = true;
+                                    }
+                                });
                                 page.Image = image;
 
                                 if (!rdr.IsDBNull("tId") && !rdr.IsDBNull("tImageId") && !rdr.IsDBNull("tPath"))

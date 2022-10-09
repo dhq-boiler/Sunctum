@@ -200,6 +200,12 @@ namespace Sunctum.Managers
             _fcTaskManager.Run((b) => Internal_FillContentsWithImage(b), book);
         }
 
+        public async void VisualizeAuthorAndTitleIfLocked()
+        {
+            _LoadedBooks.Clear();
+            _LoadedBooks.AddRange(await BookFacade.FindAllWithFillContents().ToListAsync());
+        }
+
         private void Internal_FillContents(BookViewModel book)
         {
             int currentCount = Querying.BookContentsCount(book.ID);

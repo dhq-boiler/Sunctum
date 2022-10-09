@@ -39,10 +39,10 @@ namespace Sunctum.Domain.Logic.Async
             sequence.Add(() => s_logger.Info($"Start Encryption"));
         }
 
-        public override void ConfigureTaskImplementation(AsyncTaskSequence sequence)
+        public override async void ConfigureTaskImplementation(AsyncTaskSequence sequence)
         {
             taskManager.Enqueue(libraryResetting.GetTaskSequence());
-            LibraryManager.Value.BookSource.AddRange(BookFacade.FindAllWithFillContents(null));
+            LibraryManager.Value.BookSource.AddRange(await BookFacade.FindAllWithFillContents(null).ToListAsync());
 
             sequence.Add(() => Configuration.ApplicationConfiguration.LibraryIsEncrypted = true);
             sequence.Add(() => Configuration.ApplicationConfiguration.Password = Password);

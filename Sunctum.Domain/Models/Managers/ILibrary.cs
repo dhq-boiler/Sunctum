@@ -61,6 +61,7 @@ namespace Sunctum.Domain.Models.Managers
         Task StartUnencryption(string password);
         Task UpdateBookFingerPrintAll();
         Task UpdateBookFingerPrintStillNull();
+        void VisualizeAuthorAndTitleIfLocked();
     }
 
     public delegate void SearchedEventHandler(object sender, SearchedEventArgs e);
