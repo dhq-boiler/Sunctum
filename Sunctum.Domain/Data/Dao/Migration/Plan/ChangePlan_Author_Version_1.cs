@@ -4,11 +4,16 @@ using Homura.ORM.Migration;
 using Sunctum.Domain.Models.Conversion;
 using Sunctum.Domain.Models;
 using System.Collections.Generic;
+using Homura.ORM.Setup;
 
 namespace Sunctum.Domain.Data.Dao.Migration.Plan
 {
     internal class ChangePlan_Author_Version_1 : ChangePlan<Author, Version_1>
     {
+        public ChangePlan_Author_Version_1(VersioningMode mode, MigrationAction migrationAction = MigrationAction.NotSpecified) : base("Author_1", PostMigrationVerification.TableExists, mode, migrationAction)
+        {
+        }
+
         public override void CreateTable(IConnection connection)
         {
             AuthorDao dao = new AuthorDao(typeof(Version_1));

@@ -267,7 +267,6 @@ namespace Sunctum.ViewModels
             OpenSearchPaneCommand = new DelegateCommand(() =>
             {
                 this.ActiveDocumentViewModel.SearchPaneIsVisible = true;
-                LibraryVM.VisualizeAuthorAndTitleIfLocked();
             });
             OpenTagManagementDialogCommand = new DelegateCommand(() =>
             {
@@ -859,9 +858,8 @@ namespace Sunctum.ViewModels
         {
             DataVersionManager dvManager = new DataVersionManager();
             dvManager.CurrentConnection = DataAccessManager.AppDao.CurrentConnection;
-            dvManager.Mode = VersioningMode.ByTick;
-            dvManager.RegisterChangePlan(new ChangePlan_AppDb_VersionOrigin());
-            dvManager.RegisterChangePlan(new ChangePlan_AppDb_Version_1());
+            dvManager.RegisterChangePlan(new ChangePlan_AppDb_VersionOrigin(VersioningMode.ByTick));
+            dvManager.RegisterChangePlan(new ChangePlan_AppDb_Version_1(VersioningMode.ByTick));
             dvManager.FinishedToUpgradeTo += DvManager_FinishedToUpgradeTo;
 
             dvManager.UpgradeToTargetVersion();
@@ -871,8 +869,7 @@ namespace Sunctum.ViewModels
         {
             DataVersionManager dvManager = new DataVersionManager();
             dvManager.CurrentConnection = DataAccessManager.VcDao.CurrentConnection;
-            dvManager.Mode = VersioningMode.ByTick;
-            dvManager.RegisterChangePlan(new ChangePlan_VC_VersionOrigin());
+            dvManager.RegisterChangePlan(new ChangePlan_VC_VersionOrigin(VersioningMode.ByTick));
             dvManager.FinishedToUpgradeTo += DvManager_FinishedToUpgradeTo_VC;
 
             dvManager.UpgradeToTargetVersion();

@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -26,6 +27,7 @@ namespace Sunctum.Domain.Logic.Async
 
         public AsyncTaskSequence(IEnumerable<Task> tasks)
         {
+            Debug.Assert(tasks != null);
             Tasks = tasks;
         }
 

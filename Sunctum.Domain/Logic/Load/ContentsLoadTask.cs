@@ -16,9 +16,9 @@ namespace Sunctum.Domain.Logic.Load
         {
             var pages = PageFacade.FindByBookId(book.ID).OrderBy(p => p.PageIndex);
 
-            bookStorage.AccessDispatcherObject(() => book.ClearContents());
+            bookStorage.AccessDispatcherObject(async () => book.ClearContents());
 
-            bookStorage.AccessDispatcherObject(() =>
+            bookStorage.AccessDispatcherObject(async () =>
             {
                 foreach (var page in pages)
                 {
@@ -31,7 +31,7 @@ namespace Sunctum.Domain.Logic.Load
         {
             var pages = PageFacade.FindByBookId(book.ID).OrderBy(p => p.PageIndex);
 
-            bookStorage.AccessDispatcherObject(() => book.ClearContents());
+            bookStorage.AccessDispatcherObject(async () => book.ClearContents());
 
             bookStorage.AccessDispatcherObject(async () =>
             {

@@ -3,6 +3,7 @@
 using Homura.ORM;
 using Homura.ORM.Mapping;
 using Homura.ORM.Migration;
+using Homura.ORM.Setup;
 using Sunctum.Domain.Models;
 using System;
 
@@ -10,6 +11,9 @@ namespace Sunctum.Domain.Data.Dao.Migration.Plan
 {
     internal class ChangePlan_KeyValue_VersionOrigin : ChangePlan<KeyValue, VersionOrigin>
     {
+        public ChangePlan_KeyValue_VersionOrigin(VersioningMode mode, MigrationAction migrationAction = MigrationAction.NotSpecified) : base("KeyValue", PostMigrationVerification.TableExists, mode, migrationAction)
+        {
+        }
         public override void CreateTable(IConnection connection)
         {
             var dao = new KeyValueDao(typeof(VersionOrigin));

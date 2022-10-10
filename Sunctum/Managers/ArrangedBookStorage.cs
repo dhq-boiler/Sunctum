@@ -6,7 +6,9 @@ using Reactive.Bindings;
 using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.BookSorting;
 using Sunctum.Domain.Logic.DisplayType;
+using Sunctum.Domain.Logic.Encrypt;
 using Sunctum.Domain.Logic.Query;
+using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using System;
@@ -74,7 +76,12 @@ namespace Sunctum.Managers
             get
             {
                 var ret = new ReactiveCollection<BookViewModel>();
-                ret.AddRange(Sorting.Sort(DisplayableBookSource));
+                try
+                {
+                    ret.AddRange(Sorting.Sort(DisplayableBookSource));
+                }
+                catch (ArgumentException)
+                { }
                 return ret;
             }
         }
@@ -171,10 +178,10 @@ namespace Sunctum.Managers
             Search(SearchText);
         }
 
-        public void Search(string searchingText)
+        public async Task Search(string searchingText)
         {
             _SearchText = searchingText;
-            Task.Factory.StartNew(() =>
+            await Task.Factory.StartNew(async () =>
             {
                 if (string.IsNullOrEmpty(searchingText))
                 {

@@ -3,6 +3,7 @@
 using Reactive.Bindings;
 using Sunctum.Domain.ViewModels;
 using System;
+using System.Threading.Tasks;
 
 namespace Sunctum.Domain.Models.Managers
 {
@@ -11,10 +12,10 @@ namespace Sunctum.Domain.Models.Managers
         ReactiveCollection<BookViewModel> BookSource { get; }
         ReactiveCollection<BookViewModel> OnStage { get; }
 
-        void AccessDispatcherObject(Action accessAction);
-        void AddToMemory(BookViewModel book);
-        void RemoveFromMemory(BookViewModel book);
-        void UpdateInMemory(BookViewModel book);
+        Task AccessDispatcherObject(Func<Task> accessAction);
+        Task AddToMemory(BookViewModel book);
+        Task RemoveFromMemory(BookViewModel book);
+        Task UpdateInMemory(BookViewModel book);
         void FireFillContents(BookViewModel book);
         void RunFillContents(BookViewModel book);
         void FireFillContentsWithImage(BookViewModel book);

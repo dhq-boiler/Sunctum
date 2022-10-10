@@ -25,15 +25,14 @@ namespace Sunctum.Domain.Test.UnitTest
 
             DataVersionManager dvManager = new DataVersionManager();
             dvManager.CurrentConnection = ConnectionManager.DefaultConnection;
-            dvManager.Mode = VersioningMode.ByTick;
-            dvManager.RegisterChangePlan(new ChangePlan_VersionOrigin());
-            dvManager.RegisterChangePlan(new ChangePlan_Version_1());
-            dvManager.RegisterChangePlan(new ChangePlan_Version_2());
-            dvManager.RegisterChangePlan(new ChangePlan_Version_3());
-            dvManager.RegisterChangePlan(new ChangePlan_Version_4());
-            dvManager.RegisterChangePlan(new ChangePlan_Version_5());
-            dvManager.RegisterChangePlan(new ChangePlan_Version_6());
-            dvManager.RegisterChangePlan(new ChangePlan_Version_7());
+            dvManager.RegisterChangePlan(new ChangePlan_VersionOrigin(VersioningMode.ByTick));
+            dvManager.RegisterChangePlan(new ChangePlan_Version_1(VersioningMode.ByTick));
+            dvManager.RegisterChangePlan(new ChangePlan_Version_2(VersioningMode.ByTick));
+            dvManager.RegisterChangePlan(new ChangePlanVersion3(VersioningMode.ByTick));
+            dvManager.RegisterChangePlan(new ChangePlan_Version_4(VersioningMode.ByTick));
+            dvManager.RegisterChangePlan(new ChangePlan_Version_5(VersioningMode.ByTick));
+            dvManager.RegisterChangePlan(new ChangePlan_Version_6(VersioningMode.ByTick));
+            dvManager.RegisterChangePlan(new ChangePlan_Version_7(VersioningMode.ByTick));
             dvManager.UpgradeToTargetVersion();
         }
 

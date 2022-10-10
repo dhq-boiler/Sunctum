@@ -154,7 +154,7 @@ namespace Sunctum.Domain.Logic.Encrypt
                         byte[] buffer = new byte[4096]; // バッファーサイズはBlockSizeの倍数にする
                         int len = 0;
                         while ((len = await cs.ReadAsync(buffer, 0, 4096)) > 0)
-                            outStream.Write(buffer, 0, len);
+                            await outStream.WriteAsync(buffer, 0, len);
                     }
                     // 出力がファイルなら、以上で完了
 

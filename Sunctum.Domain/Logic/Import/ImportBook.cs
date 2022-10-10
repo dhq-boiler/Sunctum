@@ -189,7 +189,7 @@ namespace Sunctum.Domain.Logic.Import
             if (child is ImportPage)
             {
                 var ip = child as ImportPage;
-                ret.Add(new Task(() => library.AccessDispatcherObject(() => _book.AddPage(ip.GeneratedPage))));
+                ret.Add(new Task(() => library.AccessDispatcherObject(async () => _book.AddPage(ip.GeneratedPage))));
             }
             ret.Add(new Task(() =>
             {

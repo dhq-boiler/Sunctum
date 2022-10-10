@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
+using System.Data.SqlClient;
 using System.Threading.Tasks;
 
 namespace Sunctum.Domain.Data.Dao
@@ -108,12 +109,22 @@ namespace Sunctum.Domain.Data.Dao
                                 book.ByteSize = rdr.SafeNullableGetLong("bByteSize", null);
                                 book.PublishDate = rdr.SafeGetNullableDateTime("bPublishDate", null);
                                 book.TitleIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("bTitleIsEncrypted", null));
+                                if (book.TitleIsEncrypted.Value && !book.TitleIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                                {
+                                    book.Title = Encryptor.DecryptString(book.Title, Configuration.ApplicationConfiguration.Password).Result;
+                                    book.TitleIsDecrypted.Value = true;
+                                }
                                 if (!rdr.IsDBNull("aId") && !rdr.IsDBNull("aName"))
                                 {
                                     var author = new AuthorViewModel();
                                     author.ID = rdr.SafeGetGuid("aId", null);
                                     author.Name = rdr.SafeGetString("aName", null);
-                                    author.NameIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("aNameIsEncrypted", null));
+                                    author.NameIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("aNameIsEncrypted", null)); 
+                                    if (author.NameIsEncrypted.Value && !author.NameIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                                    {
+                                        author.Name = Encryptor.DecryptString(author.Name, Configuration.ApplicationConfiguration.Password).Result;
+                                        author.NameIsDecrypted.Value = true;
+                                    }
                                     book.Author = author;
                                 }
                                 book.StarLevel = rdr.SafeGetNullableInt("sLevel", null);
@@ -346,7 +357,7 @@ namespace Sunctum.Domain.Data.Dao
             }
         }
 
-        public async IAsyncEnumerable<BookViewModel> FindAllWithFillContents(DbConnection conn = null)
+        public IEnumerable<BookViewModel> FindAllWithFillContents(DbConnection conn = null)
         {
             bool isTransaction = conn != null;
 
@@ -415,11 +426,169 @@ namespace Sunctum.Domain.Data.Dao
                                     prevId = id;
                                     book.Title = rdr.SafeGetString("bTitle", null);
                                     book.TitleIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("bTitleIsEncrypted", null));
-                                    await Task.Run(() =>
+                                    if (book.TitleIsEncrypted.Value && !book.TitleIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                                    {
+                                        book.Title = Encryptor.DecryptString(book.Title, Configuration.ApplicationConfiguration.Password).Result;
+                                        book.TitleIsDecrypted.Value = true;
+                                    }
+                                    book.AuthorID = rdr.SafeGetGuid("bAuthorId", null);
+                                    book.ByteSize = rdr.SafeNullableGetLong("bByteSize", null);
+                                    book.PublishDate = rdr.SafeGetNullableDateTime("bPublishDate", null);
+                                    book.FingerPrint = rdr.SafeGetString("bFingerPrint", null);
+                                    book.StarLevel = rdr.SafeGetNullableInt("sLevel", null);
+
+                                    if (!rdr.IsDBNull("aId") && !rdr.IsDBNull("aName"))
+                                    {
+                                        var author = new AuthorViewModel();
+                                        author.ID = rdr.SafeGetGuid("aId", null);
+                                        author.Name = rdr.SafeGetString("aName", null);
+                                        author.NameIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("aNameIsEncrypted", null));
+                                        if (author.NameIsEncrypted.Value && !author.NameIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                                        {
+                                            author.Name = Encryptor.DecryptString(author.Name, Configuration.ApplicationConfiguration.Password).Result;
+                                            author.NameIsDecrypted.Value = true;
+                                        }
+                                        book.Author = author;
+                                    }
+                                }
+
+                                var page = new PageViewModel();
+                                page.Configuration = Configuration.ApplicationConfiguration;
+                                page.ID = rdr.SafeGetGuid("pId", null);
+                                page.Title = rdr.SafeGetString("pTitle", null);
+                                page.BookID = rdr.SafeGetGuid("bId", null);
+                                page.ImageID = rdr.SafeGetGuid("pImageId", null);
+                                page.PageIndex = rdr.SafeGetInt("pIndex", null);
+                                page.TitleIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("pTitleIsEncrypted", null));
+                                if (page.TitleIsEncrypted.Value && !page.TitleIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                                {
+                                    page.Title = Encryptor.DecryptString(page.Title, Configuration.ApplicationConfiguration.Password).Result;
+                                    page.TitleIsDecrypted.Value = true;
+                                }
+                                if (id != prevId)
+                                {
+                                    book.FirstPage.Value = page;
+                                }
+
+                                var image = new ImageViewModel();
+                                image.Configuration = Configuration.ApplicationConfiguration;
+                                image.ID = rdr.SafeGetGuid("iId", null);
+                                image.Title = rdr.SafeGetString("iTitle", null);
+                                image.RelativeMasterPath = rdr.SafeGetString("iMasterPath", null);
+                                image.IsEncrypted = rdr.SafeGetBoolean("iIsEncrypted", null);
+                                image.TitleIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("iTitleIsEncrypted", null));
+                                if (image.TitleIsEncrypted.Value && !image.TitleIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                                {
+                                    image.Title = Encryptor.DecryptString(image.Title, Configuration.ApplicationConfiguration.Password).Result;
+                                    image.TitleIsDecrypted.Value = true;
+                                }
+                                page.Image = image;
+
+                                if (!rdr.IsDBNull("tId") && !rdr.IsDBNull("tImageId") && !rdr.IsDBNull("tPath"))
+                                {
+                                    var thumbnail = new ThumbnailViewModel();
+                                    thumbnail.ID = rdr.SafeGetGuid("tId", null);
+                                    thumbnail.ImageID = rdr.SafeGetGuid("tImageId", null);
+                                    thumbnail.RelativeMasterPath = rdr.SafeGetString("tPath", null);
+                                    image.Thumbnail = thumbnail;
+                                }
+
+                                book.Contents.Add(page);
+
+                                prevId = id;
+                            }
+
+                            if (book is not null)
+                            {
+                                yield return book;
+                            }
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                if (!isTransaction)
+                {
+                    conn.Dispose();
+                }
+            }
+        }
+
+        public async IAsyncEnumerable<BookViewModel> FindAllWithFillContentsAsync(DbConnection conn = null)
+        {
+            bool isTransaction = conn != null;
+
+            try
+            {
+                if (!isTransaction)
+                {
+                    conn = await GetConnectionAsync();
+                }
+
+                using (var command = conn.CreateCommand())
+                {
+                    using (var query = new Select().Column("b", "ID").As("bId")
+                                                   .Column("b", "Title").As("bTitle")
+                                                   .Column("b", "AuthorID").As("bAuthorId")
+                                                   .Column("b", "ByteSize").As("bByteSize")
+                                                   .Column("b", "PublishDate").As("bPublishDate")
+                                                   .Column("b", "FingerPrint").As("bFingerPrint")
+                                                   .Column("b", "TitleIsEncrypted").As("bTitleIsEncrypted")
+                                                   .Column("a", "ID").As("aId")
+                                                   .Column("a", "Name").As("aName")
+                                                   .Column("a", "NameIsEncrypted").As("aNameIsEncrypted")
+                                                   .Column("p", "ID").As("pId")
+                                                   .Column("p", "Title").As("pTitle")
+                                                   .Column("p", "ImageId").As("pImageId")
+                                                   .Column("p", "PageIndex").As("pIndex")
+                                                   .Column("p", "TitleIsEncrypted").As("pTitleIsEncrypted")
+                                                   .Column("i", "ID").As("iId")
+                                                   .Column("i", "Title").As("iTitle")
+                                                   .Column("i", "MasterPath").As("iMasterPath")
+                                                   .Column("i", "TitleIsEncrypted").As("iTitleIsEncrypted")
+                                                   .Column("i", "IsEncrypted").As("iIsEncrypted")
+                                                   .Column("t", "ID").As("tId")
+                                                   .Column("t", "ImageID").As("tImageId")
+                                                   .Column("t", "Path").As("tPath")
+                                                   .Column("s", "Level").As("sLevel")
+                                                   .From.Table(new Table<Book>().Name, "b")
+                                                   .Left.Join(new Table<Author>().Name, "a").On.Column("a", "ID").EqualTo.Column("bAuthorId")
+                                                   .Cross.Join(new Table<Page>().Name, "p").On.Column("p", "BookID").EqualTo.Column("b", "ID")
+                                                   .Inner.Join(new Table<Image>().Name, "i").On.Column("i", "ID").EqualTo.Column("pImageId")
+                                                   .Left.Join(new Table<Thumbnail>().Name, "t").On.Column("i", "ID").EqualTo.Column("tImageId")
+                                                   .Left.Join(new Table<Star>().Name, "s").On.Column("s", "TypeId").EqualTo.Value(0).And().Column("s", "ID").EqualTo.Column("bId"))
+                    {
+                        string sql = query.ToSql();
+                        command.CommandText = sql;
+                        query.SetParameters(command);
+
+                        using (var rdr = await command.ExecuteReaderAsync())
+                        {
+                            var prevId = Guid.Empty;
+
+                            BookViewModel book = null;
+                            while (await rdr.ReadAsync())
+                            {
+                                var id = rdr.SafeGetGuid("bId", null);
+
+                                if (id != prevId)
+                                {
+                                    if (book is not null)
+                                    {
+                                        yield return book;
+                                    }
+                                    book = new BookViewModel();
+                                    book.Configuration = Configuration.ApplicationConfiguration;
+                                    book.ID = id;
+                                    prevId = id;
+                                    book.Title = rdr.SafeGetString("bTitle", null);
+                                    book.TitleIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("bTitleIsEncrypted", null));
+                                    await Task.Run(async () =>
                                     {
                                         if (book.TitleIsEncrypted.Value && !book.TitleIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
                                         {
-                                            book.Title = Encryptor.DecryptString(book.Title, Configuration.ApplicationConfiguration.Password).Result;
+                                            book.Title = await Encryptor.DecryptString(book.Title, Configuration.ApplicationConfiguration.Password).ConfigureAwait(false);
                                             book.TitleIsDecrypted.Value = true;
                                         }
                                     });
@@ -435,11 +604,11 @@ namespace Sunctum.Domain.Data.Dao
                                         author.ID = rdr.SafeGetGuid("aId", null);
                                         author.Name = rdr.SafeGetString("aName", null);
                                         author.NameIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("aNameIsEncrypted", null));
-                                        await Task.Run(() =>
+                                        await Task.Run(async () =>
                                         {
                                             if (author.NameIsEncrypted.Value && !author.NameIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
                                             {
-                                                author.Name = Encryptor.DecryptString(author.Name, Configuration.ApplicationConfiguration.Password).Result;
+                                                author.Name = await Encryptor.DecryptString(author.Name, Configuration.ApplicationConfiguration.Password);
                                                 author.NameIsDecrypted.Value = true;
                                             }
                                         });
@@ -455,11 +624,11 @@ namespace Sunctum.Domain.Data.Dao
                                 page.ImageID = rdr.SafeGetGuid("pImageId", null);
                                 page.PageIndex = rdr.SafeGetInt("pIndex", null);
                                 page.TitleIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("pTitleIsEncrypted", null));
-                                await Task.Run(() =>
+                                await Task.Run(async () =>
                                 {
                                     if (page.TitleIsEncrypted.Value && !page.TitleIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
                                     {
-                                        page.Title = Encryptor.DecryptString(page.Title, Configuration.ApplicationConfiguration.Password).Result;
+                                        page.Title = await Encryptor.DecryptString(page.Title, Configuration.ApplicationConfiguration.Password);
                                         page.TitleIsDecrypted.Value = true;
                                     }
                                 });
@@ -475,11 +644,11 @@ namespace Sunctum.Domain.Data.Dao
                                 image.RelativeMasterPath = rdr.SafeGetString("iMasterPath", null);
                                 image.IsEncrypted = rdr.SafeGetBoolean("iIsEncrypted", null);
                                 image.TitleIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("iTitleIsEncrypted", null));
-                                await Task.Run(() =>
+                                await Task.Run(async () =>
                                 {
                                     if (image.TitleIsEncrypted.Value && !image.TitleIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
                                     {
-                                        image.Title = Encryptor.DecryptString(image.Title, Configuration.ApplicationConfiguration.Password).Result;
+                                        image.Title = await Encryptor.DecryptString(image.Title, Configuration.ApplicationConfiguration.Password);
                                         image.TitleIsDecrypted.Value = true;
                                     }
                                 });

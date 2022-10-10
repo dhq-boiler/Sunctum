@@ -1,4 +1,5 @@
-﻿using NLog;
+﻿using Homura.ORM;
+using NLog;
 using Sunctum.Domain.Extensions;
 using Sunctum.Domain.Logic.Import;
 using Sunctum.Domain.Logic.Parse;
@@ -28,6 +29,8 @@ namespace Sunctum.Domain.Logic.Async
         public string MasterDirectory { get; set; }
 
         public IEnumerable<string> ObjectPaths { get; set; }
+
+        private DataOperationUnit _dataOpUnit;
 
         public override void ConfigurePreTaskAction(AsyncTaskSequence sequence)
         {
@@ -110,18 +113,21 @@ namespace Sunctum.Domain.Logic.Async
             }
 
             sequence.Add(new System.Threading.Tasks.Task(() => s_logger.Info($"Began to import.")));
+            _dataOpUnit = new DataOperationUnit();
+            _dataOpUnit.Open(ConnectionManager.DefaultConnection);
             for (int i = 0; i < importers.Count(); ++i)
             {
                 var task = importers.ElementAt(i);
                 Guid entryNameSeedGuid = Guid.NewGuid();
                 var entryName = entryNameSeedGuid.ToString("N");
-                var t = task.GenerateTasks(LibraryManager.Value, copyTo, entryName, null, (importer, bookvm) =>
+                var t = task.GenerateTasks(LibraryManager.Value, copyTo, entryName, _dataOpUnit, (importer, bookvm) =>
                 {
                     bookvm.CurrentProcessProgress.Value.Count.Value = importer.Processed;
                     bookvm.CurrentProcessProgress.Value.TotalCount.Value = importer.Count;
                 });
                 sequence.AddRange(t);
             }
+            sequence.Add(() => _dataOpUnit.Dispose());
             sequence.Add(new System.Threading.Tasks.Task(() => s_logger.Info($"Completed to import.")));
         }
 

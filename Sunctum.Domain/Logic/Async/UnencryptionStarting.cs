@@ -41,10 +41,10 @@ namespace Sunctum.Domain.Logic.Async
 
         private EncryptImage _TargetEncryptImage;
 
-        public override async void ConfigureTaskImplementation(AsyncTaskSequence sequence)
+        public override void ConfigureTaskImplementation(AsyncTaskSequence sequence)
         {
             taskManager.Enqueue(libraryResetting.GetTaskSequence());
-            LibraryManager.Value.BookSource.AddRange(await BookFacade.FindAllWithFillContents(null).ToListAsync());
+            LibraryManager.Value.BookSource.AddRange(BookFacade.FindAllWithFillContents(null));
 
             var books = LibraryManager.Value.BookSource;
             var authors = LibraryManager.Value.AuthorManager.Authors;
