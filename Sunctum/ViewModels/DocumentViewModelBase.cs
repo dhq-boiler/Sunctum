@@ -17,6 +17,7 @@ using Sunctum.Domain.Logic.Query;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
+using Sunctum.Managers;
 using Sunctum.Plugin;
 using Sunctum.UI.Controls;
 using Sunctum.Views;

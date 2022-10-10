@@ -9,6 +9,7 @@ using Sunctum.Domain.Models;
 using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Sunctum.Domain.Data.DaoFacade
 {
@@ -58,7 +59,7 @@ namespace Sunctum.Domain.Data.DaoFacade
                 book.TitleIsDecrypted.Value = false;
             }
             BookDao dao = new BookDao();
-            dao.Update(book.ToEntity(), dataOpUnit?.CurrentConnection);
+            await dao.UpdateAsync(book.ToEntity(), dataOpUnit?.CurrentConnection);
             s_logger.Debug($"UPDATE Book:{book}");
             if (book.TitleIsEncrypted.Value && !book.TitleIsDecrypted.Value)
             {
@@ -91,10 +92,20 @@ namespace Sunctum.Domain.Data.DaoFacade
             return dao.FindDuplicateFingerPrint();
         }
 
-        public static IAsyncEnumerable<BookViewModel> FindAllWithFillContents(DataOperationUnit dataOpUnit = null)
+        public static IEnumerable<BookViewModel> FindAllWithFillContents(DataOperationUnit dataOpUnit = null)
         {
             var dao = new BookDao();
             return dao.FindAllWithFillContents(dataOpUnit?.CurrentConnection);
+        }
+
+        public static async IAsyncEnumerable<BookViewModel> FindAllWithFillContentsAsync(DataOperationUnit dataOpUnit = null)
+        {
+            var dao = new BookDao();
+            var items = await dao.FindAllWithFillContentsAsync(dataOpUnit?.CurrentConnection).ToListAsync();
+            foreach (var item in items)
+            {
+                yield return item;
+            }
         }
 
         public static void FillContents(ref BookViewModel book, DataOperationUnit dataOpUnit = null)

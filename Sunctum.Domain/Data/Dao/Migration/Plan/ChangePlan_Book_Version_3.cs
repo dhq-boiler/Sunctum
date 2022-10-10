@@ -2,6 +2,7 @@
 
 using Homura.ORM;
 using Homura.ORM.Migration;
+using Homura.ORM.Setup;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Conversion;
 using System.Collections.Generic;
@@ -10,6 +11,10 @@ namespace Sunctum.Domain.Data.Dao.Migration.Plan
 {
     internal class ChangePlan_Book_Version_3 : ChangePlan<Book, Version_3>
     {
+        public ChangePlan_Book_Version_3(VersioningMode mode, MigrationAction migrationAction = MigrationAction.NotSpecified) : base("Book_3", PostMigrationVerification.TableExists, mode, migrationAction)
+        {
+        }
+
         public override void CreateTable(IConnection connection)
         {
             BookDao dao = new BookDao(typeof(Version_3));

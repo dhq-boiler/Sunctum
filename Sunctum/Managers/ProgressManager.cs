@@ -2,6 +2,7 @@
 
 using Homura.Core;
 using Microsoft.AspNetCore.Components;
+using NLog;
 using Prism.Mvvm;
 using Sunctum.Domail.Util;
 using Sunctum.Domain.Models.Managers;
@@ -16,6 +17,7 @@ namespace Sunctum.Managers
 {
     public class ProgressManager : BindableBase, IProgressManager
     {
+        private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
         private int _TotalCount;
         private int _Current;
         private DateTime? _previousUpdateDateTime;
@@ -111,9 +113,19 @@ namespace Sunctum.Managers
                     var duration = now - _previousUpdateDateTime.Value;
                     if (duration.Seconds >= 1)
                     {
-                        EstimateRemainTime = TimeSpan.FromMilliseconds(remainTimesAvgMilliseconds);
-                        _previousUpdateDateTime = now;
-                        queue.Enqueue(now);
+                        try
+                        {
+                            EstimateRemainTime = TimeSpan.FromMilliseconds(remainTimesAvgMilliseconds);
+                        }
+                        catch (OverflowException e)
+                        {
+                            s_logger.Error(e);
+                        }
+                        finally
+                        {
+                            _previousUpdateDateTime = now;
+                            queue.Enqueue(now);
+                        }
                     }
                 }
                 else

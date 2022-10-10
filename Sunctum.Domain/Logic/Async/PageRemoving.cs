@@ -67,10 +67,10 @@ namespace Sunctum.Domain.Logic.Async
             return tasks;
         }
 
-        private static void RemovePageFromBook(ILibrary libVM, PageViewModel page)
+        private static async Task RemovePageFromBook(ILibrary libVM, PageViewModel page)
         {
             var bookInLib = libVM.BookSource.Where(b => b.ID == page.BookID).Single();
-            libVM.AccessDispatcherObject(() => bookInLib.RemovePage(page));
+            await libVM.AccessDispatcherObject(async () => bookInLib.RemovePage(page));
         }
 
         internal static void DeleteFileFromStorage(PageViewModel page)

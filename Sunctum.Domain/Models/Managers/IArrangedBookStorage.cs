@@ -5,6 +5,7 @@ using Sunctum.Domain.Logic.BookSorting;
 using Sunctum.Domain.Logic.DisplayType;
 using Sunctum.Domain.ViewModels;
 using System;
+using System.Threading.Tasks;
 
 namespace Sunctum.Domain.Models.Managers
 {
@@ -22,7 +23,7 @@ namespace Sunctum.Domain.Models.Managers
 
         void ClearSearchResult();
         void Search();
-        void Search(string searchingText);
+        Task Search(string searchingText);
         bool SortingSelected(string name);
     }
 }

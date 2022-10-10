@@ -19,9 +19,9 @@ namespace Sunctum.Domain.Logic.Async
 
         public override void ConfigureTaskImplementation(AsyncTaskSequence sequence)
         {
-            sequence.Add(() =>
+            sequence.Add(async () =>
             {
-                LibraryManager.Value.AccessDispatcherObject(() =>
+                await LibraryManager.Value.AccessDispatcherObject(async () =>
                 {
                     LibraryManager.Value.RecentOpenedLibraryList?.Clear();
                     LibraryManager.Value.RecentOpenedLibraryList = new ObservableCollection<RecentOpenedLibrary>();
@@ -49,7 +49,7 @@ namespace Sunctum.Domain.Logic.Async
                     var o = other.ElementAt(i - 1);
                     o.AccessOrder = i;
                     dao.Update(o);
-                    LibraryManager.Value.AccessDispatcherObject(() =>
+                    await LibraryManager.Value.AccessDispatcherObject(async () =>
                     {
                         LibraryManager.Value.RecentOpenedLibraryList.Add(o);
                     });

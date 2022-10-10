@@ -10,6 +10,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 
@@ -40,19 +41,19 @@ namespace Sunctum.Managers
 
         #region オンメモリ
 
-        public void AddToMemory(BookViewModel book)
+        public async Task AddToMemory(BookViewModel book)
         {
-            AccessDispatcherObject(() => Internal_AddToMemory(book));
+            await AccessDispatcherObject(async () => Internal_AddToMemory(book));
         }
 
-        public void UpdateInMemory(BookViewModel book)
+        public async Task UpdateInMemory(BookViewModel book)
         {
-            AccessDispatcherObject(() => Internal_UpdateInMemory(book));
+            await AccessDispatcherObject(async () => Internal_UpdateInMemory(book));
         }
 
-        public void RemoveFromMemory(BookViewModel book)
+        public async Task RemoveFromMemory(BookViewModel book)
         {
-            AccessDispatcherObject(() => Internal_RemoveBookFromMemory(book));
+            await AccessDispatcherObject(async () => Internal_RemoveBookFromMemory(book));
         }
 
         #region private
@@ -128,11 +129,11 @@ namespace Sunctum.Managers
 
         #region DispatcherObjectアクセス
 
-        public void AccessDispatcherObject(Action accessAction)
+        public async Task AccessDispatcherObject(Func<Task> accessAction)
         {
             if (Application.Current?.Dispatcher == null) //For UnitTest
             {
-                accessAction.Invoke();
+                await accessAction();
                 return;
             }
 
@@ -198,12 +199,6 @@ namespace Sunctum.Managers
         public void RunFillContentsWithImage(BookViewModel book)
         {
             _fcTaskManager.Run((b) => Internal_FillContentsWithImage(b), book);
-        }
-
-        public async void VisualizeAuthorAndTitleIfLocked()
-        {
-            _LoadedBooks.Clear();
-            _LoadedBooks.AddRange(await BookFacade.FindAllWithFillContents().ToListAsync());
         }
 
         private void Internal_FillContents(BookViewModel book)

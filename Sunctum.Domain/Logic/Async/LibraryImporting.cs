@@ -106,7 +106,7 @@ namespace Sunctum.Domain.Logic.Async
                 ret.AddRange(GenerateTasksToImportPage(libManager, addBook, addPage));
             }
             ret.Add(new Task(() => CopyImageTag(libManager, addBook)));
-            ret.Add(new Task(() => libManager.AccessDispatcherObject(() => addBook.ContentsRegistered = true)));
+            ret.Add(new Task(() => libManager.AccessDispatcherObject(async () => addBook.ContentsRegistered = true)));
 
             return ret;
         }
@@ -262,8 +262,8 @@ namespace Sunctum.Domain.Logic.Async
             if (page.PageIndex == Specifications.PAGEINDEX_FIRSTPAGE)
             {
                 Generate.ThumbnailGenerating.GenerateThumbnail(page.Image, _dataOpUnit);
-                libManager.AccessDispatcherObject(() => parent.FirstPage.Value = page);
-                libManager.AccessDispatcherObject(() => parent.IsLoaded = true);
+                libManager.AccessDispatcherObject(async () => parent.FirstPage.Value = page);
+                libManager.AccessDispatcherObject(async () => parent.IsLoaded = true);
             }
         }
 
@@ -272,7 +272,7 @@ namespace Sunctum.Domain.Logic.Async
             PageDao pageDao = new PageDao();
             pageDao.Insert(page.ToEntity(), _dataOpUnit.CurrentConnection);
 
-            libManager.AccessDispatcherObject(() => parent.AddPage(page));
+            libManager.AccessDispatcherObject(async () => parent.AddPage(page));
         }
 
         private void ImportBooks(ILibrary libManager)
@@ -311,7 +311,7 @@ namespace Sunctum.Domain.Logic.Async
             ImportBook(libManager, add);
             CopyPages(libManager, add);
             CopyImageTag(libManager, add);
-            libManager.AccessDispatcherObject(() => add.ContentsRegistered = true);
+            libManager.AccessDispatcherObject(async () => add.ContentsRegistered = true);
         }
 
         private void ImportBook(ILibrary libManager, BookViewModel add)
