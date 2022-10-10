@@ -40,9 +40,13 @@ namespace Sunctum.Domain.Test.UnitTest
         };
 
         [OneTimeSetUp]
-        public async Task OneTimeSetUp()
+        public async Task _OneTimeSetUp()
         {
             _filePath = Path.Combine(TestContext.CurrentContext.TestDirectory, "BookFacadeTest.db");
+            if (File.Exists(_filePath))
+            {
+                File.Delete(_filePath);
+            }
             ConnectionManager.SetDefaultConnection(_instanceId, $"Data Source={_filePath}", typeof(SQLiteConnection));
 
             var mwvm = Container.Resolve<IMainWindowViewModel>();
@@ -55,21 +59,25 @@ namespace Sunctum.Domain.Test.UnitTest
         }
 
         [Test, Order(0)]
-        public void SelectEmptyTest()
+        public async Task SelectEmptyTest()
         {
-            var items = BookFacade.FindAll();
-            Assert.That(items.Count, Is.EqualTo(0));
+            using (var dataOpUnit = new DataOperationUnit())
+            {
+                dataOpUnit.Open(ConnectionManager.DefaultConnection);
+                var items = await BookFacade.FindAll(null).ToListAsync();
+                Assert.That(items.Count, Is.EqualTo(0));
+            }
         }
 
         [Test, Order(1)]
-        public void CreateBooksTest()
+        public async Task CreateBooksTest()
         {
             foreach (var book in _books)
             {
-                BookFacade.Insert(book);
+                await BookFacade.Insert(book);
             }
 
-            var items = BookFacade.FindAll();
+            var items = await BookFacade.FindAll().ToListAsync();
             Assert.That(items.Count, Is.EqualTo(12));
             Assert.That(items.ElementAt(0), Is.EqualTo(_books[0]));
             Assert.That(items.ElementAt(1), Is.EqualTo(_books[1]));
@@ -86,7 +94,7 @@ namespace Sunctum.Domain.Test.UnitTest
         }
 
         [Test, Order(2)]
-        public void UpdateBooksTest()
+        public async Task UpdateBooksTest()
         {
             var changeList = new BookViewModel[]
             {
@@ -94,10 +102,10 @@ namespace Sunctum.Domain.Test.UnitTest
                 new BookViewModel(new System.Guid(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12), "ブックタイトル１２＋"),
             };
 
-            BookFacade.Update(changeList[0]);
-            BookFacade.Update(changeList[1]);
+            await BookFacade.Update(changeList[0]);
+            await BookFacade.Update(changeList[1]);
 
-            var items = BookFacade.FindAll();
+            var items = await BookFacade.FindAll().ToListAsync();
             Assert.That(items.Count, Is.EqualTo(12));
             Assert.That(items.ElementAt(0), Is.EqualTo(changeList[0]));
             Assert.That(items.ElementAt(1), Is.EqualTo(_books[1]));
@@ -114,9 +122,9 @@ namespace Sunctum.Domain.Test.UnitTest
         }
 
         [Test, Order(3)]
-        public void DeleteBooksTest()
+        public async Task DeleteBooksTest()
         {
-            var items = BookFacade.FindAll();
+            var items = await BookFacade.FindAll().ToListAsync();
             Assert.That(items.Count, Is.EqualTo(12));
 
             BookFacade.DeleteWhereIDIs(_books[0].ID);
@@ -126,7 +134,7 @@ namespace Sunctum.Domain.Test.UnitTest
             BookFacade.DeleteWhereIDIs(_books[4].ID);
             BookFacade.DeleteWhereIDIs(_books[5].ID);
 
-            items = BookFacade.FindAll();
+            items = await BookFacade.FindAll().ToListAsync();
             Assert.That(items.Count, Is.EqualTo(6));
 
             BookFacade.DeleteWhereIDIs(_books[6].ID);
@@ -136,7 +144,7 @@ namespace Sunctum.Domain.Test.UnitTest
             BookFacade.DeleteWhereIDIs(_books[10].ID);
             BookFacade.DeleteWhereIDIs(_books[11].ID);
 
-            items = BookFacade.FindAll();
+            items = await BookFacade.FindAll().ToListAsync();
             Assert.That(items.Count, Is.EqualTo(0));
         }
 

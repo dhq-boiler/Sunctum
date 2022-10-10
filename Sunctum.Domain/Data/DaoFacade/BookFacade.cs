@@ -10,6 +10,7 @@ using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Sunctum.Domain.Data.DaoFacade
 {
@@ -17,17 +18,17 @@ namespace Sunctum.Domain.Data.DaoFacade
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
-        public static void Insert(BookViewModel target, DataOperationUnit dataOpUnit = null)
+        public static async Task Insert(BookViewModel target, DataOperationUnit dataOpUnit = null)
         {
             BookDao dao = new BookDao();
-            dao.Insert(target.ToEntity(), dataOpUnit?.CurrentConnection);
+            await dao.InsertAsync(target.ToEntity(), dataOpUnit?.CurrentConnection);
             s_logger.Debug($"INSERT Book:{target}");
         }
 
-        public static void DeleteWhereIDIs(Guid id, DataOperationUnit dataOpUnit = null)
+        public static async Task DeleteWhereIDIs(Guid id, DataOperationUnit dataOpUnit = null)
         {
             BookDao dao = new BookDao();
-            dao.DeleteWhereIDIs(id, dataOpUnit?.CurrentConnection);
+            await dao.DeleteWhereIDIsAsync(id, dataOpUnit?.CurrentConnection);
             s_logger.Debug($"DELETE Book:{id}");
         }
 
@@ -43,13 +44,17 @@ namespace Sunctum.Domain.Data.DaoFacade
             return dao.FindBy(new Dictionary<string, object>() { { "FingerPrint", null } }).ToViewModel();
         }
 
-        public static IEnumerable<BookViewModel> FindAll(DataOperationUnit dataOpUnit = null)
+        public static async IAsyncEnumerable<BookViewModel> FindAll(DataOperationUnit dataOpUnit = null)
         {
             BookDao dao = new BookDao();
-            return dao.FindAll(dataOpUnit?.CurrentConnection).ToViewModel();
+            var items = await dao.FindAllAsync(dataOpUnit?.CurrentConnection).ToListAsync();
+            foreach (var item in items)
+            {
+                yield return item.ToViewModel();
+            }
         }
 
-        public static async void Update(BookViewModel book, DataOperationUnit dataOpUnit = null)
+        public static async Task Update(BookViewModel book, DataOperationUnit dataOpUnit = null)
         {
             string plainText = null;
             if (book.TitleIsEncrypted.Value && book.TitleIsDecrypted.Value)

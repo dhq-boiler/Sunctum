@@ -8,6 +8,7 @@ using Sunctum.Domain.Models.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Unity;
 
 namespace Sunctum.ViewModels
@@ -63,14 +64,14 @@ namespace Sunctum.ViewModels
 
         public event Action<IDialogResult> RequestClose;
 
-        public void Load()
+        public async Task Load()
         {
             var id = Guid.Parse("00000000-0000-0000-0000-000000000000");
             var appDao = DataAccessManager.AppDao.Build<StatisticsDao>();
             var statistics = appDao.FindBy(new Dictionary<string, object>() { { "ID", id } }).First();
             NumberOfBoots.Value = statistics.NumberOfBoots;
 
-            NumberOfBooks.Value = BookFacade.FindAll().Count();
+            NumberOfBooks.Value = (await BookFacade.FindAll().ToListAsync()).Count();
 
             TotalFileSize.Value = ImageFacade.SumTotalFileSize();
 
