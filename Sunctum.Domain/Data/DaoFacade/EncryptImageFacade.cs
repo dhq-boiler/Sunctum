@@ -39,5 +39,11 @@ namespace Sunctum.Domain.Data.DaoFacade
             EncryptImageDao dao = new EncryptImageDao();
             return dao.FindAll().Any();
         }
+
+        internal static async Task<bool> AnyEncryptedAsync()
+        {
+            EncryptImageDao dao = new EncryptImageDao();
+            return await dao.FindAllAsync().AnyAsync();
+        }
     }
 }

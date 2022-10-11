@@ -40,17 +40,17 @@ namespace Sunctum.Domain.Logic.Async
 
         public override void ConfigureTaskImplementation(AsyncTaskSequence sequence)
         {
-            sequence.Add(() => TaskManager.Enqueue(LibraryResettingService.GetTaskSequence()));
+            sequence.Add(async () => await TaskManager.Enqueue(LibraryResettingService.GetTaskSequence()).ConfigureAwait(false));
 
-            sequence.Add(() => TaskManager.Enqueue(RecentOpenedLibraryUpdating.GetTaskSequence()));
+            sequence.Add(async () => await TaskManager.Enqueue(RecentOpenedLibraryUpdating.GetTaskSequence()).ConfigureAwait(false));
 
-            sequence.Add(() => TagManager.Load());
+            sequence.Add(async () => await TagManager.LoadAsync().ConfigureAwait(false));
 
-            sequence.Add(() => AuthorManager.LoadAsync());
+            sequence.Add(async () => await AuthorManager.LoadAsync().ConfigureAwait(false));
 
-            sequence.Add(() => TaskManager.Enqueue(BookLoadingService.GetTaskSequence()));
+            sequence.Add(async () => await TaskManager.Enqueue(BookLoadingService.GetTaskSequence()).ConfigureAwait(false));
 
-            sequence.Add(() => Configuration.ApplicationConfiguration.LibraryIsEncrypted = EncryptImageFacade.AnyEncrypted());
+            sequence.Add(async () => Configuration.ApplicationConfiguration.LibraryIsEncrypted = await EncryptImageFacade.AnyEncryptedAsync().ConfigureAwait(false));
         }
 
         public override void ConfigurePostTaskAction(AsyncTaskSequence sequence)
