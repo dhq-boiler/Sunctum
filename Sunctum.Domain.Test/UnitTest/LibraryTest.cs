@@ -22,8 +22,8 @@ namespace Sunctum.Domain.Test.UnitTest
         private ILibrary _libManager;
         private static Guid _instanceId = Guid.NewGuid();
 
-        [Test]
-        public async Task 検索中インポート()
+        [SetUp]
+        public void _SetUp()
         {
             _dirPath = Path.Combine(TestContext.CurrentContext.TestDirectory, "LibraryTest");
             _filePath = Path.Combine(_dirPath, "library.db");
@@ -45,7 +45,11 @@ namespace Sunctum.Domain.Test.UnitTest
             {
                 Directory.CreateDirectory(_dataPath);
             }
+        }
 
+        [Test]
+        public async Task 検索中インポート()
+        {
             var mwvm = Container.Resolve<IMainWindowViewModel>();
             mwvm.ManageAppDB();
             mwvm.ManageVcDB();
