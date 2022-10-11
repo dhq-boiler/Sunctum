@@ -54,7 +54,7 @@ namespace Sunctum.Domain.Test.UnitTest
             _libManager = Container.Resolve<ILibrary>();
             var home = mwvm.HomeDocumentViewModel;
             home.BookCabinet = _libManager.CreateBookStorage();
-            home.BookCabinet.Search("minecraft");
+            await home.BookCabinet.Search("minecraft");
 
             await mwvm.Initialize(true, false).ConfigureAwait(false);
             await _libManager.ImportAsync(new string[] { Path.Combine(TestContext.CurrentContext.TestDirectory, "TestData", "minecraft_screenshots") }).ConfigureAwait(false);
