@@ -19,27 +19,27 @@ namespace Sunctum.Domain.Data.Dao.Migration.Plan
         {
         }
 
-        public override void CreateTable(IConnection connection)
+        public override async Task CreateTable(IConnection connection)
         {
             EncryptImageDao dao = new EncryptImageDao(typeof(VersionOrigin));
             dao.CurrentConnection = connection;
-            dao.CreateTableIfNotExists();
+            await dao.CreateTableIfNotExistsAsync();
             ++ModifiedCount;
-            dao.CreateIndexIfNotExists();
+            await dao.CreateIndexIfNotExistsAsync();
             ++ModifiedCount;
         }
 
-        public override void DropTable(IConnection connection)
+        public override async Task DropTable(IConnection connection)
         {
             EncryptImageDao dao = new EncryptImageDao(typeof(VersionOrigin));
             dao.CurrentConnection = connection;
-            dao.DropTable();
+            await dao.DropTableAsync();
             ++ModifiedCount;
         }
 
-        public override void UpgradeToTargetVersion(IConnection connection)
+        public override async Task UpgradeToTargetVersion(IConnection connection)
         {
-            CreateTable(connection);
+            await CreateTable(connection);
         }
     }
 }

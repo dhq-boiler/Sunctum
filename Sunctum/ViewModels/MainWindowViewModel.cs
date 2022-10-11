@@ -854,7 +854,7 @@ namespace Sunctum.ViewModels
             }
         }
 
-        public void ManageAppDB()
+        public async Task ManageAppDB()
         {
             DataVersionManager dvManager = new DataVersionManager();
             dvManager.CurrentConnection = DataAccessManager.AppDao.CurrentConnection;
@@ -862,17 +862,17 @@ namespace Sunctum.ViewModels
             dvManager.RegisterChangePlan(new ChangePlan_AppDb_Version_1(VersioningMode.ByTick));
             dvManager.FinishedToUpgradeTo += DvManager_FinishedToUpgradeTo;
 
-            dvManager.UpgradeToTargetVersion();
+            await dvManager.UpgradeToTargetVersion();
         }
 
-        public void ManageVcDB()
+        public async Task ManageVcDB()
         {
             DataVersionManager dvManager = new DataVersionManager();
             dvManager.CurrentConnection = DataAccessManager.VcDao.CurrentConnection;
             dvManager.RegisterChangePlan(new ChangePlan_VC_VersionOrigin(VersioningMode.ByTick));
             dvManager.FinishedToUpgradeTo += DvManager_FinishedToUpgradeTo_VC;
 
-            dvManager.UpgradeToTargetVersion();
+            await dvManager.UpgradeToTargetVersion();
         }
 
         private void DvManager_FinishedToUpgradeTo_VC(object sender, ModifiedEventArgs e)

@@ -63,7 +63,7 @@ namespace Sunctum.Domain.ViewModels
         IHomeDocumentViewModel HomeDocumentViewModel { get; set; }
 
         void InitializeWindowComponent();
-        void ManageAppDB();
-        void ManageVcDB();
+        Task ManageAppDB();
+        Task ManageVcDB();
     }
 }

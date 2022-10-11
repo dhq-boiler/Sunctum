@@ -40,11 +40,11 @@ namespace Sunctum.Domain.Logic.Async
             _importLibraryDirectory = Path.GetDirectoryName(ImportLibraryFilename);
 
             Initialize(ImportLibraryFilename);
-            sequence.Add(new Task(() => CreateIDConversionTable()));
+            sequence.Add(new Task(async () => await CreateIDConversionTable()));
             sequence.Add(new Task(() => ImportAuthors(LibraryManager.Value)));
             sequence.Add(new Task(() => ImportTags(LibraryManager.Value)));
             sequence.AddRange(GenerateTasksToImportBooks(LibraryManager.Value));
-            sequence.Add(new Task(() => DropIDConversionTable()));
+            sequence.Add(new Task(async () => await DropIDConversionTable()));
             sequence.Add(new Task(() => EndProcess()));
         }
 
@@ -454,14 +454,14 @@ namespace Sunctum.Domain.Logic.Async
             libManager.AuthorManager.Authors.Add(add);
         }
 
-        private void CreateIDConversionTable()
+        private async Task CreateIDConversionTable()
         {
             s_logger.Info("Create IDConversion table...");
 
             try
             {
                 IDConversionDao idConvertionDao = new IDConversionDao();
-                idConvertionDao.CreateTableIfNotExists();
+                await idConvertionDao.CreateTableIfNotExistsAsync();
 
                 s_logger.Info("Completed to create IDConversion table.");
             }
@@ -475,14 +475,14 @@ namespace Sunctum.Domain.Logic.Async
             }
         }
 
-        private void DropIDConversionTable()
+        private async Task DropIDConversionTable()
         {
             s_logger.Info("Drop IDConversion table...");
 
             try
             {
                 IDConversionDao idConvertionDao = new IDConversionDao();
-                idConvertionDao.DropTable();
+                await idConvertionDao.DropTableAsync();
 
                 s_logger.Info("Completed to drop IDConversion table.");
             }

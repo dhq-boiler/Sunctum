@@ -6,6 +6,7 @@ using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Sunctum.Domain.Data.DaoFacade
 {
@@ -26,10 +27,10 @@ namespace Sunctum.Domain.Data.DaoFacade
             return dao.CountBy(new Dictionary<string, object>() { { "BookID", target.BookID }, { "TagID", target.TagID } }) > 0;
         }
 
-        public static void Delete(BookTagViewModel deleteEntity)
+        public static async Task Delete(BookTagViewModel deleteEntity)
         {
             var dao = new BookTagDao();
-            dao.Delete(new Dictionary<string, object>() { { "BookID", deleteEntity.BookID }, { "TagID", deleteEntity.TagID } });
+            await dao.DeleteAsync(new Dictionary<string, object>() { { "BookID", deleteEntity.BookID }, { "TagID", deleteEntity.TagID } });
         }
 
         public static IEnumerable<BookTagViewModel> FindAll()

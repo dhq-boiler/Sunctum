@@ -9,6 +9,7 @@ using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Sunctum.Domain.Data.DaoFacade
 {
@@ -81,10 +82,10 @@ namespace Sunctum.Domain.Data.DaoFacade
             return dao.CountAll();
         }
 
-        public static void DeleteWhereIDIs(Guid imageId, Guid tagId)
+        public static async Task DeleteWhereIDIs(Guid imageId, Guid tagId)
         {
             ImageTagDao dao = new ImageTagDao();
-            dao.Delete(new Dictionary<string, object>() { { "ImageID", imageId }, { "TagID", tagId } });
+            await dao.DeleteAsync(new Dictionary<string, object>() { { "ImageID", imageId }, { "TagID", tagId } });
             s_logger.Debug($"DELETE ImageTag ImageId:{imageId}, TagId:{tagId}");
         }
 
@@ -124,16 +125,16 @@ namespace Sunctum.Domain.Data.DaoFacade
             return dao.FindBy(new Dictionary<string, object>() { { "ImageID", imageIds.ToArray() } }).ToViewModel();
         }
 
-        public static int CountByTagId(Guid tagId)
+        public static async Task<int> CountByTagId(Guid tagId)
         {
             ImageTagDao dao = new ImageTagDao();
-            return dao.CountBy(new Dictionary<string, object>() { { "TagID", tagId } });
+            return await dao.CountByAsync(new Dictionary<string, object>() { { "TagID", tagId } });
         }
 
-        public static void DeleteWhereIDIs(Guid imageId)
+        public static async Task DeleteWhereIDIs(Guid imageId)
         {
             ImageTagDao dao = new ImageTagDao();
-            dao.Delete(new Dictionary<string, object>() { { "ImageID", imageId } });
+            await dao.DeleteAsync(new Dictionary<string, object>() { { "ImageID", imageId } });
             s_logger.Debug($"DELETE ImageTag ImageId:{imageId}");
         }
     }
