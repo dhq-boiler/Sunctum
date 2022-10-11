@@ -4,6 +4,7 @@ using Sunctum.Domain.Models.Managers;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Linq;
 using Unity;
 
 namespace Sunctum.Domain.Logic.Async
@@ -35,10 +36,10 @@ namespace Sunctum.Domain.Logic.Async
 
             sequence.Add(() => LibraryManager.Value.BookSource.CollectionChanged -= AuthorManager.LoadedBooks_CollectionChanged);
 
-            sequence.Add(() =>
+            sequence.Add(async () =>
             {
                 LibraryManager.Value.BookSource.Clear();
-                LibraryManager.Value.BookSource.AddRange(BookFacade.FindAllWithAuthor(null));
+                LibraryManager.Value.BookSource.AddRange(await BookFacade.FindAllWithAuthorAsync(null).ToListAsync());
             });
 
             sequence.Add(() => LibraryManager.Value.BookSource.CollectionChanged += AuthorManager.LoadedBooks_CollectionChanged);

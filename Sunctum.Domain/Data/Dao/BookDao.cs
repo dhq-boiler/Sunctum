@@ -146,6 +146,86 @@ namespace Sunctum.Domain.Data.Dao
             }
         }
 
+        public async IAsyncEnumerable<BookViewModel> FindAllWithAuthorAsync(DbConnection conn = null)
+        {
+            bool isTransaction = conn != null;
+
+            try
+            {
+                if (!isTransaction)
+                {
+                    conn = await GetConnectionAsync();
+                }
+
+                using (var command = conn.CreateCommand())
+                {
+                    using (var query = new Select().Column("b", "ID").As("bId")
+                                                   .Column("b", "Title").As("bTitle")
+                                                   .Column("b", "AuthorID").As("bAuthorId")
+                                                   .Column("b", "ByteSize").As("bByteSize")
+                                                   .Column("b", "PublishDate").As("bPublishDate")
+                                                   .Column("b", "TitleIsEncrypted").As("bTitleIsEncrypted")
+                                                   .Column("a", "ID").As("aId")
+                                                   .Column("a", "Name").As("aName")
+                                                   .Column("a", "NameIsEncrypted").As("aNameIsEncrypted")
+                                                   .Column("s", "Level").As("sLevel")
+                                                   .Column("b", "FingerPrint").As("bFingerPrint")
+                                                   .From.Table(new Table<Book>().Name, "b")
+                                                   .Left.Join(new Table<Author>().Name, "a").On.Column("a", "ID").EqualTo.Column("bAuthorId")
+                                                   .Left.Join(new Table<Star>().Name, "s").On.Column("s", "TypeId").EqualTo.Value(0).And().Column("s", "ID").EqualTo.Column("bId"))
+                    {
+                        string sql = query.ToSql();
+                        command.CommandText = sql;
+                        query.SetParameters(command);
+
+                        using (var rdr = await command.ExecuteReaderAsync())
+                        {
+                            while (await rdr.ReadAsync())
+                            {
+                                var book = new BookViewModel();
+                                book.Configuration = Configuration.ApplicationConfiguration;
+                                book.ID = rdr.SafeGetGuid("bId", null);
+                                book.Title = rdr.SafeGetString("bTitle", null);
+                                book.ByteSize = rdr.SafeNullableGetLong("bByteSize", null);
+                                book.PublishDate = rdr.SafeGetNullableDateTime("bPublishDate", null);
+                                book.TitleIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("bTitleIsEncrypted", null));
+                                if (book.TitleIsEncrypted.Value && !book.TitleIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                                {
+                                    book.Title = await Encryptor.DecryptString(book.Title, Configuration.ApplicationConfiguration.Password);
+                                    book.TitleIsDecrypted.Value = true;
+                                }
+                                if (!rdr.IsDBNull("aId") && !rdr.IsDBNull("aName"))
+                                {
+                                    var author = new AuthorViewModel();
+                                    author.ID = rdr.SafeGetGuid("aId", null);
+                                    author.Name = rdr.SafeGetString("aName", null);
+                                    author.NameIsEncrypted.Value = CatchThrow(() => rdr.SafeGetBoolean("aNameIsEncrypted", null));
+                                    if (author.NameIsEncrypted.Value && !author.NameIsDecrypted.Value && !string.IsNullOrEmpty(Configuration.ApplicationConfiguration.Password))
+                                    {
+                                        author.Name = await Encryptor.DecryptString(author.Name, Configuration.ApplicationConfiguration.Password);
+                                        author.NameIsDecrypted.Value = true;
+                                    }
+                                    book.Author = author;
+                                }
+                                book.StarLevel = rdr.SafeGetNullableInt("sLevel", null);
+                                book.FingerPrint = rdr.SafeGetString("bFingerPrint", null);
+                                book.ContentsRegistered = true;
+
+                                yield return book;
+                            }
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                if (!isTransaction)
+                {
+                    conn.Dispose();
+                }
+            }
+        }
+
         internal IEnumerable<BookViewModel> FindDuplicateFingerPrint(DbConnection conn = null)
         {
             bool isTransaction = conn != null;
