@@ -5,6 +5,7 @@ using Homura.ORM.Mapping;
 using Homura.ORM.Migration;
 using Homura.ORM.Setup;
 using Sunctum.Domain.Models;
+using System.Threading.Tasks;
 
 namespace Sunctum.Domain.Data.Dao.Migration.Plan
 {
@@ -14,25 +15,25 @@ namespace Sunctum.Domain.Data.Dao.Migration.Plan
         {
         }
 
-        public override void CreateTable(IConnection connection)
+        public override async Task CreateTable(IConnection connection)
         {
             var dao = new DirectoryNameParserDao();
-            dao.CreateTableIfNotExists();
+            await dao.CreateTableIfNotExistsAsync();
             ++ModifiedCount;
-            dao.CreateIndexIfNotExists();
+            await dao.CreateIndexIfNotExistsAsync();
             ++ModifiedCount;
         }
 
-        public override void DropTable(IConnection connection)
+        public override async Task DropTable(IConnection connection)
         {
             var dao = new DirectoryNameParserDao();
-            dao.DropTable();
+            await dao.DropTableAsync();
             ++ModifiedCount;
         }
 
-        public override void UpgradeToTargetVersion(IConnection connection)
+        public override async Task UpgradeToTargetVersion(IConnection connection)
         {
-            CreateTable(connection);
+            await CreateTable(connection);
         }
     }
 }

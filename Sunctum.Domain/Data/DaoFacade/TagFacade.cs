@@ -8,6 +8,7 @@ using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Sunctum.Domain.Data.DaoFacade
 {
@@ -42,10 +43,10 @@ namespace Sunctum.Domain.Data.DaoFacade
             return entity.ToViewModel();
         }
 
-        internal static void DeleteByTagName(string tagName)
+        internal static async Task DeleteByTagName(string tagName)
         {
             TagDao dao = new TagDao();
-            dao.Delete(new Dictionary<string, object>() { { "Name", tagName } });
+            await dao.DeleteAsync(new Dictionary<string, object>() { { "Name", tagName } });
         }
 
         public static IEnumerable<TagViewModel> OrderByNaturalString()

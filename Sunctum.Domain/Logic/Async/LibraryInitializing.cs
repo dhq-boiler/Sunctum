@@ -51,7 +51,7 @@ namespace Sunctum.Domain.Logic.Async
         {
             sequence.Add(() => s_logger.Info("Checking Database schema..."));
 
-            sequence.Add(() =>
+            sequence.Add(async () =>
             {
                 try
                 {
@@ -78,7 +78,7 @@ namespace Sunctum.Domain.Logic.Async
                     dvManager.RegisterChangePlan(new ChangePlan_Version_8(VersioningMode.ByTick));
                     dvManager.FinishedToUpgradeTo += DvManager_FinishedToUpgradeTo;
 
-                    dvManager.UpgradeToTargetVersion();
+                    await dvManager.UpgradeToTargetVersion();
 
                     Stopwatch.Stop();
 

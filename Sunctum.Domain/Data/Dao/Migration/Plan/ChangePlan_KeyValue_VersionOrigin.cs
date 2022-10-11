@@ -6,6 +6,7 @@ using Homura.ORM.Migration;
 using Homura.ORM.Setup;
 using Sunctum.Domain.Models;
 using System;
+using System.Threading.Tasks;
 
 namespace Sunctum.Domain.Data.Dao.Migration.Plan
 {
@@ -14,27 +15,27 @@ namespace Sunctum.Domain.Data.Dao.Migration.Plan
         public ChangePlan_KeyValue_VersionOrigin(VersioningMode mode, MigrationAction migrationAction = MigrationAction.NotSpecified) : base("KeyValue", PostMigrationVerification.TableExists, mode, migrationAction)
         {
         }
-        public override void CreateTable(IConnection connection)
+        public override async Task CreateTable(IConnection connection)
         {
             var dao = new KeyValueDao(typeof(VersionOrigin));
             dao.CurrentConnection = connection;
-            dao.CreateTableIfNotExists();
+            await dao.CreateTableIfNotExistsAsync();
             ++ModifiedCount;
-            dao.CreateIndexIfNotExists();
+            await dao.CreateIndexIfNotExistsAsync();
             ++ModifiedCount;
         }
 
-        public override void DropTable(IConnection connection)
+        public override async Task DropTable(IConnection connection)
         {
             var dao = new KeyValueDao(typeof(VersionOrigin));
             dao.CurrentConnection = connection;
-            dao.DropTable();
+            await dao.DropTableAsync();
             ++ModifiedCount;
         }
 
-        public override void UpgradeToTargetVersion(IConnection connection)
+        public override async Task UpgradeToTargetVersion(IConnection connection)
         {
-            CreateTable(connection);
+            await CreateTable(connection);
 
             var dao = new KeyValueDao();
             dao.CurrentConnection = connection;

@@ -28,10 +28,10 @@ namespace Sunctum.Domain.Data.DaoFacade
             return dao.FindBy(new Dictionary<string, object>() { { "TargetImageID", targetImageId } }, dataOperationUnit?.CurrentConnection).SingleOrDefault();
         }
 
-        internal static void DeleteBy(Guid targetImageId, DataOperationUnit dataOperationUnit = null)
+        internal static async Task DeleteBy(Guid targetImageId, DataOperationUnit dataOperationUnit = null)
         {
             EncryptImageDao dao = new EncryptImageDao();
-            dao.Delete(new Dictionary<string, object>() { { "TargetImageID", targetImageId } }, dataOperationUnit?.CurrentConnection);
+            await dao.DeleteAsync(new Dictionary<string, object>() { { "TargetImageID", targetImageId } }, dataOperationUnit?.CurrentConnection);
         }
 
         internal static bool AnyEncrypted()
