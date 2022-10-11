@@ -79,6 +79,12 @@ namespace Sunctum.Domain.Data.DaoFacade
             return dao.FindAllWithAuthor(dataOpUnit?.CurrentConnection);
         }
 
+        internal static IAsyncEnumerable<BookViewModel> FindAllWithAuthorAsync(DataOperationUnit dataOpUnit)
+        {
+            BookDao dao = new BookDao();
+            return dao.FindAllWithAuthorAsync(dataOpUnit?.CurrentConnection);
+        }
+
         public static IEnumerable<BookViewModel> FindByAuthorId(Guid authorId)
         {
             BookDao dao = new BookDao();
