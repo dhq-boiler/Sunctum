@@ -313,7 +313,7 @@ namespace Sunctum.Domain.Data.Dao
             }
         }
 
-        public IEnumerable<TagCount> FindAllAsTagCount(DbConnection conn = null)
+        public async IAsyncEnumerable<ImageTag> FindAllAsync(DbConnection conn = null)
         {
             bool isTransaction = conn != null;
 
@@ -321,7 +321,50 @@ namespace Sunctum.Domain.Data.Dao
             {
                 if (!isTransaction)
                 {
-                    conn = GetConnection();
+                    conn = await GetConnectionAsync();
+                }
+
+                using (var command = conn.CreateCommand())
+                {
+                    using (var query = new Select().Column("ImageID")
+                                                   .Column("TagID")
+                                                   .Column("Name")
+                                                   .From.Table(new Table<ImageTag>().Name)
+                                                   .Inner.Join(new Table<Tag>().Name).On.Column("TagID").EqualTo.Column("ID"))
+                    {
+                        string sql = query.ToSql();
+                        command.CommandText = sql;
+                        command.CommandType = CommandType.Text;
+
+                        s_logger.Debug(sql);
+                        using (var reader = await command.ExecuteReaderAsync())
+                        {
+                            while (await reader.ReadAsync())
+                            {
+                                yield return ToEntity(reader);
+                            }
+                        }
+                    }
+                }
+            }
+            finally
+            {
+                if (!isTransaction)
+                {
+                    conn.Dispose();
+                }
+            }
+        }
+
+        public async IAsyncEnumerable<TagCount> FindAllAsTagCountAsync(DbConnection conn = null)
+        {
+            bool isTransaction = conn != null;
+
+            try
+            {
+                if (!isTransaction)
+                {
+                    conn = await GetConnectionAsync();
                 }
 
                 using (var command = conn.CreateCommand())
@@ -338,9 +381,9 @@ namespace Sunctum.Domain.Data.Dao
                         command.CommandType = CommandType.Text;
 
                         s_logger.Debug(sql);
-                        using (var reader = command.ExecuteReader())
+                        using (var reader = await command.ExecuteReaderAsync())
                         {
-                            while (reader.Read())
+                            while (await reader.ReadAsync())
                             {
                                 Guid tagId = reader.SafeGetGuid("TagID", Table);
                                 string name = reader.SafeGetString("Name", Table);

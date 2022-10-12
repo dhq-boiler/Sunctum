@@ -6,6 +6,7 @@ using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Sunctum.Domain.Data.DaoFacade
@@ -37,6 +38,16 @@ namespace Sunctum.Domain.Data.DaoFacade
         {
             var dao = new BookTagDao();
             return dao.FindAll().ToViewModel();
+        }
+
+        public static async IAsyncEnumerable<BookTagViewModel> FindAllAsync()
+        {
+            var dao = new BookTagDao();
+            var items = await dao.FindAllAsync().ToListAsync();
+            foreach (var item in items)
+            {
+                yield return item.ToViewModel();
+            }
         }
 
         public static long CountAll()

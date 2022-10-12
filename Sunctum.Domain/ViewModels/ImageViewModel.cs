@@ -12,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace Sunctum.Domain.ViewModels
@@ -103,7 +104,7 @@ namespace Sunctum.Domain.ViewModels
             }
         }
 
-        public void DecryptImage(bool isThumbnail)
+        public async Task DecryptImage(bool isThumbnail)
         {
             if (!OnmemoryImageManager.Instance.Exists(this.ID, isThumbnail))
             {
@@ -112,7 +113,7 @@ namespace Sunctum.Domain.ViewModels
                     return;
                 try
                 {
-                    Encryptor.Decrypt(image.EncryptFilePath, Configuration.Password, isThumbnail);
+                    await Encryptor.Decrypt(image.EncryptFilePath, Configuration.Password, isThumbnail);
                 }
                 catch (ArgumentException e)
                 {

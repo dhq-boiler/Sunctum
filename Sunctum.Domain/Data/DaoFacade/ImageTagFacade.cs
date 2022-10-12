@@ -101,6 +101,16 @@ namespace Sunctum.Domain.Data.DaoFacade
             return dao.FindAll().ToViewModel();
         }
 
+        public static async IAsyncEnumerable<ImageTagViewModel> FindAllAsync()
+        {
+            ImageTagDao dao = new ImageTagDao();
+            var items = await dao.FindAllAsync().ToListAsync();
+            foreach (var item in items)
+            {
+                yield return item.ToViewModel();
+            }
+        }
+
         public static IEnumerable<ImageTagViewModel> FindByTagId(Guid tagId)
         {
             ImageTagDao dao = new ImageTagDao();
@@ -113,10 +123,14 @@ namespace Sunctum.Domain.Data.DaoFacade
             return dao.FindBy(new Dictionary<string, object>() { { "ImageID", imageId } }).ToViewModel();
         }
 
-        public static IEnumerable<TagCountViewModel> FindAllAsCount()
+        public static async IAsyncEnumerable<TagCountViewModel> FindAllAsCount()
         {
             ImageTagDao dao = new ImageTagDao();
-            return dao.FindAllAsTagCount().ToViewModel();
+            var items = await dao.FindAllAsTagCountAsync().ToListAsync();
+            foreach (var item in items)
+            {
+                yield return item.ToViewModel();
+            }
         }
 
         public static IEnumerable<ImageTagViewModel> FindByImageIds(IEnumerable<Guid> imageIds)

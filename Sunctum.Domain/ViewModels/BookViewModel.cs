@@ -253,8 +253,10 @@ namespace Sunctum.Domain.ViewModels
             {
                 if (disposing)
                 {
-                    NumberOfPages.Dispose();
-                    FirstPage.Dispose();
+                    if (NumberOfPages is not null)
+                        NumberOfPages.Dispose();
+                    if (FirstPage is not null)
+                        FirstPage.Dispose();
                 }
 
                 Contents = null;

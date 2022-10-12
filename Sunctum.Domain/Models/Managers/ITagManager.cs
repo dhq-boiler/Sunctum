@@ -43,7 +43,7 @@ namespace Sunctum.Domain.Models.Managers
 
         Task RemoveImageTag(IEnumerable<string> tagNames);
 
-        void Load();
+        Task Load();
 
         Task LoadAsync();
 

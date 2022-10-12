@@ -121,7 +121,7 @@ namespace Sunctum.Domain.Logic.Async
                 ret.Add(new Task(() => ImportImage(addPage, addImage)));
             }
             ret.Add(new Task(() => ImportPage(libManager, addBook, addPage)));
-            ret.Add(new Task(() => PrepareThumbnailIfFirstPage(libManager, addBook, addPage)));
+            ret.Add(new Task(async () => await PrepareThumbnailIfFirstPage(libManager, addBook, addPage)));
 
             return ret;
         }
@@ -224,7 +224,7 @@ namespace Sunctum.Domain.Logic.Async
             parent.Image = image;
         }
 
-        private void CopyPages(ILibrary libManager, BookViewModel parent)
+        private async Task CopyPages(ILibrary libManager, BookViewModel parent)
         {
             IDConversionDao idcDao = new IDConversionDao();
             PageDao pageDao = new PageDao();
@@ -240,30 +240,30 @@ namespace Sunctum.Domain.Logic.Async
                     idcDao.Insert(new Data.Entity.Migration.IDConversion("Page", newGuid, page.ID), _dataOpUnit.CurrentConnection);
                     page.ID = newGuid;
 
-                    ImportPageWithContents(libManager, parent, page);
+                    await ImportPageWithContents(libManager, parent, page);
                 }
                 else
                 {
                     //対象ライブラリのエンティティを変更せずそのままインポートする。
-                    ImportPageWithContents(libManager, parent, page);
+                    await ImportPageWithContents(libManager, parent, page);
                 }
             }
         }
 
-        private void ImportPageWithContents(ILibrary libManager, BookViewModel parent, PageViewModel page)
+        private async Task ImportPageWithContents(ILibrary libManager, BookViewModel parent, PageViewModel page)
         {
             ImportImageWithContents(libManager, page);
             ImportPage(libManager, parent, page);
-            PrepareThumbnailIfFirstPage(libManager, parent, page);
+            await PrepareThumbnailIfFirstPage(libManager, parent, page);
         }
 
-        private void PrepareThumbnailIfFirstPage(ILibrary libManager, BookViewModel parent, PageViewModel page)
+        private async Task PrepareThumbnailIfFirstPage(ILibrary libManager, BookViewModel parent, PageViewModel page)
         {
             if (page.PageIndex == Specifications.PAGEINDEX_FIRSTPAGE)
             {
-                Generate.ThumbnailGenerating.GenerateThumbnail(page.Image, _dataOpUnit);
-                libManager.AccessDispatcherObject(async () => parent.FirstPage.Value = page);
-                libManager.AccessDispatcherObject(async () => parent.IsLoaded = true);
+                await Generate.ThumbnailGenerating.GenerateThumbnail(page.Image, _dataOpUnit);
+                await libManager.AccessDispatcherObject(async () => parent.FirstPage.Value = page);
+                await libManager.AccessDispatcherObject(async () => parent.IsLoaded = true);
             }
         }
 
@@ -275,7 +275,7 @@ namespace Sunctum.Domain.Logic.Async
             libManager.AccessDispatcherObject(async () => parent.AddPage(page));
         }
 
-        private void ImportBooks(ILibrary libManager)
+        private async Task ImportBooks(ILibrary libManager)
         {
             IDConversionDao idcDao = new IDConversionDao();
             BookDao bookDao = new BookDao();
@@ -293,7 +293,7 @@ namespace Sunctum.Domain.Logic.Async
                 idcDao.Insert(new Data.Entity.Migration.IDConversion("Book", newGuid, add.ID), _dataOpUnit.CurrentConnection);
                 add.ID = newGuid;
 
-                ImportBookWithContents(libManager, add);
+                await ImportBookWithContents(libManager, add);
             }
 
             //異ID：対象ライブラリのエンティティを変更せずそのままインポートする。
@@ -302,16 +302,16 @@ namespace Sunctum.Domain.Logic.Async
 
             foreach (var add in beta)
             {
-                ImportBookWithContents(libManager, add);
+                await ImportBookWithContents(libManager, add);
             }
         }
 
-        private void ImportBookWithContents(ILibrary libManager, BookViewModel add)
+        private async Task ImportBookWithContents(ILibrary libManager, BookViewModel add)
         {
             ImportBook(libManager, add);
-            CopyPages(libManager, add);
+            await CopyPages(libManager, add);
             CopyImageTag(libManager, add);
-            libManager.AccessDispatcherObject(async () => add.ContentsRegistered = true);
+            await libManager.AccessDispatcherObject(async () => add.ContentsRegistered = true);
         }
 
         private void ImportBook(ILibrary libManager, BookViewModel add)

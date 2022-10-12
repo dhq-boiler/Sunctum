@@ -16,6 +16,8 @@ namespace Sunctum.Domain.Models.Managers
 
         void RunSync(AsyncTaskSequence sequence);
 
+        Task RunAsync(AsyncTaskSequence sequence);
+
         void WaitUntilProcessAll(TimeSpan? waitUnit = null);
 
         IProgressManager ProgressManager { get; }

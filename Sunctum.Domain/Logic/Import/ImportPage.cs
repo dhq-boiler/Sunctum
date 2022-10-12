@@ -73,16 +73,16 @@ namespace Sunctum.Domain.Logic.Import
                 {
                     try
                     {
-                        using (var scope = new TransactionScope())
+                        using (var scope = new TransactionScope(TransactionScopeAsyncFlowOption.Enabled))
                         {
                             var fileManager = new TxFileManager();
-                            Encryptor.Encrypt(InsertedImage, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{InsertedImage.ID.ToString().Substring(0, 2)}\\{InsertedImage.ID}{System.IO.Path.GetExtension(InsertedImage.AbsoluteMasterPath)}", Configuration.ApplicationConfiguration.Password, dataOpUnit, fileManager);
+                            await Encryptor.Encrypt(InsertedImage, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{InsertedImage.ID.ToString().Substring(0, 2)}\\{InsertedImage.ID}{System.IO.Path.GetExtension(InsertedImage.AbsoluteMasterPath)}", Configuration.ApplicationConfiguration.Password, dataOpUnit, fileManager).ConfigureAwait(false);
                             Encryptor.DeleteOriginal(GeneratedPage, fileManager);
                             InsertedImage.IsEncrypted = true;
                             var titlePlainText = InsertedImage.Title;
                             InsertedImage.Title = await Encryptor.EncryptString(InsertedImage.Title, Configuration.ApplicationConfiguration.Password);
                             InsertedImage.TitleIsEncrypted.Value = true;
-                            await ImageFacade.UpdateAsync(InsertedImage);
+                            await ImageFacade.UpdateAsync(InsertedImage).ConfigureAwait(false);
                             InsertedImage.Title = titlePlainText;
                             InsertedImage.TitleIsDecrypted.Value = true;
                             scope.Complete();
