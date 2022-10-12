@@ -36,7 +36,7 @@ namespace Sunctum.Domain.Logic.Encrypt
 
             using (FileStream outfs = new FileStream(OutFilePath, FileMode.Create, FileAccess.Write))
             {
-                using (AesManaged aes = new AesManaged())
+                using (var aes = Aes.Create())
                 {
                     aes.BlockSize = 128;
                     aes.KeySize = 128;
@@ -174,7 +174,7 @@ namespace Sunctum.Domain.Logic.Encrypt
             fileMgr.Delete(page.Image.AbsoluteMasterPath);
         }
 
-        public static void Decrypt(string encryptedFilePath, string password, bool isThumbnail)
+        public static async Task Decrypt(string encryptedFilePath, string password, bool isThumbnail)
         {
             if (password is null || string.IsNullOrWhiteSpace(password))
             {
@@ -187,7 +187,7 @@ namespace Sunctum.Domain.Logic.Encrypt
 
             using (var fs = new FileStream(encryptedFilePath, FileMode.Open, FileAccess.Read))
             {
-                using (var aes = new AesManaged())
+                using (var aes = Aes.Create())
                 {
                     aes.BlockSize = 128;
                     aes.KeySize = 128;
@@ -195,10 +195,10 @@ namespace Sunctum.Domain.Logic.Encrypt
                     aes.Padding = PaddingMode.PKCS7;
 
                     byte[] salt = new byte[16];
-                    fs.Read(salt, 0, 16);
+                    await fs.ReadAsync(salt, 0, 16);
 
                     byte[] iv = new byte[16];
-                    fs.Read(iv, 0, 16);
+                    await fs.ReadAsync(iv, 0, 16);
                     aes.IV = iv;
 
                     Rfc2898DeriveBytes deriveBytes = new Rfc2898DeriveBytes(password, salt);
@@ -210,9 +210,9 @@ namespace Sunctum.Domain.Logic.Encrypt
                     using (ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV))
                     using (CryptoStream cse = new CryptoStream(fs, decryptor, CryptoStreamMode.Read))
                     {
-                        while ((len = cse.Read(buffer, 0, 4096)) > 0)
+                        while ((len = await cse.ReadAsync(buffer, 0, 4096)) > 0)
                         {
-                            outstream.Write(buffer, 0, len);
+                            await outstream.WriteAsync(buffer, 0, len);
                         }
                     }
                 }

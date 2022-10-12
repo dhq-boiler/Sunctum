@@ -47,7 +47,7 @@ namespace Sunctum.Domain.Logic.Async
                     {
                         try
                         {
-                            thumbnail.RelativeMasterPath = ThumbnailGenerator.SaveThumbnail(Target.AbsoluteMasterPath, Target.ID.ToString("N") + System.IO.Path.GetExtension(Target.AbsoluteMasterPath));
+                            thumbnail.RelativeMasterPath = await ThumbnailGenerator.SaveThumbnail(Target.AbsoluteMasterPath, Target.ID.ToString("N") + System.IO.Path.GetExtension(Target.AbsoluteMasterPath));
                             s_logger.Debug($"Generate thumbnail ImageID={Target.ID}");
                         }
                         catch (Exception e)

@@ -13,6 +13,7 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
@@ -54,7 +55,7 @@ namespace Sunctum.Converters
                 {
                     try
                     {
-                        image.DecryptImage(true);
+                        Task.Run(async () => await image.DecryptImage(true)).GetAwaiter().GetResult();
                     }
                     catch (ArgumentException)
                     {
@@ -119,7 +120,7 @@ namespace Sunctum.Converters
             }
             else
             {
-                Encryptor.Decrypt(value as string, Configuration.ApplicationConfiguration.Password, false);
+                Task.Run(async () => await Encryptor.Decrypt(value as string, Configuration.ApplicationConfiguration.Password, false)).GetAwaiter().GetResult();
                 var guid = Guid.Parse(Path.GetFileNameWithoutExtension(value as string));
                 var bitmap = OnmemoryImageManager.Instance.PullAsWriteableBitmap(guid, false);
                 if (bitmap is null)
@@ -137,7 +138,7 @@ namespace Sunctum.Converters
                 var bitmap = OnmemoryImageManager.Instance.PullAsWriteableBitmap(image.ID, false);
                 if (bitmap is null)
                 {
-                    image.DecryptImage(false);
+                    Task.Run(async () => await image.DecryptImage(false)).GetAwaiter().GetResult();
                     return OnmemoryImageManager.Instance.PullAsWriteableBitmap(image.ID, false);
                 }
                 return bitmap;

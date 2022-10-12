@@ -48,7 +48,7 @@ namespace Sunctum.Domain.Logic.Async
             {
                 ImageViewModel image = page.Image;
                 tasks.Add(new Task(() => Delete.ThumbnailDeleting.DeleteThumbnail(image)));
-                tasks.Add(new Task(() => Generate.ThumbnailGenerating.GenerateThumbnail(image)));
+                tasks.Add(new Task(async () => await Generate.ThumbnailGenerating.GenerateThumbnail(image)));
                 tasks.Add(new Task(() => s_logger.Info($"Remade Thumbnail imageId:{image.ID}")));
             }
 

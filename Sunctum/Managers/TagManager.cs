@@ -61,10 +61,10 @@ namespace Sunctum.Managers
 
         public async Task LoadAsync()
         {
-            await Task.Run(() => Load());
+            await Task.Run(async () => await Load());
         }
 
-        public void Load()
+        public async Task Load()
         {
             if (Tags != null)
             {
@@ -76,10 +76,10 @@ namespace Sunctum.Managers
                 Chains.CollectionChanged -= Chains_CollectionChanged;
             }
 
-            LoadTag();
-            LoadImageTag();
-            LoadBookTag();
-            TagCount = new ObservableCollection<TagCountViewModel>(GenerateTagCount());
+            await LoadTag();
+            await LoadImageTag();
+            await LoadBookTag();
+            TagCount = new ObservableCollection<TagCountViewModel>(await GenerateTagCount().ToListAsync());
             SelectedEntries = new List<EntryViewModel>();
             ObserveSelectedEntityTags();
         }
@@ -303,14 +303,14 @@ namespace Sunctum.Managers
 
         #endregion //プロパティ
 
-        private void LoadTag()
+        private async Task LoadTag()
         {
             Stopwatch sw = new Stopwatch();
             s_logger.Info("Loading Tag list...");
             sw.Start();
             try
             {
-                Tags = new ObservableCollection<TagViewModel>(TagFacade.FindAll());
+                Tags = new ObservableCollection<TagViewModel>(await TagFacade.FindAllAsync().ToListAsync());
                 Tags.CollectionChanged += Tags_CollectionChanged;
             }
             finally
@@ -319,14 +319,14 @@ namespace Sunctum.Managers
             }
         }
 
-        private void LoadImageTag()
+        private async Task LoadImageTag()
         {
             Stopwatch sw = new Stopwatch();
             s_logger.Info("Loading ImageTag list...");
             sw.Start();
             try
             {
-                Chains = new ObservableCollection<ImageTagViewModel>(ImageTagFacade.FindAll());
+                Chains = new ObservableCollection<ImageTagViewModel>(await ImageTagFacade.FindAllAsync().ToListAsync());
                 Chains.CollectionChanged += Chains_CollectionChanged;
             }
             finally
@@ -335,14 +335,14 @@ namespace Sunctum.Managers
             }
         }
 
-        private void LoadBookTag()
+        private async Task LoadBookTag()
         {
             var sw = new Stopwatch();
             s_logger.Info("Loading BookTag list...");
             sw.Start();
             try
             {
-                BookTagChains = new ObservableCollection<BookTagViewModel>(BookTagFacade.FindAll());
+                BookTagChains = new ObservableCollection<BookTagViewModel>(await BookTagFacade.FindAllAsync().ToListAsync());
             }
             finally
             {
@@ -370,14 +370,18 @@ namespace Sunctum.Managers
             ProgressManager.Complete();
         }
 
-        private IEnumerable<TagCountViewModel> GenerateTagCount()
+        private async IAsyncEnumerable<TagCountViewModel> GenerateTagCount()
         {
             Stopwatch sw = new Stopwatch();
             s_logger.Info($"Loading TagCount list...");
             sw.Start();
             try
             {
-                return ImageTagFacade.FindAllAsCount();
+                var items = await ImageTagFacade.FindAllAsCount().ToListAsync();
+                foreach (var item in items)
+                {
+                    yield return item;
+                }
             }
             finally
             {

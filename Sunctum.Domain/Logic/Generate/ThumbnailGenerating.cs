@@ -19,11 +19,11 @@ namespace Sunctum.Domain.Logic.Generate
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
-        public static void GenerateThumbnail(ImageViewModel target, DataOperationUnit dataOpUnit = null)
+        public static async Task GenerateThumbnail(ImageViewModel target, DataOperationUnit dataOpUnit = null)
         {
             try
             {
-                while (!InternalGenerateThumbnail(target, dataOpUnit))
+                while (! await InternalGenerateThumbnail(target, dataOpUnit))
                 {
                     Thread.Sleep(500);
                 }
@@ -34,47 +34,44 @@ namespace Sunctum.Domain.Logic.Generate
             }
         }
 
-        private static bool InternalGenerateThumbnail(ImageViewModel target, DataOperationUnit dataOpUnit)
+        private static async Task<bool> InternalGenerateThumbnail(ImageViewModel target, DataOperationUnit dataOpUnit)
         {
-            lock (target)
+            //暗号化しておらず、ファイルが存在しない場合
+            if (!target.IsEncrypted && !File.Exists(target.AbsoluteMasterPath))
             {
-                //暗号化しておらず、ファイルが存在しない場合
-                if (!target.IsEncrypted && !File.Exists(target.AbsoluteMasterPath))
-                {
-                    throw new FileNotFoundException(target.AbsoluteMasterPath);
-                }
-
-                var thumbnail = new ThumbnailViewModel();
-                thumbnail.ID = target.ID;
-                thumbnail.ImageID = target.ID;
-
-                var encryptImage = EncryptImageFacade.FindBy(target.ID);
-                if (encryptImage != null && !string.IsNullOrWhiteSpace(Configuration.ApplicationConfiguration.Password))
-                {
-                    Encryptor.Decrypt(encryptImage.EncryptFilePath, Configuration.ApplicationConfiguration.Password, true);
-                    thumbnail.RelativeMasterPath = $"{Path.GetDirectoryName(target.RelativeMasterPath)}\\{target.ID.ToString("N")}{Path.GetExtension(target.RelativeMasterPath)}";
-                }
-                else
-                {
-                    try
-                    {
-                        thumbnail.RelativeMasterPath = ThumbnailGenerator.SaveThumbnail(target.AbsoluteMasterPath, target.ID.ToString("N") + System.IO.Path.GetExtension(target.AbsoluteMasterPath));
-                    }
-                    catch (Exception e)
-                    {
-                        s_logger.Warn(e);
-                        return false;
-                    }
-
-                    s_logger.Debug($"Generate thumbnail ImageID={target.ID}");
-                }
-
-                Task.Factory.StartNew(() => RecordThumbnail(thumbnail));
-
-                //Apply thumbnail
-                target.Thumbnail = thumbnail;
-                return true;
+                throw new FileNotFoundException(target.AbsoluteMasterPath);
             }
+
+            var thumbnail = new ThumbnailViewModel();
+            thumbnail.ID = target.ID;
+            thumbnail.ImageID = target.ID;
+
+            var encryptImage = EncryptImageFacade.FindBy(target.ID);
+            if (encryptImage != null && !string.IsNullOrWhiteSpace(Configuration.ApplicationConfiguration.Password))
+            {
+                await Encryptor.Decrypt(encryptImage.EncryptFilePath, Configuration.ApplicationConfiguration.Password, true);
+                thumbnail.RelativeMasterPath = $"{Path.GetDirectoryName(target.RelativeMasterPath)}\\{target.ID.ToString("N")}{Path.GetExtension(target.RelativeMasterPath)}";
+            }
+            else
+            {
+                try
+                {
+                    thumbnail.RelativeMasterPath = await ThumbnailGenerator.SaveThumbnail(target.AbsoluteMasterPath, target.ID.ToString("N") + System.IO.Path.GetExtension(target.AbsoluteMasterPath));
+                }
+                catch (Exception e)
+                {
+                    s_logger.Warn(e);
+                    return false;
+                }
+
+                s_logger.Debug($"Generate thumbnail ImageID={target.ID}");
+            }
+
+            await Task.Factory.StartNew(() => RecordThumbnail(thumbnail));
+
+            //Apply thumbnail
+            target.Thumbnail = thumbnail;
+            return true;
         }
 
         public static void RecordThumbnail(ThumbnailViewModel thumbnail, DataOperationUnit dataOpUnit = null)

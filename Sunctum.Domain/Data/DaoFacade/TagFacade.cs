@@ -35,6 +35,16 @@ namespace Sunctum.Domain.Data.DaoFacade
             return dao.FindAll().ToViewModel();
         }
 
+        public static async IAsyncEnumerable<TagViewModel> FindAllAsync()
+        {
+            TagDao dao = new TagDao();
+            var items = await dao.FindAllAsync().ToListAsync();
+            foreach (var item in items)
+            {
+                yield return item.ToViewModel();
+            }
+        }
+
         public static TagViewModel FindByTagName(string tagName)
         {
             TagDao dao = new TagDao();
