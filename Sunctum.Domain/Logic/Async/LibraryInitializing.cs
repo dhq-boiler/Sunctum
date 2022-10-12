@@ -17,6 +17,7 @@ using System;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using Unity;
 
 namespace Sunctum.Domain.Logic.Async
@@ -160,22 +161,22 @@ namespace Sunctum.Domain.Logic.Async
             await TaskManager.Enqueue(BookHashingService.GetTaskSequence()).ConfigureAwait(false);
         }
 
-        private void LibraryInitializing_FinishedToUpgradeTo_Version_6(object sender, VersionChangeEventArgs e)
+        private async void LibraryInitializing_FinishedToUpgradeTo_Version_6(object sender, VersionChangeEventArgs e)
         {
             using (var dataOpUnit = new DataOperationUnit())
             {
-                dataOpUnit.Open(ConnectionManager.DefaultConnection);
-                dataOpUnit.BeginTransaction();
+                await dataOpUnit.OpenAsync(ConnectionManager.DefaultConnection);
+                await dataOpUnit.BeginTransactionAsync();
 
-                var encryptImages = EncryptImageFacade.FindAll(dataOpUnit);
+                var encryptImages = await EncryptImageFacade.FindAllAsync(dataOpUnit).ToListAsync();
                 foreach (var encryptImage in encryptImages)
                 {
-                    var image = ImageFacade.FindBy(encryptImage.TargetImageID, dataOpUnit);
+                    var image = await ImageFacade.FindByAsync(encryptImage.TargetImageID, dataOpUnit);
                     image.IsEncrypted = true; //EncryptImageテーブルに存在するエントリは暗号化済みとしてマーク
-                    ImageFacade.Update(image, dataOpUnit);
+                    await ImageFacade.UpdateAsync(image, dataOpUnit);
                 }
 
-                dataOpUnit.Commit();
+                await dataOpUnit.CommitAsync();
             }
         }
     }

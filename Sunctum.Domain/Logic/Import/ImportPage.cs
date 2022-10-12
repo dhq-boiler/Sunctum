@@ -82,7 +82,7 @@ namespace Sunctum.Domain.Logic.Import
                             var titlePlainText = InsertedImage.Title;
                             InsertedImage.Title = await Encryptor.EncryptString(InsertedImage.Title, Configuration.ApplicationConfiguration.Password);
                             InsertedImage.TitleIsEncrypted.Value = true;
-                            ImageFacade.Update(InsertedImage);
+                            await ImageFacade.UpdateAsync(InsertedImage);
                             InsertedImage.Title = titlePlainText;
                             InsertedImage.TitleIsDecrypted.Value = true;
                             scope.Complete();

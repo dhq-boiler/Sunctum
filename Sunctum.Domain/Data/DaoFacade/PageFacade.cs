@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Sunctum.Domain.Data.DaoFacade
 {
@@ -84,7 +85,7 @@ namespace Sunctum.Domain.Data.DaoFacade
             s_logger.Debug($"UPDATE Page bookId:{bookID}");
         }
 
-        public static async void Update(PageViewModel target, DataOperationUnit dataOpUnit = null)
+        public static async Task UpdateAsync(PageViewModel target, DataOperationUnit dataOpUnit = null)
         {
             string plainText = null;
             if (target.TitleIsEncrypted.Value && target.TitleIsDecrypted.Value)
@@ -94,7 +95,7 @@ namespace Sunctum.Domain.Data.DaoFacade
                 target.TitleIsDecrypted.Value = false;
             }
             PageDao dao = new PageDao();
-            dao.Update(target.ToEntity(), dataOpUnit?.CurrentConnection);
+            await dao.UpdateAsync(target.ToEntity(), dataOpUnit?.CurrentConnection);
             s_logger.Debug($"UPDATE Page:{target}");
             if (target.TitleIsEncrypted.Value)
             {

@@ -116,23 +116,23 @@ namespace Sunctum.Domain.Logic.Async
                 {
                     if (page.Image.IsEncrypted)
                     {
-                        sequence.Add(() =>
+                        sequence.Add(async () =>
                         {
                             using (var dataOpUnit = new DataOperationUnit())
                             {
-                                dataOpUnit.Open(ConnectionManager.DefaultConnection);
-                                dataOpUnit.BeginTransaction();
+                                await dataOpUnit.OpenAsync(ConnectionManager.DefaultConnection);
+                                await dataOpUnit.BeginTransactionAsync();
                                 try
                                 {
                                     using (var scope = new TransactionScope())
                                     {
-                                        _TargetEncryptImage = EncryptImageFacade.FindBy(page.Image.ID, dataOpUnit);
+                                        _TargetEncryptImage = await EncryptImageFacade.FindByAsync(page.Image.ID, dataOpUnit);
                                         if (_TargetEncryptImage is not null)
                                         {
                                             var fileMgr = new TxFileManager();
                                             Encryptor.Decrypt(_TargetEncryptImage.EncryptFilePath, page.Image.AbsoluteMasterPath, Password, fileMgr);
                                             fileMgr.Delete(_TargetEncryptImage.EncryptFilePath);
-                                            EncryptImageFacade.DeleteBy(page.Image.ID, dataOpUnit);
+                                            await EncryptImageFacade.DeleteBy(page.Image.ID, dataOpUnit);
                                         }
                                         if (page.Image.Thumbnail is not null)
                                         {
@@ -140,7 +140,7 @@ namespace Sunctum.Domain.Logic.Async
                                         }
                                         page.Image.Thumbnail = null;
                                         page.Image.IsEncrypted = false;
-                                        ImageFacade.Update(page.Image, dataOpUnit);
+                                        await ImageFacade.UpdateAsync(page.Image, dataOpUnit);
                                         scope.Complete();
                                     }
                                     dataOpUnit.Commit();
@@ -156,7 +156,7 @@ namespace Sunctum.Domain.Logic.Async
                                         }
                                         page.Image.Thumbnail = null;
                                         page.Image.IsEncrypted = false;
-                                        ImageFacade.Update(page.Image, dataOpUnit);
+                                        await ImageFacade.UpdateAsync(page.Image, dataOpUnit);
                                         dataOpUnit.Commit();
                                     }
                                     else
@@ -190,7 +190,7 @@ namespace Sunctum.Domain.Logic.Async
                                         page.Title = await Encryptor.DecryptString(_page.Title, Configuration.ApplicationConfiguration.Password);
                                     }
                                     page.TitleIsEncrypted.Value = false;
-                                    PageFacade.Update(page, dataOpUnit);
+                                    await PageFacade.UpdateAsync(page, dataOpUnit);
                                     dataOpUnit.Commit();
                                 }
                                 catch (Exception)
@@ -224,7 +224,7 @@ namespace Sunctum.Domain.Logic.Async
                                         image.Title = await Encryptor.DecryptString(_image.Title, Configuration.ApplicationConfiguration.Password);
                                     }
                                     image.TitleIsEncrypted.Value = false;
-                                    ImageFacade.Update(image, dataOpUnit);
+                                    await ImageFacade.UpdateAsync(image, dataOpUnit);
                                     dataOpUnit.Commit();
                                 }
                                 catch (Exception)

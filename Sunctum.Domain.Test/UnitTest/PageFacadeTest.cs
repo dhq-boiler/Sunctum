@@ -75,7 +75,7 @@ namespace Sunctum.Domain.Test.UnitTest
                 imageIds.Add(page.ID, page.ImageID);
 
                 page.PageIndex = page.PageIndex + 10000;
-                PageFacade.Update(page);
+                await PageFacade.UpdateAsync(page);
             }
 
                 //再読み込み

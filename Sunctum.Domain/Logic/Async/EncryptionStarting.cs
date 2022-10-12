@@ -102,8 +102,8 @@ namespace Sunctum.Domain.Logic.Async
                         using (var dataOpUnit = new DataOperationUnit())
                         using (var scope = new TransactionScope(TransactionScopeOption.Required, TimeSpan.FromMinutes(3)))
                         {
-                            dataOpUnit.Open(ConnectionManager.DefaultConnection);
-                            dataOpUnit.BeginTransaction();
+                            await dataOpUnit.OpenAsync(ConnectionManager.DefaultConnection);
+                            await dataOpUnit.BeginTransactionAsync();
 
                             try
                             {
@@ -112,7 +112,7 @@ namespace Sunctum.Domain.Logic.Async
                                     var plainText = book.Title;
                                     book.Title = await Encryptor.EncryptString(book.Title, Configuration.ApplicationConfiguration.Password);
                                     book.TitleIsEncrypted.Value = true;
-                                    BookFacade.Update(book, dataOpUnit);
+                                    await BookFacade.Update(book, dataOpUnit);
                                     book.Title = plainText;
                                     book.TitleIsDecrypted.Value = true;
                                 }
@@ -131,7 +131,7 @@ namespace Sunctum.Domain.Logic.Async
                                         Encryptor.Encrypt(page.Image, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{page.Image.ID.ToString().Substring(0, 2)}\\{page.Image.ID}{Path.GetExtension(page.Image.AbsoluteMasterPath)}", Password, dataOpUnit, fileMgr);
                                         Encryptor.DeleteOriginal(page, fileMgr);
                                         page.Image.IsEncrypted = true;
-                                        ImageFacade.Update(page.Image, dataOpUnit);
+                                        await ImageFacade.UpdateAsync(page.Image, dataOpUnit);
                                     }
 
                                     if (!page.TitleIsEncrypted.Value)
@@ -139,7 +139,7 @@ namespace Sunctum.Domain.Logic.Async
                                         var plainText = page.Title;
                                         page.Title = await Encryptor.EncryptString(page.Title, Configuration.ApplicationConfiguration.Password);
                                         page.TitleIsEncrypted.Value = true;
-                                        PageFacade.Update(page, dataOpUnit);
+                                        await PageFacade.UpdateAsync(page, dataOpUnit);
                                         page.Title = plainText;
                                         page.TitleIsDecrypted.Value = true;
                                     }
@@ -150,7 +150,7 @@ namespace Sunctum.Domain.Logic.Async
                                         var plainText = image.Title;
                                         image.Title = await Encryptor.EncryptString(image.Title, Configuration.ApplicationConfiguration.Password);
                                         image.TitleIsEncrypted.Value = true;
-                                        ImageFacade.Update(image, dataOpUnit);
+                                        await ImageFacade.UpdateAsync(image, dataOpUnit);
                                         image.Title = plainText;
                                         image.TitleIsDecrypted.Value = true;
                                     }
