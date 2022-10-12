@@ -79,10 +79,14 @@ namespace Sunctum.Domain.Data.DaoFacade
             return dao.FindAllWithAuthor(dataOpUnit?.CurrentConnection);
         }
 
-        internal static IAsyncEnumerable<BookViewModel> FindAllWithAuthorAsync(DataOperationUnit dataOpUnit)
+        internal static async IAsyncEnumerable<BookViewModel> FindAllWithAuthorAsync(DataOperationUnit dataOpUnit)
         {
             BookDao dao = new BookDao();
-            return dao.FindAllWithAuthorAsync(dataOpUnit?.CurrentConnection);
+            var items = await dao.FindAllWithAuthorAsync(dataOpUnit?.CurrentConnection).ToListAsync();
+            foreach (var item in items.AsParallel())
+            {
+                yield return item;
+            }
         }
 
         public static IEnumerable<BookViewModel> FindByAuthorId(Guid authorId)
@@ -113,7 +117,7 @@ namespace Sunctum.Domain.Data.DaoFacade
         {
             var dao = new BookDao();
             var items = await dao.FindAllWithFillContentsAsync(dataOpUnit?.CurrentConnection).ToListAsync();
-            foreach (var item in items)
+            foreach (var item in items.AsParallel())
             {
                 yield return item;
             }
