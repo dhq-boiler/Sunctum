@@ -85,7 +85,7 @@ namespace Sunctum.Domain.Logic.Async
             foreach (var page in pages)
             {
                 ret.Add(new Task(() => GetImage(page)));
-                ret.Add(new Task(() => UpdateImage(page.Image)));
+                ret.Add(new Task(async () => await UpdateImage(page.Image)));
                 ret.Add(new Task(() => AddByteSize(page.Image)));
             }
 
@@ -100,10 +100,10 @@ namespace Sunctum.Domain.Logic.Async
             PageFacade.GetProperty(ref page);
         }
 
-        private void UpdateImage(ImageViewModel image)
+        private async Task UpdateImage(ImageViewModel image)
         {
             image.ByteSize = image.MasterFileSize;
-            ImageFacade.Update(image);
+            await ImageFacade.UpdateAsync(image);
         }
 
         private void AddByteSize(ImageViewModel image)

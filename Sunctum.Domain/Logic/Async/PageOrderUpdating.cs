@@ -6,6 +6,7 @@ using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Unity;
 
 namespace Sunctum.Domain.Logic.Async
@@ -35,7 +36,7 @@ namespace Sunctum.Domain.Logic.Async
 
             for (int i = 0; i < Target.Contents.Count; ++i)
             {
-                sequence.Add(() => UpdatePageOrderIf(_index++));
+                sequence.Add(async () => await UpdatePageOrderIf(_index++));
             }
 
             sequence.Add(() =>
@@ -56,13 +57,13 @@ namespace Sunctum.Domain.Logic.Async
             });
         }
 
-        private void UpdatePageOrderIf(int i)
+        private async Task UpdatePageOrderIf(int i)
         {
             var page = Target.Contents[i];
             if (page.PageIndex != i + 1)
             {
                 page.PageIndex = i + 1;
-                PageFacade.Update(page);
+                await PageFacade.UpdateAsync(page);
             }
         }
 

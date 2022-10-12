@@ -21,11 +21,26 @@ namespace Sunctum.Domain.Data.DaoFacade
             EncryptImageDao dao = new EncryptImageDao();
             return dao.FindAll(dataOpUnit?.CurrentConnection);
         }
+        public static async IAsyncEnumerable<EncryptImage> FindAllAsync(DataOperationUnit dataOpUnit = null)
+        {
+            EncryptImageDao dao = new EncryptImageDao();
+            var items = await dao.FindAllAsync(dataOpUnit?.CurrentConnection).ToListAsync();
+            foreach (var item in items)
+            {
+                yield return item;
+            }
+        }
 
         public static EncryptImage FindBy(Guid targetImageId, DataOperationUnit dataOperationUnit = null)
         {
             EncryptImageDao dao = new EncryptImageDao();
             return dao.FindBy(new Dictionary<string, object>() { { "TargetImageID", targetImageId } }, dataOperationUnit?.CurrentConnection).SingleOrDefault();
+        }
+
+        public static async Task<EncryptImage> FindByAsync(Guid targetImageId, DataOperationUnit dataOperationUnit = null)
+        {
+            EncryptImageDao dao = new EncryptImageDao();
+            return (await dao.FindByAsync(new Dictionary<string, object>() { { "TargetImageID", targetImageId } }, dataOperationUnit?.CurrentConnection).ToListAsync()).SingleOrDefault();
         }
 
         internal static async Task DeleteBy(Guid targetImageId, DataOperationUnit dataOperationUnit = null)

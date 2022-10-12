@@ -25,7 +25,7 @@ namespace Sunctum.Domain.Logic.Encrypt
 {
     public static class Encryptor
     {
-        public static void Encrypt(ImageViewModel image, string OutFilePath, string password, DataOperationUnit dataOpUnit, TxFileManager txFileManager)
+        public static async Task Encrypt(ImageViewModel image, string OutFilePath, string password, DataOperationUnit dataOpUnit, TxFileManager txFileManager)
         {
             int len;
             byte[] buffer = new byte[4096];
@@ -54,14 +54,14 @@ namespace Sunctum.Domain.Logic.Encrypt
                     using (ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV))
                     using (CryptoStream cse = new CryptoStream(outfs, encryptor, CryptoStreamMode.Write))
                     {
-                        outfs.Write(salt, 0, 16);
-                        outfs.Write(aes.IV, 0, 16);
+                        await outfs.WriteAsync(salt, 0, 16);
+                        await outfs.WriteAsync(aes.IV, 0, 16);
 
                         using (FileStream fs = new FileStream(originalImagePath, FileMode.Open, FileAccess.Read))
                         {
-                            while ((len = fs.Read(buffer, 0, 4096)) > 0)
+                            while ((len = await fs.ReadAsync(buffer, 0, 4096)) > 0)
                             {
-                                cse.Write(buffer, 0, len);
+                                await cse.WriteAsync(buffer, 0, len);
                             }
                         }
                     }
@@ -74,7 +74,7 @@ namespace Sunctum.Domain.Logic.Encrypt
             encryptImage.EncryptFilePath = OutFilePath;
 
             EncryptImageDao dao = new EncryptImageDao();
-            dao.InsertOrReplace(encryptImage, dataOpUnit.CurrentConnection);
+            await dao.InsertOrReplaceAsync(encryptImage, dataOpUnit.CurrentConnection);
         }
 
         public static async Task<string> EncryptString(string plainText, string password)

@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Sunctum.Domain.Data.DaoFacade
 {
@@ -43,6 +44,26 @@ namespace Sunctum.Domain.Data.DaoFacade
                 {
                     ImageDao dao = new ImageDao();
                     return dao.FindBy(new Dictionary<string, object>() { { "ID", id } }, dataOpUnit?.CurrentConnection).SingleOrDefault().ToViewModel();
+                }
+                catch (SQLiteException e)
+                {
+                    trying.Add(e);
+                    Thread.Sleep(500);
+                    continue;
+                }
+            }
+            throw new QueryFailedException($"設定回数({challengeMaxCount})の問い合わせに失敗しました．", trying);
+        }
+
+        public static async Task<ImageViewModel> FindByAsync(Guid id, DataOperationUnit dataOpUnit = null, int challengeMaxCount = 3)
+        {
+            List<Exception> trying = new List<Exception>();
+            while (trying.Count() < challengeMaxCount)
+            {
+                try
+                {
+                    ImageDao dao = new ImageDao();
+                    return (await dao.FindByAsync(new Dictionary<string, object>() { { "ID", id } }, dataOpUnit?.CurrentConnection).ToListAsync()).SingleOrDefault().ToViewModel();
                 }
                 catch (SQLiteException e)
                 {
@@ -117,7 +138,7 @@ namespace Sunctum.Domain.Data.DaoFacade
             return ret;
         }
 
-        public static async void Update(ImageViewModel image, DataOperationUnit dataOpUnit = null)
+        public static async Task UpdateAsync(ImageViewModel image, DataOperationUnit dataOpUnit = null)
         {
             string plainText = null;
             if (image.TitleIsEncrypted.Value && image.TitleIsDecrypted.Value)
@@ -127,7 +148,7 @@ namespace Sunctum.Domain.Data.DaoFacade
                 image.TitleIsDecrypted.Value = false;
             }
             ImageDao dao = new ImageDao();
-            dao.Update(image.ToEntity(), dataOpUnit?.CurrentConnection);
+            await dao.UpdateAsync(image.ToEntity(), dataOpUnit?.CurrentConnection);
             if (image.TitleIsEncrypted.Value)
             {
                 image.Title = await Encryptor.DecryptString(image.Title, Configuration.ApplicationConfiguration.Password);
