@@ -221,7 +221,7 @@ namespace Sunctum.Domain.Data.Dao
             {
                 if (!isTransaction)
                 {
-                    conn.Dispose();
+                    await conn.DisposeAsync();
                 }
             }
         }
@@ -760,7 +760,7 @@ namespace Sunctum.Domain.Data.Dao
             {
                 if (!isTransaction)
                 {
-                    conn.Dispose();
+                    await conn.DisposeAsync();
                 }
             }
         }
