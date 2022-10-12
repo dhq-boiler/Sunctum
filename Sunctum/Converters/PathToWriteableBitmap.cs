@@ -4,6 +4,7 @@ using NLog;
 using OpenCvSharp;
 using OpenCvSharp.WpfExtensions;
 using Sunctum.Domain.Data.DaoFacade;
+using Sunctum.Domain.Exceptions;
 using Sunctum.Domain.Logic.Encrypt;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
@@ -100,10 +101,18 @@ namespace Sunctum.Converters
                         (Application.Current.MainWindow.DataContext as IMainWindowViewModel).LibraryVM.TaskManager.RunSync(tg.GetTaskSequence());
                         if (image.IsEncrypted)
                         {
+                            try
+                            {
+                                Task.Run(async () => await image.DecryptImage(true)).GetAwaiter().GetResult();
+                            }
+                            catch (ArgumentException)
+                            {
+                                return LoadBitmap($"{Configuration.ApplicationConfiguration.ExecutingDirectory}\\{Specifications.LOCK_ICON_FILE}", image.IsEncrypted);
+                            }
                             var bitmap = OnmemoryImageManager.Instance.PullAsWriteableBitmap(image.ID, true);
                             if (bitmap is null)
                             {
-                                return LoadBitmap(image.AbsoluteMasterPath, image.IsEncrypted);
+                                throw new UnexpectedException("expected: bitmap is not null but actual: bitmap is null");
                             }
                             return bitmap;
                         }
