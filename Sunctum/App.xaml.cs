@@ -33,8 +33,6 @@ namespace Sunctum
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            base.OnStartup(e);
-
             this.DispatcherUnhandledException += App_DispatcherUnhandledException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
@@ -42,6 +40,8 @@ namespace Sunctum
             s_logger.Info($"Sunctum Personal Photo Library {version}");
             s_logger.Info("Copyright (C) dhq_boiler 2015-2021. All rights reserved.");
             s_logger.Info("SUNCTUM IS LAUNCHING");
+
+            base.OnStartup(e);
         }
 
         protected override Window CreateShell()
