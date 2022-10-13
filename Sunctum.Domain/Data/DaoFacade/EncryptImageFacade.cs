@@ -7,7 +7,6 @@ using Sunctum.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Sunctum.Domain.Data.DaoFacade
@@ -21,11 +20,12 @@ namespace Sunctum.Domain.Data.DaoFacade
             EncryptImageDao dao = new EncryptImageDao();
             return dao.FindAll(dataOpUnit?.CurrentConnection);
         }
+
         public static async IAsyncEnumerable<EncryptImage> FindAllAsync(DataOperationUnit dataOpUnit = null)
         {
             EncryptImageDao dao = new EncryptImageDao();
             var items = await dao.FindAllAsync(dataOpUnit?.CurrentConnection).ToListAsync();
-            foreach (var item in items)
+            foreach (var item in items.AsParallel())
             {
                 yield return item;
             }
@@ -47,6 +47,12 @@ namespace Sunctum.Domain.Data.DaoFacade
         {
             EncryptImageDao dao = new EncryptImageDao();
             await dao.DeleteAsync(new Dictionary<string, object>() { { "TargetImageID", targetImageId } }, dataOperationUnit?.CurrentConnection);
+        }
+
+        public static async Task<int> CountAllAsync(DataOperationUnit dataOpUnit = null)
+        {
+            EncryptImageDao dao = new EncryptImageDao();
+            return await dao.CountAllAsync(dataOpUnit?.CurrentConnection);
         }
 
         internal static bool AnyEncrypted()

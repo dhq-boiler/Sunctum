@@ -314,8 +314,8 @@ namespace Sunctum.Managers
 
         public async Task<bool> UnlockIfLocked()
         {
-            var encryptedItems = EncryptImageFacade.FindAll();
-            if (encryptedItems.Count() == 0)
+            var encryptedItemsCount = await EncryptImageFacade.CountAllAsync();
+            if (encryptedItemsCount == 0)
             {
                 return false;
             }
@@ -323,7 +323,7 @@ namespace Sunctum.Managers
             try
             {
                 var dao = new KeyValueDao();
-                var record = dao.FindBy(new System.Collections.Generic.Dictionary<string, object>() { { "Key", "LibraryID" } }).SingleOrDefault();
+                var record = (await dao.FindByAsync(new System.Collections.Generic.Dictionary<string, object>() { { "Key", "LibraryID" } }).ToListAsync()).SingleOrDefault();
                 var libraryId = record?.Value;
                 var password = await PasswordManager.SignInAsync(libraryId, Environment.UserName).ConfigureAwait(false);
                 if (password is not null)
@@ -333,25 +333,25 @@ namespace Sunctum.Managers
                 }
                 else
                 {
-                    return CallInputPasswordDialog();
+                    return await CallInputPasswordDialog();
                 }
             }
             catch (COMException e)
             {
-                return CallInputPasswordDialog();
+                return await CallInputPasswordDialog();
             }
         }
 
-        private static bool CallInputPasswordDialog()
+        private static async Task<bool> CallInputPasswordDialog()
         {
-            return App.Current.Dispatcher.Invoke(() =>
+            return (await App.Current.Dispatcher.InvokeAsync(async () =>
             {
                 InputPasswordDialog dialog = new InputPasswordDialog("このライブラリは暗号化されています。閲覧するにはパスワードが必要です。");
 
                 if (dialog.ShowDialog() == true)
                 {
                     var dao = new KeyValueDao();
-                    var record = dao.FindBy(new System.Collections.Generic.Dictionary<string, object>() { { "Key", "LibraryID" } }).SingleOrDefault();
+                    var record = (await dao.FindByAsync(new System.Collections.Generic.Dictionary<string, object>() { { "Key", "LibraryID" } }).ToListAsync()).SingleOrDefault();
                     var libraryId = record?.Value;
                     Configuration.ApplicationConfiguration.Password = dialog.Password;
                     PasswordManager.SetPassword(libraryId, dialog.Password, Environment.UserName);
@@ -361,7 +361,7 @@ namespace Sunctum.Managers
                 {
                     return false;
                 }
-            });
+            })).Result;
         }
 
         public async Task StartUnencryption(string password)
