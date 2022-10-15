@@ -633,11 +633,11 @@ namespace Sunctum.ViewModels
 
             SetMainWindowTitle();
             InitializeWindowComponent();
-            ManageVcDB();
-            ManageAppDB();
-            InitializeVcGitHubReleasesLatest();
-            IncrementNumberOfBoots();
-            RecordVersionControlIfFirstLaunch();
+            await ManageVcDB();
+            await ManageAppDB();
+            await InitializeVcGitHubReleasesLatest();
+            await IncrementNumberOfBoots();
+            await RecordVersionControlIfFirstLaunch();
 
             Configuration.ApplicationConfiguration.ConnectionString = Specifications.GenerateConnectionString(Configuration.ApplicationConfiguration.WorkingDirectory);
             ConnectionManager.SetDefaultConnection(Guid.Parse("9056E8CF-745D-4BCC-AEB9-14B1D1B40F37"), Configuration.ApplicationConfiguration.ConnectionString, typeof(SQLiteConnection));
@@ -687,27 +687,27 @@ namespace Sunctum.ViewModels
             }
         }
 
-        private void InitializeVcGitHubReleasesLatest()
+        private async Task InitializeVcGitHubReleasesLatest()
         {
             var dao = DataAccessManager.VcDao.Build<GitHubReleasesLatestDao>();
-            var records = dao.FindAll();
-            if (records.Count() == 0)
+            var recordsCount = await dao.CountAllAsync();
+            if (recordsCount == 0)
             {
                 var newrecord = new GitHubReleasesLatest()
                 {
                     URL = "https://api.github.com/repos/dhq-boiler/Sunctum/releases/latest",
                 };
-                dao.Insert(newrecord);
+                await dao.InsertAsync(newrecord);
             }
         }
 
-        private void RecordVersionControlIfFirstLaunch()
+        private async Task RecordVersionControlIfFirstLaunch()
         {
             var assembly = Assembly.GetExecutingAssembly().GetName();
             var version = assembly.Version;
             string key = GetVersionString(version);
             var dao = DataAccessManager.VcDao.Build<VersionControlDao>();
-            var records = dao.FindBy(new Dictionary<string, object>() { { "FullVersion", key } });
+            var records = await dao.FindByAsync(new Dictionary<string, object>() { { "FullVersion", key } }).ToListAsync();
             if (records.Count() == 0)
             {
                 var newrecord = new VersionControl()
@@ -721,7 +721,7 @@ namespace Sunctum.ViewModels
                     InstalledDate = DateTime.Now,
                     RetiredDate = null,
                 };
-                dao.Insert(newrecord);
+                await dao.InsertAsync(newrecord);
             }
         }
 
@@ -744,23 +744,23 @@ namespace Sunctum.ViewModels
             return key;
         }
 
-        private void IncrementNumberOfBoots()
+        private async Task IncrementNumberOfBoots()
         {
             var id = Guid.Parse("00000000-0000-0000-0000-000000000000");
             var dao = DataAccessManager.AppDao.Build<StatisticsDao>();
-            var statistics = dao.FindBy(new Dictionary<string, object>() { { "ID", id } });
+            var statistics = await dao.FindByAsync(new Dictionary<string, object>() { { "ID", id } }).ToListAsync();
             if (statistics.Count() == 0)
             {
                 var newStatistics = new Domain.Models.Statistics();
                 newStatistics.ID = id;
                 newStatistics.NumberOfBoots = 1;
-                dao.Insert(newStatistics);
+                await dao.InsertAsync(newStatistics);
             }
             else
             {
                 var existStatistics = statistics.First();
                 existStatistics.NumberOfBoots += 1;
-                dao.Update(existStatistics);
+                await dao.UpdateAsync(existStatistics);
             }
         }
 
