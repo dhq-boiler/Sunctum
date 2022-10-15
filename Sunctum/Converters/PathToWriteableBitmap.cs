@@ -109,12 +109,25 @@ namespace Sunctum.Converters
                             {
                                 return LoadBitmap($"{Configuration.ApplicationConfiguration.ExecutingDirectory}\\{Specifications.LOCK_ICON_FILE}", image.IsEncrypted);
                             }
-                            var bitmap = OnmemoryImageManager.Instance.PullAsWriteableBitmap(image.ID, true);
-                            if (bitmap is null)
+                            int count = 0;
+                            while (true)
                             {
-                                throw new UnexpectedException("expected: bitmap is not null but actual: bitmap is null");
+                                var bitmap = OnmemoryImageManager.Instance.PullAsWriteableBitmap(image.ID, true);
+                                if (bitmap is not null)
+                                {
+                                    return bitmap;
+                                }
+                                else
+                                {
+                                    Thread.Sleep(100);
+                                    count++;
+                                    if (count >= 600) //60秒経過
+                                    {
+                                        throw new UnexpectedException("60秒間で画像を復号化した結果のWriteableBitmapを得ることができませんでした。");
+                                    }
+                                    s_logger.Debug($"retrying OnmemoryImageManager.Instance.PullAsWriteableBitmap() #{count} count");
+                                }
                             }
-                            return bitmap;
                         }
                         else
                         {
