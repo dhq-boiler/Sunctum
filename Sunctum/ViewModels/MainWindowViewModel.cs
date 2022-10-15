@@ -640,6 +640,7 @@ namespace Sunctum.ViewModels
             await RecordVersionControlIfFirstLaunch();
 
             Configuration.ApplicationConfiguration.ConnectionString = Specifications.GenerateConnectionString(Configuration.ApplicationConfiguration.WorkingDirectory);
+            s_logger.Info($"Set ConnectionString={Configuration.ApplicationConfiguration.ConnectionString}");
             ConnectionManager.SetDefaultConnection(Guid.Parse("9056E8CF-745D-4BCC-AEB9-14B1D1B40F37"), Configuration.ApplicationConfiguration.ConnectionString, typeof(SQLiteConnection));
 
             try
