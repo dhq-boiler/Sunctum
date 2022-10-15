@@ -877,7 +877,7 @@ namespace Sunctum.ViewModels
 
         private void DvManager_FinishedToUpgradeTo_VC(object sender, ModifiedEventArgs e)
         {
-            s_logger.Info($"Heavy Modifying AppDB Count : {e.ModifiedCount}");
+            s_logger.Info($"Heavy Modifying VcDB Count : {e.ModifiedCount}");
 
             if (e.ModifiedCount > 0)
             {
