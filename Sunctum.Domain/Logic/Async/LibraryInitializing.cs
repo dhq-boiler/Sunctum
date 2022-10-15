@@ -4,7 +4,6 @@ using Homura.Core;
 using Homura.ORM;
 using Homura.ORM.Migration;
 using Homura.ORM.Setup;
-using Homura.QueryBuilder.Iso.Dml;
 using NLog;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Data.Dao.Migration.Plan;
@@ -17,7 +16,6 @@ using System;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using Unity;
 
 namespace Sunctum.Domain.Logic.Async
