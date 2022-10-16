@@ -113,7 +113,7 @@ namespace Sunctum.Domain.ViewModels
                     return;
                 try
                 {
-                    await Encryptor.Decrypt(image.EncryptFilePath, Configuration.Password, isThumbnail);
+                    await Encryptor.Decrypt(Configuration.ApplicationConfiguration.WorkingDirectory + image.EncryptFilePath, Configuration.Password, isThumbnail);
                 }
                 catch (ArgumentException e)
                 {
@@ -195,7 +195,7 @@ namespace Sunctum.Domain.ViewModels
                 if (EncryptImageFacade.AnyEncrypted())
                 {
                     var image = EncryptImageFacade.FindBy(this.ID);
-                    Encryptor.Decrypt(image.EncryptFilePath, Configuration.Password, false);
+                    Encryptor.Decrypt(Configuration.ApplicationConfiguration.WorkingDirectory + image.EncryptFilePath, Configuration.Password, false);
                     return OnmemoryImageManager.Instance.PullAsMemoryStream(this.ID, false).Length;
                 }
 

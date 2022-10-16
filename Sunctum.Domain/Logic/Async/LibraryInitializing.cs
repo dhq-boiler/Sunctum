@@ -4,6 +4,7 @@ using Homura.Core;
 using Homura.ORM;
 using Homura.ORM.Migration;
 using Homura.ORM.Setup;
+using Homura.QueryBuilder.Iso.Dml;
 using NLog;
 using Sunctum.Domain.Data.Dao;
 using Sunctum.Domain.Data.Dao.Migration.Plan;
@@ -16,6 +17,7 @@ using System;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using Unity;
 
 namespace Sunctum.Domain.Logic.Async
@@ -75,6 +77,8 @@ namespace Sunctum.Domain.Logic.Async
                     dvManager.RegisterChangePlan(new ChangePlan_Version_7(VersioningMode.ByTick));
                     dvManager.GetPlan(new Version_7()).FinishedToUpgradeTo += LibraryInitializing_FinishedToUpgradeTo_Version_7;
                     dvManager.RegisterChangePlan(new ChangePlan_Version_8(VersioningMode.ByTick));
+                    dvManager.RegisterChangePlan(new ChangePlan_Version_9(VersioningMode.ByTick));
+                    dvManager.GetPlan(new Version_9()).FinishedToUpgradeTo += LibraryInitializing_FinishedToUpgradeTo_Version_9;
                     dvManager.FinishedToUpgradeTo += DvManager_FinishedToUpgradeTo;
 
                     await dvManager.UpgradeToTargetVersion();
@@ -121,6 +125,57 @@ namespace Sunctum.Domain.Logic.Async
             {
                 DirectoryNameParserManager.Load();
             });
+        }
+
+        private async void LibraryInitializing_FinishedToUpgradeTo_Version_9(object sender, VersionChangeEventArgs e)
+        {
+            using (var conn = await ConnectionManager.DefaultConnection.OpenConnectionAsync())
+            {
+                using (var transaction = await conn.BeginTransactionAsync())
+                {
+                    long count = 0;
+                    var dao = new EncryptImageDao();
+                    await DirectQuery.RunQueryAsync(conn, async (conn) =>
+                    {
+                        using (var cmd = conn.CreateCommand())
+                        {
+                            using (var query = new Select().Count().From.Table(new Table<EncryptImage>()).Where.Column("EncryptFilePath").Like.Value(Configuration.ApplicationConfiguration.WorkingDirectory + "%"))
+                            {
+                                cmd.CommandText = query.ToSql();
+                                cmd.CommandType = System.Data.CommandType.Text;
+                                query.SetParameters(cmd);
+                                count = (long)await cmd.ExecuteScalarAsync();
+                            }
+                        }
+                    });
+
+                    if (count == 0)
+                    {
+                        return;
+                    }    
+
+                    try
+                    {
+                        await DirectQuery.RunQueryAsync(conn, async (conn) =>
+                        {
+                            using (var cmd = conn.CreateCommand())
+                            {
+                                using (var query = new Update().Table(new Table<EncryptImage>()).Set.Column("EncryptFilePath").EqualTo.ReplaceColumn("EncryptFilePath", Configuration.ApplicationConfiguration.WorkingDirectory, String.Empty))
+                                {
+                                    cmd.CommandText = query.ToSql();
+                                    cmd.CommandType = System.Data.CommandType.Text;
+                                    await cmd.ExecuteNonQueryAsync();
+                                }
+                            }
+                        });
+                        await transaction.CommitAsync();
+                    }
+                    catch (Exception)
+                    {
+                        await transaction.RollbackAsync();
+                    }
+                }
+            }
         }
 
         private void LibraryInitializing_FinishedToUpgradeTo_Version_7(object sender, VersionChangeEventArgs e)

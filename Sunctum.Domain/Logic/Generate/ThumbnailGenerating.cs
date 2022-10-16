@@ -46,10 +46,10 @@ namespace Sunctum.Domain.Logic.Generate
             thumbnail.ID = target.ID;
             thumbnail.ImageID = target.ID;
 
-            var encryptImage = EncryptImageFacade.FindBy(target.ID);
+            var encryptImage = await EncryptImageFacade.FindByAsync(target.ID);
             if (encryptImage != null && !string.IsNullOrWhiteSpace(Configuration.ApplicationConfiguration.Password))
             {
-                await Encryptor.Decrypt(encryptImage.EncryptFilePath, Configuration.ApplicationConfiguration.Password, true);
+                await Encryptor.Decrypt(Configuration.ApplicationConfiguration.WorkingDirectory + encryptImage.EncryptFilePath, Configuration.ApplicationConfiguration.Password, true);
                 thumbnail.RelativeMasterPath = $"{Path.GetDirectoryName(target.RelativeMasterPath)}\\{target.ID.ToString("N")}{Path.GetExtension(target.RelativeMasterPath)}";
             }
             else
