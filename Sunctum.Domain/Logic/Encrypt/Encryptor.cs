@@ -71,7 +71,7 @@ namespace Sunctum.Domain.Logic.Encrypt
             EncryptImage encryptImage = new EncryptImage();
             encryptImage.ID = Guid.NewGuid();
             encryptImage.TargetImageID = image.ID;
-            encryptImage.EncryptFilePath = OutFilePath;
+            encryptImage.EncryptFilePath = OutFilePath.Replace(Configuration.ApplicationConfiguration.WorkingDirectory, string.Empty);
 
             EncryptImageDao dao = new EncryptImageDao();
             await dao.InsertOrReplaceAsync(encryptImage, dataOpUnit.CurrentConnection);
