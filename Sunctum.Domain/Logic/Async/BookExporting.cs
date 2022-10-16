@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Unity;
 
 namespace Sunctum.Domain.Logic.Async
@@ -46,11 +47,11 @@ namespace Sunctum.Domain.Logic.Async
                 {
                     if (IncludeTag)
                     {
-                        sequence.Add(() => CopyFileWithTag(page));
+                        sequence.Add(async () => await CopyFileWithTag(page));
                     }
                     else
                     {
-                        sequence.Add(() => CopyFile(page));
+                        sequence.Add(async () => await CopyFile(page));
                     }
                 }
             }
@@ -61,13 +62,13 @@ namespace Sunctum.Domain.Logic.Async
             sequence.Add(() => s_logger.Info($"Finish BookExporting"));
         }
 
-        private void CopyFileWithTag(PageViewModel page)
+        private async Task CopyFileWithTag(PageViewModel page)
         {
             var imageTag = ImageTagFacade.FindByImageId(page.ImageID);
-            CopyFile(page, imageTag.Select(a => a.Tag).ToArray());
+            await CopyFile(page, imageTag.Select(a => a.Tag).ToArray());
         }
 
-        private void CopyFiles(BookViewModel book, bool tag)
+        private async Task CopyFiles(BookViewModel book, bool tag)
         {
             int pageCount = book.NumberOfPages.Value;
             for (int i = 0; i < pageCount; ++i)
@@ -76,16 +77,16 @@ namespace Sunctum.Domain.Logic.Async
                 if (tag)
                 {
                     var imageTag = ImageTagFacade.FindByImageId(page.ImageID);
-                    CopyFile(page, imageTag.Select(a => a.Tag).ToArray());
+                    await CopyFile(page, imageTag.Select(a => a.Tag).ToArray());
                 }
                 else
                 {
-                    CopyFile(page);
+                    await CopyFile(page);
                 }
             }
         }
 
-        private void CopyFile(PageViewModel page, params TagViewModel[] tags)
+        private async Task CopyFile(PageViewModel page, params TagViewModel[] tags)
         {
             try
             {
@@ -93,7 +94,7 @@ namespace Sunctum.Domain.Logic.Async
                 {
                     string tagsString = BuildTagsString(tags);
                     var encryptImage = EncryptImageFacade.FindBy(page.Image.ID);
-                    Encrypt.Encryptor.Decrypt(encryptImage.EncryptFilePath, Configuration.ApplicationConfiguration.Password, false);
+                    await Encrypt.Encryptor.Decrypt(Configuration.ApplicationConfiguration.WorkingDirectory + encryptImage.EncryptFilePath, Configuration.ApplicationConfiguration.Password, false);
                     var decryptStream = OnmemoryImageManager.Instance.PullAsMemoryStream(page.Image.ID, false);
                     using (var writeTo = new FileStream($"{_bookDir}\\{Path.GetFileNameWithoutExtension(page.Image.AbsoluteMasterPath)}_{tagsString}{Path.GetExtension(page.Image.AbsoluteMasterPath)}", FileMode.Create))
                     {
