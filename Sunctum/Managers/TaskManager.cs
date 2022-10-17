@@ -37,12 +37,12 @@ namespace Sunctum.Managers
         public async Task Enqueue(AsyncTaskSequence sequence)
         {
             Sequences.Enqueue(sequence);
-            await Fire();
+            await Fire().ConfigureAwait(false);
         }
 
         private async Task Fire()
         {
-            await Task.Run(() => ProcessTaskLoop());
+            await Task.Run(() => ProcessTaskLoop()).ConfigureAwait(false);
         }
 
         public void RunSync(AsyncTaskSequence sequence)

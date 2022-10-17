@@ -29,18 +29,18 @@ namespace Sunctum.Domain.Logic.Load
 
         public static async Task FillContentsWithImage(IBookStorage bookStorage, BookViewModel book)
         {
-            var pages = PageFacade.FindByBookId(book.ID).OrderBy(p => p.PageIndex);
+            var pages = PageFacade.FindByBookId(book.ID).OrderBy(p => p.PageIndex).ToList();
 
-            bookStorage.AccessDispatcherObject(async () => book.ClearContents());
 
-            bookStorage.AccessDispatcherObject(async () =>
+            await bookStorage.AccessDispatcherObject(async () =>
             {
+                book.ClearContents();
                 foreach (var page in pages)
                 {
-                    await Load(page);
+                    await Load(page).ConfigureAwait(false);
                     book.AddPage(page);
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         public static async Task Load(PageViewModel page)

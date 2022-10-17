@@ -191,14 +191,14 @@ namespace Sunctum.Managers
             _fcTaskManager.Run((b) => Internal_FillContents(b), book);
         }
 
-        public void FireFillContentsWithImage(BookViewModel book)
+        public async Task FireFillContentsWithImage(BookViewModel book)
         {
-            _fcTaskManager.RunAsync((b) => Internal_FillContentsWithImage(b), book);
+            await _fcTaskManager.RunAsync(async (b) => await Internal_FillContentsWithImage(b), book);
         }
 
         public void RunFillContentsWithImage(BookViewModel book)
         {
-            _fcTaskManager.Run((b) => Internal_FillContentsWithImage(b), book);
+            _fcTaskManager.Run(async (b) => await Internal_FillContentsWithImage(b), book);
         }
 
         private void Internal_FillContents(BookViewModel book)
@@ -222,12 +222,12 @@ namespace Sunctum.Managers
             }
         }
 
-        private void Internal_FillContentsWithImage(BookViewModel book)
+        private async Task Internal_FillContentsWithImage(BookViewModel book)
         {
             int currentCount = Querying.BookContentsCount(book.ID);
             if (currentCount != book.Contents.Count() || !book.Contents.All(b => b.IsLoaded))
             {
-                ContentsLoadTask.FillContentsWithImage(this, book);
+                await ContentsLoadTask.FillContentsWithImage(this, book);
             }
         }
 

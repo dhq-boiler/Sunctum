@@ -2,6 +2,7 @@
 
 using Homura.Core;
 using Homura.ORM;
+using Homura.ORM.Mapping;
 using Homura.ORM.Migration;
 using Homura.ORM.Setup;
 using Homura.QueryBuilder.Iso.Dml;
@@ -52,7 +53,7 @@ namespace Sunctum.Domain.Logic.Async
         {
             sequence.Add(() => s_logger.Info("Checking Database schema..."));
 
-            sequence.Add(async () =>
+            sequence.Add(() =>
             {
                 try
                 {
@@ -81,7 +82,7 @@ namespace Sunctum.Domain.Logic.Async
                     dvManager.GetPlan(new Version_9()).FinishedToUpgradeTo += LibraryInitializing_FinishedToUpgradeTo_Version_9;
                     dvManager.FinishedToUpgradeTo += DvManager_FinishedToUpgradeTo;
 
-                    await dvManager.UpgradeToTargetVersion();
+                    dvManager.UpgradeToTargetVersion().GetAwaiter().GetResult();
 
                     Stopwatch.Stop();
 

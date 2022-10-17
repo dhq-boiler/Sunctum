@@ -24,7 +24,7 @@ namespace Sunctum.Domain.Test.UnitTest
         private static Guid _instanceId = Guid.NewGuid();
 
         [OneTimeSetUp]
-        public async Task OneTimeSetUp()
+        public async Task _OneTimeSetUp()
         {
             _dirPath = Path.Combine(TestContext.CurrentContext.TestDirectory, "PageOrderingTest");
             _filePath = Path.Combine(_dirPath, "library.db");
@@ -43,8 +43,8 @@ namespace Sunctum.Domain.Test.UnitTest
             _dataPath = Path.Combine(_dirPath, "data");
 
             var mwvm = Container.Resolve<IMainWindowViewModel>();
-            mwvm.ManageAppDB();
-            mwvm.ManageVcDB();
+            await mwvm.ManageAppDB();
+            await mwvm.ManageVcDB();
 
             _libManager = Container.Resolve<ILibrary>();
 
@@ -85,13 +85,16 @@ namespace Sunctum.Domain.Test.UnitTest
             //入れ替えた結果をDBに書き込み
             await _libManager.SaveBookContentsOrder(newOrderedBook).ConfigureAwait(false);
 
+            //1秒間ぐらい待たないとテストが失敗する
+            await Task.Delay(1000);
+
             //再読み込み
             await _libManager.Load().ConfigureAwait(false);
 
             book = _libManager.BookSource.First();
 
             //ブックの読み込み
-            _libManager.RunFillContentsWithImage(book);
+            await _libManager.FireFillContentsWithImage(book).ConfigureAwait(false);
 
             Assert.That(book.Contents.Count, Is.EqualTo(26));
 
@@ -121,7 +124,7 @@ namespace Sunctum.Domain.Test.UnitTest
             var mwvm = Container.Resolve<IMainWindowViewModel>();
             mwvm.Close();
 
-            ConnectionManager.DisposeDebris(_instanceId);
+            //ConnectionManager.DisposeDebris(_instanceId);
 
             GC.Collect();
 

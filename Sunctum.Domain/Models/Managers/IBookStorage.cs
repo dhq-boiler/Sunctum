@@ -18,7 +18,7 @@ namespace Sunctum.Domain.Models.Managers
         Task UpdateInMemory(BookViewModel book);
         void FireFillContents(BookViewModel book);
         void RunFillContents(BookViewModel book);
-        void FireFillContentsWithImage(BookViewModel book);
+        Task FireFillContentsWithImage(BookViewModel book);
         void RunFillContentsWithImage(BookViewModel book);
         bool IsDirty(BookViewModel book);
     }

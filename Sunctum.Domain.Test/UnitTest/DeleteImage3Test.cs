@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Sunctum.Domain.Test.UnitTest
 {
@@ -18,7 +19,7 @@ namespace Sunctum.Domain.Test.UnitTest
         private static Guid _instanceId = Guid.NewGuid();
 
         [OneTimeSetUp]
-        public void _OneTimeSetUp()
+        public async Task _OneTimeSetUp()
         {
             var _filePath = Path.Combine(TestContext.CurrentContext.TestDirectory, "BookFacadeTest.db");
             ConnectionManager.SetDefaultConnection(_instanceId, $"Data Source={_filePath}", typeof(SQLiteConnection));
@@ -33,14 +34,16 @@ namespace Sunctum.Domain.Test.UnitTest
             dvManager.RegisterChangePlan(new ChangePlan_Version_5(VersioningMode.ByTick));
             dvManager.RegisterChangePlan(new ChangePlan_Version_6(VersioningMode.ByTick));
             dvManager.RegisterChangePlan(new ChangePlan_Version_7(VersioningMode.ByTick));
-            dvManager.UpgradeToTargetVersion();
+            dvManager.RegisterChangePlan(new ChangePlan_Version_8(VersioningMode.ByTick));
+            dvManager.RegisterChangePlan(new ChangePlan_Version_9(VersioningMode.ByTick));
+            await dvManager.UpgradeToTargetVersion();
         }
 
         [Test]
-        public void Image_3テーブルを全削除()
+        public async Task Image_3テーブルを全削除()
         {
             var dao = new ImageDao(typeof(Version_3));
-            dao.Delete(new Dictionary<string, object>());
+            await dao.DeleteAsync(new Dictionary<string, object>());
         }
 
         [OneTimeTearDown]

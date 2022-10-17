@@ -37,9 +37,9 @@ namespace Sunctum.Domain.Data.Dao.Migration.Plan
         {
             await CreateTable(connection);
 
-            var dao = new KeyValueDao();
+            var dao = new KeyValueDao(TargetVersion.GetType());
             dao.CurrentConnection = connection;
-            dao.Insert(new KeyValue()
+            await dao.InsertAsync(new KeyValue()
             {
                 Key = "LibraryID",
                 Value = Guid.NewGuid().ToString(),

@@ -96,7 +96,7 @@ namespace Sunctum.Domain.Data.DaoFacade
             }
             PageDao dao = new PageDao();
             await dao.UpdateAsync(target.ToEntity(), dataOpUnit?.CurrentConnection);
-            s_logger.Debug($"UPDATE Page:{target}");
+            s_logger.Debug($"UPDATE Page:{target.ToString()}");
             if (target.TitleIsEncrypted.Value)
             {
                 target.Title = await Encryptor.DecryptString(target.Title, Configuration.ApplicationConfiguration.Password);

@@ -50,8 +50,8 @@ namespace Sunctum.Domain.Test.UnitTest
             ConnectionManager.SetDefaultConnection(_instanceId, $"Data Source={_filePath}", typeof(SQLiteConnection));
 
             var mwvm = Container.Resolve<IMainWindowViewModel>();
-            mwvm.ManageAppDB();
-            mwvm.ManageVcDB();
+            await mwvm.ManageAppDB();
+            await mwvm.ManageVcDB();
 
             s_libManager = Container.Resolve<ILibrary>();
             await s_libManager.Initialize().ConfigureAwait(false);
@@ -127,22 +127,22 @@ namespace Sunctum.Domain.Test.UnitTest
             var items = await BookFacade.FindAll().ToListAsync();
             Assert.That(items.Count, Is.EqualTo(12));
 
-            BookFacade.DeleteWhereIDIs(_books[0].ID);
-            BookFacade.DeleteWhereIDIs(_books[1].ID);
-            BookFacade.DeleteWhereIDIs(_books[2].ID);
-            BookFacade.DeleteWhereIDIs(_books[3].ID);
-            BookFacade.DeleteWhereIDIs(_books[4].ID);
-            BookFacade.DeleteWhereIDIs(_books[5].ID);
+            await BookFacade.DeleteWhereIDIs(_books[0].ID);
+            await BookFacade.DeleteWhereIDIs(_books[1].ID);
+            await BookFacade.DeleteWhereIDIs(_books[2].ID);
+            await BookFacade.DeleteWhereIDIs(_books[3].ID);
+            await BookFacade.DeleteWhereIDIs(_books[4].ID);
+            await BookFacade.DeleteWhereIDIs(_books[5].ID);
 
             items = await BookFacade.FindAll().ToListAsync();
             Assert.That(items.Count, Is.EqualTo(6));
 
-            BookFacade.DeleteWhereIDIs(_books[6].ID);
-            BookFacade.DeleteWhereIDIs(_books[7].ID);
-            BookFacade.DeleteWhereIDIs(_books[8].ID);
-            BookFacade.DeleteWhereIDIs(_books[9].ID);
-            BookFacade.DeleteWhereIDIs(_books[10].ID);
-            BookFacade.DeleteWhereIDIs(_books[11].ID);
+            await BookFacade.DeleteWhereIDIs(_books[6].ID);
+            await BookFacade.DeleteWhereIDIs(_books[7].ID);
+            await BookFacade.DeleteWhereIDIs(_books[8].ID);
+            await BookFacade.DeleteWhereIDIs(_books[9].ID);
+            await BookFacade.DeleteWhereIDIs(_books[10].ID);
+            await BookFacade.DeleteWhereIDIs(_books[11].ID);
 
             items = await BookFacade.FindAll().ToListAsync();
             Assert.That(items.Count, Is.EqualTo(0));
