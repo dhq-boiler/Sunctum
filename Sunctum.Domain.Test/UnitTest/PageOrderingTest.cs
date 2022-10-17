@@ -23,8 +23,8 @@ namespace Sunctum.Domain.Test.UnitTest
         private ILibrary _libManager;
         private static Guid _instanceId = Guid.NewGuid();
 
-        [OneTimeSetUp]
-        public async Task _OneTimeSetUp()
+        [SetUp]
+        public async Task _SetUp()
         {
             _dirPath = Path.Combine(TestContext.CurrentContext.TestDirectory, "PageOrderingTest");
             _filePath = Path.Combine(_dirPath, "library.db");
@@ -116,15 +116,15 @@ namespace Sunctum.Domain.Test.UnitTest
             Assert.That(new Guid[] { after_first.ID, after_second.ID }, Is.EqualTo(new Guid[] { second_guid, first_guid }));
         }
 
-        [OneTimeTearDown]
-        public void _OneTimeTearDown()
+        [TearDown]
+        public void _TearDown()
         {
             _libManager.Dispose();
 
             var mwvm = Container.Resolve<IMainWindowViewModel>();
             mwvm.Close();
 
-            //ConnectionManager.DisposeDebris(_instanceId);
+            ConnectionManager.DisposeDebris(_instanceId);
 
             GC.Collect();
 
