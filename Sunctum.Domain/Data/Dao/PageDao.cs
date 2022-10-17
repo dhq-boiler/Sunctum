@@ -186,6 +186,7 @@ namespace Sunctum.Domain.Data.Dao
                 {
                     using (var query = new Select().Column("p", "ID").As("pId")
                                                    .Column("p", "ImageID").As("pImageId")
+                                                   .Column("p", "PageIndex").As("pPageIndex")
                                                    .Column("i", "ID").As("iId")
                                                    .Column("i", "Title").As("iTitle")
                                                    .Column("i", "MasterPath").As("iMasterPath")
@@ -206,6 +207,7 @@ namespace Sunctum.Domain.Data.Dao
                         {
                             if (rdr.Read())
                             {
+                                page.PageIndex = rdr.SafeGetInt("pPageIndex", null);
                                 page.ImageID = rdr.SafeGetGuid("pImageId", null);
                                 page.Image = new ImageViewModel(rdr.SafeGetGuid("iId", null),
                                                                 rdr.SafeGetString("iTitle", null),

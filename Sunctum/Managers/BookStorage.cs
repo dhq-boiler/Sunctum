@@ -191,9 +191,9 @@ namespace Sunctum.Managers
             _fcTaskManager.Run((b) => Internal_FillContents(b), book);
         }
 
-        public void FireFillContentsWithImage(BookViewModel book)
+        public async Task FireFillContentsWithImage(BookViewModel book)
         {
-            _fcTaskManager.RunAsync((b) => Internal_FillContentsWithImage(b), book);
+            await _fcTaskManager.RunAsync((b) => Internal_FillContentsWithImage(b), book);
         }
 
         public void RunFillContentsWithImage(BookViewModel book)

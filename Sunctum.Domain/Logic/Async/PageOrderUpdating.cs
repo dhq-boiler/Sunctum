@@ -2,6 +2,7 @@
 
 using NLog;
 using Sunctum.Domain.Data.DaoFacade;
+using Sunctum.Domain.Logic.PageSorting;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using System;

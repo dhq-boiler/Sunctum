@@ -48,14 +48,20 @@ namespace Sunctum.Domain.Test.UnitTest
         };
 
         [OneTimeSetUp]
-        public async Task OneTimeSetUp()
+        public async Task _OneTimeSetUp()
         {
             _filePath = Path.Combine(TestContext.CurrentContext.TestDirectory, "AuthorFacadeTest.db");
+
+            if (File.Exists(_filePath))
+            {
+                File.Delete(_filePath);
+            }
+
             ConnectionManager.SetDefaultConnection(_instanceId, $"Data Source={_filePath}", typeof(SQLiteConnection));
 
             var mwvm = Container.Resolve<IMainWindowViewModel>();
-            mwvm.ManageAppDB();
-            mwvm.ManageVcDB();
+            await mwvm.ManageAppDB();
+            await mwvm.ManageVcDB();
 
             s_libManager = Container.Resolve<ILibrary>();
             await s_libManager.Initialize().ConfigureAwait(false);
