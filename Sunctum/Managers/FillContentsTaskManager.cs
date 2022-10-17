@@ -28,7 +28,7 @@ namespace Sunctum.Managers
             }
             else
             {
-                await System.Threading.Tasks.Task.Factory.StartNew(() => RunInternal(act, book));
+                await Task.Run(() => RunInternal(act, book));
             }
         }
 

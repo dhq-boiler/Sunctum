@@ -31,16 +31,16 @@ namespace Sunctum.Domain.Logic.Load
         {
             var pages = PageFacade.FindByBookId(book.ID).OrderBy(p => p.PageIndex).ToList();
 
-            bookStorage.AccessDispatcherObject(async () => book.ClearContents());
 
-            bookStorage.AccessDispatcherObject(async () =>
+            await bookStorage.AccessDispatcherObject(async () =>
             {
+                book.ClearContents();
                 foreach (var page in pages)
                 {
-                    await Load(page);
+                    await Load(page).ConfigureAwait(false);
                     book.AddPage(page);
                 }
-            });
+            }).ConfigureAwait(false);
         }
 
         public static async Task Load(PageViewModel page)

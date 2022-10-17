@@ -83,15 +83,18 @@ namespace Sunctum.Domain.Test.UnitTest
             var newOrderedBook = _libManager.OrderForward(first, book);
 
             //入れ替えた結果をDBに書き込み
-            _libManager.SaveBookContentsOrder(newOrderedBook).GetAwaiter().GetResult();
+            await _libManager.SaveBookContentsOrder(newOrderedBook).ConfigureAwait(false);
+
+            //1秒間ぐらい待たないとテストが失敗する
+            await Task.Delay(1000);
 
             //再読み込み
-            _libManager.Load().GetAwaiter().GetResult();
+            await _libManager.Load().ConfigureAwait(false);
 
             book = _libManager.BookSource.First();
 
             //ブックの読み込み
-            _libManager.FireFillContentsWithImage(book).GetAwaiter().GetResult();
+            await _libManager.FireFillContentsWithImage(book).ConfigureAwait(false);
 
             Assert.That(book.Contents.Count, Is.EqualTo(26));
 
