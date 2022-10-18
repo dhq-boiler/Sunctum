@@ -104,7 +104,7 @@ namespace Sunctum.Domain.Data.Dao
 
             await QueryHelper.KeepTryingUntilProcessSucceedAsync<Task>(async () =>
             {
-                await QueryHelper.ForDao.ConnectionInternalAsync(this, new Action<DbConnection>(async (connection) =>
+                await QueryHelper.ForDao.ConnectionInternalAsync(this, async (connection) =>
                 {
                     using (var command = connection.CreateCommand())
                     {
@@ -126,7 +126,7 @@ namespace Sunctum.Domain.Data.Dao
                             }
                         }
                     }
-                }), conn);
+                }, conn);
             });
         }
     }
