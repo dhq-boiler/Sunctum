@@ -37,8 +37,8 @@ namespace Sunctum
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
             var version = Assembly.GetExecutingAssembly().GetName().Version;
-            s_logger.Info($"Sunctum Personal Photo Library {version}");
-            s_logger.Info("Copyright (C) dhq_boiler 2015-2021. All rights reserved.");
+            s_logger.Info($"Sunctum Private Personal Photo Library {version}");
+            s_logger.Info("Copyright (C) dhq_boiler 2015-2022. All rights reserved.");
             s_logger.Info("SUNCTUM IS LAUNCHING");
 
             base.OnStartup(e);
