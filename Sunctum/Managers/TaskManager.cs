@@ -47,7 +47,7 @@ namespace Sunctum.Managers
 
         public void RunSync(AsyncTaskSequence sequence)
         {
-            InnerProcessTask(sequence);
+            InnerProcessTask(sequence).GetAwaiter().GetResult();
         }
 
         public async Task RunAsync(AsyncTaskSequence sequence)
@@ -126,7 +126,7 @@ namespace Sunctum.Managers
 
                     if (t.Status != TaskStatus.Faulted && t.Status != TaskStatus.RanToCompletion && t.Status != TaskStatus.Running)
                     {
-                        await Task.Run(() => t.RunSynchronously());
+                        await Task.Run(() => t.RunSynchronously()).ConfigureAwait(false);
                     }
 
                     if (t.Exception?.InnerExceptions?.Count > 0)

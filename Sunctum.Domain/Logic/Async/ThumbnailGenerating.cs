@@ -40,14 +40,14 @@ namespace Sunctum.Domain.Logic.Async
                     var encryptImage = await EncryptImageFacade.FindByAsync(Target.ID);
                     if (encryptImage != null && !string.IsNullOrWhiteSpace(Configuration.ApplicationConfiguration.Password))
                     {
-                        await Encryptor.Decrypt(Configuration.ApplicationConfiguration.WorkingDirectory + encryptImage.EncryptFilePath, Configuration.ApplicationConfiguration.Password, true);
+                        await Encryptor.Decrypt(Configuration.ApplicationConfiguration.WorkingDirectory + encryptImage.EncryptFilePath, Configuration.ApplicationConfiguration.Password, true).ConfigureAwait(false);
                         thumbnail.RelativeMasterPath = $"{Path.GetDirectoryName(Target.RelativeMasterPath)}\\{Target.ID.ToString("N")}{Path.GetExtension(Target.RelativeMasterPath)}";
                     }
                     else
                     {
                         try
                         {
-                            thumbnail.RelativeMasterPath = await ThumbnailGenerator.SaveThumbnail(Target.AbsoluteMasterPath, Target.ID.ToString("N") + System.IO.Path.GetExtension(Target.AbsoluteMasterPath));
+                            thumbnail.RelativeMasterPath = await ThumbnailGenerator.SaveThumbnail(Target.AbsoluteMasterPath, Target.ID.ToString("N") + System.IO.Path.GetExtension(Target.AbsoluteMasterPath)).ConfigureAwait(false);
                             s_logger.Debug($"Generate thumbnail ImageID={Target.ID}");
                         }
                         catch (Exception e)
@@ -61,7 +61,7 @@ namespace Sunctum.Domain.Logic.Async
                     {
                         var tr = new Async.ThumbnailRecording();
                         tr.Target = thumbnail;
-                        await (Application.Current.MainWindow.DataContext as IMainWindowViewModel).LibraryVM.TaskManager.Enqueue(tr.GetTaskSequence());
+                        await (Application.Current.MainWindow.DataContext as IMainWindowViewModel).LibraryVM.TaskManager.Enqueue(tr.GetTaskSequence()).ConfigureAwait(false);
                     });
                 });
             }
