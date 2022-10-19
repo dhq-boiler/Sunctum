@@ -47,6 +47,7 @@ namespace Sunctum.Domain.Test.UnitTest
             }
         }
 
+        [Retry(3)]
         [Test]
         public async Task 検索中インポート()
         {
