@@ -352,6 +352,11 @@ namespace Sunctum.Managers
 
         private void Filter(ObservableCollection<BookViewModel> books)
         {
+            if (BookTagChains is null)
+            {
+                return;
+            }
+
             var timeKeeper = new TimeKeeper();
 
             ProgressManager.UpdateProgress(0, OnStage.Count, timeKeeper);
