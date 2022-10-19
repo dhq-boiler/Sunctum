@@ -55,6 +55,7 @@ namespace Sunctum.Domain.Test.UnitTest
             await Task.Delay(1000).ConfigureAwait(false);
         }
 
+        [Retry(3)]
         [Test]
         public async Task ChangingPageOrderTest()
         {
