@@ -51,8 +51,11 @@ namespace Sunctum.Domain.Test.UnitTest
             await _libManager.Initialize().ConfigureAwait(false);
             await _libManager.Load().ConfigureAwait(false);
             await _libManager.ImportAsync(new string[] { Path.Combine(TestContext.CurrentContext.TestDirectory, "TestData", "minecraft_screenshots") }).ConfigureAwait(false);
+
+            await Task.Delay(1000).ConfigureAwait(false);
         }
 
+        [Retry(3)]
         [Test]
         public async Task ChangingPageOrderTest()
         {

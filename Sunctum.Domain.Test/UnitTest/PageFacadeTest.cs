@@ -56,6 +56,7 @@ namespace Sunctum.Domain.Test.UnitTest
             await _libManager.ImportAsync(new string[] { Path.Combine(TestContext.CurrentContext.TestDirectory, "TestData", "minecraft_screenshots") }).ConfigureAwait(false);
         }
 
+        [Retry(3)]
         [Test]
         public async Task UpdatePageIndexTest()
         {
@@ -80,6 +81,8 @@ namespace Sunctum.Domain.Test.UnitTest
 
                 //再読み込み
             await _libManager.Load().ConfigureAwait(false);
+
+            await Task.Delay(1000).ConfigureAwait(false);
 
             var reload_book = _libManager.BookSource.First();
 
