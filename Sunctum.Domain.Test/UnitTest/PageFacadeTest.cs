@@ -81,6 +81,8 @@ namespace Sunctum.Domain.Test.UnitTest
                 //再読み込み
             await _libManager.Load().ConfigureAwait(false);
 
+            await Task.Delay(1000).ConfigureAwait(false);
+
             var reload_book = _libManager.BookSource.First();
 
             //ブックの読み込み
