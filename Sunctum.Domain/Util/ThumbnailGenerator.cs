@@ -29,11 +29,11 @@ namespace Sunctum.Domain.Util
                     {
                         case ".jpeg":
                         case ".jpg":
-                            return await SaveImageAsJPEG(destFilename, small, quality);
+                            return await SaveImageAsJPEG(destFilename, small, quality).ConfigureAwait(false);
                         case ".png":
-                            return await SaveImageAsPNG(destFilename, small, quality);
+                            return await SaveImageAsPNG(destFilename, small, quality).ConfigureAwait(false);
                         case ".gif":
-                            return await SaveImageAsGIF(destFilename, small, quality);
+                            return await SaveImageAsGIF(destFilename, small, quality).ConfigureAwait(false);
                         default:
                             throw new NotSupportedException("Support in JPG, PNG and GIF");
                     }
@@ -117,8 +117,6 @@ namespace Sunctum.Domain.Util
             {
                 throw;
             }
-
-            return null;
         }
 
         private static async Task<string> SaveImageAsJPEG(string destFilename, Bitmap bmp, int quality)
@@ -137,7 +135,7 @@ namespace Sunctum.Domain.Util
                         CreateCacheDirectoryIfDoesntExist();
                         CreateCacheBranchDirectoryIfDoesntExist(Path.GetDirectoryName(newFileName));
 
-                        await SaveBitmap(bmp, eps, ici, newFileName);
+                        SaveBitmap(bmp, eps, ici, newFileName);
 
                         return GetRelativeCacheFilePath(destFilename);
                     }
@@ -158,11 +156,11 @@ namespace Sunctum.Domain.Util
             }
         }
 
-        private static async Task SaveBitmap(Bitmap bmp, EncoderParameters eps, ImageCodecInfo ici, string newFileName)
+        private static void SaveBitmap(Bitmap bmp, EncoderParameters eps, ImageCodecInfo ici, string newFileName)
         {
-            using (var mat = await Task.Run(() => bmp.ToMat()))
+            using (var mat = bmp.ToMat())
             {
-                await Task.Run(() => mat.SaveImage(newFileName));
+                mat.SaveImage(newFileName);
             }
         }
 
@@ -190,7 +188,7 @@ namespace Sunctum.Domain.Util
                         string newFileName = GetAbsoluteCacheFilePath(destFilename);
                         CreateCacheDirectoryIfDoesntExist();
                         CreateCacheBranchDirectoryIfDoesntExist(Path.GetDirectoryName(newFileName));
-                        await SaveBitmap(bmp, eps, ici, newFileName);
+                        SaveBitmap(bmp, eps, ici, newFileName);
 
                         return GetRelativeCacheFilePath(destFilename);
                     }
@@ -217,7 +215,7 @@ namespace Sunctum.Domain.Util
                         string newFileName = GetAbsoluteCacheFilePath(destFilename);
                         CreateCacheDirectoryIfDoesntExist();
                         CreateCacheBranchDirectoryIfDoesntExist(Path.GetDirectoryName(newFileName));
-                        await SaveBitmap(bmp, eps, ici, newFileName);
+                        SaveBitmap(bmp, eps, ici, newFileName);
 
                         return GetRelativeCacheFilePath(destFilename);
                     }
