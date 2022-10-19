@@ -79,7 +79,8 @@ namespace Sunctum.Domain.Test.UnitTest
                 await PageFacade.UpdateAsync(page);
             }
 
-                //再読み込み
+            //再読み込み
+            await _libManager.Initialize().ConfigureAwait(false);
             await _libManager.Load().ConfigureAwait(false);
 
             await Task.Delay(1000).ConfigureAwait(false);
