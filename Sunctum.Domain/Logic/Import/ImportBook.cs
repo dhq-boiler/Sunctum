@@ -222,6 +222,11 @@ namespace Sunctum.Domain.Logic.Import
                 throw new UnexpectedException($"expected:_book.FirstPage is not null but actual:_book.FirstPage is null");
             }
 
+            if (_book.FirstPage.Value is null)
+            {
+                Load.BookLoading.Load(_book, dataOpUnit);
+            }
+
             if (_book.FirstPage.Value.Image is null)
             {
                 throw new UnexpectedException($"expected:_book.FirstPage.Image is not null but actual:_book.FirstPage.Image is null");
