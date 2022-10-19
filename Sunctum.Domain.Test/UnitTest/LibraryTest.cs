@@ -51,14 +51,14 @@ namespace Sunctum.Domain.Test.UnitTest
         public async Task 検索中インポート()
         {
             var mwvm = Container.Resolve<IMainWindowViewModel>();
-            mwvm.ManageAppDB();
-            mwvm.ManageVcDB();
+            await mwvm.ManageAppDB().ConfigureAwait(false);
+            await mwvm.ManageVcDB().ConfigureAwait(false);
             mwvm.InitializeWindowComponent();
 
             _libManager = Container.Resolve<ILibrary>();
             var home = mwvm.HomeDocumentViewModel;
             home.BookCabinet = _libManager.CreateBookStorage();
-            await home.BookCabinet.Search("minecraft");
+            await home.BookCabinet.Search("minecraft").ConfigureAwait(false);
 
             await mwvm.Initialize(true, false).ConfigureAwait(false);
             await _libManager.ImportAsync(new string[] { Path.Combine(TestContext.CurrentContext.TestDirectory, "TestData", "minecraft_screenshots") }).ConfigureAwait(false);

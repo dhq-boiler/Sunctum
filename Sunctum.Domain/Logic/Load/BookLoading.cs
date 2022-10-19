@@ -36,6 +36,11 @@ namespace Sunctum.Domain.Logic.Load
                     book.IsLoaded = true;
                 }
             }
+
+            if (book.FirstPage.Value is null)
+            {
+                s_logger.Error("book.FirstPage.Value is null");
+            }
         }
 
         public static void GenerateThumbnailCondition(BookViewModel book, DataOperationUnit dataOpUnit = null)
