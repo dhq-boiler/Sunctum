@@ -84,7 +84,7 @@ namespace Sunctum.Domain.Logic.Import
 
             var firstChild = _children.First();
             ProcessChildren(library, ret, directoryPath, firstChild, dataOpUnit, progressUpdatingAction);
-            ret.Add(new Task(() => GenerateDeliverables(dataOpUnit)));
+            ret.Add(new Task(async () => await GenerateDeliverables(dataOpUnit).ConfigureAwait(false)));
             ret.Add(new Task(() => SetDeliverables(library)));
 
             for (int i = 1; i < _children.Count(); ++i)
@@ -93,7 +93,7 @@ namespace Sunctum.Domain.Logic.Import
                 ProcessChildren(library, ret, directoryPath, child, dataOpUnit, progressUpdatingAction);
             }
 
-            ret.Add(new Task(() => WriteMetadata()));
+            ret.Add(new Task(async () => await WriteMetadata().ConfigureAwait(false)));
 
             ret.Add(new Task(() => TagImage(library.TagManager)));
 
@@ -106,7 +106,7 @@ namespace Sunctum.Domain.Logic.Import
             return ret;
         }
 
-        protected void WriteMetadata()
+        protected async Task WriteMetadata()
         {
             if (_book is null)
             {
@@ -116,7 +116,7 @@ namespace Sunctum.Domain.Logic.Import
             _book.ByteSize = 0;
             _children.ForEach(c => _book.ByteSize += ((ImportPage)c).Size);
             _book.FingerPrint = Hash.Generate(_children);
-            BookFacade.Update(_book);
+            await BookFacade.Update(_book);
         }
 
         private void TagBook(ITagManager tagMng)
@@ -208,7 +208,7 @@ namespace Sunctum.Domain.Logic.Import
             library.AddToMemory(_book);
         }
 
-        protected void GenerateDeliverables(DataOperationUnit dataOpUnit)
+        protected async Task GenerateDeliverables(DataOperationUnit dataOpUnit)
         {
             if (_book is null)
             {
@@ -237,7 +237,7 @@ namespace Sunctum.Domain.Logic.Import
                 return;
             }
             
-            Dispatcher.CurrentDispatcher.InvokeAsync(() =>
+            await Dispatcher.CurrentDispatcher.InvokeAsync(() =>
             {
                 var tg = new Async.ThumbnailGenerating();
                 tg.Target = _book.FirstPage.Value.Image;
