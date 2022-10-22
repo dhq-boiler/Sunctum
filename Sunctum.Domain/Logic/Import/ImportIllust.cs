@@ -65,7 +65,7 @@ namespace Sunctum.Domain.Logic.Import
 
             var firstChild = _children.First();
             ProcessChild(library, dataOpUnit, ret, directoryPath, firstChild, progressUpdatingAction);
-            ret.Add(new System.Threading.Tasks.Task(() => GenerateDeliverables(dataOpUnit)));
+            ret.Add(new System.Threading.Tasks.Task(async () => await GenerateDeliverables(dataOpUnit).ConfigureAwait(false)));
             ret.Add(new System.Threading.Tasks.Task(() => SetDeliverables(library)));
 
             for (int i = 1; i < _children.Count(); ++i)

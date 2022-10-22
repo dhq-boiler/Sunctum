@@ -101,17 +101,22 @@ namespace Sunctum.Converters
                         (Application.Current.MainWindow.DataContext as IMainWindowViewModel).LibraryVM.TaskManager.RunSync(tg.GetTaskSequence());
                         if (image.IsEncrypted)
                         {
-                            try
-                            {
-                                Task.Run(async () => await image.DecryptImage(true)).GetAwaiter().GetResult();
-                            }
-                            catch (ArgumentException)
-                            {
-                                return LoadBitmap($"{Configuration.ApplicationConfiguration.ExecutingDirectory}\\{Specifications.LOCK_ICON_FILE}", image.IsEncrypted);
-                            }
-                            int count = 0;
+                            var beginDateTime = DateTime.Now;
+                            var currentDateTime = DateTime.Now;
                             while (true)
                             {
+                                try
+                                {
+                                    Task.Run(async () => await image.DecryptImage(true)).GetAwaiter().GetResult();
+                                }
+                                catch (ArgumentException)
+                                {
+                                    if ((currentDateTime - beginDateTime).TotalSeconds >= 60) //60秒経過
+                                    {
+                                        return LoadBitmap($"{Configuration.ApplicationConfiguration.ExecutingDirectory}\\{Specifications.LOCK_ICON_FILE}", image.IsEncrypted);
+                                    }
+                                    continue;
+                                }
                                 var bitmap = OnmemoryImageManager.Instance.PullAsWriteableBitmap(image.ID, true);
                                 if (bitmap is not null)
                                 {
@@ -120,12 +125,12 @@ namespace Sunctum.Converters
                                 else
                                 {
                                     Thread.Sleep(100);
-                                    count++;
-                                    if (count >= 600) //60秒経過
+                                    currentDateTime = DateTime.Now;
+                                    if ((currentDateTime - beginDateTime).TotalSeconds >= 60) //60秒経過
                                     {
                                         throw new UnexpectedException("60秒間で画像を復号化した結果のWriteableBitmapを得ることができませんでした。");
                                     }
-                                    s_logger.Debug($"retrying OnmemoryImageManager.Instance.PullAsWriteableBitmap() #{count} count");
+                                    s_logger.Debug($"retrying OnmemoryImageManager.Instance.PullAsWriteableBitmap() {(currentDateTime - beginDateTime).TotalSeconds}s");
                                 }
                             }
                         }
