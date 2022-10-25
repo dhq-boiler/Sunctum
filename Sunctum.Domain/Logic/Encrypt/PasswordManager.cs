@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Windows.Security.Credentials;
@@ -26,7 +27,7 @@ namespace Sunctum.Domain.Logic.Encrypt
 
         public static async Task<string> SignInAsync(string libraryId, string userName)
         {
-            var result = await UserConsentVerifier.RequestVerificationAsync("このライブラリは暗号化されています。閲覧するには資格情報が必要です。");
+            var result = await UserConsentVerifierInterop.RequestVerificationForWindowAsync(Process.GetCurrentProcess().MainWindowHandle, "このライブラリは暗号化されています。閲覧するには資格情報が必要です。");
             if (result != UserConsentVerificationResult.Verified)
                 return null;
 
