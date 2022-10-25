@@ -6,6 +6,7 @@ using Windows.Security.Credentials.UI;
 
 namespace Sunctum.Domain.Logic.Encrypt
 {
+#pragma warning disable CA1416
     public static class PasswordManager
     {
         public static void SetPassword(string libraryId, string password, string userName)
@@ -41,4 +42,5 @@ namespace Sunctum.Domain.Logic.Encrypt
             }
         }
     }
+#pragma warning restore CA1416
 }
