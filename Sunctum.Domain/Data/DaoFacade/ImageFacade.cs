@@ -21,17 +21,17 @@ namespace Sunctum.Domain.Data.DaoFacade
     {
         private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
 
-        public static void Insert(ImageViewModel target, DataOperationUnit dataOpUnit = null)
+        public static async Task Insert(ImageViewModel target, DataOperationUnit dataOpUnit = null)
         {
             ImageDao dao = new ImageDao();
-            dao.Insert(target.ToEntity(), dataOpUnit?.CurrentConnection);
+            await dao.InsertAsync(target.ToEntity(), dataOpUnit?.CurrentConnection).ConfigureAwait(false);
             s_logger.Debug($"INSERT Image:{target}");
         }
 
-        public static void DeleteWhereIDIs(Guid id, DataOperationUnit dataOpUnit = null)
+        public static async Task DeleteWhereIDIs(Guid id, DataOperationUnit dataOpUnit = null)
         {
             ImageDao dao = new ImageDao();
-            dao.DeleteWhereIDIs(id, dataOpUnit?.CurrentConnection);
+            await dao.DeleteWhereIDIsAsync(id, dataOpUnit?.CurrentConnection).ConfigureAwait(false);
             s_logger.Debug($"DELETE Image:{id}");
         }
 

@@ -45,7 +45,7 @@ namespace Sunctum.Converters
             {
                 if (thumbnail.RelativeMasterPath is null)
                 {
-                    var th = ThumbnailFacade.FindByImageID(image.ID);
+                    var th = ThumbnailFacade.FindByImageID(image.ID).Result;
                     if (th is not null)
                     {
                         image.Thumbnail = thumbnail = th;
@@ -86,7 +86,7 @@ namespace Sunctum.Converters
             }
             else if (image is not null)
             {
-                var th = ThumbnailFacade.FindByImageID(image.ID);
+                var th = ThumbnailFacade.FindByImageID(image.ID).Result;
                 if (th is not null && !image.IsEncrypted)
                 {
                     image.Thumbnail = thumbnail = th;

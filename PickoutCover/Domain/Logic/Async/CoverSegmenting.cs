@@ -88,7 +88,7 @@ namespace PickoutCover.Domain.Logic.Async
             {
                 image.RelativeMasterPath = cs._masterPath;
             }
-            ImageFacade.Insert(image, dataOpUnit);
+            await ImageFacade.Insert(image, dataOpUnit).ConfigureAwait(false);
 
             var pageID = Guid.NewGuid();
             var page = new PageViewModel();
@@ -99,15 +99,15 @@ namespace PickoutCover.Domain.Logic.Async
             page.BookID = _page.BookID;
             page.PageIndex = 1;
             page.Image = image;
-            PageFacade.Insert(page, dataOpUnit);
+            await PageFacade.Insert(page, dataOpUnit).ConfigureAwait(false);
 
-            var encryptImage = EncryptImageFacade.FindBy(image.ID);
+            var encryptImage = await EncryptImageFacade.FindByAsync(image.ID).ConfigureAwait(false);
             if (Configuration.ApplicationConfiguration.LibraryIsEncrypted && encryptImage is not null)
             {
                 using (var scope = new TransactionScope())
                 {
                     var fileManager = new TxFileManager();
-                    Encryptor.Encrypt(page.Image, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{page.Image.ID.ToString().Substring(0, 2)}\\{page.Image.ID}{Path.GetExtension(page.Image.AbsoluteMasterPath)}", Configuration.ApplicationConfiguration.Password, dataOpUnit, fileManager);
+                    await Encryptor.Encrypt(page.Image, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{page.Image.ID.ToString().Substring(0, 2)}\\{page.Image.ID}{Path.GetExtension(page.Image.AbsoluteMasterPath)}", Configuration.ApplicationConfiguration.Password, dataOpUnit, fileManager).ConfigureAwait(false);
                     scope.Complete();
                 }
             }
@@ -116,7 +116,7 @@ namespace PickoutCover.Domain.Logic.Async
             book.FirstPage.Value = page;
             if (book.FirstPage.Value.Image.ThumbnailRecorded)
             {
-                book.FirstPage.Value.Image.Thumbnail = ThumbnailFacade.FindByImageID(book.FirstPage.Value.ImageID, dataOpUnit);
+                book.FirstPage.Value.Image.Thumbnail = await ThumbnailFacade.FindByImageID(book.FirstPage.Value.ImageID, dataOpUnit).ConfigureAwait(false);
             }
 
             if (!book.FirstPage.Value.Image.ThumbnailLoaded || !book.FirstPage.Value.Image.ThumbnailGenerated)

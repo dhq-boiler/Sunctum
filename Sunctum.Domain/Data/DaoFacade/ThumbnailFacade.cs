@@ -8,6 +8,7 @@ using Sunctum.Domain.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Sunctum.Domain.Data.DaoFacade
 {
@@ -22,17 +23,17 @@ namespace Sunctum.Domain.Data.DaoFacade
             s_logger.Debug($"INSERT Thumbnail:{target}");
         }
 
-        public static void DeleteWhereIDIs(Guid id, DataOperationUnit dataOpUnit = null)
+        public static async Task DeleteWhereIDIs(Guid id, DataOperationUnit dataOpUnit = null)
         {
             ThumbnailDao dao = new ThumbnailDao();
-            dao.DeleteWhereIDIs(id, dataOpUnit?.CurrentConnection);
+            await dao.DeleteWhereIDIsAsync(id, dataOpUnit?.CurrentConnection).ConfigureAwait(false);
             s_logger.Debug($"DELETE Thumbnail:{id}");
         }
 
-        public static ThumbnailViewModel FindByImageID(Guid imageId, DataOperationUnit dataOpUnit = null)
+        public static async Task<ThumbnailViewModel> FindByImageID(Guid imageId, DataOperationUnit dataOpUnit = null)
         {
             ThumbnailDao dao = new ThumbnailDao();
-            var items = dao.FindBy(new Dictionary<string, object>() { { "ImageID", imageId } }, dataOpUnit?.CurrentConnection).SingleOrDefault();
+            var items = (await dao.FindByAsync(new Dictionary<string, object>() { { "ImageID", imageId } }, dataOpUnit?.CurrentConnection).ToListAsync().ConfigureAwait(false)).SingleOrDefault();
             if (items == null)
             {
                 return null;

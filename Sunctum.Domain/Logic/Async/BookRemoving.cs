@@ -44,14 +44,14 @@ namespace Sunctum.Domain.Logic.Async
 
                 foreach (var page in book.Contents)
                 {
-                    sequence.Add(new Task(() => RemoveImageTagByImage(LibraryManager.Value, page)));
-                    sequence.Add(new Task(() => PageRemoving.DeleteFileFromStorage(page)));
-                    sequence.Add(new Task(() => PageRemoving.DeleteRecordFromStorage(page)));
+                    sequence.Add(new Task(async () => await RemoveImageTagByImage(LibraryManager.Value, page).ConfigureAwait(false)));
+                    sequence.Add(new Task(async () => await PageRemoving.DeleteFileFromStorage(page).ConfigureAwait(false)));
+                    sequence.Add(new Task(async () => await PageRemoving.DeleteRecordFromStorage(page).ConfigureAwait(false)));
                     sequence.Add(new Task(() => ProcessedCount++));
                     sequence.Add(new Task(() => book.CurrentProcessProgress.Value.Count.Value = ProcessedCount));
                 }
 
-                sequence.Add(new Task(() => DeleteRecordFromStorage(book)));
+                sequence.Add(new Task(async () => await DeleteRecordFromStorage(book).ConfigureAwait(false)));
                 sequence.Add(new Task(() => LibraryManager.Value.RemoveFromMemory(book)));
                 sequence.Add(new Task(() => s_logger.Info($"Removed Book:{book}")));
             }
@@ -62,11 +62,11 @@ namespace Sunctum.Domain.Logic.Async
             sequence.Add(() => s_logger.Info($"Finish BookRemoving"));
         }
 
-        private static void RemoveImageTagByImage(ILibrary libraryManager, PageViewModel page)
+        private static async Task RemoveImageTagByImage(ILibrary libraryManager, PageViewModel page)
         {
             try
             {
-                libraryManager.TagManager.RemoveByImage(page.Image);
+                await libraryManager.TagManager.RemoveByImage(page.Image).ConfigureAwait(false);
             }
             catch (ArgumentNullException)
             {
@@ -74,10 +74,10 @@ namespace Sunctum.Domain.Logic.Async
             }
         }
 
-        private static void DeleteRecordFromStorage(BookViewModel book, DataOperationUnit dataOpUnit = null)
+        private static async Task DeleteRecordFromStorage(BookViewModel book, DataOperationUnit dataOpUnit = null)
         {
             Debug.Assert(book != null);
-            BookFacade.DeleteWhereIDIs(book.ID, dataOpUnit);
+            await BookFacade.DeleteWhereIDIs(book.ID, dataOpUnit).ConfigureAwait(false);
         }
     }
 }
