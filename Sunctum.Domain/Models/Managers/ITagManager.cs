@@ -37,7 +37,7 @@ namespace Sunctum.Domain.Models.Managers
 
         void ObserveSelectedEntityTags();
 
-        void RemoveByImage(ImageViewModel image);
+        Task RemoveByImage(ImageViewModel image);
 
         Task RemoveImageTag(string tagName);
 

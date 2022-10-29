@@ -22,7 +22,7 @@ namespace Sunctum.Domain.Models.Managers
         event SearchedEventHandler Searched;
 
         void ClearSearchResult();
-        void Search();
+        Task Search();
         Task Search(string searchingText);
         bool SortingSelected(string name);
     }

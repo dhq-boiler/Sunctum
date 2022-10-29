@@ -72,7 +72,7 @@ namespace Sunctum.Domain.Logic.Load
 
                 if (!firstPageImage.ThumbnailLoaded)
                 {
-                    firstPageImage.Thumbnail = ThumbnailFacade.FindByImageID(firstPageImage.ID, dataOpUnit);
+                    firstPageImage.Thumbnail = await ThumbnailFacade.FindByImageID(firstPageImage.ID, dataOpUnit).ConfigureAwait(false);
                 }
 
                 if (!firstPageImage.ThumbnailLoaded

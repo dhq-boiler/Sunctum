@@ -537,14 +537,14 @@ namespace Sunctum.Managers
             SelectedEntityTags = GetCommonTags();
         }
 
-        public void RemoveByImage(ImageViewModel image)
+        public async Task RemoveByImage(ImageViewModel image)
         {
             if (image == null)
             {
                 throw new ArgumentNullException("image == null");
             }
 
-            ImageTagFacade.DeleteWhereIDIs(image.ID);
+            await ImageTagFacade.DeleteWhereIDIs(image.ID).ConfigureAwait(false);
 
             var removeList = Chains.Where(it => it.ImageID == image.ID).ToList();
             foreach (var remove in removeList)

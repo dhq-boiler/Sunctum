@@ -76,9 +76,9 @@ namespace Sunctum.Managers
             RaisePropertyChanged(nameof(OnStage));
         }
 
-        protected virtual void Internal_UpdateInMemory(BookViewModel book)
+        protected virtual async Task Internal_UpdateInMemory(BookViewModel book)
         {
-            BookFacade.Update(book);
+            await BookFacade.Update(book).ConfigureAwait(false);
             int index = BookSource.IndexOf(BookSource.Where(b => b.ID.Equals(book.ID)).Single());
             BookSource[index] = book;
             if (observer is not null)

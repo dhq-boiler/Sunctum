@@ -143,9 +143,9 @@ namespace Sunctum.Managers
             get { return $"Searched by '{UnescapedSearchText}'"; }
         }
 
-        protected override void Internal_UpdateInMemory(BookViewModel book)
+        protected override async Task Internal_UpdateInMemory(BookViewModel book)
         {
-            BookFacade.Update(book);
+            await BookFacade.Update(book).ConfigureAwait(false);
             int index = BookSource.IndexOf(BookSource.Where(b => b.ID.Equals(book.ID)).Single());
             BookSource[index] = book;
             if (SearchedBooks != null)
@@ -173,9 +173,9 @@ namespace Sunctum.Managers
             Searched?.Invoke(this, e);
         }
 
-        public void Search()
+        public async Task Search()
         {
-            Search(SearchText);
+            await Search(SearchText).ConfigureAwait(false);
         }
 
         public async Task Search(string searchingText)
