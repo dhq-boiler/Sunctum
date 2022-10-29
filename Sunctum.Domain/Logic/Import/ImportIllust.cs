@@ -73,7 +73,7 @@ namespace Sunctum.Domain.Logic.Import
                 var child = _children[i];
                 ProcessChild(library, dataOpUnit, ret, directoryPath, child, progressUpdatingAction);
             }
-            ret.Add(new System.Threading.Tasks.Task(() => WriteMetadata()));
+            ret.Add(new System.Threading.Tasks.Task(async () => await WriteMetadata()));
             ret.Add(new System.Threading.Tasks.Task(() => SwitchContentsRegisteredToTrue()));
             ret.Add(new System.Threading.Tasks.Task(() => Dispose()));
             ret.Add(new System.Threading.Tasks.Task(() => Log()));
