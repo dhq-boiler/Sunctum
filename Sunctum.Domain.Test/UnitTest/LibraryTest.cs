@@ -16,7 +16,6 @@ namespace Sunctum.Domain.Test.UnitTest
     [Category("UnitTest")]
     public class LibraryTest : TestSession
     {
-        private string _filePath;
         private string _dirPath;
         private string _dataPath;
         private ILibrary _libManager;
@@ -26,13 +25,6 @@ namespace Sunctum.Domain.Test.UnitTest
         public void _SetUp()
         {
             _dirPath = Path.Combine(TestContext.CurrentContext.TestDirectory, "LibraryTest");
-            _filePath = Path.Combine(_dirPath, "library.db");
-            ConnectionManager.SetDefaultConnection(_instanceId, $"Data Source={_filePath}", typeof(SQLiteConnection));
-
-            if (Directory.Exists(_dirPath))
-            {
-                Directory.Delete(_dirPath, true);
-            }
 
             if (!Directory.Exists(_dirPath))
             {
@@ -74,14 +66,9 @@ namespace Sunctum.Domain.Test.UnitTest
             mwvm.Close();
             mwvm.Dispose();
 
-            ConnectionManager.DisposeDebris(_instanceId);
+            ConnectionManager.DisposeDebris(Guid.Parse("9056E8CF-745D-4BCC-AEB9-14B1D1B40F37"));
 
             GC.Collect();
-
-            if (File.Exists(_filePath))
-            {
-                File.Delete(_filePath);
-            }
 
             if (Directory.Exists(_dataPath))
             {
