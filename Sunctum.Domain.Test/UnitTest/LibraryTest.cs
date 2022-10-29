@@ -81,10 +81,10 @@ namespace Sunctum.Domain.Test.UnitTest
                 Directory.Delete(_dirPath + "\\cache", true);
             }
 
-            if (Directory.Exists(_dirPath))
-            {
-                Directory.Delete(_dirPath, true);
-            }
+            //if (Directory.Exists(_dirPath))
+            //{
+            //    Directory.Delete(_dirPath, true);
+            //}
         }
 
         public override string GetTestDirectory()

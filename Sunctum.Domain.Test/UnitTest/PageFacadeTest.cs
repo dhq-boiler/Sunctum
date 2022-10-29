@@ -88,7 +88,7 @@ namespace Sunctum.Domain.Test.UnitTest
             var reload_book = _libManager.BookSource.First();
 
             //ブックの読み込み
-            _libManager.RunFillContentsWithImage(reload_book);
+            await _libManager.FireFillContentsWithImage(reload_book).ConfigureAwait(false);
 
             Assert.That(reload_book.Contents.Count, Is.EqualTo(26));
 
