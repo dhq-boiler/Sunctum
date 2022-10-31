@@ -133,7 +133,7 @@ namespace Sunctum.Domain.Logic.Import
             GeneratedPage.PageIndex = PageIndex;
             GeneratedPage.Image = InsertedImage;
             GeneratedPage.FingerPrint = FingerPrint = Hash.Generate(GeneratedPage);
-            PageFacade.Insert(GeneratedPage, dataOpUnit);
+            await PageFacade.Insert(GeneratedPage, dataOpUnit).ConfigureAwait(false);
             if (Configuration.ApplicationConfiguration.LibraryIsEncrypted)
             {
                 GeneratedPage.Title = plainText;

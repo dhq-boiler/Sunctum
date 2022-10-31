@@ -53,7 +53,7 @@ namespace Sunctum.Domain.Logic.Async
                         catch (Exception e)
                         {
                             s_logger.Warn(e);
-                            throw;
+                            return;
                         }
                     }
                     Target.Thumbnail = thumbnail;

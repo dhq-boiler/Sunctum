@@ -242,7 +242,7 @@ namespace Sunctum.Domain.Logic.Import
                 var tg = new Async.ThumbnailGenerating();
                 tg.Target = _book.FirstPage.Value.Image;
                 (Application.Current.MainWindow.DataContext as IMainWindowViewModel).LibraryVM.TaskManager.RunSync(tg.GetTaskSequence());
-            });
+            }).Task.ConfigureAwait(false);
         }
 
         private void Log()
