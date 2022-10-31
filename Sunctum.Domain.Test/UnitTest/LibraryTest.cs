@@ -53,7 +53,8 @@ namespace Sunctum.Domain.Test.UnitTest
             home.BookCabinet = _libManager.CreateBookStorage();
             await home.BookCabinet.Search("minecraft").ConfigureAwait(false);
 
-            await mwvm.Initialize(true, false).ConfigureAwait(false);
+            mwvm.Initialize1stPhase(true);
+            await mwvm.Initialize3rdPhase().ConfigureAwait(false);
             await _libManager.ImportAsync(new string[] { Path.Combine(TestContext.CurrentContext.TestDirectory, "TestData", "minecraft_screenshots") }).ConfigureAwait(false);
 
             Assert.That(home.BookCabinet.OnStage[0], Has.Property("Title").Contains("minecraft"));
