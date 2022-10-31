@@ -13,7 +13,11 @@ namespace Sunctum.Domain.ViewModels
 {
     public interface IMainWindowViewModel : IDisposable
     {
-        Task Initialize(bool starting, bool shiftPressed);
+        void Initialize1stPhase(bool starting);
+
+        bool Initialize2ndPhase(bool shiftPressed);
+
+        Task Initialize3rdPhase();
 
         void Terminate();
 

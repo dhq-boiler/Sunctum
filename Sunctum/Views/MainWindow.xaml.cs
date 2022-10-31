@@ -107,7 +107,9 @@ namespace Sunctum.Views
         {
             DataContext = MainWindowVM;
             bool ShiftPressed = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
-            await MainWindowVM.Initialize(true, ShiftPressed).ConfigureAwait(false);
+            MainWindowVM.Initialize1stPhase(true);
+            MainWindowVM.Initialize2ndPhase(ShiftPressed);
+            await MainWindowVM.Initialize3rdPhase().ConfigureAwait(false);
         }
 
         private void DockPanel_SizeChanged(object sender, SizeChangedEventArgs e)

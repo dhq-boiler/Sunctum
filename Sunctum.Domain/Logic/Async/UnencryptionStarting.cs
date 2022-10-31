@@ -247,7 +247,9 @@ namespace Sunctum.Domain.Logic.Async
             sequence.Add(() => Configuration.ApplicationConfiguration.Password = null);
             sequence.Add(() => Configuration.ApplicationConfiguration.LibraryIsEncrypted = false);
             sequence.Add(() => mainWindowViewModel.Value.Terminate());
-            sequence.Add(() => mainWindowViewModel.Value.Initialize(false, false));
+            sequence.Add(() => mainWindowViewModel.Value.Initialize1stPhase(false));
+            sequence.Add(() => mainWindowViewModel.Value.Initialize2ndPhase(false));
+            sequence.Add(async () => await mainWindowViewModel.Value.Initialize3rdPhase().ConfigureAwait(false));
         }
     }
 }

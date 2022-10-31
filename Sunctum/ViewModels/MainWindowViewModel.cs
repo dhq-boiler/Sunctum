@@ -261,7 +261,12 @@ namespace Sunctum.ViewModels
                 {
                     Terminate();
                     CloseAllTab();
-                    await Initialize(false).ConfigureAwait(false);
+                    Initialize1stPhase(false);
+                    if (!Initialize2ndPhase())
+                    {
+                        return;
+                    }
+                    await Initialize3rdPhase().ConfigureAwait(false);
                 }
             });
             OpenSearchPaneCommand = new DelegateCommand(() =>
@@ -276,7 +281,12 @@ namespace Sunctum.ViewModels
             {
                 Terminate();
                 CloseAllTab();
-                await Initialize(false).ConfigureAwait(false);
+                Initialize1stPhase(false);
+                if (!Initialize2ndPhase())
+                {
+                    return;
+                }
+                await Initialize3rdPhase().ConfigureAwait(false);
             });
             ShowPreferenceDialogCommand = new DelegateCommand(() =>
             {
@@ -348,7 +358,12 @@ namespace Sunctum.ViewModels
                 await LibraryVM.Reset().ConfigureAwait(false);
                 Configuration.ApplicationConfiguration.WorkingDirectory = p.Path;
                 Configuration.Save(Configuration.ApplicationConfiguration);
-                await Initialize(false).ConfigureAwait(false);
+                Initialize1stPhase(false);
+                if (!Initialize2ndPhase())
+                {
+                    return;
+                }
+                await Initialize3rdPhase().ConfigureAwait(false);
             });
             ToggleDisplayAuthorPaneCommand = new DelegateCommand(() =>
             {
@@ -587,7 +602,7 @@ namespace Sunctum.ViewModels
 
         #region 一般
 
-        public async Task Initialize(bool starting, bool shiftPressed = false)
+        public void Initialize1stPhase(bool starting)
         {
             if (starting)
             {
@@ -607,13 +622,16 @@ namespace Sunctum.ViewModels
             WindowTop = Configuration.ApplicationConfiguration.WindowRect.Y;
             WindowWidth = Configuration.ApplicationConfiguration.WindowRect.Width;
             WindowHeight = Configuration.ApplicationConfiguration.WindowRect.Height;
+        }
 
+        public bool Initialize2ndPhase(bool shiftPressed = false)
+        {
             if (shiftPressed)
             {
                 if (!OpenSwitchLibraryDialogAndChangeWorkingDirectory())
                 {
                     Close();
-                    return;
+                    return false;
                 }
             }
             else
@@ -623,14 +641,18 @@ namespace Sunctum.ViewModels
                 if (dialogResult.Result == ButtonResult.Cancel || dialogResult.Result == ButtonResult.None)
                 {
                     Close();
-                    return;
+                    return false;
                 }
                 Configuration.ApplicationConfiguration.WorkingDirectory = dialogResult.Parameters.GetValue<string>("WorkingDirectory");
                 Configuration.Save(Configuration.ApplicationConfiguration);
             }
 
             CloseAllTab();
+            return true;
+        }
 
+        public async Task Initialize3rdPhase()
+        {
             var authorSorting = Configuration.ApplicationConfiguration.AuthorSorting;
             if (authorSorting != null)
             {
