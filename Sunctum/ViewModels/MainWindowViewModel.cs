@@ -608,13 +608,25 @@ namespace Sunctum.ViewModels
             WindowWidth = Configuration.ApplicationConfiguration.WindowRect.Width;
             WindowHeight = Configuration.ApplicationConfiguration.WindowRect.Height;
 
-            if (shiftPressed || Configuration.ApplicationConfiguration.WorkingDirectory == null)
+            if (shiftPressed)
             {
                 if (!OpenSwitchLibraryDialogAndChangeWorkingDirectory())
                 {
                     Close();
                     return;
                 }
+            }
+            else
+            {
+                IDialogResult dialogResult = null;
+                DialogService.ShowDialog("Top", ret => dialogResult = ret);
+                if (dialogResult.Result == ButtonResult.Cancel || dialogResult.Result == ButtonResult.None)
+                {
+                    Close();
+                    return;
+                }
+                Configuration.ApplicationConfiguration.WorkingDirectory = dialogResult.Parameters.GetValue<string>("WorkingDirectory");
+                Configuration.Save(Configuration.ApplicationConfiguration);
             }
 
             CloseAllTab();

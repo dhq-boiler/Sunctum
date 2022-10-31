@@ -128,7 +128,8 @@ namespace Sunctum.Converters
                                     currentDateTime = DateTime.Now;
                                     if ((currentDateTime - beginDateTime).TotalSeconds >= 60) //60秒経過
                                     {
-                                        throw new UnexpectedException("60秒間で画像を復号化した結果のWriteableBitmapを得ることができませんでした。");
+                                        s_logger.Error("60秒間で画像を復号化した結果のWriteableBitmapを得ることができませんでした。");
+                                        return DependencyProperty.UnsetValue;
                                     }
                                     s_logger.Debug($"retrying OnmemoryImageManager.Instance.PullAsWriteableBitmap() {(currentDateTime - beginDateTime).TotalSeconds}s");
                                 }
