@@ -43,7 +43,7 @@ namespace Sunctum.Domain.Data.DaoFacade
                 {
                     try
                     {
-                        dao.BatchInsert(tag.ToEntity(), process.Select(i => i.ToEntity()), dataOpUnit.CurrentConnection);
+                        dao.BatchInsert(tag.ToEntity(), process.Where(x => x is not null).Select(i => i.ToEntity()), dataOpUnit.CurrentConnection);
                     }
                     catch (Exception e)
                     {

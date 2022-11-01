@@ -148,7 +148,9 @@ namespace Sunctum.Converters
             }
             else
             {
-                Task.Run(async () => await Encryptor.Decrypt(value as string, Configuration.ApplicationConfiguration.Password, false)).GetAwaiter().GetResult();
+                var filePathPart = value as string;
+                var file = Path.Combine(Configuration.ApplicationConfiguration.WorkingDirectory, filePathPart.Substring(filePathPart.IndexOf("\\") + 1));
+                Task.Run(async () => await Encryptor.Decrypt(file, Configuration.ApplicationConfiguration.Password, false)).GetAwaiter().GetResult();
                 var guid = Guid.Parse(Path.GetFileNameWithoutExtension(value as string));
                 var bitmap = OnmemoryImageManager.Instance.PullAsWriteableBitmap(guid, false);
                 if (bitmap is null)

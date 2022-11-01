@@ -460,7 +460,7 @@ namespace Sunctum.Domain.Data.Dao
                 {
                     using (var query = new InsertOrReplace().Into.Table(new Table<ImageTag>().Name)
                                                             .Columns("ImageID", "TagID")
-                                                            .Values.Rows(images.Select(i => new object[] { i.ID, tag.ID })))
+                                                            .Values.Rows(images.Where(x => x is not null).Select(i => new object[] { i.ID, tag.ID })))
                     {
                         string sql = query.ToSql();
                         command.CommandText = sql;
