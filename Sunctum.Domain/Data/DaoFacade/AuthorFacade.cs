@@ -94,13 +94,29 @@ namespace Sunctum.Domain.Data.DaoFacade
         public static IEnumerable<AuthorViewModel> OrderByNaturalString()
         {
             AuthorDao dao = new AuthorDao();
-            return dao.FindAll().OrderBy(a => a.Name, new NaturalStringComparer()).ToViewModel();
+            var items = dao.FindAll().ToViewModel();
+            items = items.Select(x =>
+            {
+                if (x.NameIsEncrypted.Value && !x.NameIsDecrypted.Value)
+                {
+                    x.Name = Encryptor.DecryptString(x.Name, Configuration.ApplicationConfiguration.Password).Result;
+                    x.NameIsDecrypted.Value = true;
+                }
+                return x;
+            });
+            return items.OrderBy(a => a.Name, new NaturalStringComparer());
         }
 
         public static AuthorViewModel FindBy(Guid id, DataOperationUnit dataOpUnit = null)
         {
             AuthorDao dao = new AuthorDao();
-            return dao.FindBy(new Dictionary<string, object>() { { "ID", id } }, dataOpUnit?.CurrentConnection).SingleOrDefault().ToViewModel();
+            var item = dao.FindBy(new Dictionary<string, object>() { { "ID", id } }, dataOpUnit?.CurrentConnection).SingleOrDefault().ToViewModel();
+            if (item is not null && item.NameIsEncrypted.Value && !item.NameIsDecrypted.Value)
+            {
+                item.Name = Encryptor.DecryptString(item.Name, Configuration.ApplicationConfiguration.Password).Result;
+                item.NameIsDecrypted.Value = true;
+            }
+            return item;
         }
 
         public static IEnumerable<Author> FindBy(string name, DataOperationUnit dataOpUnit = null)
