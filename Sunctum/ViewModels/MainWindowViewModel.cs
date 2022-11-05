@@ -282,10 +282,6 @@ namespace Sunctum.ViewModels
                 Terminate();
                 CloseAllTab();
                 Initialize1stPhase(false);
-                if (!Initialize2ndPhase())
-                {
-                    return;
-                }
                 await Initialize3rdPhase().ConfigureAwait(false);
             });
             ShowPreferenceDialogCommand = new DelegateCommand(() =>
@@ -359,10 +355,6 @@ namespace Sunctum.ViewModels
                 Configuration.ApplicationConfiguration.WorkingDirectory = p.Path;
                 Configuration.Save(Configuration.ApplicationConfiguration);
                 Initialize1stPhase(false);
-                if (!Initialize2ndPhase())
-                {
-                    return;
-                }
                 await Initialize3rdPhase().ConfigureAwait(false);
             });
             ToggleDisplayAuthorPaneCommand = new DelegateCommand(() =>
