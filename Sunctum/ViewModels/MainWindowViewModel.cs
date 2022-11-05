@@ -637,7 +637,10 @@ namespace Sunctum.ViewModels
             else
             {
                 IDialogResult dialogResult = null;
-                DialogService.ShowDialog("Top", ret => dialogResult = ret);
+                App.Current.Dispatcher.Invoke(() =>
+                {
+                    DialogService.ShowDialog("Top", ret => dialogResult = ret);
+                });
                 if (dialogResult.Result == ButtonResult.Cancel || dialogResult.Result == ButtonResult.None)
                 {
                     Close();
@@ -1130,7 +1133,10 @@ namespace Sunctum.ViewModels
             }
             if (System.Windows.Application.Current is not null)
             {
-                System.Windows.Application.Current.Shutdown();
+                App.Current.Dispatcher.Invoke(() =>
+                {
+                    System.Windows.Application.Current.Shutdown();
+                });
             }
         }
 
