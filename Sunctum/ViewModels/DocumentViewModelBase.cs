@@ -593,10 +593,13 @@ namespace Sunctum.ViewModels
 
         public void ClearSelectedItems()
         {
-            App.Current.Dispatcher.Invoke(() =>
+            if (App.Current is not null)
             {
-                BookListViewSelectedItems.Clear();
-            });
+                App.Current.Dispatcher.Invoke(() =>
+                {
+                    BookListViewSelectedItems.Clear();
+                });
+            }
             ContentsListViewSelectedItems = new List<PageViewModel>();
         }
 
