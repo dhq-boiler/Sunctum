@@ -272,16 +272,16 @@ namespace Sunctum.ViewModels
                 Book.Author = null;
             }
 
-            if (LibraryManager.IsDirty(Book))
-            {
-                LibraryManager.UpdateInMemory(Book);
-            }
             foreach (var documentViewModel in MainWindowViewModel.DockingDocumentViewModels)
             {
                 if (documentViewModel.BookCabinet.IsDirty(Book))
                 {
                     documentViewModel.BookCabinet.UpdateInMemory(Book);
                 }
+            }
+            if (LibraryManager.IsDirty(Book))
+            {
+                LibraryManager.UpdateInMemory(Book);
             }
         }
 
