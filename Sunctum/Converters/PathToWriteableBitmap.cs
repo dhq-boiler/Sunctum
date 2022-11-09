@@ -56,7 +56,7 @@ namespace Sunctum.Converters
                 {
                     try
                     {
-                        Task.Run(async () => await image.DecryptImage(true)).GetAwaiter().GetResult();
+                        Task.Run(async () => await image.DecryptImage(true).ConfigureAwait(false)).GetAwaiter().GetResult();
                     }
                     catch (ArgumentException)
                     {
@@ -107,7 +107,7 @@ namespace Sunctum.Converters
                             {
                                 try
                                 {
-                                    Task.Run(async () => await image.DecryptImage(true)).GetAwaiter().GetResult();
+                                    Task.Run(async () => await image.DecryptImage(true).ConfigureAwait(false)).GetAwaiter().GetResult();
                                 }
                                 catch (ArgumentException)
                                 {
