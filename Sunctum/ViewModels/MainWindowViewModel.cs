@@ -316,15 +316,23 @@ namespace Sunctum.ViewModels
                     using (var dataOpUnit = new DataOperationUnit())
                     {
                         dataOpUnit.Open(ConnectionManager.DefaultConnection);
-                        File.Copy(copyFrom, copyTo);
-                        Encryptor.Encrypt(page.Image, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{page.Image.ID.ToString().Substring(0, 2)}\\{page.Image.ID}{Path.GetExtension(page.Image.AbsoluteMasterPath)}", Configuration.ApplicationConfiguration.Password, dataOpUnit, fileMgr).GetAwaiter().GetResult();
-                        File.Delete(copyTo);
+                        fileMgr.Copy(copyFrom, copyTo, true);
+                        EncryptImageDao dao = new EncryptImageDao();
+                        var items = dao.FindBy(new Dictionary<string, object>() { { "TargetImageID", page.Image.ID } });
+                        items.ToList().ForEach(x =>
+                        {
+                            dao.DeleteWhereIDIs(x.ID);
+                        });
+                        Encryptor.Encrypt(page.Image, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{page.Image.ID.ToString().Substring(0, 2)}\\{page.Image.ID}{Path.GetExtension(page.Image.AbsoluteMasterPath)}", Configuration.ApplicationConfiguration.Password, dataOpUnit, fileMgr).Wait();
+                        fileMgr.Delete(copyTo);
+                        scope.Complete();
                     }
                 }
                 else
                 {
                     File.Copy(copyFrom, copyTo);
                 }
+                System.Windows.MessageBox.Show("ファイルを置換しました。", "置換成功", MessageBoxButton.OK, MessageBoxImage.Information);
             });
             ShowPreferenceDialogCommand = new DelegateCommand(() =>
             {

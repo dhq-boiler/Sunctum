@@ -7,7 +7,7 @@ using System.Data;
 
 namespace Sunctum.Domain.Data.Dao
 {
-    internal class EncryptImageDao : SQLiteBaseDao<EncryptImage>
+    public class EncryptImageDao : SQLiteBaseDao<EncryptImage>
     {
         public EncryptImageDao() : base()
         { }

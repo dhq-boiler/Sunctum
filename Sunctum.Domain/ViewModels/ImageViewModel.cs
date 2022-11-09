@@ -108,14 +108,21 @@ namespace Sunctum.Domain.ViewModels
         {
             if (!OnmemoryImageManager.Instance.Exists(this.ID, isThumbnail))
             {
-                var image = EncryptImageFacade.FindBy(this.ID);
-                if (image is null)
-                    return;
                 try
                 {
-                    await Encryptor.Decrypt(Configuration.ApplicationConfiguration.WorkingDirectory + image.EncryptFilePath, Configuration.Password, isThumbnail);
+                    var image = EncryptImageFacade.FindBy(this.ID);
+                    if (image is null)
+                        return;
+                    try
+                    {
+                        await Encryptor.Decrypt(Configuration.ApplicationConfiguration.WorkingDirectory + image.EncryptFilePath, Configuration.Password, isThumbnail).ConfigureAwait(false);
+                    }
+                    catch (ArgumentException e)
+                    {
+                        s_logger.Warn(e);
+                    }
                 }
-                catch (ArgumentException e)
+                catch (InvalidOperationException e)
                 {
                     s_logger.Warn(e);
                 }

@@ -13,6 +13,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -61,6 +62,10 @@ namespace Sunctum.Converters
                     catch (ArgumentException)
                     {
                         return LoadBitmap($"{Configuration.ApplicationConfiguration.ExecutingDirectory}\\{Specifications.LOCK_ICON_FILE}", image.IsEncrypted);
+                    }
+                    catch (CryptographicException)
+                    {
+                        return DependencyProperty.UnsetValue;
                     }
                 }
                 if (!image.IsEncrypted && !File.Exists(thumbnail.AbsoluteMasterPath))

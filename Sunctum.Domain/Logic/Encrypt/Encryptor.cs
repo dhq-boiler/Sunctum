@@ -54,14 +54,14 @@ namespace Sunctum.Domain.Logic.Encrypt
                     using (ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV))
                     using (CryptoStream cse = new CryptoStream(outfs, encryptor, CryptoStreamMode.Write))
                     {
-                        await outfs.WriteAsync(salt, 0, 16);
-                        await outfs.WriteAsync(aes.IV, 0, 16);
+                        await outfs.WriteAsync(salt, 0, 16).ConfigureAwait(false);
+                        await outfs.WriteAsync(aes.IV, 0, 16).ConfigureAwait(false);
 
                         using (FileStream fs = new FileStream(originalImagePath, FileMode.Open, FileAccess.Read))
                         {
-                            while ((len = await fs.ReadAsync(buffer, 0, 4096)) > 0)
+                            while ((len = await fs.ReadAsync(buffer, 0, 4096).ConfigureAwait(false)) > 0)
                             {
-                                await cse.WriteAsync(buffer, 0, len);
+                                await cse.WriteAsync(buffer, 0, len).ConfigureAwait(false);
                             }
                         }
                     }
