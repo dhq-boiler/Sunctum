@@ -169,7 +169,12 @@ namespace Sunctum.Views
 
         private void Contents_ListViewItem_PreviewDragOver(object sender, DragEventArgs e)
         {
-            ProcessDragEventArgsInPreviewDragOver(ref e);
+            if (e.Data.GetDataPresent(typeof(TagCountViewModel)) || e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effects = DragDropEffects.Copy;
+            else
+                e.Effects = DragDropEffects.None;
+
+            e.Handled = true;
         }
 
         private void Contents_ListViewItem_Drop(object sender, DragEventArgs e)

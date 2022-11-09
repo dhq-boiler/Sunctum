@@ -1,5 +1,6 @@
 ﻿
 
+using ChinhDo.Transactions;
 using Homura.Core;
 using Homura.ORM;
 using Homura.ORM.Setup;
@@ -17,6 +18,7 @@ using Sunctum.Domain.Data.DaoFacade;
 using Sunctum.Domain.Logic.AuthorSorting;
 using Sunctum.Domain.Logic.BookSorting;
 using Sunctum.Domain.Logic.DisplayType;
+using Sunctum.Domain.Logic.Encrypt;
 using Sunctum.Domain.Logic.ImageTagCountSorting;
 using Sunctum.Domain.Models;
 using Sunctum.Domain.Models.Managers;
@@ -36,6 +38,7 @@ using System.Linq;
 using System.Reactive.Disposables;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Transactions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Forms;
@@ -122,6 +125,8 @@ namespace Sunctum.ViewModels
         public ICommand OpenTagManagementDialogCommand { get; set; }
 
         public ICommand ReloadLibraryCommand { get; set; }
+
+        public ICommand ReplaceContentCommand { get; set; }
 
         public ICommand ShowPreferenceDialogCommand { get; set; }
 
@@ -283,6 +288,43 @@ namespace Sunctum.ViewModels
                 CloseAllTab();
                 Initialize1stPhase(false);
                 await Initialize3rdPhase().ConfigureAwait(false);
+            });
+            ReplaceContentCommand = new DelegateCommand<System.Windows.DragEventArgs>(e =>
+            {
+                var a = e.Source as FrameworkElement;
+                var b = e.Source as FrameworkContentElement;
+                PageViewModel page = null;
+                if (e.Source is FrameworkElement fe)
+                {
+                    page = fe.DataContext as PageViewModel;
+                }
+                else if (e.Source is FrameworkContentElement fce)
+                {
+                    page = fce.DataContext as PageViewModel;
+                }
+                var copyFrom = ((string[])e.Data.GetData(System.Windows.DataFormats.FileDrop)).First();
+                var copyTo = page.Image.AbsoluteMasterPath;
+                if (!Path.GetFileName(copyFrom).Equals(Path.GetFileName(copyTo)))
+                {
+                    System.Windows.MessageBox.Show("ファイル名が一致しないため, 置換できません。", "置換不可", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    return;
+                }
+                if (page.Image.IsEncrypted)
+                {
+                    var fileMgr = new TxFileManager();
+                    using (var scope = new TransactionScope())
+                    using (var dataOpUnit = new DataOperationUnit())
+                    {
+                        dataOpUnit.Open(ConnectionManager.DefaultConnection);
+                        File.Copy(copyFrom, copyTo);
+                        Encryptor.Encrypt(page.Image, $"{Configuration.ApplicationConfiguration.WorkingDirectory}\\{Specifications.MASTER_DIRECTORY}\\{page.Image.ID.ToString().Substring(0, 2)}\\{page.Image.ID}{Path.GetExtension(page.Image.AbsoluteMasterPath)}", Configuration.ApplicationConfiguration.Password, dataOpUnit, fileMgr).GetAwaiter().GetResult();
+                        File.Delete(copyTo);
+                    }
+                }
+                else
+                {
+                    File.Copy(copyFrom, copyTo);
+                }
             });
             ShowPreferenceDialogCommand = new DelegateCommand(() =>
             {
