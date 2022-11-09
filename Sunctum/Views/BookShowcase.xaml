@@ -66,7 +66,12 @@
             </Style.Triggers>
         </Style>
         <DataTemplate x:Key="Contents_ListViewItem_DataTemplate">
-            <Grid>
+            <Grid AllowDrop="True">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Drop">
+                        <helper:EventToCommand Command="{Binding Path=DataContext.ReplaceContentCommand, RelativeSource={RelativeSource AncestorType=local:MainWindow}}" PassEventArgsToCommand="True" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
                 <Grid.Margin>
                     <MultiBinding Converter="{StaticResource MarginConverter}">
                         <Binding Path="Configuration.ContentListViewItemMarginLeft" />
