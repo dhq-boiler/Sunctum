@@ -132,7 +132,7 @@ namespace Sunctum.Domain.Logic.Async
         {
             using (var conn = await ConnectionManager.DefaultConnection.OpenConnectionAsync())
             {
-                using (var transaction = await conn.BeginTransactionAsync())
+                using (var transaction = await conn.BeginTransactionAsync().ConfigureAwait(false))
                 {
                     long count = 0;
                     var dao = new EncryptImageDao();
@@ -148,7 +148,7 @@ namespace Sunctum.Domain.Logic.Async
                                 count = (long)await cmd.ExecuteScalarAsync();
                             }
                         }
-                    });
+                    }).ConfigureAwait(false);
 
                     if (count == 0)
                     {
@@ -165,15 +165,15 @@ namespace Sunctum.Domain.Logic.Async
                                 {
                                     cmd.CommandText = query.ToSql();
                                     cmd.CommandType = System.Data.CommandType.Text;
-                                    await cmd.ExecuteNonQueryAsync();
+                                    await cmd.ExecuteNonQueryAsync().ConfigureAwait(false);
                                 }
                             }
-                        });
-                        await transaction.CommitAsync();
+                        }).ConfigureAwait(false);
+                        await transaction.CommitAsync().ConfigureAwait(false);
                     }
                     catch (Exception)
                     {
-                        await transaction.RollbackAsync();
+                        await transaction.RollbackAsync().ConfigureAwait(false);
                     }
                 }
             }
