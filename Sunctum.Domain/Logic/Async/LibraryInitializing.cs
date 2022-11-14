@@ -130,7 +130,7 @@ namespace Sunctum.Domain.Logic.Async
 
         private async void LibraryInitializing_FinishedToUpgradeTo_Version_9(object sender, VersionChangeEventArgs e)
         {
-            using (var conn = await ConnectionManager.DefaultConnection.OpenConnectionAsync())
+            using (var conn = await ConnectionManager.DefaultConnection.OpenConnectionAsync().ConfigureAwait(false))
             {
                 using (var transaction = await conn.BeginTransactionAsync().ConfigureAwait(false))
                 {
@@ -145,7 +145,7 @@ namespace Sunctum.Domain.Logic.Async
                                 cmd.CommandText = query.ToSql();
                                 cmd.CommandType = System.Data.CommandType.Text;
                                 query.SetParameters(cmd);
-                                count = (long)await cmd.ExecuteScalarAsync();
+                                count = (long)await cmd.ExecuteScalarAsync().ConfigureAwait(false);
                             }
                         }
                     }).ConfigureAwait(false);
