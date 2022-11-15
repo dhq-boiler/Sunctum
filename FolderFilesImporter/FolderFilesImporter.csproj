@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0-windows10.0.22000.0</TargetFramework>
+    <TargetFramework>net7.0-windows10.0.22000.0</TargetFramework>
     <OutputType>Library</OutputType>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWPF>true</UseWPF>
@@ -18,7 +18,7 @@
   </ItemGroup>
   <PropertyGroup>
     <PostBuildEvent>
-	    copy /Y "$(SolutionDir)FolderFilesImporter\bin\$(Configuration)\net6.0-windows10.0.22000.0\FolderFilesImporter.dll" "$(SolutionDir)Sunctum\bin\$(Configuration)\net6.0-windows10.0.22000.0\plugins\FolderFilesImporter.dll"
+	    copy /Y "$(SolutionDir)FolderFilesImporter\bin\$(Configuration)\net7.0-windows10.0.22000.0\FolderFilesImporter.dll" "$(SolutionDir)Sunctum\bin\$(Configuration)\net7.0-windows10.0.22000.0\plugins\FolderFilesImporter.dll"
     </PostBuildEvent>
   </PropertyGroup>
 </Project>
