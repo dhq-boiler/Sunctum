@@ -17,8 +17,8 @@
     </PackageReference>
   </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>
-	    copy /Y "$(SolutionDir)FolderFilesImporter\bin\$(Configuration)\net7.0-windows10.0.22000.0\FolderFilesImporter.dll" "$(SolutionDir)Sunctum\bin\$(Configuration)\net7.0-windows10.0.22000.0\plugins\FolderFilesImporter.dll"
+    <PostBuildEvent>if not exist "$(SolutionDir)Sunctum\bin\$(Configuration)\net7.0-windows10.0.22000.0\plugins" mkdir "$(SolutionDir)Sunctum\bin\$(Configuration)\net7.0-windows10.0.22000.0\plugins"
+copy /Y "$(SolutionDir)FolderFilesImporter\bin\$(Configuration)\net7.0-windows10.0.22000.0\FolderFilesImporter.dll" "$(SolutionDir)Sunctum\bin\$(Configuration)\net7.0-windows10.0.22000.0\plugins\FolderFilesImporter.dll"
     </PostBuildEvent>
   </PropertyGroup>
 </Project>

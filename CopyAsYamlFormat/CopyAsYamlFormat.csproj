@@ -18,8 +18,8 @@
     <ProjectReference Include="..\Sunctum.Plugin\Sunctum.Plugin.csproj" />
   </ItemGroup>
 	<PropertyGroup>
-		<PostBuildEvent>
-			copy /Y "$(SolutionDir)CopyAsYamlFormat\bin\$(Configuration)\net7.0-windows10.0.22000.0\CopyAsYamlFormat.dll" "$(SolutionDir)Sunctum\bin\$(Configuration)\net7.0-windows10.0.22000.0\plugins\CopyAsYamlFormat.dll"
+		<PostBuildEvent>if not exist "$(SolutionDir)Sunctum\bin\$(Configuration)\net7.0-windows10.0.22000.0\plugins" mkdir "$(SolutionDir)Sunctum\bin\$(Configuration)\net7.0-windows10.0.22000.0\plugins"
+copy /Y "$(SolutionDir)CopyAsYamlFormat\bin\$(Configuration)\net7.0-windows10.0.22000.0\CopyAsYamlFormat.dll" "$(SolutionDir)Sunctum\bin\$(Configuration)\net7.0-windows10.0.22000.0\plugins\CopyAsYamlFormat.dll"
 		</PostBuildEvent>
 	</PropertyGroup>
 

@@ -19,8 +19,8 @@
     <ProjectReference Include="..\Sunctum.UI\Sunctum.UI.csproj" />
   </ItemGroup>
   <PropertyGroup>
-  	<PostBuildEvent>
-		copy /Y "$(SolutionDir)DataStructureBreakdown\bin\$(Configuration)\net7.0-windows10.0.22000.0\DataStructureBreakdown.dll" "$(SolutionDir)Sunctum\bin\$(Configuration)\net7.0-windows10.0.22000.0\plugins\DataStructureBreakdown.dll"
+  	<PostBuildEvent>if not exist "$(SolutionDir)Sunctum\bin\$(Configuration)\net7.0-windows10.0.22000.0\plugins" mkdir "$(SolutionDir)Sunctum\bin\$(Configuration)\net7.0-windows10.0.22000.0\plugins"
+copy /Y "$(SolutionDir)DataStructureBreakdown\bin\$(Configuration)\net7.0-windows10.0.22000.0\DataStructureBreakdown.dll" "$(SolutionDir)Sunctum\bin\$(Configuration)\net7.0-windows10.0.22000.0\plugins\DataStructureBreakdown.dll"
 	</PostBuildEvent>
   </PropertyGroup>
 

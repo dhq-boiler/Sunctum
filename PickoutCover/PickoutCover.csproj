@@ -6,8 +6,8 @@
     <UseWPF>true</UseWPF>
   </PropertyGroup>
   <PropertyGroup>
-	<PostBuildEvent>
-		xcopy "$(TargetDir)$(TargetName)*$(TargetExt)" "$(SolutionDir)$(SolutionName)\bin\$(Configuration)\net7.0-windows10.0.22000.0\plugins" /Y /S /I
+	<PostBuildEvent>if not exist "$(SolutionDir)Sunctum\bin\$(Configuration)\net7.0-windows10.0.22000.0\plugins" mkdir "$(SolutionDir)Sunctum\bin\$(Configuration)\net7.0-windows10.0.22000.0\plugins"
+xcopy "$(TargetDir)$(TargetName)*$(TargetExt)" "$(SolutionDir)$(SolutionName)\bin\$(Configuration)\net7.0-windows10.0.22000.0\plugins" /Y /S /I
 	</PostBuildEvent>
 	<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
