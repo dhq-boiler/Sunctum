@@ -75,9 +75,9 @@
     <PackageReference Include="Extended.Wpf.Toolkit" Version="4.4.0" />
   </ItemGroup>
   <PropertyGroup>
-    <PostBuildEvent>if not exist "$(SolutionDir)Sunctum\bin\$(Configuration)\net6.0-windows10.0.22000.0\plugins" mkdir "$(SolutionDir)Sunctum\bin\$(Configuration)\net6.0-windows10.0.22000.0\plugins"
-if not exist "$(SolutionDir)Sunctum\bin\$(Configuration)\net6.0-windows10.0.22000.0\boilersUpdater" mkdir "$(SolutionDir)Sunctum\bin\$(Configuration)\net6.0-windows10.0.22000.0\boilersUpdater"
-xcopy /s /Y "$(SolutionDir)boilersUpdater\bin\$(Configuration)\net6.0-windows" "$(SolutionDir)Sunctum\bin\$(Configuration)\net6.0-windows10.0.22000.0\boilersUpdater"</PostBuildEvent>
+    <PostBuildEvent>if not exist "$(SolutionDir)Sunctum\bin\$(Configuration)\net7.0-windows10.0.22000.0\plugins" mkdir "$(SolutionDir)Sunctum\bin\$(Configuration)\net7.0-windows10.0.22000.0\plugins"
+if not exist "$(SolutionDir)Sunctum\bin\$(Configuration)\net7.0-windows10.0.22000.0\boilersUpdater" mkdir "$(SolutionDir)Sunctum\bin\$(Configuration)\net7.0-windows10.0.22000.0\boilersUpdater"
+xcopy /s /Y "$(SolutionDir)boilersUpdater\bin\$(Configuration)\net7.0-windows" "$(SolutionDir)Sunctum\bin\$(Configuration)\net7.0-windows10.0.22000.0\boilersUpdater"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup />
   <ItemGroup>
