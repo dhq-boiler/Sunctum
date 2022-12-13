@@ -2,22 +2,18 @@
 
 using Homura.Core;
 using Microsoft.AspNetCore.Components;
-using NLog;
 using Prism.Mvvm;
 using Sunctum.Domail.Util;
 using Sunctum.Domain.Models.Managers;
 using Sunctum.Domain.ViewModels;
 using Sunctum.Infrastructure.Core;
 using System;
-using System.Collections;
-using System.Collections.Concurrent;
 using System.Runtime.CompilerServices;
 
 namespace Sunctum.Managers
 {
     public class ProgressManager : BindableBase, IProgressManager
     {
-        private static readonly Logger s_logger = LogManager.GetCurrentClassLogger();
         private int _TotalCount;
         private int _Current;
         private DateTime? _previousUpdateDateTime;
@@ -74,10 +70,6 @@ namespace Sunctum.Managers
             return (double)_Current / _TotalCount;
         }
 
-        private ConcurrentQueue<DateTime> queue = new ConcurrentQueue<DateTime>();
-
-        private const int _PoolQueueCount = 1000;
-
         public void UpdateProgress(int current, int total, TimeKeeper timekeeper)
         {
             _TotalCount = total;
@@ -96,42 +88,24 @@ namespace Sunctum.Managers
             timekeeper.RecordTime();
             if (current > 100 && current < total)
             {
-                while (queue.Count > _PoolQueueCount)
-                {
-                    queue.TryDequeue(out var result);
-                }
-
                 var now = DateTime.Now;
+                var sum = (now - timekeeper.BeginTaskDatetime.Value);
+                var avgMilliseconds = sum.TotalMilliseconds / current;
+                var remain = total - current;
+                var remainTimesAvgMilliseconds = remain * avgMilliseconds;
 
                 if (_previousUpdateDateTime.HasValue)
                 {
-                    queue.TryPeek(out var result);
-                    var diff = (DateTime.Now - result);
-                    var avgMilliseconds = diff.TotalMilliseconds / queue.Count;
-                    var remain = total - current;
-                    var remainTimesAvgMilliseconds = remain * avgMilliseconds;
                     var duration = now - _previousUpdateDateTime.Value;
                     if (duration.Seconds >= 1)
                     {
-                        try
-                        {
-                            EstimateRemainTime = TimeSpan.FromMilliseconds(remainTimesAvgMilliseconds);
-                        }
-                        catch (OverflowException e)
-                        {
-                            s_logger.Error(e);
-                        }
-                        finally
-                        {
-                            _previousUpdateDateTime = now;
-                            queue.Enqueue(now);
-                        }
+                        EstimateRemainTime = TimeSpan.FromMilliseconds(remainTimesAvgMilliseconds);
+                        _previousUpdateDateTime = now;
                     }
                 }
                 else
                 {
                     _previousUpdateDateTime = now;
-                    queue.Enqueue(now);
                 }
             }
             else if (current == total)
@@ -157,8 +131,6 @@ namespace Sunctum.Managers
                     }
                 });
             }
-
-            queue.Clear();
         }
 
         public void Abort()
