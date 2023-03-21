@@ -172,7 +172,7 @@ namespace Sunctum.Domain.Logic.Async
             }
             sequence.Add(() => mainWindowViewModel.Value.Terminate());
             sequence.Add(() => mainWindowViewModel.Value.Initialize1stPhase(false));
-            sequence.Add(() => mainWindowViewModel.Value.Initialize2ndPhase(false));
+            sequence.Add(() => mainWindowViewModel.Value.Initialize2ndPhase(false, false));
             sequence.Add(async () => await mainWindowViewModel.Value.Initialize3rdPhase().ConfigureAwait(false));
         }
 
