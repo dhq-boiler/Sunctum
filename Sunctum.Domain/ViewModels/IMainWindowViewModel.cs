@@ -15,7 +15,7 @@ namespace Sunctum.Domain.ViewModels
     {
         void Initialize1stPhase(bool starting);
 
-        bool Initialize2ndPhase(bool shiftPressed);
+        bool Initialize2ndPhase(bool isSwitching, bool shiftPressed);
 
         Task Initialize3rdPhase();
 

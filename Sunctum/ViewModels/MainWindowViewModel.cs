@@ -267,7 +267,7 @@ namespace Sunctum.ViewModels
                     Terminate();
                     CloseAllTab();
                     Initialize1stPhase(false);
-                    if (!Initialize2ndPhase())
+                    if (!Initialize2ndPhase(true))
                     {
                         return;
                     }
@@ -666,7 +666,7 @@ namespace Sunctum.ViewModels
             WindowHeight = Configuration.ApplicationConfiguration.WindowRect.Height;
         }
 
-        public bool Initialize2ndPhase(bool shiftPressed = false)
+        public bool Initialize2ndPhase(bool isSwitching, bool shiftPressed = false)
         {
             if (shiftPressed)
             {
@@ -676,7 +676,7 @@ namespace Sunctum.ViewModels
                     return false;
                 }
             }
-            else
+            else if (!isSwitching)
             {
                 IDialogResult dialogResult = null;
                 App.Current.Dispatcher.Invoke(() =>

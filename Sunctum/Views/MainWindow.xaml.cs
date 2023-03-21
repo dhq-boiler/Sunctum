@@ -108,7 +108,7 @@ namespace Sunctum.Views
             DataContext = MainWindowVM;
             bool ShiftPressed = Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift);
             MainWindowVM.Initialize1stPhase(true);
-            MainWindowVM.Initialize2ndPhase(ShiftPressed);
+            MainWindowVM.Initialize2ndPhase(false, ShiftPressed);
             await MainWindowVM.Initialize3rdPhase().ConfigureAwait(false);
         }
 
