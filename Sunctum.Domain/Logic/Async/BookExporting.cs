@@ -114,6 +114,10 @@ namespace Sunctum.Domain.Logic.Async
             {
                 s_logger.Warn(e.Message);
             }
+            catch (NullReferenceException e)
+            {
+                s_logger.Warn(e.Message);
+            }
         }
 
         private void CreateDirectoryIfDoesntExist(string directory, BookViewModel book, bool tag)
